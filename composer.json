@@ -1,0 +1,46 @@
+{
+	"name": "subscribo/main",
+	"description": "The Subscribo API Server project.",
+	"keywords": ["subscribo"],
+	"license": "proprietary",
+	"type": "project",
+    "repositories": [{"type": "composer", "url": "http://satis.localhost"}],
+	"require": {
+		"laravel/framework": "4.2.*",
+        "subscribo/modifier": "@dev",
+        "subscribo/modelbase": "@dev"
+	},
+    "require-dev": {
+        "subscribo/dependencyresolver": "@dev",
+        "subscribo/schemabuilder": "@dev",
+        "subscribo/api0": "@dev",
+        "subscribo/apichecker": "@dev"
+    },
+	"autoload": {
+		"classmap": [
+			"app/commands",
+			"app/controllers",
+			"app/models",
+			"app/database/migrations",
+			"app/database/seeds",
+			"app/tests/TestCase.php"
+		]
+	},
+	"scripts": {
+		"post-install-cmd": [
+			"php artisan clear-compiled",
+			"php artisan optimize"
+		],
+		"post-update-cmd": [
+			"php artisan clear-compiled",
+			"php artisan optimize"
+		],
+		"post-create-project-cmd": [
+			"php artisan key:generate"
+		]
+	},
+	"config": {
+		"preferred-install": "dist"
+	},
+	"minimum-stability": "stable"
+}
