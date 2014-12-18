@@ -11,3 +11,7 @@
 |
 */
 
+if (class_exists('\\Subscribo\\SchemaBuilder\\SchemaBuilderServiceProvider')) {
+    App::register('\\Subscribo\\SchemaBuilder\\SchemaBuilderServiceProvider');
+}
+

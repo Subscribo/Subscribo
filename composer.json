@@ -1,12 +1,21 @@
 {
-	"name": "laravel/laravel",
-	"description": "The Laravel Framework.",
-	"keywords": ["framework", "laravel"],
-	"license": "MIT",
+	"name": "subscribo/main",
+	"description": "The Subscribo API Server project.",
+	"keywords": ["subscribo"],
+	"license": "proprietary",
 	"type": "project",
+    "repositories": [{"type": "composer", "url": "http://satis.localhost"}],
 	"require": {
-		"laravel/framework": "4.2.*"
+		"laravel/framework": "4.2.*",
+        "subscribo/modifier": "@dev",
+        "subscribo/modelbase": "@dev"
 	},
+    "require-dev": {
+        "subscribo/dependencyresolver": "@dev",
+        "subscribo/schemabuilder": "@dev",
+        "subscribo/api0": "@dev",
+        "subscribo/apichecker": "@dev"
+    },
 	"autoload": {
 		"classmap": [
 			"app/commands",

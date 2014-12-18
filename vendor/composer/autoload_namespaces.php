@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'Whoops' => array($vendorDir . '/filp/whoops/src'),
     'System' => array($vendorDir . '/phpseclib/phpseclib/phpseclib'),
+    'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
     'Symfony\\Component\\Translation\\' => array($vendorDir . '/symfony/translation'),
     'Symfony\\Component\\Security\\Core\\' => array($vendorDir . '/symfony/security-core'),
     'Symfony\\Component\\Routing\\' => array($vendorDir . '/symfony/routing'),

@@ -6,5 +6,12 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Subscribo\\SchemaBuilder\\' => array($vendorDir . '/subscribo/schemabuilder/src/Subscribo/SchemaBuilder'),
+    'Subscribo\\Modifier\\' => array($vendorDir . '/subscribo/modifier/src/Subscribo/Modifier'),
+    'Subscribo\\ModelBase\\' => array($vendorDir . '/subscribo/modelbase/src/Subscribo/ModelBase'),
+    'Subscribo\\DependencyResolver\\' => array($vendorDir . '/subscribo/dependencyresolver/src/Subscribo/DependencyResolver'),
+    'Subscribo\\ApiChecker\\' => array($vendorDir . '/subscribo/apichecker/src/Subscribo/ApiChecker'),
+    'Subscribo\\Api0\\' => array($vendorDir . '/subscribo/api0/src/Subscribo/Api0'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
+    'Fuel\\Core\\' => array($vendorDir . '/subscribo/schemabuilder/src/lib/fuel/core/src/Fuel/Core'),
 );
