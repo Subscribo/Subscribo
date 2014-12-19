@@ -32,8 +32,8 @@ class Filesystem
      * @param string $targetFile The target filename
      * @param bool   $override   Whether to override an existing file or not
      *
-     * @throws FileNotFoundException    When originFile doesn't exist
-     * @throws IOException              When copy fails
+     * @throws FileNotFoundException When originFile doesn't exist
+     * @throws IOException           When copy fails
      */
     public function copy($originFile, $targetFile, $override = false)
     {
@@ -290,6 +290,7 @@ class Filesystem
 
         if ($onWindows && $copyOnWindows) {
             $this->mirror($originDir, $targetDir);
+
             return;
         }
 
@@ -422,7 +423,7 @@ class Filesystem
                 }
             } else {
                 if (is_link($file)) {
-                    $this->symlink($file->getLinkTarget(), $target);
+                    $this->symlink($file->getRealPath(), $target);
                 } elseif (is_dir($file)) {
                     $this->mkdir($target);
                 } elseif (is_file($file)) {

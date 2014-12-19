@@ -5,13 +5,13 @@ use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\MessageBag;
-use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\Container;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Illuminate\Support\Contracts\MessageProviderInterface;
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 
-class Validator implements MessageProviderInterface {
+class Validator implements ValidatorContract {
 
 	/**
 	 * The Translator implementation.
@@ -26,6 +26,13 @@ class Validator implements MessageProviderInterface {
 	 * @var \Illuminate\Validation\PresenceVerifierInterface
 	 */
 	protected $presenceVerifier;
+
+	/**
+	 * The container instance.
+	 *
+	 * @var \Illuminate\Contracts\Container\Container
+	 */
+	protected $container;
 
 	/**
 	 * The failed validation rules.
@@ -61,6 +68,13 @@ class Validator implements MessageProviderInterface {
 	 * @var array
 	 */
 	protected $rules;
+
+	/**
+	 * All of the registered "after" callbacks.
+	 *
+	 * @var array
+	 */
+	protected $after = array();
 
 	/**
 	 * The array of custom error messages.
@@ -189,6 +203,22 @@ class Validator implements MessageProviderInterface {
 	}
 
 	/**
+	 * After an after validation callback.
+	 *
+	 * @param  callable|string  $callback
+	 * @return $this
+	 */
+	public function after($callback)
+	{
+		$this->after[] = function() use ($callback)
+		{
+			return call_user_func_array($callback, [$this]);
+		};
+
+		return $this;
+	}
+
+	/**
 	 * Add conditions to a given field based on a Closure.
 	 *
 	 * @param  string  $attribute
@@ -274,6 +304,14 @@ class Validator implements MessageProviderInterface {
 			}
 		}
 
+		// Here we will spin through all of the "after" hooks on this validator and
+		// fire them off. This gives the callbacks a chance to perform all kinds
+		// of other validation that needs to get wrapped up in this operation.
+		foreach ($this->after as $after)
+		{
+			call_user_func($after);
+		}
+
 		return count($this->messages->all()) === 0;
 	}
 
@@ -316,27 +354,27 @@ class Validator implements MessageProviderInterface {
 	}
 
 	/**
- 	 * Returns the data which was valid.
- 	 *
+	 * Returns the data which was valid.
+	 *
 	 * @return array
 	 */
 	public function valid()
 	{
 		if ( ! $this->messages) $this->passes();
 
- 		return array_diff_key($this->data, $this->messages()->toArray());
+		return array_diff_key($this->data, $this->messages()->toArray());
 	}
 
 	/**
- 	 * Returns the data which was invalid.
- 	 *
+	 * Returns the data which was invalid.
+	 *
 	 * @return array
 	 */
 	public function invalid()
 	{
 		if ( ! $this->messages) $this->passes();
 
- 		return array_intersect_key($this->data, $this->messages()->toArray());
+		return array_intersect_key($this->data, $this->messages()->toArray());
 	}
 
 	/**
@@ -368,7 +406,8 @@ class Validator implements MessageProviderInterface {
 	protected function isValidatable($rule, $attribute, $value)
 	{
 		return $this->presentOrRuleIsImplicit($rule, $attribute, $value) &&
-               $this->passesOptionalCheck($attribute);
+               $this->passesOptionalCheck($attribute) &&
+               $this->hasNotFailedPreviousRuleIfPresenceRule($rule, $attribute);
 	}
 
 	/**
@@ -395,7 +434,8 @@ class Validator implements MessageProviderInterface {
 		if ($this->hasRule($attribute, array('Sometimes')))
 		{
 			return array_key_exists($attribute, array_dot($this->data))
-                || array_key_exists($attribute, $this->files);
+				|| in_array($attribute, array_keys($this->data))
+				|| array_key_exists($attribute, $this->files);
 		}
 
 		return true;
@@ -410,6 +450,21 @@ class Validator implements MessageProviderInterface {
 	protected function isImplicit($rule)
 	{
 		return in_array($rule, $this->implicitRules);
+	}
+
+	/**
+	 * Determine if it's a necessary presence validation.
+	 *
+	 * This is to avoid possible database type comparison errors.
+	 *
+	 * @param  string  $rule
+	 * @param  string  $attribute
+	 * @return bool
+	 */
+	protected function hasNotFailedPreviousRuleIfPresenceRule($rule, $attribute)
+	{
+		return in_array($rule, ['Unique', 'Exists'])
+						? ! $this->messages->has($attribute): true;
 	}
 
 	/**
@@ -473,7 +528,7 @@ class Validator implements MessageProviderInterface {
 		{
 			return false;
 		}
-		elseif (is_array($value) && count($value) < 1)
+		elseif ((is_array($value) || $value instanceof \Countable) && count($value) < 1)
 		{
 			return false;
 		}
@@ -799,7 +854,8 @@ class Validator implements MessageProviderInterface {
 
 		$length = strlen((string) $value);
 
-		return $length >= $parameters[0] && $length <= $parameters[1];
+		return $this->validateNumeric($attribute, $value)
+		  && $length >= $parameters[0] && $length <= $parameters[1];
 	}
 
 	/**
@@ -1134,7 +1190,7 @@ class Validator implements MessageProviderInterface {
 	{
 		$url = str_replace(array('http://', 'https://', 'ftp://'), '', strtolower($value));
 
-		return checkdnsrr($url);
+		return checkdnsrr($url, 'A');
 	}
 
 	/**
@@ -1146,7 +1202,7 @@ class Validator implements MessageProviderInterface {
 	 */
 	protected function validateImage($attribute, $value)
 	{
-		return $this->validateMimes($attribute, $value, array('jpeg', 'png', 'gif', 'bmp'));
+		return $this->validateMimes($attribute, $value, array('jpeg', 'png', 'gif', 'bmp', 'svg'));
 	}
 
 	/**
@@ -1349,9 +1405,9 @@ class Validator implements MessageProviderInterface {
 	/**
 	 * Given two date/time strings, check that one is after the other.
 	 *
-	 * @param  string $format
-	 * @param  string $before
-	 * @param  string $after
+	 * @param  string  $format
+	 * @param  string  $before
+	 * @param  string  $after
 	 * @return bool
 	 */
 	protected function checkDateTimeOrder($format, $before, $after)
@@ -1366,8 +1422,8 @@ class Validator implements MessageProviderInterface {
 	/**
 	 * Get a DateTime instance from a string.
 	 *
-	 * @param  string $format
-	 * @param  string $value
+	 * @param  string  $format
+	 * @param  string  $value
 	 * @return \DateTime|null
 	 */
 	protected function getDateTimeWithOptionalFormat($format, $value)
@@ -1382,7 +1438,7 @@ class Validator implements MessageProviderInterface {
 		}
 		catch (\Exception $e)
 		{
-			return null;
+			return;
 		}
 	}
 
@@ -2403,7 +2459,7 @@ class Validator implements MessageProviderInterface {
 	/**
 	 * Set the IoC container instance.
 	 *
-	 * @param  \Illuminate\Container\Container  $container
+	 * @param  \Illuminate\Contracts\Container\Container  $container
 	 * @return void
 	 */
 	public function setContainer(Container $container)

@@ -32,6 +32,7 @@ class HasManyThrough extends Relation {
 	 * Create a new has many relationship instance.
 	 *
 	 * @param  \Illuminate\Database\Eloquent\Builder  $query
+	 * @param  \Illuminate\Database\Eloquent\Model  $farParent
 	 * @param  \Illuminate\Database\Eloquent\Model  $parent
 	 * @param  string  $firstKey
 	 * @param  string  $secondKey
@@ -231,22 +232,6 @@ class HasManyThrough extends Relation {
 		}
 
 		return array_merge($columns, array($this->parent->getTable().'.'.$this->firstKey));
-	}
-
-	/**
-	 * Get a paginator for the "select" statement.
-	 *
-	 * @param  int    $perPage
-	 * @param  array  $columns
-	 * @return \Illuminate\Pagination\Paginator
-	 */
-	public function paginate($perPage = null, $columns = array('*'))
-	{
-		$this->query->addSelect($this->getSelectColumns($columns));
-
-		$pager = $this->query->paginate($perPage, $columns);
-
-		return $pager;
 	}
 
 	/**

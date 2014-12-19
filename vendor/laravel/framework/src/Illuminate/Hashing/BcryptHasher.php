@@ -1,6 +1,8 @@
 <?php namespace Illuminate\Hashing;
 
-class BcryptHasher implements HasherInterface {
+use Illuminate\Contracts\Hashing\Hasher as HasherContract;
+
+class BcryptHasher implements HasherContract {
 
 	/**
 	 * Default crypt cost factor.
@@ -57,6 +59,19 @@ class BcryptHasher implements HasherInterface {
 		$cost = isset($options['rounds']) ? $options['rounds'] : $this->rounds;
 
 		return password_needs_rehash($hashedValue, PASSWORD_BCRYPT, array('cost' => $cost));
+	}
+
+	/**
+	 * Set the default passwork work factor.
+	 *
+	 * @param  int  $rounds
+	 * @return $this
+	 */
+	public function setRounds($rounds)
+	{
+		$this->rounds = (int) $rounds;
+
+		return $this;
 	}
 
 }

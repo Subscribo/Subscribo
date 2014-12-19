@@ -59,9 +59,7 @@ class ArrayStore extends TaggableStore implements StoreInterface {
 	 */
 	public function decrement($key, $value = 1)
 	{
-		$this->storage[$key] = $this->storage[$key] - $value;
-
-		return $this->storage[$key];
+		return $this->increment($key, $value * -1);
 	}
 
 	/**
@@ -80,11 +78,13 @@ class ArrayStore extends TaggableStore implements StoreInterface {
 	 * Remove an item from the cache.
 	 *
 	 * @param  string  $key
-	 * @return void
+	 * @return bool
 	 */
 	public function forget($key)
 	{
 		unset($this->storage[$key]);
+
+		return true;
 	}
 
 	/**
