@@ -6,9 +6,18 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Subscribo\\ServiceProvider\\' => array($vendorDir . '/subscribo/serviceprovider/src/Subscribo/ServiceProvider'),
+    'Subscribo\\SchemaBuilder\\' => array($vendorDir . '/subscribo/schemabuilder/src/Subscribo/SchemaBuilder'),
+    'Subscribo\\Modifier\\' => array($vendorDir . '/subscribo/modifier/src/Subscribo/Modifier'),
+    'Subscribo\\ModelBase\\' => array($vendorDir . '/subscribo/modelbase/src/Subscribo/ModelBase'),
+    'Subscribo\\DependencyResolver\\' => array($vendorDir . '/subscribo/dependencyresolver/src/Subscribo/DependencyResolver'),
+    'Subscribo\\ApiChecker\\' => array($vendorDir . '/subscribo/apichecker/src/Subscribo/ApiChecker'),
+    'Subscribo\\Api0\\' => array($vendorDir . '/subscribo/api0/src/Subscribo/Api0'),
     'Predis\\' => array($vendorDir . '/predis/predis/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
+    'Model\\' => array($baseDir . '/app/models'),
     'League\\Flysystem\\' => array($vendorDir . '/league/flysystem/src'),
+    'Fuel\\Core\\' => array($vendorDir . '/subscribo/schemabuilder/src/lib/fuel/core/src/Fuel/Core'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
     'App\\' => array($baseDir . '/app'),
 );

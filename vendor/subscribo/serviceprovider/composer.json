@@ -1,0 +1,15 @@
+{
+    "name": "subscribo/serviceprovider",
+    "description": "Contain Laravel 4.2 ServiceProvider to be used for now.",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\ServiceProvider\\": "src/Subscribo/ServiceProvider/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
