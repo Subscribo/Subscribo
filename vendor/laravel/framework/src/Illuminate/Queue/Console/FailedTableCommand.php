@@ -27,7 +27,7 @@ class FailedTableCommand extends Command {
 	protected $files;
 
 	/**
-	 * Create a new session table command instance.
+	 * Create a new failed queue jobs table command instance.
 	 *
 	 * @param  \Illuminate\Filesystem\Filesystem  $files
 	 * @return void

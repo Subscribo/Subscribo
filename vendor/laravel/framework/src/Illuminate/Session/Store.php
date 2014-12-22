@@ -1,6 +1,7 @@
 <?php namespace Illuminate\Session;
 
 use SessionHandlerInterface;
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\MetadataBag;
@@ -196,9 +197,7 @@ class Store implements SessionInterface {
 	{
 		$this->attributes = array();
 
-		$this->migrate();
-
-		return true;
+		return $this->migrate();
 	}
 
 	/**
@@ -210,7 +209,9 @@ class Store implements SessionInterface {
 
 		$this->setExists(false);
 
-		$this->id = $this->generateSessionId(); return true;
+		$this->id = $this->generateSessionId();
+
+		return true;
 	}
 
 	/**
@@ -455,10 +456,7 @@ class Store implements SessionInterface {
 	 */
 	public function replace(array $attributes)
 	{
-		foreach ($attributes as $key => $value)
-		{
-			$this->put($key, $value);
-		}
+		$this->put($attributes);
 	}
 
 	/**
@@ -526,7 +524,7 @@ class Store implements SessionInterface {
 	{
 		return array_get($this->bags, $name, function()
 		{
-			throw new \InvalidArgumentException("Bag not registered.");
+			throw new InvalidArgumentException("Bag not registered.");
 		});
 	}
 
