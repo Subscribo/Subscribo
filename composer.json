@@ -4,7 +4,6 @@
 	"keywords": ["subscribo"],
 	"license": "proprietary",
 	"type": "project",
-    "repositories": [{"type": "composer", "url": "http://satis.localhost"}],
 	"require": {
 		"laravel/framework": "~5.0",
         "subscribo/modifier": "@dev",
