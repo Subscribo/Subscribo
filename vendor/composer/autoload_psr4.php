@@ -15,7 +15,7 @@ return array(
     'Subscribo\\Api0\\' => array($vendorDir . '/subscribo/api0/src/Subscribo/Api0'),
     'Predis\\' => array($vendorDir . '/predis/predis/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
-    'Model\\' => array($baseDir . '/app/models'),
+    'Model\\' => array($baseDir . '/app/Models'),
     'League\\Flysystem\\' => array($vendorDir . '/league/flysystem/src'),
     'Fuel\\Core\\' => array($vendorDir . '/subscribo/schemabuilder/src/lib/fuel/core/src/Fuel/Core'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
