@@ -41,6 +41,18 @@ $app->singleton(
 	'App\Exceptions\Handler'
 );
 
+if (class_exists('\\Subscribo\\SchemaBuilder\\SchemaBuilderServiceProvider')) {
+    $app->register('\\Subscribo\\SchemaBuilder\\SchemaBuilderServiceProvider');
+}
+
+if (class_exists('\\Subscribo\\Api0\\Api0ServiceProvider')) {
+    $app->register('\\Subscribo\\Api0\\Api0ServiceProvider');
+}
+
+if (class_exists('\\Subscribo\\ApiChecker\\ApiCheckerServiceProvider')) {
+    $app->register('\\Subscribo\\ApiChecker\\ApiCheckerServiceProvider');
+}
+
 /*
 |--------------------------------------------------------------------------
 | Return The Application
