@@ -16,7 +16,8 @@
         "subscribo/dependencyresolver": "@dev",
         "subscribo/schemabuilder": "@dev",
         "subscribo/api0": "@dev",
-        "subscribo/apichecker": "@dev"
+        "subscribo/apichecker": "@dev",
+        "barryvdh/laravel-ide-helper": "dev-master"
 	},
 	"autoload": {
 		"classmap": [

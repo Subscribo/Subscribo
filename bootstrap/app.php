@@ -53,6 +53,11 @@ if (class_exists('\\Subscribo\\ApiChecker\\ApiCheckerServiceProvider')) {
     $app->register('\\Subscribo\\ApiChecker\\ApiCheckerServiceProvider');
 }
 
+if (class_exists('\\Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider')) {
+    $app->register('\\Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider');
+}
+
+
 /*
 |--------------------------------------------------------------------------
 | Return The Application
