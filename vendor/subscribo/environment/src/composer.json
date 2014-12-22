@@ -1,0 +1,38 @@
+{
+    "name": "subscribo/environment",
+    "description": "Package Environment is for getting current environment",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "environment"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner"
+        }
+    ],
+    "require": {
+        "php": "~5.4"
+    },
+    "suggest": {
+        "laravel/laravel": "This package have been developed to work with The Laravel Framework 5.0",
+        "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\Environment\\": "src/Subscribo/Environment/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
