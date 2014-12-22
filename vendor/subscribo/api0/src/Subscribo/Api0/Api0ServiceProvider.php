@@ -24,7 +24,7 @@ class Api0ServiceProvider extends ServiceProvider {
     public function boot()
     {
         $this->package('subscribo/api0');
-
+/*
         $this->app->error(function(HttpException $exception)
         {
             $previous = $exception->getPrevious();
@@ -33,7 +33,7 @@ class Api0ServiceProvider extends ServiceProvider {
             }
             return $exception->forgeResponse($this->app->make('request'));
         });
-
+/* */
         $this->app->make('router')->get('api/v0/model/{model}/{identifier?}', '\\Subscribo\Api0\ModelController@getIndex');
         $this->app->make('router')->post('api/v0/model/{model}', '\\Subscribo\Api0\ModelController@addElement');
         $this->app->make('router')->post('api/v0/model/{model}/{identifier?}', '\\Subscribo\Api0\ModelController@modifyElement');

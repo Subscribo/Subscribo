@@ -50,7 +50,7 @@ class BuildCommand extends BuildCommandAbstract {
         $this->call('build:schema', array($inputFile, $outputFile));
         $this->call('build:models', array($outputFile));
         $this->call('build:migrations', array($outputFile));
-        $this->call('build:administrator-configs', array($outputFile));
+    //    $this->call('build:administrator-configs', array($outputFile));
 
         $exitCode = null;
         passthru('php ~/bin/composer.phar dump-autoload -o -vvv', $exitCode);
@@ -69,8 +69,8 @@ class BuildCommand extends BuildCommandAbstract {
     protected function getArguments()
     {
         return array(
-            array('input_file', InputArgument::OPTIONAL, 'File used for input schema.', 'schema.yml'),
-            array('output_file', InputArgument::OPTIONAL, 'File used for output schema.', 'parsed_schema.yml'),
+            array('input_file', InputArgument::OPTIONAL, 'File used for input schema.', self::SCHEMA_DIR.'schema.yml'),
+            array('output_file', InputArgument::OPTIONAL, 'File used for output schema.', self::SCHEMA_DIR.'parsed_schema.yml'),
         );
     }
 

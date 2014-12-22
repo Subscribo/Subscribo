@@ -5,6 +5,11 @@ use Illuminate\Support\Str;
 
 abstract class BuildCommandAbstract extends Command {
 
+    const CONFIG_DIR = 'config/';
+    const MIGRATIONS_DIR = 'database/migrations/';
+    const MODELS_DIR = 'app/Models/';
+    const SCHEMA_DIR = '';
+
 
     protected function _createFile($filePath, $content, $mode = 'exception')
     {

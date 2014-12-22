@@ -17,7 +17,7 @@ use Request;
  *
  * @package Subscribo\Api0
  */
-class ModelController extends BaseController {
+class ModelController extends \App\Http\Controllers\Controller {
 
     /**
      * @var \Subscribo\ModelBase\ModelFactory

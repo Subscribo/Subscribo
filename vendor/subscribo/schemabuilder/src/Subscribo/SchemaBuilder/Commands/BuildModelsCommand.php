@@ -39,7 +39,7 @@ class BuildModelsCommand extends BuildCommandAbstract {
         $modelFields = $input['model_fields'];
         $modelOptions = $input['model_options'];
 
-        $this->_buildModels($modelFields, $modelOptions, 'app/models/', 'app/config/');
+        $this->_buildModels($modelFields, $modelOptions, self::MODELS_DIR, self::CONFIG_DIR);
 
         $this->info('Building models finished.');
     }
@@ -78,7 +78,7 @@ class BuildModelsCommand extends BuildCommandAbstract {
         $apiConfigContent = View::make('schemabuilder::commands.build.api_config', array('apiConfiguration' => array(
             'models' => $modelsForApiConfiguration,
         )));
-        $apiConfigFilePath = $configPath.'api/configuration.php';
+        $apiConfigFilePath = $configPath.'apiconfiguration.php';
         $this->_createFile($apiConfigFilePath, $apiConfigContent, 'overwrite');
     }
 
@@ -90,7 +90,7 @@ class BuildModelsCommand extends BuildCommandAbstract {
 	protected function getArguments()
 	{
 		return array(
-			array('file', InputArgument::OPTIONAL, 'File used for schema.', 'parsed_schema.yml'),
+			array('file', InputArgument::OPTIONAL, 'File used for schema.', self::SCHEMA_DIR.'parsed_schema.yml'),
 		);
 	}
 

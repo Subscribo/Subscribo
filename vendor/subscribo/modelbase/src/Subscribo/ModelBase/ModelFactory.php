@@ -13,7 +13,7 @@ class ModelFactory {
      */
     public static function resolveModelFromUriStub($modelUriStub)
     {
-        $modelsConfiguration = \Config::get('api/configuration.models');
+        $modelsConfiguration = \Config::get('apiconfiguration.models');
         if (empty($modelsConfiguration[$modelUriStub]['model_full_name'])) {
             return null;
         }
@@ -29,7 +29,7 @@ class ModelFactory {
      */
     public static function listUriStubs()
     {
-        $modelsConfiguration = \Config::get('api/configuration.models');
+        $modelsConfiguration = \Config::get('apiconfiguration.models');
         $result = array();
         foreach ($modelsConfiguration as $stub => $configuration) {
             if ( ! empty($configuration['model_full_name'])) {
