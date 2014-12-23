@@ -1,16 +1,366 @@
 <?php namespace Subscribo\Config;
 
 use Subscribo\Environment\EnvironmentInterface;
+use Subscribo\Support\Arr;
+
+use Subscribo\Config\Loader\PhpFileLoader;
+use Symfony\Component\Config\Loader\DelegatingLoader;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Loader\LoaderResolver;
+use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\Definition\ArrayNode;
 
 class Config {
+
+    const ENVIRONMENTS_SUBDIRECTORY_NAME = 'env';
+
+    protected $supportedExtensions = array('php', 'json', 'yml', 'yaml');
 
     /**
      * @var null|\Subscribo\Environment\EnvironmentInterface
      */
     protected $environmentInstance = null;
 
-    public function __construct(EnvironmentInterface $environment)
+    /**
+     * @var array
+     */
+    protected $mainConfiguration = array();
+
+    /**
+     * @var array
+     */
+    protected $packagesConfiguration = array();
+
+    /**
+     * @var string
+     */
+    protected $mainBaseDirectory;
+
+    /**
+     * @var string
+     */
+    protected $packageBaseDirectory;
+
+    /**
+     * @var string
+     */
+    protected $projectBasePath;
+
+    /**
+     * @var \Symfony\Component\Config\Loader\LoaderResolver
+     */
+    protected $loaderResolver;
+
+    /**
+     * @param \Subscribo\Environment\EnvironmentInterface $environment
+     * @param string $projectBasePath
+     * @param string|null $mainBaseDirectory
+     * @param string|null $packageBaseDirectory
+     */
+    public function __construct(EnvironmentInterface $environment, $projectBasePath, $mainBaseDirectory = null, $packageBaseDirectory = null)
     {
         $this->environmentInstance = $environment;
+        $this->projectBasePath = $projectBasePath;
+        $this->mainBaseDirectory = $mainBaseDirectory;
+        if (is_null($packageBaseDirectory) and $mainBaseDirectory) {
+            $packageBaseDirectory = $mainBaseDirectory.'packages/';
+        }
+        $this->packageBaseDirectory = $packageBaseDirectory;
+    }
+
+    /**
+     * Return value stored under provided key
+     *
+     * @param string $key Array key with dot notation
+     * @param mixed $default What to return, if key is not found
+     * @param string|null $package If provided, return value for given package
+     * @return mixed|null
+     */
+    public function get($key, $default = null, $package = null)
+    {
+        if ($package) {
+            return $this->getForPackage($package, $key, $default);
+        }
+        return Arr::get($this->mainConfiguration, $key, $default);
+
+    }
+
+    /**
+     * Return value stored under provided key for given package
+     *
+     * @param string $package Package  name
+     * @param string $key Array key with dot notation
+     * @param mixed $default What to return, if key is not found
+     * @return mixed|null
+     */
+    public function getForPackage($package, $key, $default = null)
+    {
+        if (empty($this->packagesConfiguration[$package])) {
+            return $default;
+        }
+        return Arr::get($this->packagesConfiguration[$package], $key, $default);
+    }
+
+    /**
+     * Store given value under given key
+     *
+     * @param string $key Array key with dot notation
+     * @param mixed $value Value to store
+     * @param string|null $package If provided, return value for given package
+     * @return $this
+     */
+    public function set($key, $value, $package = null)
+    {
+        if ( ! is_null($package)) {
+            $this->setForPackage($package, $key, $value);
+            return $this;
+        }
+        $mainConfiguration = $this->mainConfiguration;
+        Arr::set($mainConfiguration, $key, $value);
+        return $this;
+    }
+
+    /**
+     * Store given value under given key for given package
+     *
+     * @param string $package Package  name
+     * @param string $key Array key with dot notation
+     * @param mixed $value Value to store
+     * @return $this
+     */
+    public function setForPackage($package, $key, $value)
+    {
+        $packageConfiguration = empty($this->packagesConfiguration[$package]) ? array() : $this->packagesConfiguration[$package];
+        Arr::set($packageConfiguration, $key, $value);
+        $this->packagesConfiguration[$package] = $packageConfiguration;
+        return $this;
+    }
+
+
+    /**
+     * Load configuration file(s)
+     *
+     * @param string|array $filePath File path or array of file paths
+     * @param string|null|bool $group Whether parsed file content should be under some group.
+     *        False - no group (root node)
+     *        True - Group same as file base name (without extension)
+     *        String - under provided string
+     *        Null (default) - based on file base name - if it is 'config' then root, otherwise file name     * @param string|bool $environment
+     * @param null $configuration
+     * @param string|null $package If provided, loads configuration for a package
+     *
+     * @return $this
+     */
+    public function loadFile($filePath, $group = null, $environment = true, $configuration = null, $package = null)
+    {
+        if ( ! is_null($package)) {
+            $this->loadFileForPackage($package, $filePath, $group, $environment, $configuration);
+            return $this;
+        }
+        $baseDir = $this->mainBaseDirectory;
+        $processed = $this->processFiles($filePath, $group, $environment, $baseDir, $configuration, $this->mainConfiguration);
+        $this->mainConfiguration = $processed;
+        return $this;
+
+    }
+
+    /**
+     * Load configuration file(s) for a package
+     *
+     * @param string $package Package name
+     * @param string|array $filePath File path or array of file paths
+     * @param string|null|bool $group Whether parsed file content should be under some group.
+     *        False - no group (root node)
+     *        True - Group same as file base name (without extension)
+     *        String - under provided string
+     *        Null (default) - based on file base name - if it is 'config' then root, otherwise file name     * @param string|bool $environment
+     * @param null $configuration
+     *
+     * @return $this
+     */
+    public function loadFileForPackage($package, $filePath, $group = null, $environment = true, $configuration = null)
+    {
+        $baseDir = ($this->packageBaseDirectory) ? ($this->packageBaseDirectory.$package.'/') : null;
+        $currentStatus = array_key_exists($package, $this->packagesConfiguration) ? $this->packagesConfiguration[$package] : array();
+        $processed = $this->processFiles($filePath, $group, $environment, $baseDir, $configuration, $currentStatus);
+        $this->packagesConfiguration[$package] = $processed;
+        return $this;
+    }
+
+    public function parseFile($filePath)
+    {
+        $delegatingLoader = new DelegatingLoader($this->obtainLoaderResolver());
+        $result = $delegatingLoader->load($filePath);
+        return $result;
+    }
+
+    /**
+     * @return LoaderResolver
+     */
+    protected function obtainLoaderResolver()
+    {
+        if ($this->loaderResolver) {
+            return $this->loaderResolver;
+        }
+        $fileLocator = new FileLocator();
+        $loaders = array(
+            new PhpFileLoader($fileLocator),
+        );
+        $this->loaderResolver = new LoaderResolver($loaders);
+        return $this->loaderResolver;
+    }
+
+
+    public function findAndParseFile($filePath)
+    {
+        $realFile = $this->findFile($filePath);
+        if (empty($realFile)) {
+            $realFile = $this->findFile($this->projectBasePath.$filePath);
+        }
+        if (empty($realFile)) {
+            return null;
+        }
+        return $this->parseFile($realFile);
+    }
+
+    /**
+     * Tries to find existing file with supported extension
+     *
+     * @param $filePath
+     * @return null|string
+     */
+    public function findFile($filePath)
+    {
+        if (file_exists($filePath)) {
+            return $filePath;
+        }
+        foreach ($this->supportedExtensions as $extension)
+        {
+            $extendedFilePath = $filePath.'.'.$extension;
+            if (file_exists($extendedFilePath)) {
+                return $extendedFilePath;
+            }
+            $extendedFilePath = $filePath.'.'.strtoupper($extension);
+            if (file_exists($extendedFilePath)) {
+                return $extendedFilePath;
+            }
+            $extendedFilePath = $filePath.'.'.ucfirst($extension);
+            if (file_exists($extendedFilePath)) {
+                return $extendedFilePath;
+            }
+        }
+        return null;
+    }
+
+    private function processFiles($filePath, $group = null, $environment = true, $baseDir = null, $configuration = null, $currentStatus = array())
+    {
+        $toProcess = empty($currentStatus) ? array() : array($currentStatus);
+        $filePaths = is_array($filePath) ? $filePath : array($filePath);
+        foreach ($filePaths as $pathToFile) {
+            $processedFile = $this->processFile($pathToFile, $group, $baseDir);
+            if ($processedFile) {
+                $toProcess[] = $processedFile;
+            }
+            if ($environment) {
+                $environmentFilePath = $this->assembleEnvironmentFilePath($pathToFile, $environment);
+                $processedEnvironmentFile = $this->processFile($environmentFilePath, $group, $baseDir);
+                if ($processedEnvironmentFile) {
+                    $toProcess[] = $processedEnvironmentFile;
+                }
+            }
+        }
+        if ($configuration) {
+            $processor = new Processor();
+            $result = $processor->process($configuration, $toProcess);
+        } else {
+            $result = $this->mergeConfigurations($toProcess);
+        }
+        return $result;
+    }
+
+    protected function mergeConfigurations(array $configurations)
+    {
+        $result = array();
+        foreach ($configurations as $configuration)
+        {
+            $result = Arr::merge_natural($result, $configuration);
+        }
+        return $result;
+    }
+
+    /**
+     * Processing the file, optionally putting result under group
+     *
+     * @param string $filePath
+     * @param string|null|bool $group Whether parsed file content should be under some group.
+     *        False - no group (root node)
+     *        True - Group same as file base name (without extension)
+     *        String - under provided string
+     *        Null (default) - based on file base name - if it is 'config' then root, otherwise file name
+     * @param string|null $baseDir if provided, then on failure to load provided filePath an attempt it made to load it with $baseDir prepended
+     * @return array|null
+     */
+    private function processFile($filePath, $group = null, $baseDir = null)
+    {
+        $content = $this->findAndParseFile($filePath);
+        if (is_null($content) and $baseDir) {
+            $content = $this->findAndParseFile($baseDir.$filePath);
+        }
+        if (empty($content)) {
+            return null;
+        }
+        if (is_null($group)) {
+            $fileNameBase = $this->extractFileNameBase($filePath);
+            if ('config' === strtolower($fileNameBase)) {
+                $group = false;
+            } else {
+                $group = $fileNameBase;
+            }
+        }
+        if ($group) {
+            $result = array($group => $content);
+        } else {
+            $result = $content;
+        }
+        return $result;
+    }
+
+
+    /**
+     * Return file name base, without directories and without extension
+     *
+     * @param string $filePath
+     * @return string
+     */
+    private function extractFileNameBase($filePath)
+    {
+        $directories = explode('/', $filePath);
+        $fileName = array_pop($directories);
+        $fileNameParts = explode('.', $fileName);
+        if (count($fileNameParts) > 1) {
+            $extension = array_pop($fileNameParts);
+        }
+        $result = implode('.', $fileNameParts);
+        return $result;
+    }
+
+    /**
+     * Assemble path to configuration file with environment taken into account
+     *
+     * @param string $filePath Path to configuration file for all environments
+     * @param string|bool $environment Environment name, true for predefined for Config object (usually the current one)
+     * @return string
+     */
+    private function assembleEnvironmentFilePath($filePath, $environment = true)
+    {
+        if (true === $environment) {
+            $environment = $this->environmentInstance->getEnvironment();
+        }
+        $directories = explode('/', $filePath);
+        $fileName = array_pop($directories);
+        $fileNameWithoutExtension = $this->extractFileNameBase($filePath);
+        array_push($directories, self::ENVIRONMENTS_SUBDIRECTORY_NAME, $environment, $fileNameWithoutExtension);
+        $result = implode('/', $directories);
+        return $result;
     }
 }

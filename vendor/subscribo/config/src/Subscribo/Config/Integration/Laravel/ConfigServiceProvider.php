@@ -18,7 +18,7 @@ class ConfigServiceProvider extends ServiceProvider {
     {
         $this->app->register('\\Subscribo\\Environment\\Integration\\Laravel\\EnvironmentServiceProvider');
         $this->app->singleton('subscribo.config', function() {
-            return new Config($this->app->make('subscribo.environment'));
+            return new Config($this->app->make('subscribo.environment'), ($this->app->make('path.base').'/'), 'subscribo/config/');
         });
         $aliasLoader = AliasLoader::getInstance();
         $aliasLoader->alias('Subscribo\Config', 'Subscribo\\Config\\Integration\\Laravel\\Facades\\Config');
