@@ -1,4 +1,4 @@
-<?php namespace Subscribo\ModelBase\Support\Laravel;
+<?php namespace Subscribo\ModelBase\Integration\Laravel;
 
 use Subscribo\ServiceProvider\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
@@ -19,6 +19,6 @@ class ModelBaseServiceProvider extends ServiceProvider {
             return new ModelFactory;
         });
         $aliasLoader = AliasLoader::getInstance();
-        $aliasLoader->alias('Subscribo\ModelFactory', 'Subscribo\\ModelBase\\Support\\Laravel\\Facades\\ModelFactory');
+        $aliasLoader->alias('Subscribo\ModelFactory', 'Subscribo\\ModelBase\\Integration\\Laravel\\Facades\\ModelFactory');
     }
 }

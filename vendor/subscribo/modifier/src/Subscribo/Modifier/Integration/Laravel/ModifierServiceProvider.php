@@ -1,4 +1,4 @@
-<?php namespace Subscribo\Modifier\Support\Laravel;
+<?php namespace Subscribo\Modifier\Integration\Laravel;
 
 use Subscribo\ServiceProvider\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
@@ -20,6 +20,6 @@ class ModifierServiceProvider extends ServiceProvider {
             return new Modifier;
         });
         $aliasLoader = AliasLoader::getInstance();
-        $aliasLoader->alias('Subscribo\Modifier', 'Subscribo\\Modifier\\Support\\Laravel\\Facades\\Modifier');
+        $aliasLoader->alias('Subscribo\Modifier', 'Subscribo\\Modifier\\Integration\\Laravel\\Facades\\Modifier');
     }
 }

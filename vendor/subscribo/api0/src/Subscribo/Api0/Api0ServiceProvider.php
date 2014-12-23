@@ -16,8 +16,8 @@ class Api0ServiceProvider extends ServiceProvider {
 
     public function register()
     {
-        $this->app->register('\\Subscribo\\Modifier\\Support\\Laravel\\ModifierServiceProvider');
-        $this->app->register('\\Subscribo\\ModelBase\\Support\\Laravel\\ModelBaseServiceProvider');
+        $this->app->register('\\Subscribo\\Modifier\\Integration\\Laravel\\ModifierServiceProvider');
+        $this->app->register('\\Subscribo\\ModelBase\\Integration\\Laravel\\ModelBaseServiceProvider');
         $this->app->alias('subscribo.api0modelcontroller', 'Subscribo\Api0\ModelController');
     }
 

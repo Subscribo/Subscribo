@@ -17,7 +17,7 @@ Model Base provides Eloquent based abstract class to make models extending it as
 1.3 If you are using Laravel (4.2), you might want to add
 
 ```php
-    '\\Subscribo\\ModelBase\\Support\\Laravel\\ModelBaseServiceProvider',
+    '\\Subscribo\\ModelBase\\Integration\\Laravel\\ModelBaseServiceProvider',
 ```
 
 under 'provider' key in app/config/app.php file.

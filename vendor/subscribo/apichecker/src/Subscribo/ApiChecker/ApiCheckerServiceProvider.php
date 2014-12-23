@@ -13,7 +13,7 @@ class ApiCheckerServiceProvider extends ServiceProvider {
 
     public function register()
     {
-        $this->app->register('\\Subscribo\\ModelBase\\Support\\Laravel\\ModelBaseServiceProvider');
+        $this->app->register('\\Subscribo\\ModelBase\\Integration\\Laravel\\ModelBaseServiceProvider');
         $this->app->make('router')->get('checker', function() {
             return $this->app->make('view')->make('apichecker::checker');
         });

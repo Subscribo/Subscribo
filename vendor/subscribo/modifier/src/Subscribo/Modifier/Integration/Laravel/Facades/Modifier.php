@@ -1,4 +1,4 @@
-<?php namespace Subscribo\Modifier\Support\Laravel\Facades;
+<?php namespace Subscribo\Modifier\Integration\Laravel\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

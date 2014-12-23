@@ -17,7 +17,7 @@ Dependency Resolver for resolving dependencies
 1.3 If you are using Laravel (4.2), you might want to add
 
 ```php
-    '\\Subscribo\\DependencyResolver\\Support\\Laravel\\DependencyResolverServiceProvider',
+    '\\Subscribo\\DependencyResolver\\Integration\\Laravel\\DependencyResolverServiceProvider',
 ```
 
 under 'provider' key in app/config/app.php file.

@@ -1,4 +1,4 @@
-<?php namespace Subscribo\DependencyResolver\Support\Laravel;
+<?php namespace Subscribo\DependencyResolver\Integration\Laravel;
 
 use Subscribo\ServiceProvider\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
@@ -20,6 +20,6 @@ class DependencyResolverServiceProvider extends ServiceProvider {
             return new DependencyResolver;
         });
         $aliasLoader = AliasLoader::getInstance();
-        $aliasLoader->alias('Subscribo\DependencyResolver', 'Subscribo\\DependencyResolver\\Support\\Laravel\\Facades\\DependencyResolver');
+        $aliasLoader->alias('Subscribo\DependencyResolver', 'Subscribo\\DependencyResolver\\Integration\\Laravel\\Facades\\DependencyResolver');
     }
 }
