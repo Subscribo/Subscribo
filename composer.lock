@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d30acb7fc0efab506b501a1abafe293c",
+    "hash": "13fdebab95b08a75d9c942de57202011",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -305,12 +305,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "11e3d8228e7886c30b59c2023ac11f1f33fa03a8"
+                "reference": "f364f9988e77b2f9b50f7d90d90636b6cf564968"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/11e3d8228e7886c30b59c2023ac11f1f33fa03a8",
-                "reference": "11e3d8228e7886c30b59c2023ac11f1f33fa03a8",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/f364f9988e77b2f9b50f7d90d90636b6cf564968",
+                "reference": "f364f9988e77b2f9b50f7d90d90636b6cf564968",
                 "shasum": ""
             },
             "require": {
@@ -338,6 +338,7 @@
                 "symfony/routing": "2.6.*",
                 "symfony/security-core": "2.6.*",
                 "symfony/translation": "2.6.*",
+                "symfony/var-dumper": "2.6.*",
                 "vlucas/phpdotenv": "~1.0"
             },
             "replace": {
@@ -412,7 +413,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2014-12-21 20:31:49"
+            "time": "2014-12-22 22:27:11"
         },
         {
             "name": "league/flysystem",
@@ -420,12 +421,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "3a62246ca3608fbd58953e0966a7b454f357d0a5"
+                "reference": "e63bbefb51e49a78a732c5a920240c6e8c08d641"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/3a62246ca3608fbd58953e0966a7b454f357d0a5",
-                "reference": "3a62246ca3608fbd58953e0966a7b454f357d0a5",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/e63bbefb51e49a78a732c5a920240c6e8c08d641",
+                "reference": "e63bbefb51e49a78a732c5a920240c6e8c08d641",
                 "shasum": ""
             },
             "require": {
@@ -500,7 +501,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2014-12-21 22:18:17"
+            "time": "2014-12-22 16:32:36"
         },
         {
             "name": "monolog/monolog",
@@ -861,18 +862,128 @@
             "time": "2014-01-18 15:33:09"
         },
         {
+            "name": "subscribo/config",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "/Users/slavo/Projects/packages/workbench/subscribo/config",
+                "reference": "168a756cc36a4cd76e013125ee59a1774d3498e8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://satis.localhost/downloads/subscribo-config-dev-master-8a1ea1.zip",
+                "reference": "168a756cc36a4cd76e013125ee59a1774d3498e8",
+                "shasum": "89ae3a262d2827cae58ed15a889ce457df33d767"
+            },
+            "require": {
+                "php": "~5.4",
+                "subscribo/environment": "@dev",
+                "symfony/config": "~2.6"
+            },
+            "suggest": {
+                "laravel/laravel": "This package have been developed to work with The Laravel Framework 5.0",
+                "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Subscribo\\Config\\": "src/Subscribo/Config/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Slavo",
+                    "role": "developer"
+                },
+                {
+                    "name": "Kochabo",
+                    "role": "owner"
+                }
+            ],
+            "description": "Config package for reading configuration",
+            "homepage": "http://www.subscribo.io",
+            "keywords": [
+                "config",
+                "laravel",
+                "subscribo"
+            ],
+            "time": "2014-12-23 09:28:18"
+        },
+        {
+            "name": "subscribo/environment",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "/Users/slavo/Projects/packages/workbench/subscribo/environment",
+                "reference": "528328e9625c82df697eefcfcf9a1a55f58486a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://satis.localhost/downloads/subscribo-environment-dev-master-e57222.zip",
+                "reference": "528328e9625c82df697eefcfcf9a1a55f58486a1",
+                "shasum": "b27bd4820a3605aed0ea248b2ad0b95ab0d37587"
+            },
+            "require": {
+                "php": "~5.4"
+            },
+            "suggest": {
+                "laravel/laravel": "This package have been developed to work with The Laravel Framework 5.0",
+                "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Subscribo\\Environment\\": "src/Subscribo/Environment/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Slavo",
+                    "role": "developer"
+                },
+                {
+                    "name": "Kochabo",
+                    "role": "owner"
+                }
+            ],
+            "description": "Package Environment is for getting current environment",
+            "homepage": "http://www.subscribo.io",
+            "keywords": [
+                "environment",
+                "laravel",
+                "subscribo"
+            ],
+            "time": "2014-12-23 09:35:14"
+        },
+        {
             "name": "subscribo/modelbase",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/modelbase",
-                "reference": "3909c6eab03a1928400165e4b73c797882deb05c"
+                "reference": "57cfac31a866a935e07bfb4227dd2bd38a7cce3f"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-modelbase-dev-master-c63eaa.zip",
-                "reference": "3909c6eab03a1928400165e4b73c797882deb05c",
-                "shasum": "2506c5e6be965769906e7c451ea16c9444250984"
+                "url": "http://satis.localhost/downloads/subscribo-modelbase-dev-master-dc0ef5.zip",
+                "reference": "57cfac31a866a935e07bfb4227dd2bd38a7cce3f",
+                "shasum": "b8a109140c2c55ecb8c71689d90e59495d55b1c0"
             },
             "require": {
                 "php": "~5.4"
@@ -913,7 +1024,7 @@
                 "model",
                 "subscribo"
             ],
-            "time": "2014-12-18 19:34:21"
+            "time": "2014-12-23 09:25:59"
         },
         {
             "name": "subscribo/modifier",
@@ -1024,18 +1135,66 @@
             "time": "2014-12-05 14:17:46"
         },
         {
+            "name": "symfony/config",
+            "version": "2.7.x-dev",
+            "target-dir": "Symfony/Component/Config",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Config.git",
+                "reference": "226c50f5fa81ef0784195a70745a8f50e3593125"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Config/zipball/226c50f5fa81ef0784195a70745a8f50e3593125",
+                "reference": "226c50f5fa81ef0784195a70745a8f50e3593125",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "symfony/filesystem": "~2.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Config\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Symfony Config Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-12-22 16:45:18"
+        },
+        {
             "name": "symfony/console",
             "version": "2.6.x-dev",
             "target-dir": "Symfony/Component/Console",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "4240553bedec413ac2453fdb4cd4c3095809e821"
+                "reference": "577d3c905af3cfa12a07675665eded52608a15da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/4240553bedec413ac2453fdb4cd4c3095809e821",
-                "reference": "4240553bedec413ac2453fdb4cd4c3095809e821",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/577d3c905af3cfa12a07675665eded52608a15da",
+                "reference": "577d3c905af3cfa12a07675665eded52608a15da",
                 "shasum": ""
             },
             "require": {
@@ -1078,7 +1237,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2014-12-20 16:02:27"
+            "time": "2014-12-22 16:44:09"
         },
         {
             "name": "symfony/debug",
@@ -1087,12 +1246,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Debug.git",
-                "reference": "065ba32a362c28b43939528640612d20d145a4c9"
+                "reference": "9e11c84428f235f0b28aeb4c82aaea3d3476f436"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Debug/zipball/065ba32a362c28b43939528640612d20d145a4c9",
-                "reference": "065ba32a362c28b43939528640612d20d145a4c9",
+                "url": "https://api.github.com/repos/symfony/Debug/zipball/9e11c84428f235f0b28aeb4c82aaea3d3476f436",
+                "reference": "9e11c84428f235f0b28aeb4c82aaea3d3476f436",
                 "shasum": ""
             },
             "require": {
@@ -1134,7 +1293,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "http://symfony.com",
-            "time": "2014-12-21 16:36:15"
+            "time": "2014-12-22 16:44:09"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -1143,12 +1302,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "24f2c9ea9353cbb25dc40786272f0b4f42ba3d3c"
+                "reference": "b27ae60d9bf9b4768b3a6f155a4309f2cd991845"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/24f2c9ea9353cbb25dc40786272f0b4f42ba3d3c",
-                "reference": "24f2c9ea9353cbb25dc40786272f0b4f42ba3d3c",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/b27ae60d9bf9b4768b3a6f155a4309f2cd991845",
+                "reference": "b27ae60d9bf9b4768b3a6f155a4309f2cd991845",
                 "shasum": ""
             },
             "require": {
@@ -1192,7 +1351,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "http://symfony.com",
-            "time": "2014-12-16 20:28:45"
+            "time": "2014-12-22 16:45:18"
         },
         {
             "name": "symfony/filesystem",
@@ -1201,12 +1360,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Filesystem.git",
-                "reference": "1ff6caf45e7c5aac036b1536a914afbf4b8c6066"
+                "reference": "0741f3048da4547262344daba0df0211d7d7b64c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/1ff6caf45e7c5aac036b1536a914afbf4b8c6066",
-                "reference": "1ff6caf45e7c5aac036b1536a914afbf4b8c6066",
+                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/0741f3048da4547262344daba0df0211d7d7b64c",
+                "reference": "0741f3048da4547262344daba0df0211d7d7b64c",
                 "shasum": ""
             },
             "require": {
@@ -1239,7 +1398,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "http://symfony.com",
-            "time": "2014-12-12 16:23:01"
+            "time": "2014-12-22 16:45:18"
         },
         {
             "name": "symfony/finder",
@@ -1248,12 +1407,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
-                "reference": "2965809f4877c2809859e78491e04296b562c94a"
+                "reference": "b3f014794d2318b974a9c07ca2ccc9d55c638252"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Finder/zipball/2965809f4877c2809859e78491e04296b562c94a",
-                "reference": "2965809f4877c2809859e78491e04296b562c94a",
+                "url": "https://api.github.com/repos/symfony/Finder/zipball/b3f014794d2318b974a9c07ca2ccc9d55c638252",
+                "reference": "b3f014794d2318b974a9c07ca2ccc9d55c638252",
                 "shasum": ""
             },
             "require": {
@@ -1286,7 +1445,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "http://symfony.com",
-            "time": "2014-12-20 16:02:27"
+            "time": "2014-12-22 16:44:09"
         },
         {
             "name": "symfony/http-foundation",
@@ -1295,12 +1454,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpFoundation.git",
-                "reference": "de3417053084145f472db53e747bc6a600b88c94"
+                "reference": "1457101e6ab844dc335de3c7d052db3c75575041"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/de3417053084145f472db53e747bc6a600b88c94",
-                "reference": "de3417053084145f472db53e747bc6a600b88c94",
+                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/1457101e6ab844dc335de3c7d052db3c75575041",
+                "reference": "1457101e6ab844dc335de3c7d052db3c75575041",
                 "shasum": ""
             },
             "require": {
@@ -1339,7 +1498,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "http://symfony.com",
-            "time": "2014-12-20 16:02:27"
+            "time": "2014-12-22 16:44:09"
         },
         {
             "name": "symfony/http-kernel",
@@ -1348,12 +1507,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpKernel.git",
-                "reference": "4f5274ef4a545a180366b27aa43a8c523910d263"
+                "reference": "3ad3c1ab770cad55adddd7ad138eae8136a45b07"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/4f5274ef4a545a180366b27aa43a8c523910d263",
-                "reference": "4f5274ef4a545a180366b27aa43a8c523910d263",
+                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/3ad3c1ab770cad55adddd7ad138eae8136a45b07",
+                "reference": "3ad3c1ab770cad55adddd7ad138eae8136a45b07",
                 "shasum": ""
             },
             "require": {
@@ -1416,7 +1575,7 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "http://symfony.com",
-            "time": "2014-12-20 16:02:27"
+            "time": "2014-12-22 16:44:09"
         },
         {
             "name": "symfony/process",
@@ -1425,12 +1584,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Process.git",
-                "reference": "9735d28f79ab86de80119b7607740e6d3dee85b6"
+                "reference": "931dccf6c946c28e2d3386eca686b4c6164dee22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Process/zipball/9735d28f79ab86de80119b7607740e6d3dee85b6",
-                "reference": "9735d28f79ab86de80119b7607740e6d3dee85b6",
+                "url": "https://api.github.com/repos/symfony/Process/zipball/931dccf6c946c28e2d3386eca686b4c6164dee22",
+                "reference": "931dccf6c946c28e2d3386eca686b4c6164dee22",
                 "shasum": ""
             },
             "require": {
@@ -1463,7 +1622,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "http://symfony.com",
-            "time": "2014-12-20 16:02:27"
+            "time": "2014-12-22 16:44:09"
         },
         {
             "name": "symfony/routing",
@@ -1472,12 +1631,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Routing.git",
-                "reference": "100092621411cbf7d984c02a86b648ccc2163a84"
+                "reference": "257de72921284cd96ed5a8054b8be5c812a18f33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Routing/zipball/100092621411cbf7d984c02a86b648ccc2163a84",
-                "reference": "100092621411cbf7d984c02a86b648ccc2163a84",
+                "url": "https://api.github.com/repos/symfony/Routing/zipball/257de72921284cd96ed5a8054b8be5c812a18f33",
+                "reference": "257de72921284cd96ed5a8054b8be5c812a18f33",
                 "shasum": ""
             },
             "require": {
@@ -1531,7 +1690,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2014-12-20 16:02:27"
+            "time": "2014-12-22 16:44:09"
         },
         {
             "name": "symfony/security-core",
@@ -1540,12 +1699,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/security-core.git",
-                "reference": "a38ea965e0ebfac46422c44a95c557541094ff4f"
+                "reference": "82f67eb8980c876a6adaf6f023136a28c1e3d170"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/security-core/zipball/a38ea965e0ebfac46422c44a95c557541094ff4f",
-                "reference": "a38ea965e0ebfac46422c44a95c557541094ff4f",
+                "url": "https://api.github.com/repos/symfony/security-core/zipball/82f67eb8980c876a6adaf6f023136a28c1e3d170",
+                "reference": "82f67eb8980c876a6adaf6f023136a28c1e3d170",
                 "shasum": ""
             },
             "require": {
@@ -1594,7 +1753,7 @@
             ],
             "description": "Symfony Security Component - Core Library",
             "homepage": "http://symfony.com",
-            "time": "2014-12-21 16:36:15"
+            "time": "2014-12-22 16:44:09"
         },
         {
             "name": "symfony/translation",
@@ -1603,12 +1762,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Translation.git",
-                "reference": "78d79421243373ec785980236504e582ac46d077"
+                "reference": "2533dccfe2fa76e680ecd4f2f1ed138e062daa59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Translation/zipball/78d79421243373ec785980236504e582ac46d077",
-                "reference": "78d79421243373ec785980236504e582ac46d077",
+                "url": "https://api.github.com/repos/symfony/Translation/zipball/2533dccfe2fa76e680ecd4f2f1ed138e062daa59",
+                "reference": "2533dccfe2fa76e680ecd4f2f1ed138e062daa59",
                 "shasum": ""
             },
             "require": {
@@ -1652,7 +1811,60 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "http://symfony.com",
-            "time": "2014-12-20 16:02:27"
+            "time": "2014-12-22 16:44:09"
+        },
+        {
+            "name": "symfony/var-dumper",
+            "version": "2.6.x-dev",
+            "target-dir": "Symfony/Component/VarDumper",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/var-dumper.git",
+                "reference": "804b6cf44cfd2db769f1d4e322178a672388529d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/804b6cf44cfd2db769f1d4e322178a672388529d",
+                "reference": "804b6cf44cfd2db769f1d4e322178a672388529d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-symfony_debug": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.6-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "Resources/functions/dump.php"
+                ],
+                "psr-0": {
+                    "Symfony\\Component\\VarDumper\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                }
+            ],
+            "description": "Symfony mechanism for exploring and dumping PHP variables",
+            "homepage": "http://symfony.com",
+            "keywords": [
+                "debug",
+                "dump"
+            ],
+            "time": "2014-12-07 18:23:39"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -2295,12 +2507,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "a26a348a8686a8f523c53ed2683d65b3d36956bd"
+                "reference": "2a1f8746a5bc0ff5d0cd24b356123fcf0fd1fb64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a26a348a8686a8f523c53ed2683d65b3d36956bd",
-                "reference": "a26a348a8686a8f523c53ed2683d65b3d36956bd",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2a1f8746a5bc0ff5d0cd24b356123fcf0fd1fb64",
+                "reference": "2a1f8746a5bc0ff5d0cd24b356123fcf0fd1fb64",
                 "shasum": ""
             },
             "require": {
@@ -2359,7 +2571,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2014-12-19 06:27:31"
+            "time": "2014-12-22 16:18:11"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -2739,13 +2951,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/api0",
-                "reference": "53e66087cbe02cd357ec8da0df31fb1d81f27044"
+                "reference": "eb834aa6956aa89d5b75d7584162e9a3ae19eb18"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-api0-dev-master-c088fd.zip",
-                "reference": "53e66087cbe02cd357ec8da0df31fb1d81f27044",
-                "shasum": "01f4b6bc1fba1f2d465dde26a2c7a4de54462bca"
+                "url": "http://satis.localhost/downloads/subscribo-api0-dev-master-3cca74.zip",
+                "reference": "eb834aa6956aa89d5b75d7584162e9a3ae19eb18",
+                "shasum": "255308aabc5c264569b2a449979d1c5ab39dc0a5"
             },
             "require": {
                 "php": "~5.4",
@@ -2787,7 +2999,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2014-12-18 19:34:21"
+            "time": "2014-12-23 09:25:59"
         },
         {
             "name": "subscribo/apichecker",
@@ -2907,13 +3119,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/schemabuilder",
-                "reference": "0c15bd9e22a892910a524bd9ef8868d8931b2319"
+                "reference": "84a5151e7df0bb28db067fb0779d22fa4e39483f"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-schemabuilder-dev-master-ae7bae.zip",
-                "reference": "0c15bd9e22a892910a524bd9ef8868d8931b2319",
-                "shasum": "fe1506e6323395cb0fbab4f031366580514ac4e8"
+                "url": "http://satis.localhost/downloads/subscribo-schemabuilder-dev-master-48d20b.zip",
+                "reference": "84a5151e7df0bb28db067fb0779d22fa4e39483f",
+                "shasum": "8a63046aecf6ea6ff6628c15bf3c9a5082e4537a"
             },
             "require": {
                 "php": "~5.4",
@@ -2957,7 +3169,7 @@
                 "schema",
                 "subscribo"
             ],
-            "time": "2014-12-18 20:01:53"
+            "time": "2014-12-23 09:27:24"
         },
         {
             "name": "subscribo/serviceprovider",
@@ -2997,12 +3209,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ClassLoader.git",
-                "reference": "53634806fb9815d4dfcbaf46052e15dc0ffcc5df"
+                "reference": "b855c55f2fe753fc93cec26f74a4678dda775ab1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ClassLoader/zipball/53634806fb9815d4dfcbaf46052e15dc0ffcc5df",
-                "reference": "53634806fb9815d4dfcbaf46052e15dc0ffcc5df",
+                "url": "https://api.github.com/repos/symfony/ClassLoader/zipball/b855c55f2fe753fc93cec26f74a4678dda775ab1",
+                "reference": "b855c55f2fe753fc93cec26f74a4678dda775ab1",
                 "shasum": ""
             },
             "require": {
@@ -3038,7 +3250,7 @@
             ],
             "description": "Symfony ClassLoader Component",
             "homepage": "http://symfony.com",
-            "time": "2014-12-20 16:02:27"
+            "time": "2014-12-22 16:44:09"
         },
         {
             "name": "symfony/yaml",
@@ -3047,12 +3259,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "b9c19ce1bd9a51d3f42665973088f2e2b82db240"
+                "reference": "4acdf4ff8dedd856ee5fd1e4e0e16f7f42dca463"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/b9c19ce1bd9a51d3f42665973088f2e2b82db240",
-                "reference": "b9c19ce1bd9a51d3f42665973088f2e2b82db240",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/4acdf4ff8dedd856ee5fd1e4e0e16f7f42dca463",
+                "reference": "4acdf4ff8dedd856ee5fd1e4e0e16f7f42dca463",
                 "shasum": ""
             },
             "require": {
@@ -3085,7 +3297,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2014-12-09 17:32:32"
+            "time": "2014-12-22 16:45:18"
         }
     ],
     "aliases": [],
@@ -3093,6 +3305,7 @@
     "stability-flags": {
         "subscribo/modifier": 20,
         "subscribo/modelbase": 20,
+        "subscribo/config": 20,
         "subscribo/dependencyresolver": 20,
         "subscribo/schemabuilder": 20,
         "subscribo/api0": 20,
