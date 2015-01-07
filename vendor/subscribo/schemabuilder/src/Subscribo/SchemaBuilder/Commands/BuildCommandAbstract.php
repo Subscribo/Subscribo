@@ -6,9 +6,10 @@ use Illuminate\Support\Str;
 abstract class BuildCommandAbstract extends Command {
 
     const CONFIG_DIR = 'config/';
+    const PACKAGES_CONFIG_DIR = 'subscribo/config/packages/';
     const MIGRATIONS_DIR = 'database/migrations/';
     const MODELS_DIR = 'app/Models/';
-    const SCHEMA_DIR = '';
+    const SCHEMA_DIR = 'subscribo/config/packages/schemabuilder/';
 
 
     protected function _createFile($filePath, $content, $mode = 'exception')

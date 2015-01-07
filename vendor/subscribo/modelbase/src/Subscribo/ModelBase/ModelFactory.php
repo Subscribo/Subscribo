@@ -1,5 +1,6 @@
 <?php namespace Subscribo\ModelBase;
 
+use Subscribo\Config;
 
 use Subscribo\ModelBase\AbstractModel;
 
@@ -13,7 +14,7 @@ class ModelFactory {
      */
     public static function resolveModelFromUriStub($modelUriStub)
     {
-        $modelsConfiguration = \Config::get('apiconfiguration.models');
+        $modelsConfiguration = Config::getForPackage('modelbase', 'api.models');
         if (empty($modelsConfiguration[$modelUriStub]['model_full_name'])) {
             return null;
         }
@@ -29,7 +30,7 @@ class ModelFactory {
      */
     public static function listUriStubs()
     {
-        $modelsConfiguration = \Config::get('apiconfiguration.models');
+        $modelsConfiguration = Config::getForPackage('modelbase', 'api.models');
         $result = array();
         foreach ($modelsConfiguration as $stub => $configuration) {
             if ( ! empty($configuration['model_full_name'])) {

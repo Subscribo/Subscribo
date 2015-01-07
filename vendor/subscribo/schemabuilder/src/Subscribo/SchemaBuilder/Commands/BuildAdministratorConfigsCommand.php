@@ -2,7 +2,7 @@
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Yaml\Yaml;
+use Subscribo\Config;
 use Fuel\Core\Arr;
 
 use App;
@@ -34,8 +34,9 @@ class BuildAdministratorConfigsCommand extends BuildCommandAbstract {
         $fileName = $this->argument('file');
         $this->info('Building Frozennode Administrator configuration files starting. Using file: '. $fileName);
         $this->info('Environment: '. App::environment());
-        $file = file_get_contents($fileName);
-        $input = Yaml::parse($file);
+        Config::setForPackage('schemabuilder', 'parsed_schema', array());
+        Config::loadFileForPackage('schemabuilder', $fileName, 'parsed_schema', true, null);
+        $input = Config::getForPackage('schemabuilder', 'parsed_schema');
         $modelFields = $input['model_fields'];
         $modelOptions = $input['model_options'];
 

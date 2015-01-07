@@ -20,8 +20,8 @@
     ],
     "require": {
         "php": "~5.4",
-        "symfony/config": "~2.6",
-        "symfony/yaml": "~2.6",
+        "symfony/config": "~2.6@stable",
+        "symfony/yaml": "~2.6@stable",
         "subscribo/environment": "@dev",
         "subscribo/support": "@dev"
     },

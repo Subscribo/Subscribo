@@ -20,7 +20,7 @@
     ],
     "require": {
         "php": "~5.4",
-        "symfony/yaml": "~2.6",
+        "symfony/yaml": "~2.6@stable",
         "subscribo/dependencyresolver": "@dev",
         "subscribo/serviceprovider": "@dev"
     },

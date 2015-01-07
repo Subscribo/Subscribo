@@ -4,6 +4,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Yaml\Yaml;
 use Fuel\Core\Arr;
+use Subscribo\Config;
 
 use App;
 use Exception;
@@ -38,8 +39,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         $outputFileName = $this->argument('output_file');
         $this->info('Schema build starting. Using input file: '. $inputFileName.' output file: '.$outputFileName);
         $this->info('Environment: '. App::environment());
-        $file = file_get_contents($inputFileName);
-        $input = Yaml::parse($file);
+        Config::loadFileForPackage('schemabuilder', $inputFileName, 'schema', true, null);
+        $input = Config::getForPackage('schemabuilder', 'schema');
         $doctype = $input['doctype'];
         if (false === in_array($doctype, array('MODEL_SCHEMA-v1.0', 'PARSED_MODEL_SCHEMA-v1.0'))) {
             throw new \Exception ("Unsupported doctype. You can use for example: 'MODEL_SCHEMA-v1.0'");

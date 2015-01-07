@@ -2,7 +2,7 @@
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Yaml\Yaml;
+use Subscribo\Config;
 use Fuel\Core\Arr;
 
 use Subscribo\DependencyResolver;
@@ -35,8 +35,9 @@ class BuildMigrationsCommand extends BuildCommandAbstract {
         $fileName = $this->argument('file');
         $this->info('Building migrations starting. Using file: '. $fileName);
         $this->info('Environment: '. App::environment());
-        $file = file_get_contents($fileName);
-        $input = Yaml::parse($file);
+        Config::setForPackage('schemabuilder', 'parsed_schema', array());
+        Config::loadFileForPackage('schemabuilder', $fileName, 'parsed_schema', true, null);
+        $input = Config::getForPackage('schemabuilder', 'parsed_schema');
         $modelFields = Arr::get($input,'model_fields', array());
         $modelOptions = Arr::get($input, 'model_options', array());
         $pivotTables = Arr::get($input, 'pivot_tables', array());
