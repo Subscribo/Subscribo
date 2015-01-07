@@ -15,6 +15,7 @@ return array(
     'Subscribo\\Config\\' => array($vendorDir . '/subscribo/config/src/Subscribo/Config'),
     'Subscribo\\ApiChecker\\' => array($vendorDir . '/subscribo/apichecker/src/Subscribo/ApiChecker'),
     'Subscribo\\Api0\\' => array($vendorDir . '/subscribo/api0/src/Subscribo/Api0'),
+    'Stringy\\' => array($vendorDir . '/danielstjules/stringy/src'),
     'Predis\\' => array($vendorDir . '/predis/predis/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Model\\' => array($baseDir . '/app/Models'),
