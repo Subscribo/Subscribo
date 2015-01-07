@@ -11,8 +11,6 @@
 
 namespace Symfony\Component\Yaml;
 
-use Symfony\Component\Yaml\Deprecated\Unescaper as Deprecated;
-
 /**
  * Unescaper encapsulates unescaping rules for single and double-quoted
  * YAML strings.
@@ -21,17 +19,13 @@ use Symfony\Component\Yaml\Deprecated\Unescaper as Deprecated;
  */
 class Unescaper
 {
-    /**
-     * Parser and Inline assume UTF-8 encoding, so escaped Unicode characters
-     * must be converted to that encoding.
-     *
-     * @deprecated since version 2.5, to be removed in 3.0
-     */
-    const ENCODING = Deprecated::ENCODING;
+    // Parser and Inline assume UTF-8 encoding, so escaped Unicode characters
+    // must be converted to that encoding.
+    // @deprecated since 2.5, to be removed in 3.0
+    const ENCODING = 'UTF-8';
 
-    /**
-     * Regex fragment that matches an escaped character in a double quoted string.
-     */
+    // Regex fragment that matches an escaped character in a double quoted
+    // string.
     const REGEX_ESCAPED_CHARACTER = "\\\\([0abt\tnvfre \\\"\\/\\\\N_LP]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8})";
 
     /**
@@ -65,7 +59,7 @@ class Unescaper
     }
 
     /**
-     * Unescapes a character that was found in a double-quoted string.
+     * Unescapes a character that was found in a double-quoted string
      *
      * @param string $value An escaped character
      *

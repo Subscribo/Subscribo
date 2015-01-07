@@ -464,7 +464,9 @@ EOF;
     }
 
     /**
+     *
      * @expectedException \Symfony\Component\Yaml\Exception\ParseException
+     *
      */
     public function testUnindentedCollectionException()
     {
