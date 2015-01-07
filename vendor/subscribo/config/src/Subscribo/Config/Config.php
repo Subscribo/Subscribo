@@ -4,15 +4,14 @@ use Subscribo\Environment\EnvironmentInterface;
 use Subscribo\Support\Arr;
 
 use Subscribo\Config\Loader\PhpFileLoader;
+use Subscribo\Config\Loader\YamlFileLoader;
+use Subscribo\Config\Loader\JsonFileLoader;
 use Symfony\Component\Config\Loader\DelegatingLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Config\Definition\ArrayNode;
 
 class Config {
-
-    const ENVIRONMENTS_SUBDIRECTORY_NAME = 'env';
 
     protected $supportedExtensions = array('php', 'json', 'yml', 'yaml');
 
@@ -34,17 +33,22 @@ class Config {
     /**
      * @var string
      */
-    protected $mainBaseDirectory;
-
-    /**
-     * @var string
-     */
-    protected $packageBaseDirectory;
-
-    /**
-     * @var string
-     */
     protected $projectBasePath;
+
+    /**
+     * @var string
+     */
+    protected $mainConfigDirectory;
+
+    /**
+     * @var string
+     */
+    protected $packageConfigDirectory;
+
+    /**
+     * @var string
+     */
+    protected $environmentSubdirectoryName;
 
     /**
      * @var \Symfony\Component\Config\Loader\LoaderResolver
@@ -54,18 +58,26 @@ class Config {
     /**
      * @param \Subscribo\Environment\EnvironmentInterface $environment
      * @param string $projectBasePath
-     * @param string|null $mainBaseDirectory
-     * @param string|null $packageBaseDirectory
+     * @param string|null $mainConfigDirectory
+     * @param string|null $packageConfigDirectory
+     * @param string $environmentSubdirectoryName
      */
-    public function __construct(EnvironmentInterface $environment, $projectBasePath, $mainBaseDirectory = null, $packageBaseDirectory = null)
+    public function __construct(EnvironmentInterface $environment, $projectBasePath, $mainConfigDirectory = null, $packageConfigDirectory = null, $environmentSubdirectoryName = 'env')
     {
+        $projectBasePath = rtrim($projectBasePath, '/').'/';
+        if (is_null($mainConfigDirectory)) {
+            $mainConfigDirectory = $projectBasePath.'subscribo/config/';
+        }
+        $mainConfigDirectory = rtrim($mainConfigDirectory, '/').'/';
+        if (is_null($packageConfigDirectory)) {
+            $packageConfigDirectory = $mainConfigDirectory.'packages/';
+        }
+        $packageConfigDirectory = rtrim($packageConfigDirectory, '/').'/';
         $this->environmentInstance = $environment;
         $this->projectBasePath = $projectBasePath;
-        $this->mainBaseDirectory = $mainBaseDirectory;
-        if (is_null($packageBaseDirectory) and $mainBaseDirectory) {
-            $packageBaseDirectory = $mainBaseDirectory.'packages/';
-        }
-        $this->packageBaseDirectory = $packageBaseDirectory;
+        $this->mainConfigDirectory = $mainConfigDirectory;
+        $this->packageConfigDirectory = $packageConfigDirectory;
+        $this->environmentSubdirectoryName = $environmentSubdirectoryName;
     }
 
     /**
@@ -145,22 +157,31 @@ class Config {
      *        False - no group (root node)
      *        True - Group same as file base name (without extension)
      *        String - under provided string
-     *        Null (default) - based on file base name - if it is 'config' then root, otherwise file name     * @param string|bool $environment
+     *        Null (default) - based on file base name - if it is 'config' then root, otherwise file name
+     * @param string|bool $environment
+     * @param string|null|bool $baseDirectory Directory to be prepended to filePath
+     *        False - Nothing (filePath is absolute)
+     *        True - Main Configs directory
+     *        Null - Application root directory
+     *        String - string to be prepended
      * @param null $configuration
      * @param string|null $package If provided, loads configuration for a package
      *
-     * @return $this
+     * @return int How many files have been loaded
      */
-    public function loadFile($filePath, $group = null, $environment = true, $configuration = null, $package = null)
+    public function loadFile($filePath, $group = null, $environment = true, $baseDirectory = true, $configuration = null, $package = null)
     {
         if ( ! is_null($package)) {
-            $this->loadFileForPackage($package, $filePath, $group, $environment, $configuration);
+            $this->loadFileForPackage($package, $filePath, $group, $environment, $baseDirectory, $configuration);
             return $this;
         }
-        $baseDir = $this->mainBaseDirectory;
-        $processed = $this->processFiles($filePath, $group, $environment, $baseDir, $configuration, $this->mainConfiguration);
-        $this->mainConfiguration = $processed;
-        return $this;
+        if (true === $baseDirectory) {
+            $baseDir = $this->mainConfigDirectory;
+        } else {
+            $baseDir = $baseDirectory;
+        }
+        $result = $this->processFiles($filePath, $this->mainConfiguration, $group, $environment, $baseDir, $configuration);
+        return $result;
 
     }
 
@@ -173,18 +194,29 @@ class Config {
      *        False - no group (root node)
      *        True - Group same as file base name (without extension)
      *        String - under provided string
-     *        Null (default) - based on file base name - if it is 'config' then root, otherwise file name     * @param string|bool $environment
+     *        Null (default) - based on file base name - if it is 'config' then root, otherwise file name
+     * @param string|bool $environment
+     * @param string|null|bool $baseDirectory Directory to be prepended to filePath
+     *        False - Nothing (filePath is absolute)
+     *        True - Main Package Config directory
+     *        Null - Application root directory
+     *        String - string to be prepended
      * @param null $configuration
      *
-     * @return $this
+     * @return int How many files have been loaded
      */
-    public function loadFileForPackage($package, $filePath, $group = null, $environment = true, $configuration = null)
+    public function loadFileForPackage($package, $filePath, $group = null, $environment = true, $baseDirectory = true, $configuration = null)
     {
-        $baseDir = ($this->packageBaseDirectory) ? ($this->packageBaseDirectory.$package.'/') : null;
-        $currentStatus = array_key_exists($package, $this->packagesConfiguration) ? $this->packagesConfiguration[$package] : array();
-        $processed = $this->processFiles($filePath, $group, $environment, $baseDir, $configuration, $currentStatus);
-        $this->packagesConfiguration[$package] = $processed;
-        return $this;
+        if (true === $baseDirectory) {
+            $baseDir = $this->packageConfigDirectory.$package.'/';
+        } else {
+            $baseDir = $baseDirectory;
+        }
+        if (empty($this->packagesConfiguration[$package])) {
+            $this->packagesConfiguration[$package] = array();
+        }
+        $result = $this->processFiles($filePath, $this->packagesConfiguration[$package], $group, $environment, $baseDir, $configuration);
+        return $result;
     }
 
     public function parseFile($filePath)
@@ -205,6 +237,8 @@ class Config {
         $fileLocator = new FileLocator();
         $loaders = array(
             new PhpFileLoader($fileLocator),
+            new JsonFileLoader($fileLocator),
+            new YamlFileLoader($fileLocator),
         );
         $this->loaderResolver = new LoaderResolver($loaders);
         return $this->loaderResolver;
@@ -214,9 +248,6 @@ class Config {
     public function findAndParseFile($filePath)
     {
         $realFile = $this->findFile($filePath);
-        if (empty($realFile)) {
-            $realFile = $this->findFile($this->projectBasePath.$filePath);
-        }
         if (empty($realFile)) {
             return null;
         }
@@ -252,30 +283,35 @@ class Config {
         return null;
     }
 
-    private function processFiles($filePath, $group = null, $environment = true, $baseDir = null, $configuration = null, $currentStatus = array())
+    private function processFiles($filePath, array &$storage, $group = null, $environment = true, $baseDir = null, $configuration = null)
     {
-        $toProcess = empty($currentStatus) ? array() : array($currentStatus);
+        $filesCount = 0;
+        $toProcess = empty($storage) ? array() : array($storage);
         $filePaths = is_array($filePath) ? $filePath : array($filePath);
         foreach ($filePaths as $pathToFile) {
             $processedFile = $this->processFile($pathToFile, $group, $baseDir);
             if ($processedFile) {
+                $filesCount++;
                 $toProcess[] = $processedFile;
             }
-            if ($environment) {
+        }
+        if ($environment) {
+            foreach ($filePaths as $pathToFile) {
                 $environmentFilePath = $this->assembleEnvironmentFilePath($pathToFile, $environment);
                 $processedEnvironmentFile = $this->processFile($environmentFilePath, $group, $baseDir);
                 if ($processedEnvironmentFile) {
+                    $filesCount++;
                     $toProcess[] = $processedEnvironmentFile;
                 }
             }
         }
         if ($configuration) {
             $processor = new Processor();
-            $result = $processor->process($configuration, $toProcess);
+            $storage = $processor->process($configuration, $toProcess);
         } else {
-            $result = $this->mergeConfigurations($toProcess);
+            $storage = $this->mergeConfigurations($toProcess);
         }
-        return $result;
+        return $filesCount;
     }
 
     protected function mergeConfigurations(array $configurations)
@@ -297,15 +333,18 @@ class Config {
      *        True - Group same as file base name (without extension)
      *        String - under provided string
      *        Null (default) - based on file base name - if it is 'config' then root, otherwise file name
-     * @param string|null $baseDir if provided, then on failure to load provided filePath an attempt it made to load it with $baseDir prepended
+     * @param string|null $baseDir If provided, then prepended to $filePath, is null, then Application path is prepended
      * @return array|null
      */
     private function processFile($filePath, $group = null, $baseDir = null)
     {
-        $content = $this->findAndParseFile($filePath);
-        if (is_null($content) and $baseDir) {
-            $content = $this->findAndParseFile($baseDir.$filePath);
+        if (is_null($baseDir)) {
+            $baseDir = $this->projectBasePath;
         }
+        if ( ! is_string($baseDir)) {
+            $baseDir = '';
+        }
+        $content = $this->findAndParseFile($baseDir.$filePath);
         if (empty($content)) {
             return null;
         }
@@ -359,7 +398,7 @@ class Config {
         $directories = explode('/', $filePath);
         $fileName = array_pop($directories);
         $fileNameWithoutExtension = $this->extractFileNameBase($filePath);
-        array_push($directories, self::ENVIRONMENTS_SUBDIRECTORY_NAME, $environment, $fileNameWithoutExtension);
+        array_push($directories, $this->environmentSubdirectoryName, $environment, $fileNameWithoutExtension);
         $result = implode('/', $directories);
         return $result;
     }

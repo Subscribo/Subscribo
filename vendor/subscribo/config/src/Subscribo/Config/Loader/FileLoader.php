@@ -4,7 +4,7 @@ abstract class FileLoader extends \Symfony\Component\Config\Loader\FileLoader
 {
     protected static function compareExtensions($filePath, $allowedExtensions)
     {
-        $allowedExtensions = is_array($allowedExtensions) ?: array($allowedExtensions);
+        $allowedExtensions = is_array($allowedExtensions) ? $allowedExtensions : array($allowedExtensions);
         $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
         foreach ($allowedExtensions as $allowedExtension) {
             if ($fileExtension === $allowedExtension) {
