@@ -307,7 +307,7 @@ class Config {
         }
         if ($configuration) {
             $processor = new Processor();
-            $storage = $processor->process($configuration, $toProcess);
+            $storage = $processor->processConfiguration($configuration, $toProcess);
         } else {
             $storage = $this->mergeConfigurations($toProcess);
         }
