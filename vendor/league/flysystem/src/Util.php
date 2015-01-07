@@ -180,22 +180,13 @@ class Util
     public static function emulateDirectories(array $listing)
     {
         $directories = [];
+        $listedDirectories = [];
 
         foreach ($listing as $object) {
-            if (empty($object['dirname'])) {
-                continue;
-            }
-
-            $parent = $object['dirname'];
-
-            while (! empty($parent) && ! in_array($parent, $directories)) {
-                $directories[] = $parent;
-
-                $parent = static::dirname($parent);
-            }
+            list($directories, $listedDirectories) = static::emulateObjectDirectories($object, $directories, $listedDirectories);
         }
 
-        $directories = array_unique($directories);
+        $directories = array_diff(array_unique($directories), array_unique($listedDirectories));
 
         foreach ($directories as $directory) {
             $listing[] = static::pathinfo($directory) + ['type' => 'dir'];
@@ -259,5 +250,36 @@ class Util
         $stat = fstat($resource);
 
         return $stat['size'];
+    }
+
+    /**
+     * Emulate the directories of a single object.
+     *
+     * @param array $object
+     * @param array $directories
+     * @param array $listedDirectories
+     * @return array
+     */
+    protected static function emulateObjectDirectories(array $object, array $directories, array $listedDirectories)
+    {
+        if (empty($object['dirname'])) {
+            return [$directories, $listedDirectories];
+        }
+
+        $parent = $object['dirname'];
+
+        while (! empty($parent) && ! in_array($parent, $directories)) {
+            $directories[] = $parent;
+
+            $parent = static::dirname($parent);
+        }
+
+        if (isset($object['type']) && $object['type'] === 'dir') {
+            $listedDirectories[] = $object['path'];
+
+            return [$directories, $listedDirectories];
+        }
+
+        return [$directories, $listedDirectories];
     }
 }
