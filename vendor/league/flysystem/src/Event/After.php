@@ -2,6 +2,7 @@
 
 namespace League\Flysystem\Event;
 
+use ErrorException;
 use League\Event\AbstractEvent;
 use League\Flysystem\FilesystemInterface;
 
@@ -23,19 +24,26 @@ class After extends AbstractEvent
     protected $result;
 
     /**
+     * @var array
+     */
+    protected $arguments;
+
+    /**
      * @param FilesystemInterface $filesystem
      * @param string              $method
      * @param mixed               $result
+     * @param array               $arguments
      */
-    public function __construct(FilesystemInterface $filesystem, $method, $result)
+    public function __construct(FilesystemInterface $filesystem, $method, $result, array $arguments = [])
     {
         $this->filesystem = $filesystem;
         $this->method = $method;
         $this->result = $result;
+        $this->arguments = $arguments;
     }
 
     /**
-     * Get the Filesystem instance
+     * Get the Filesystem instance.
      *
      * @return FilesystemInterface
      */
@@ -45,7 +53,7 @@ class After extends AbstractEvent
     }
 
     /**
-     * Get the event name
+     * Get the event name.
      *
      * @return string
      */
@@ -57,7 +65,7 @@ class After extends AbstractEvent
     }
 
     /**
-     * Get the called method
+     * Get the called method.
      *
      * @return string
      */
@@ -67,7 +75,7 @@ class After extends AbstractEvent
     }
 
     /**
-     * Get the method call result
+     * Get the method call result.
      *
      * @return mixed
      */
@@ -77,7 +85,7 @@ class After extends AbstractEvent
     }
 
     /**
-     * Overwrite the result
+     * Overwrite the result.
      *
      * @param mixed $result
      *
@@ -88,5 +96,33 @@ class After extends AbstractEvent
         $this->result = $result;
 
         return $this;
+    }
+
+    /**
+     * Get the passed arguments.
+     *
+     * @return array method arguments
+     */
+    public function getArguments()
+    {
+        return $this->arguments;
+    }
+
+    /**
+     * Get an argument by key.
+     *
+     * @param string $key     argument key
+     *
+     * @return mixed
+     *
+     * @throws ErrorException
+     */
+    public function getArgument($key)
+    {
+        if (! array_key_exists($key, $this->arguments)) {
+            throw new ErrorException('Undefined index: '.$key);
+        }
+
+        return $this->arguments[$key];
     }
 }
