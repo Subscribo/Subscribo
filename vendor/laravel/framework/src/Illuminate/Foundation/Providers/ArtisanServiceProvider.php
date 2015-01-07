@@ -7,16 +7,20 @@ use Illuminate\Foundation\Console\TinkerCommand;
 use Illuminate\Foundation\Console\AppNameCommand;
 use Illuminate\Foundation\Console\OptimizeCommand;
 use Illuminate\Foundation\Console\RouteListCommand;
-use Illuminate\Foundation\Console\RouteScanCommand;
-use Illuminate\Foundation\Console\EventScanCommand;
+use Illuminate\Foundation\Console\EventMakeCommand;
 use Illuminate\Foundation\Console\RouteCacheCommand;
 use Illuminate\Foundation\Console\RouteClearCommand;
+use Illuminate\Foundation\Console\CommandMakeCommand;
+use Illuminate\Foundation\Console\ConfigCacheCommand;
+use Illuminate\Foundation\Console\ConfigClearCommand;
 use Illuminate\Foundation\Console\ConsoleMakeCommand;
 use Illuminate\Foundation\Console\EnvironmentCommand;
 use Illuminate\Foundation\Console\KeyGenerateCommand;
 use Illuminate\Foundation\Console\RequestMakeCommand;
 use Illuminate\Foundation\Console\ProviderMakeCommand;
+use Illuminate\Foundation\Console\HandlerEventCommand;
 use Illuminate\Foundation\Console\ClearCompiledCommand;
+use Illuminate\Foundation\Console\HandlerCommandCommand;
 
 class ArtisanServiceProvider extends ServiceProvider {
 
@@ -35,10 +39,15 @@ class ArtisanServiceProvider extends ServiceProvider {
 	protected $commands = [
 		'AppName' => 'command.app.name',
 		'ClearCompiled' => 'command.clear-compiled',
+		'CommandMake' => 'command.command.make',
+		'ConfigCache' => 'command.config.cache',
+		'ConfigClear' => 'command.config.clear',
 		'ConsoleMake' => 'command.console.make',
+		'EventMake' => 'command.event.make',
 		'Down' => 'command.down',
 		'Environment' => 'command.environment',
-		'EventScan' => 'command.event.scan',
+		'HandlerCommand' => 'command.handler.command',
+		'HandlerEvent' => 'command.handler.event',
 		'KeyGenerate' => 'command.key.generate',
 		'Optimize' => 'command.optimize',
 		'ProviderMake' => 'command.provider.make',
@@ -46,7 +55,6 @@ class ArtisanServiceProvider extends ServiceProvider {
 		'RouteCache' => 'command.route.cache',
 		'RouteClear' => 'command.route.clear',
 		'RouteList' => 'command.route.list',
-		'RouteScan' => 'command.route.scan',
 		'Tinker' => 'command.tinker',
 		'Up' => 'command.up',
 	];
@@ -99,11 +107,63 @@ class ArtisanServiceProvider extends ServiceProvider {
 	 *
 	 * @return void
 	 */
+	protected function registerCommandMakeCommand()
+	{
+		$this->app->singleton('command.command.make', function($app)
+		{
+			return new CommandMakeCommand($app['files']);
+		});
+	}
+
+	/**
+	 * Register the command.
+	 *
+	 * @return void
+	 */
+	protected function registerConfigCacheCommand()
+	{
+		$this->app->singleton('command.config.cache', function($app)
+		{
+			return new ConfigCacheCommand($app['files']);
+		});
+	}
+
+	/**
+	 * Register the command.
+	 *
+	 * @return void
+	 */
+	protected function registerConfigClearCommand()
+	{
+		$this->app->singleton('command.config.clear', function($app)
+		{
+			return new ConfigClearCommand($app['files']);
+		});
+	}
+
+	/**
+	 * Register the command.
+	 *
+	 * @return void
+	 */
 	protected function registerConsoleMakeCommand()
 	{
 		$this->app->singleton('command.console.make', function($app)
 		{
 			return new ConsoleMakeCommand($app['files']);
+		});
+	}
+
+	/**
+	 * Register the command.
+	 *
+	 * @return void
+	 */
+	protected function registerEventMakeCommand()
+	{
+		$this->app->singleton('command.event.make', function($app)
+		{
+			return new EventMakeCommand($app['files']);
 		});
 	}
 
@@ -138,11 +198,24 @@ class ArtisanServiceProvider extends ServiceProvider {
 	 *
 	 * @return void
 	 */
-	protected function registerEventScanCommand()
+	protected function registerHandlerCommandCommand()
 	{
-		$this->app->singleton('command.event.scan', function()
+		$this->app->singleton('command.handler.command', function($app)
 		{
-			return new EventScanCommand;
+			return new HandlerCommandCommand($app['files']);
+		});
+	}
+
+	/**
+	 * Register the command.
+	 *
+	 * @return void
+	 */
+	protected function registerHandlerEventCommand()
+	{
+		$this->app->singleton('command.handler.event', function($app)
+		{
+			return new HandlerEventCommand($app['files']);
 		});
 	}
 
@@ -234,19 +307,6 @@ class ArtisanServiceProvider extends ServiceProvider {
 		$this->app->singleton('command.route.list', function($app)
 		{
 			return new RouteListCommand($app['router']);
-		});
-	}
-
-	/**
-	 * Register the command.
-	 *
-	 * @return void
-	 */
-	protected function registerRouteScanCommand()
-	{
-		$this->app->singleton('command.route.scan', function()
-		{
-			return new RouteScanCommand;
 		});
 	}
 

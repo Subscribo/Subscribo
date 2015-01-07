@@ -1,12 +1,13 @@
 <?php namespace Illuminate\Http;
 
 use Closure;
+use ArrayAccess;
 use SplFileInfo;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
-class Request extends SymfonyRequest {
+class Request extends SymfonyRequest implements ArrayAccess {
 
 	/**
 	 * The decoded JSON content for the request.
@@ -173,6 +174,16 @@ class Request extends SymfonyRequest {
 	public function ajax()
 	{
 		return $this->isXmlHttpRequest();
+	}
+
+	/**
+	 * Determine if the request is the result of an PJAX call.
+	 *
+	 * @return bool
+	 */
+	public function pjax()
+	{
+		return $this->headers->get('X-PJAX') == true;
 	}
 
 	/**
@@ -707,8 +718,54 @@ class Request extends SymfonyRequest {
 	}
 
 	/**
+	 * Determine if the given offset exists.
+	 *
+	 * @param  string  $offset
+	 * @return bool
+	 */
+	public function offsetExists($offset)
+	{
+		return array_key_exists($offset, $this->all());
+	}
+
+	/**
+	 * Get the value at the given offset.
+	 *
+	 * @param  string  $offset
+	 * @return mixed
+	 */
+	public function offsetGet($offset)
+	{
+		return $this->input($offset);
+	}
+
+	/**
+	 * Set the value at the given offset.
+	 *
+	 * @param  string  $offset
+	 * @param  mixed  $value
+	 * @return void
+	 */
+	public function offsetSet($offset, $value)
+	{
+		return $this->getInputSource()->set($offset, $value);
+	}
+
+	/**
+	 * Remove the value at the given offset.
+	 *
+	 * @param  string  $offset
+	 * @return void
+	 */
+	public function offsetUnset($offset)
+	{
+		return $this->getInputSource()->remove($offset);
+	}
+
+	/**
 	 * Get an input element from the request.
 	 *
+	 * @param  string  $key
 	 * @return mixed
 	 */
 	public function __get($key)

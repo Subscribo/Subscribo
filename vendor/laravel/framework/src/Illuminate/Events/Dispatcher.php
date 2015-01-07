@@ -1,5 +1,6 @@
 <?php namespace Illuminate\Events;
 
+use Exception;
 use ReflectionClass;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
@@ -195,6 +196,14 @@ class Dispatcher implements DispatcherContract {
 	 */
 	public function fire($event, $payload = array(), $halt = false)
 	{
+		// When the given "event" is actually an object we will assume it is an event
+		// object and use the class as the event name and this event itself as the
+		// payload to the handler, which makes object based events quite simple.
+		if (is_object($event))
+		{
+			list($payload, $event) = [[$event], get_class($event)];
+		}
+
 		$responses = array();
 
 		// If an array is not given to us as the payload, we will turn it into one so
@@ -364,10 +373,10 @@ class Dispatcher implements DispatcherContract {
 		try
 		{
 			return (new ReflectionClass($class))->implementsInterface(
-				'Illuminate\Contracts\Events\QueuedHandler'
+				'Illuminate\Contracts\Queue\ShouldBeQueued'
 			);
 		}
-		catch (\Exception $e)
+		catch (Exception $e)
 		{
 			return false;
 		}
@@ -384,8 +393,8 @@ class Dispatcher implements DispatcherContract {
 	{
 		return function() use ($class, $method)
 		{
-			$this->resolveQueue()->push('Illuminate\Events\FireQueuedHandler', [
-				'class' => $class, 'method' => $method, 'data' => func_get_args(),
+			$this->resolveQueue()->push('Illuminate\Events\CallQueuedHandler@call', [
+				'class' => $class, 'method' => $method, 'data' => serialize(func_get_args()),
 			]);
 		};
 	}

@@ -330,7 +330,7 @@ class Application extends Container implements ApplicationContract {
 	 */
 	public function registerConfiguredProviders()
 	{
-		$manifestPath = $this['path.storage'].'/framework/services.json';
+		$manifestPath = $this->storagePath().'/framework/services.json';
 
 		(new ProviderRepository($this, new Filesystem, $manifestPath))
 		            ->load($this->config['app.providers']);
@@ -446,7 +446,7 @@ class Application extends Container implements ApplicationContract {
 	 * @param  string  $service
 	 * @return void
 	 */
-	protected function loadDeferredProvider($service)
+	public function loadDeferredProvider($service)
 	{
 		$provider = $this->deferredServices[$service];
 
@@ -590,6 +590,26 @@ class Application extends Container implements ApplicationContract {
 	}
 
 	/**
+	 * Determine if the application configuration is cached.
+	 *
+	 * @return bool
+	 */
+	public function configurationIsCached()
+	{
+		return $this['files']->exists($this->getCachedConfigPath());
+	}
+
+	/**
+	 * Get the path to the configuration cache file.
+	 *
+	 * @return string
+	 */
+	public function getCachedConfigPath()
+	{
+		return $this['path.storage'].'/framework/config.php';
+	}
+
+	/**
 	 * Determine if the application routes are cached.
 	 *
 	 * @return bool
@@ -607,46 +627,6 @@ class Application extends Container implements ApplicationContract {
 	public function getCachedRoutesPath()
 	{
 		return $this['path.storage'].'/framework/routes.php';
-	}
-
-	/**
-	 * Determine if the application routes have been scanned.
-	 *
-	 * @return bool
-	 */
-	public function routesAreScanned()
-	{
-		return $this['files']->exists($this->getScannedRoutesPath());
-	}
-
-	/**
-	 * Get the path to the scanned routes file.
-	 *
-	 * @return string
-	 */
-	public function getScannedRoutesPath()
-	{
-		return $this['path.storage'].'/framework/routes.scanned.php';
-	}
-
-	/**
-	 * Determine if the application events have been scanned.
-	 *
-	 * @return bool
-	 */
-	public function eventsAreScanned()
-	{
-		return $this['files']->exists($this->getScannedEventsPath());
-	}
-
-	/**
-	 * Get the path to the scanned events file.
-	 *
-	 * @return string
-	 */
-	public function getScannedEventsPath()
-	{
-		return $this['path.storage'].'/framework/events.scanned.php';
 	}
 
 	/**
@@ -670,7 +650,7 @@ class Application extends Container implements ApplicationContract {
 	 */
 	public function isDownForMaintenance()
 	{
-		return file_exists($this['config']['app.manifest'].'/down');
+		return file_exists($this->storagePath().'/framework/down');
 	}
 
 	/**

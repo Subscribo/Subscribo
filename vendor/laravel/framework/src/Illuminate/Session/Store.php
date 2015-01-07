@@ -67,9 +67,9 @@ class Store implements SessionInterface {
 	/**
 	 * Create a new session instance.
 	 *
-	 * @param  string  $name
-	 * @param  \SessionHandlerInterface  $handler
-	 * @param  string|null  $id
+	 * @param  string $name
+	 * @param  \SessionHandlerInterface $handler
+	 * @param  string|null $id
 	 * @return void
 	 */
 	public function __construct($name, SessionHandlerInterface $handler, $id = null)
@@ -99,7 +99,7 @@ class Store implements SessionInterface {
 	 */
 	protected function loadSession()
 	{
-		$this->attributes = $this->readFromHandler();
+		$this->attributes = array_merge($this->attributes, $this->readFromHandler());
 
 		foreach (array_merge($this->bags, array($this->metaBag)) as $bag)
 		{
@@ -118,7 +118,25 @@ class Store implements SessionInterface {
 	{
 		$data = $this->handler->read($this->getId());
 
-		return $data ? unserialize($data) : array();
+		if ($data)
+		{
+			$data = @unserialize($this->prepareForUnserialize($data));
+
+			if ($data !== false) return $data;
+		}
+
+		return [];
+	}
+
+	/**
+	 * Prepare the raw string data from the session for unserialization.
+	 *
+	 * @param  string  $data
+	 * @return string
+	 */
+	protected function prepareForUnserialize($data)
+	{
+		return $data;
 	}
 
 	/**
@@ -234,9 +252,20 @@ class Store implements SessionInterface {
 
 		$this->ageFlashData();
 
-		$this->handler->write($this->getId(), serialize($this->attributes));
+		$this->handler->write($this->getId(), $this->prepareForStorage(serialize($this->attributes)));
 
 		$this->started = false;
+	}
+
+	/**
+	 * Prepare the serialized session data for storage.
+	 *
+	 * @param  string  $data
+	 * @return string
+	 */
+	protected function prepareForStorage($data)
+	{
+		return $data;
 	}
 
 	/**

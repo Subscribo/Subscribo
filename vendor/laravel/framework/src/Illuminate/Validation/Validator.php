@@ -3,6 +3,7 @@
 use Closure;
 use DateTime;
 use Countable;
+use Exception;
 use DateTimeZone;
 use RuntimeException;
 use BadMethodCallException;
@@ -167,15 +168,21 @@ class Validator implements ValidatorContract {
 	/**
 	 * Parse the data and hydrate the files array.
 	 *
-	 * @param  array  $data
+	 * @param  array   $data
+	 * @param  string  $arrayKey
 	 * @return array
 	 */
-	protected function parseData(array $data)
+	protected function parseData(array $data, $arrayKey = null)
 	{
-		$this->files = array();
+		if (is_null($arrayKey))
+		{
+			$this->files = array();
+		}
 
 		foreach ($data as $key => $value)
 		{
+			$key = ($arrayKey) ? "$arrayKey.$key" : $key;
+
 			// If this value is an instance of the HttpFoundation File class we will
 			// remove it from the data array and add it to the files array, which
 			// we use to conveniently separate out these files from other data.
@@ -184,6 +191,10 @@ class Validator implements ValidatorContract {
 				$this->files[$key] = $value;
 
 				unset($data[$key]);
+			}
+			elseif (is_array($value))
+			{
+				$this->parseData($value, $key);
 			}
 		}
 
@@ -468,7 +479,7 @@ class Validator implements ValidatorContract {
 	protected function hasNotFailedPreviousRuleIfPresenceRule($rule, $attribute)
 	{
 		return in_array($rule, ['Unique', 'Exists'])
-						? ! $this->messages->has($attribute): true;
+						? ! $this->messages->has($attribute) : true;
 	}
 
 	/**
@@ -954,20 +965,7 @@ class Validator implements ValidatorContract {
 			return $value->getSize() / 1024;
 		}
 
-		return $this->getStringSize($value);
-	}
-
-	/**
-	 * Get the size of a string.
-	 *
-	 * @param  string  $value
-	 * @return int
-	 */
-	protected function getStringSize($value)
-	{
-		if (function_exists('mb_strlen')) return mb_strlen($value);
-
-		return strlen($value);
+		return mb_strlen($value);
 	}
 
 	/**
@@ -1440,7 +1438,7 @@ class Validator implements ValidatorContract {
 		{
 			return new DateTime($value);
 		}
-		catch (\Exception $e)
+		catch (Exception $e)
 		{
 			return;
 		}
@@ -1459,7 +1457,7 @@ class Validator implements ValidatorContract {
 		{
 			new DateTimeZone($value);
 		}
-		catch (\Exception $e)
+		catch (Exception $e)
 		{
 			return false;
 		}

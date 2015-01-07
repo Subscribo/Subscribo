@@ -235,7 +235,7 @@ abstract class AbstractPaginator {
 	 */
 	public function lastItem()
 	{
-		return $this->firstItem() + count($this->items) - 1;
+		return $this->firstItem() + $this->count() - 1;
 	}
 
 	/**
@@ -336,6 +336,19 @@ abstract class AbstractPaginator {
 	}
 
 	/**
+	 * Set the base path to assign to all URLs.
+	 *
+	 * @param  string  $path
+	 * @return $this
+	 */
+	public function setPath($path)
+	{
+		$this->path = $path;
+
+		return $this;
+	}
+
+	/**
 	 * Get an iterator for the items.
 	 *
 	 * @return \ArrayIterator
@@ -366,6 +379,16 @@ abstract class AbstractPaginator {
 	}
 
 	/**
+	 * Get the paginator's underlying collection.
+	 *
+	 * @return \Illuminate\Support\Collection
+	 */
+	public function getCollection()
+	{
+		return $this->items;
+	}
+
+	/**
 	 * Determine if the given item exists.
 	 *
 	 * @param  mixed  $key
@@ -373,7 +396,7 @@ abstract class AbstractPaginator {
 	 */
 	public function offsetExists($key)
 	{
-		return array_key_exists($key, $this->items->all());
+		return $this->items->has($key);
 	}
 
 	/**
@@ -384,7 +407,7 @@ abstract class AbstractPaginator {
 	 */
 	public function offsetGet($key)
 	{
-		return $this->items[$key];
+		return $this->items->get($key);
 	}
 
 	/**
@@ -396,7 +419,7 @@ abstract class AbstractPaginator {
 	 */
 	public function offsetSet($key, $value)
 	{
-		$this->items[$key] = $value;
+		$this->items->put($key, $value);
 	}
 
 	/**
@@ -407,7 +430,19 @@ abstract class AbstractPaginator {
 	 */
 	public function offsetUnset($key)
 	{
-		unset($this->items[$key]);
+		$this->items->forget($key);
+	}
+
+	/**
+	 * Make dynamic calls into the collection.
+	 *
+	 * @param  string  $method
+	 * @param  array  $parameters
+	 * @return mixed
+	 */
+	public function __call($method, $parameters)
+	{
+		return call_user_func_array([$this->getCollection(), $method], $parameters);
 	}
 
 	/**

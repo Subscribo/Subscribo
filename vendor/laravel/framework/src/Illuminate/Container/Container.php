@@ -23,28 +23,28 @@ class Container implements ArrayAccess, ContainerContract {
 	 *
 	 * @var array
 	 */
-	protected $resolved = array();
+	protected $resolved = [];
 
 	/**
 	 * The container's bindings.
 	 *
 	 * @var array
 	 */
-	protected $bindings = array();
+	protected $bindings = [];
 
 	/**
 	 * The container's shared instances.
 	 *
 	 * @var array
 	 */
-	protected $instances = array();
+	protected $instances = [];
 
 	/**
 	 * The registered type aliases.
 	 *
 	 * @var array
 	 */
-	protected $aliases = array();
+	protected $aliases = [];
 
 	/**
 	 * The extension closures for services.
@@ -79,28 +79,42 @@ class Container implements ArrayAccess, ContainerContract {
 	 *
 	 * @var array
 	 */
-	protected $reboundCallbacks = array();
+	protected $reboundCallbacks = [];
 
 	/**
 	 * All of the registered resolving callbacks.
 	 *
 	 * @var array
 	 */
-	protected $resolvingCallbacks = array();
+	protected $resolvingCallbacks = [];
 
 	/**
 	 * All of the global resolving callbacks.
 	 *
 	 * @var array
 	 */
-	protected $globalResolvingCallbacks = array();
+	protected $globalResolvingCallbacks = [];
 
 	/**
 	 * All of the global after resolving callbacks.
 	 *
 	 * @var array
 	 */
-	protected $globalAfterResolvingCallbacks = array();
+	protected $globalAfterResolvingCallbacks = [];
+
+	/**
+	 * All of the after resolving callbacks by class type.
+	 *
+	 * @var array
+	 */
+	protected $resolvingCallbacksByType = [];
+
+	/**
+	 * All of the after resolving callbacks by class type.
+	 *
+	 * @var array
+	 */
+	protected $afterResolvingCallbacksByType = [];
 
 	/**
 	 * Define a contextual binding.
@@ -121,7 +135,7 @@ class Container implements ArrayAccess, ContainerContract {
 	 */
 	protected function resolvable($abstract)
 	{
-		return $this->bound($abstract) || $this->isAlias($abstract);
+		return $this->bound($abstract);
 	}
 
 	/**
@@ -215,7 +229,7 @@ class Container implements ArrayAccess, ContainerContract {
 	 */
 	protected function getClosure($abstract, $concrete)
 	{
-		return function($c, $parameters = array()) use ($abstract, $concrete)
+		return function($c, $parameters = []) use ($abstract, $concrete)
 		{
 			$method = ($abstract == $concrete) ? 'build' : 'make';
 
@@ -381,7 +395,7 @@ class Container implements ArrayAccess, ContainerContract {
 	/**
 	 * Resolve all of the bindings for a given tag.
 	 *
-	 * @param  array  $tag
+	 * @param  string  $tag
 	 * @return array
 	 */
 	public function tagged($tag)
@@ -416,7 +430,7 @@ class Container implements ArrayAccess, ContainerContract {
 	 */
 	protected function extractAlias(array $definition)
 	{
-		return array(key($definition), current($definition));
+		return [key($definition), current($definition)];
 	}
 
 	/**
@@ -478,7 +492,7 @@ class Container implements ArrayAccess, ContainerContract {
 			return $this->reboundCallbacks[$abstract];
 		}
 
-		return array();
+		return [];
 	}
 
 	/**
@@ -488,7 +502,7 @@ class Container implements ArrayAccess, ContainerContract {
 	 * @param  array  $parameters
 	 * @return \Closure
 	 */
-	public function wrap(Closure $callback, array $parameters = array())
+	public function wrap(Closure $callback, array $parameters = [])
 	{
 		return function() use ($callback, $parameters)
 		{
@@ -504,7 +518,7 @@ class Container implements ArrayAccess, ContainerContract {
 	 * @param  string|null  $defaultMethod
 	 * @return mixed
 	 */
-	public function call($callback, array $parameters = array(), $defaultMethod = null)
+	public function call($callback, array $parameters = [], $defaultMethod = null)
 	{
 		if ($this->isCallableWithAtSign($callback) || $defaultMethod)
 		{
@@ -603,7 +617,7 @@ class Container implements ArrayAccess, ContainerContract {
 	 * @param  string|null  $defaultMethod
 	 * @return mixed
 	 */
-	protected function callClass($target, array $parameters = array(), $defaultMethod = null)
+	protected function callClass($target, array $parameters = [], $defaultMethod = null)
 	{
 		$segments = explode('@', $target);
 
@@ -627,7 +641,7 @@ class Container implements ArrayAccess, ContainerContract {
 	 * @param  array   $parameters
 	 * @return mixed
 	 */
-	public function make($abstract, $parameters = array())
+	public function make($abstract, $parameters = [])
 	{
 		$abstract = $this->getAlias($abstract);
 
@@ -756,7 +770,7 @@ class Container implements ArrayAccess, ContainerContract {
 	 *
 	 * @throws BindingResolutionException
 	 */
-	public function build($concrete, $parameters = array())
+	public function build($concrete, $parameters = [])
 	{
 		// If the concrete type is actually a Closure, we will just execute it and
 		// hand back the results of the functions, which allows functions to be
@@ -817,9 +831,9 @@ class Container implements ArrayAccess, ContainerContract {
 	 * @param  array  $primitives
 	 * @return array
 	 */
-	protected function getDependencies($parameters, array $primitives = array())
+	protected function getDependencies($parameters, array $primitives = [])
 	{
-		$dependencies = array();
+		$dependencies = [];
 
 		foreach ($parameters as $parameter)
 		{
@@ -951,6 +965,24 @@ class Container implements ArrayAccess, ContainerContract {
 	}
 
 	/**
+	 * @param  $type
+	 * @param  callable  $callback
+	 */
+	public function resolvingType($type, Closure $callback)
+	{
+		$this->resolvingCallbacksByType[$type][] = $callback;
+	}
+
+	/**
+	 * @param  $type
+	 * @param  callable  $callback
+	 */
+	public function afterResolvingType($type, Closure $callback)
+	{
+		$this->afterResolvingCallbacksByType[$type][] = $callback;
+	}
+
+	/**
 	 * Fire all of the resolving callbacks.
 	 *
 	 * @param  string  $abstract
@@ -966,7 +998,42 @@ class Container implements ArrayAccess, ContainerContract {
 
 		$this->fireCallbackArray($object, $this->globalResolvingCallbacks);
 
+		$this->fireCallbackArray(
+			$object, $this->getCallbacksForType(
+				$object, $this->resolvingCallbacksByType
+			)
+		);
+
 		$this->fireCallbackArray($object, $this->globalAfterResolvingCallbacks);
+
+		$this->fireCallbackArray(
+			$object, $this->getCallbacksForType(
+				$object, $this->afterResolvingCallbacksByType
+			)
+		);
+	}
+
+	/**
+	 * Get all callbacks for a givne type.
+	 *
+	 * @param  object  $object
+	 * @param  array  $callbacksPerType
+	 *
+	 * @return array
+	 */
+	protected function getCallbacksForType($object, array $callbacksPerType)
+	{
+		$results = [];
+
+		foreach ($callbacksPerType as $type => $callbacks)
+		{
+			if ($object instanceof $type)
+			{
+				$results = array_merge($results, $callbacks);
+			}
+		}
+
+		return $results;
 	}
 
 	/**
@@ -1065,7 +1132,7 @@ class Container implements ArrayAccess, ContainerContract {
 	 */
 	public function forgetInstances()
 	{
-		$this->instances = array();
+		$this->instances = [];
 	}
 
 	/**

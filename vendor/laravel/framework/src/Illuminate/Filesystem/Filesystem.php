@@ -2,9 +2,12 @@
 
 use FilesystemIterator;
 use Symfony\Component\Finder\Finder;
+use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 class Filesystem {
+
+	use Macroable;
 
 	/**
 	 * Determine if a file exists.
@@ -63,11 +66,12 @@ class Filesystem {
 	 *
 	 * @param  string  $path
 	 * @param  string  $contents
+	 * @param  bool  $lock
 	 * @return int
 	 */
-	public function put($path, $contents)
+	public function put($path, $contents, $lock = false)
 	{
-		return file_put_contents($path, $contents);
+		return file_put_contents($path, $contents, $lock ? LOCK_EX : 0);
 	}
 
 	/**

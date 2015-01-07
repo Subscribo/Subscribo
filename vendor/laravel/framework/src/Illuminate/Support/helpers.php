@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Debug\Dumper;
 
 if ( ! function_exists('append_config'))
 {
@@ -455,7 +456,9 @@ if ( ! function_exists('dd'))
 	 */
 	function dd()
 	{
-		array_map(function($x) { dump($x); }, func_get_args()); die;
+		array_map(function($x) { (new Dumper)->dump($x); }, func_get_args());
+
+		die;
 	}
 }
 
@@ -485,39 +488,6 @@ if ( ! function_exists('ends_with'))
 	function ends_with($haystack, $needles)
 	{
 		return Str::endsWith($haystack, $needles);
-	}
-}
-
-if ( ! function_exists('env'))
-{
-	/**
-	 * Gets the value of an environment variable. Supports boolean, empty and null.
-	 *
-	 * @param  string  $key
-	 * @return mixed
-	 */
-	function env($key)
-	{
-		$value = getenv($key);
-
-		switch (strtolower($value))
-		{
-			case 'true':
-			case '(true)':
-				return true;
-
-			case 'false':
-			case '(false)':
-				return false;
-
-			case '(null)':
-				return null;
-
-			case '(empty)':
-				return '';
-		}
-
-		return $value;
 	}
 }
 

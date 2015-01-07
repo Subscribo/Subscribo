@@ -113,6 +113,7 @@ class DatabaseQueue extends Queue implements QueueContract {
 	 * @param  \DateTime|int  $delay
 	 * @param  string|null  $queue
 	 * @param  string  $payload
+	 * @param  int  $attempts
 	 * @return mixed
 	 */
 	protected function pushToDatabase($delay, $queue, $payload, $attempts = 0)
@@ -149,10 +150,14 @@ class DatabaseQueue extends Queue implements QueueContract {
 		{
 			$this->markJobAsReserved($job->id);
 
+			$this->database->commit();
+
 			return new DatabaseJob(
 				$this->container, $this, $job, $queue
 			);
 		}
+
+		$this->database->commit();
 	}
 
 	/**
@@ -206,8 +211,6 @@ class DatabaseQueue extends Queue implements QueueContract {
 		$this->database->table($this->table)->where('id', $id)->update([
 			'reserved' => 1, 'reserved_at' => $this->getTime(),
 		]);
-
-		$this->database->commit();
 	}
 
 	/**

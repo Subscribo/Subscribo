@@ -17,11 +17,11 @@ class CreateJobsTable extends Migration {
 			$table->bigIncrements('id');
 			$table->string('queue');
 			$table->text('payload');
-			$table->tinyInteger('attempts');
-			$table->tinyInteger('reserved');
-			$table->integer('reserved_at')->nullable();
-			$table->integer('available_at');
-			$table->integer('created_at');
+			$table->tinyInteger('attempts')->unsigned();
+			$table->tinyInteger('reserved')->unsigned();
+			$table->unsignedInteger('reserved_at')->nullable();
+			$table->unsignedInteger('available_at');
+			$table->unsignedInteger('created_at');
 		});
 	}
 

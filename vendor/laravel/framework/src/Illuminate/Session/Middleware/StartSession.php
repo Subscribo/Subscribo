@@ -2,13 +2,14 @@
 
 use Closure;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Session\SessionManager;
 use Illuminate\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Request;
+use Illuminate\Session\CookieSessionHandler;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Contracts\Routing\Middleware as MiddlewareContract;
 use Illuminate\Contracts\Routing\TerminableMiddleware;
+use Illuminate\Contracts\Routing\Middleware as MiddlewareContract;
 
 class StartSession implements MiddlewareContract, TerminableMiddleware {
 
@@ -69,13 +70,13 @@ class StartSession implements MiddlewareContract, TerminableMiddleware {
 	/**
 	 * Perform any final actions for the request lifecycle.
 	 *
-	 * @param  \Symfony\Component\HttpFoundation\Request $request
-	 * @param  \Symfony\Component\HttpFoundation\Response $response
+	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \Symfony\Component\HttpFoundation\Response  $response
 	 * @return void
 	 */
 	public function terminate($request, $response)
 	{
-		if ($this->sessionConfigured())
+		if ($this->sessionConfigured() && ! $this->usingCookieSessions())
 		{
 			$this->manager->driver()->save();
 		}
@@ -84,7 +85,7 @@ class StartSession implements MiddlewareContract, TerminableMiddleware {
 	/**
 	 * Start the session for the given request.
 	 *
-	 * @param  \Symfony\Component\HttpFoundation\Request  $request
+	 * @param  \Illuminate\Http\Request  $request
 	 * @return \Illuminate\Session\SessionInterface
 	 */
 	protected function startSession(Request $request)
@@ -99,7 +100,7 @@ class StartSession implements MiddlewareContract, TerminableMiddleware {
 	/**
 	 * Get the session implementation from the manager.
 	 *
-	 * @param  \Symfony\Component\HttpFoundation\Request  $request
+	 * @param  \Illuminate\Http\Request  $request
 	 * @return \Illuminate\Session\SessionInterface
 	 */
 	public function getSession(Request $request)
@@ -160,11 +161,16 @@ class StartSession implements MiddlewareContract, TerminableMiddleware {
 	 * Add the session cookie to the application response.
 	 *
 	 * @param  \Symfony\Component\HttpFoundation\Response  $response
-	 * @param  \Symfony\Component\HttpFoundation\Session\SessionInterface  $session
+	 * @param  \Illuminate\Session\SessionInterface  $session
 	 * @return void
 	 */
 	protected function addCookieToResponse(Response $response, SessionInterface $session)
 	{
+		if ($this->usingCookieSessions())
+		{
+			$this->manager->driver()->save();
+		}
+
 		if ($this->sessionIsPersistent($config = $this->manager->getSessionConfig()))
 		{
 			$response->headers->setCookie(new Cookie(
@@ -217,6 +223,18 @@ class StartSession implements MiddlewareContract, TerminableMiddleware {
 		$config = $config ?: $this->manager->getSessionConfig();
 
 		return ! in_array($config['driver'], array(null, 'array'));
+	}
+
+	/**
+	 * Determine if the session is using cookie sessions.
+	 *
+	 * @return bool
+	 */
+	protected function usingCookieSessions()
+	{
+		if ( ! $this->sessionConfigured()) return false;
+
+		return $this->manager->driver()->getHandler() instanceof CookieSessionHandler;
 	}
 
 }

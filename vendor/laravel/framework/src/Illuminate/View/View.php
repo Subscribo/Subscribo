@@ -70,7 +70,7 @@ class View implements ArrayAccess, ViewContract {
 	/**
 	 * Get the string contents of the view.
 	 *
-	 * @param  \Closure  $callback
+	 * @param  \Closure|null  $callback
 	 * @return string
 	 */
 	public function render(Closure $callback = null)
@@ -81,7 +81,7 @@ class View implements ArrayAccess, ViewContract {
 
 		// Once we have the contents of the view, we will flush the sections if we are
 		// done rendering all views so that there is nothing left hanging over when
-		// anothoer view is rendered in the future by the application developers.
+		// another view gets rendered in the future by the application developer.
 		$this->factory->flushSectionsIfDoneRendering();
 
 		return $response ?: $contents;
