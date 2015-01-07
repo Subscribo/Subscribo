@@ -1,7 +1,7 @@
 <?php
 /**
  * An helper file for Laravel 4, to provide autocomplete information to your IDE
- * Generated for Laravel 5.0-dev on 2014-12-22.
+ * Generated for Laravel 5.0-dev on 2015-01-07.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -9,7 +9,190 @@
 
 namespace Subscribo{
 
-    class DependencyResolver extends \Subscribo\DependencyResolver\Support\Laravel\Facades\DependencyResolver{
+    class Environment extends \Subscribo\Environment\Integration\Laravel\Facades\Environment{
+        
+        /**
+         * 
+         *
+         * @return string 
+         * @static 
+         */
+        public static function detectEnvironment(){
+            return \Subscribo\Environment\Environment::detectEnvironment();
+        }
+        
+        /**
+         * 
+         *
+         * @return string 
+         * @static 
+         */
+        public static function getEnvironment(){
+            return \Subscribo\Environment\Environment::getEnvironment();
+        }
+        
+        /**
+         * 
+         *
+         * @param string $environment Possible values: self::PRODUCTION, self::DEVELOPMENT, self::STAGING, self::TESTING or any string
+         * @param string $mode Either self::MODE_ALLOW_ENVIRONMENT_CHANGE or self::MODE_ALLOW_SETTING_THE_SAME_ENVIRONMENT or self::MODE_DISALLOW_REPEATED_SETTING_OF_ENVIRONMENT (default)
+         * @return $this 
+         * @throws Exceptions\AttemptToChangeEnvironmentException
+         * @throws Exceptions\AttemptToSetEnvironmentAgainException
+         * @static 
+         */
+        public static function setEnvironment($environment, $mode = 'MODE_DISALLOW_REPEATED_SETTING_OF_ENVIRONMENT'){
+            return \Subscribo\Environment\Environment::setEnvironment($environment, $mode);
+        }
+        
+        /**
+         * 
+         *
+         * @return $this 
+         * @static 
+         */
+        public static function resetEnvironment(){
+            return \Subscribo\Environment\Environment::resetEnvironment();
+        }
+        
+    }
+
+
+    class Config extends \Subscribo\Config\Integration\Laravel\Facades\Config{
+        
+        /**
+         * Return value stored under provided key
+         *
+         * @param string $key Array key with dot notation
+         * @param mixed $default What to return, if key is not found
+         * @param string|null $package If provided, return value for given package
+         * @return mixed|null 
+         * @static 
+         */
+        public static function get($key, $default = null, $package = null){
+            return \Subscribo\Config\Config::get($key, $default, $package);
+        }
+        
+        /**
+         * Return value stored under provided key for given package
+         *
+         * @param string $package Package  name
+         * @param string $key Array key with dot notation
+         * @param mixed $default What to return, if key is not found
+         * @return mixed|null 
+         * @static 
+         */
+        public static function getForPackage($package, $key, $default = null){
+            return \Subscribo\Config\Config::getForPackage($package, $key, $default);
+        }
+        
+        /**
+         * Store given value under given key
+         *
+         * @param string $key Array key with dot notation
+         * @param mixed $value Value to store
+         * @param string|null $package If provided, return value for given package
+         * @return $this 
+         * @static 
+         */
+        public static function set($key, $value, $package = null){
+            return \Subscribo\Config\Config::set($key, $value, $package);
+        }
+        
+        /**
+         * Store given value under given key for given package
+         *
+         * @param string $package Package  name
+         * @param string $key Array key with dot notation
+         * @param mixed $value Value to store
+         * @return $this 
+         * @static 
+         */
+        public static function setForPackage($package, $key, $value){
+            return \Subscribo\Config\Config::setForPackage($package, $key, $value);
+        }
+        
+        /**
+         * Load configuration file(s)
+         *
+         * @param string|array $filePath File path or array of file paths
+         * @param string|null|bool $group Whether parsed file content should be under some group.
+         *        False - no group (root node)
+         *        True - Group same as file base name (without extension)
+         *        String - under provided string
+         *        Null (default) - based on file base name - if it is 'config' then root, otherwise file name
+         * @param string|bool $environment
+         * @param string|null|bool $baseDirectory Directory to be prepended to filePath
+         *        False - Nothing (filePath is absolute)
+         *        True - Main Configs directory
+         *        Null - Application root directory
+         *        String - string to be prepended
+         * @param null $configuration
+         * @param string|null $package If provided, loads configuration for a package
+         * @return int How many files have been loaded
+         * @static 
+         */
+        public static function loadFile($filePath, $group = null, $environment = true, $baseDirectory = true, $configuration = null, $package = null){
+            return \Subscribo\Config\Config::loadFile($filePath, $group, $environment, $baseDirectory, $configuration, $package);
+        }
+        
+        /**
+         * Load configuration file(s) for a package
+         *
+         * @param string $package Package name
+         * @param string|array $filePath File path or array of file paths
+         * @param string|null|bool $group Whether parsed file content should be under some group.
+         *        False - no group (root node)
+         *        True - Group same as file base name (without extension)
+         *        String - under provided string
+         *        Null (default) - based on file base name - if it is 'config' then root, otherwise file name
+         * @param string|bool $environment
+         * @param string|null|bool $baseDirectory Directory to be prepended to filePath
+         *        False - Nothing (filePath is absolute)
+         *        True - Main Package Config directory
+         *        Null - Application root directory
+         *        String - string to be prepended
+         * @param null $configuration
+         * @return int How many files have been loaded
+         * @static 
+         */
+        public static function loadFileForPackage($package, $filePath, $group = null, $environment = true, $baseDirectory = true, $configuration = null){
+            return \Subscribo\Config\Config::loadFileForPackage($package, $filePath, $group, $environment, $baseDirectory, $configuration);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function parseFile($filePath){
+            return \Subscribo\Config\Config::parseFile($filePath);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function findAndParseFile($filePath){
+            return \Subscribo\Config\Config::findAndParseFile($filePath);
+        }
+        
+        /**
+         * Tries to find existing file with supported extension
+         *
+         * @param $filePath
+         * @return null|string 
+         * @static 
+         */
+        public static function findFile($filePath){
+            return \Subscribo\Config\Config::findFile($filePath);
+        }
+        
+    }
+
+
+    class DependencyResolver extends \Subscribo\DependencyResolver\Integration\Laravel\Facades\DependencyResolver{
         
         /**
          * Resolving dependencies. Returns only (ordered) array keys.
@@ -61,7 +244,7 @@ namespace Subscribo{
     }
 
 
-    class Modifier extends \Subscribo\Modifier\Support\Laravel\Facades\Modifier{
+    class Modifier extends \Subscribo\Modifier\Integration\Laravel\Facades\Modifier{
         
         /**
          * 
@@ -84,7 +267,7 @@ namespace Subscribo{
     }
 
 
-    class ModelFactory extends \Subscribo\ModelBase\Support\Laravel\Facades\ModelFactory{
+    class ModelFactory extends \Subscribo\ModelBase\Integration\Laravel\Facades\ModelFactory{
         
         /**
          * Return an instance of a model based on URI Stub string
@@ -337,6 +520,17 @@ namespace {
         }
         
         /**
+         * Load the provider for a deferred service.
+         *
+         * @param string $service
+         * @return void 
+         * @static 
+         */
+        public static function loadDeferredProvider($service){
+            \Illuminate\Foundation\Application::loadDeferredProvider($service);
+        }
+        
+        /**
          * Register a deferred provider and service.
          *
          * @param string $provider
@@ -418,6 +612,26 @@ namespace {
         }
         
         /**
+         * Determine if the application configuration is cached.
+         *
+         * @return bool 
+         * @static 
+         */
+        public static function configurationIsCached(){
+            return \Illuminate\Foundation\Application::configurationIsCached();
+        }
+        
+        /**
+         * Get the path to the configuration cache file.
+         *
+         * @return string 
+         * @static 
+         */
+        public static function getCachedConfigPath(){
+            return \Illuminate\Foundation\Application::getCachedConfigPath();
+        }
+        
+        /**
          * Determine if the application routes are cached.
          *
          * @return bool 
@@ -435,46 +649,6 @@ namespace {
          */
         public static function getCachedRoutesPath(){
             return \Illuminate\Foundation\Application::getCachedRoutesPath();
-        }
-        
-        /**
-         * Determine if the application routes have been scanned.
-         *
-         * @return bool 
-         * @static 
-         */
-        public static function routesAreScanned(){
-            return \Illuminate\Foundation\Application::routesAreScanned();
-        }
-        
-        /**
-         * Get the path to the scanned routes file.
-         *
-         * @return string 
-         * @static 
-         */
-        public static function getScannedRoutesPath(){
-            return \Illuminate\Foundation\Application::getScannedRoutesPath();
-        }
-        
-        /**
-         * Determine if the application events have been scanned.
-         *
-         * @return bool 
-         * @static 
-         */
-        public static function eventsAreScanned(){
-            return \Illuminate\Foundation\Application::eventsAreScanned();
-        }
-        
-        /**
-         * Get the path to the scanned events file.
-         *
-         * @return string 
-         * @static 
-         */
-        public static function getScannedEventsPath(){
-            return \Illuminate\Foundation\Application::getScannedEventsPath();
         }
         
         /**
@@ -743,7 +917,7 @@ namespace {
         /**
          * Resolve all of the bindings for a given tag.
          *
-         * @param array $tag
+         * @param string $tag
          * @return array 
          * @static 
          */
@@ -868,6 +1042,30 @@ namespace {
         public static function afterResolvingAny($callback){
             //Method inherited from \Illuminate\Container\Container            
             \Illuminate\Foundation\Application::afterResolvingAny($callback);
+        }
+        
+        /**
+         * 
+         *
+         * @param $type
+         * @param callable $callback
+         * @static 
+         */
+        public static function resolvingType($type, $callback){
+            //Method inherited from \Illuminate\Container\Container            
+            return \Illuminate\Foundation\Application::resolvingType($type, $callback);
+        }
+        
+        /**
+         * 
+         *
+         * @param $type
+         * @param callable $callback
+         * @static 
+         */
+        public static function afterResolvingType($type, $callback){
+            //Method inherited from \Illuminate\Container\Container            
+            return \Illuminate\Foundation\Application::afterResolvingType($type, $callback);
         }
         
         /**
@@ -1377,7 +1575,7 @@ namespace {
         /**
          * Return the currently cached user of the application.
          *
-         * @return \Illuminate\Contracts\Auth\User|null 
+         * @return \Illuminate\Contracts\Auth\Authenticatable|null 
          * @static 
          */
         public static function getUser(){
@@ -1725,7 +1923,7 @@ namespace {
         /**
          * Set the event dispatcher instance.
          *
-         * @param \Illuminate\Events\Dispatcher
+         * @param \Illuminate\Contracts\Events\Dispatcher
          * @return void 
          * @static 
          */
@@ -2095,6 +2293,16 @@ namespace {
         }
         
         /**
+         * Get all of the configuration items for the application.
+         *
+         * @return array 
+         * @static 
+         */
+        public static function all(){
+            return \Illuminate\Config\Repository::all();
+        }
+        
+        /**
          * Determine if the given configuration option exists.
          *
          * @param string $key
@@ -2288,7 +2496,6 @@ namespace {
          *
          * @param string $key
          * @return void 
-         * @throws \Illuminate\Encryption\InvalidKeyException
          * @static 
          */
         public static function setKey($key){
@@ -2628,11 +2835,12 @@ namespace {
          *
          * @param string $path
          * @param string $contents
+         * @param bool $lock
          * @return int 
          * @static 
          */
-        public static function put($path, $contents){
-            return \Illuminate\Filesystem\Filesystem::put($path, $contents);
+        public static function put($path, $contents, $lock = false){
+            return \Illuminate\Filesystem\Filesystem::put($path, $contents, $lock);
         }
         
         /**
@@ -2879,6 +3087,29 @@ namespace {
             return \Illuminate\Filesystem\Filesystem::cleanDirectory($directory);
         }
         
+        /**
+         * Register a custom macro.
+         *
+         * @param string $name
+         * @param callable $macro
+         * @return void 
+         * @static 
+         */
+        public static function macro($name, $macro){
+            \Illuminate\Filesystem\Filesystem::macro($name, $macro);
+        }
+        
+        /**
+         * Checks if macro is registered
+         *
+         * @param string $name
+         * @return bool 
+         * @static 
+         */
+        public static function hasMacro($name){
+            return \Illuminate\Filesystem\Filesystem::hasMacro($name);
+        }
+        
     }
 
 
@@ -3059,6 +3290,16 @@ namespace {
          */
         public static function ajax(){
             return \Illuminate\Http\Request::ajax();
+        }
+        
+        /**
+         * Determine if the request is the result of an PJAX call.
+         *
+         * @return bool 
+         * @static 
+         */
+        public static function pjax(){
+            return \Illuminate\Http\Request::pjax();
         }
         
         /**
@@ -3459,6 +3700,51 @@ namespace {
          */
         public static function setRouteResolver($callback){
             return \Illuminate\Http\Request::setRouteResolver($callback);
+        }
+        
+        /**
+         * Determine if the given offset exists.
+         *
+         * @param string $offset
+         * @return bool 
+         * @static 
+         */
+        public static function offsetExists($offset){
+            return \Illuminate\Http\Request::offsetExists($offset);
+        }
+        
+        /**
+         * Get the value at the given offset.
+         *
+         * @param string $offset
+         * @return mixed 
+         * @static 
+         */
+        public static function offsetGet($offset){
+            return \Illuminate\Http\Request::offsetGet($offset);
+        }
+        
+        /**
+         * Set the value at the given offset.
+         *
+         * @param string $offset
+         * @param mixed $value
+         * @return void 
+         * @static 
+         */
+        public static function offsetSet($offset, $value){
+            \Illuminate\Http\Request::offsetSet($offset, $value);
+        }
+        
+        /**
+         * Remove the value at the given offset.
+         *
+         * @param string $offset
+         * @return void 
+         * @static 
+         */
+        public static function offsetUnset($offset){
+            \Illuminate\Http\Request::offsetUnset($offset);
         }
         
         /**
@@ -4075,7 +4361,7 @@ namespace {
          *
          * @return string The request method
          * @api 
-         * @see getRealMethod
+         * @see getRealMethod()
          * @static 
          */
         public static function getMethod(){
@@ -4087,7 +4373,7 @@ namespace {
          * Gets the "real" request method.
          *
          * @return string The request method
-         * @see getMethod
+         * @see getMethod()
          * @static 
          */
         public static function getRealMethod(){
@@ -4331,7 +4617,7 @@ namespace {
         }
         
         /**
-         * Gets a list of content types acceptable by the client browser
+         * Gets a list of content types acceptable by the client browser.
          *
          * @return array List of content types in preferable order
          * @api 
@@ -4672,6 +4958,7 @@ namespace {
         /**
          * Log a message to the logs.
          *
+         * @param string $level
          * @param string $message
          * @param array $context
          * @return void 
@@ -5558,6 +5845,16 @@ namespace {
         }
         
         /**
+         * Determine if the request is the result of an PJAX call.
+         *
+         * @return bool 
+         * @static 
+         */
+        public static function pjax(){
+            return \Illuminate\Http\Request::pjax();
+        }
+        
+        /**
          * Determine if the request is over HTTPS.
          *
          * @return bool 
@@ -5955,6 +6252,51 @@ namespace {
          */
         public static function setRouteResolver($callback){
             return \Illuminate\Http\Request::setRouteResolver($callback);
+        }
+        
+        /**
+         * Determine if the given offset exists.
+         *
+         * @param string $offset
+         * @return bool 
+         * @static 
+         */
+        public static function offsetExists($offset){
+            return \Illuminate\Http\Request::offsetExists($offset);
+        }
+        
+        /**
+         * Get the value at the given offset.
+         *
+         * @param string $offset
+         * @return mixed 
+         * @static 
+         */
+        public static function offsetGet($offset){
+            return \Illuminate\Http\Request::offsetGet($offset);
+        }
+        
+        /**
+         * Set the value at the given offset.
+         *
+         * @param string $offset
+         * @param mixed $value
+         * @return void 
+         * @static 
+         */
+        public static function offsetSet($offset, $value){
+            \Illuminate\Http\Request::offsetSet($offset, $value);
+        }
+        
+        /**
+         * Remove the value at the given offset.
+         *
+         * @param string $offset
+         * @return void 
+         * @static 
+         */
+        public static function offsetUnset($offset){
+            \Illuminate\Http\Request::offsetUnset($offset);
         }
         
         /**
@@ -6571,7 +6913,7 @@ namespace {
          *
          * @return string The request method
          * @api 
-         * @see getRealMethod
+         * @see getRealMethod()
          * @static 
          */
         public static function getMethod(){
@@ -6583,7 +6925,7 @@ namespace {
          * Gets the "real" request method.
          *
          * @return string The request method
-         * @see getMethod
+         * @see getMethod()
          * @static 
          */
         public static function getRealMethod(){
@@ -6827,7 +7169,7 @@ namespace {
         }
         
         /**
-         * Gets a list of content types acceptable by the client browser
+         * Gets a list of content types acceptable by the client browser.
          *
          * @return array List of content types in preferable order
          * @api 
@@ -7339,7 +7681,7 @@ namespace {
          *
          * @param string $key
          * @param string $class
-         * @param \Closure $callback
+         * @param \Closure|null $callback
          * @return void 
          * @throws NotFoundHttpException
          * @static 
@@ -7613,6 +7955,29 @@ namespace {
             return \Illuminate\Routing\Router::getPatterns();
         }
         
+        /**
+         * Register a custom macro.
+         *
+         * @param string $name
+         * @param callable $macro
+         * @return void 
+         * @static 
+         */
+        public static function macro($name, $macro){
+            \Illuminate\Routing\Router::macro($name, $macro);
+        }
+        
+        /**
+         * Checks if macro is registered
+         *
+         * @param string $name
+         * @return bool 
+         * @static 
+         */
+        public static function hasMacro($name){
+            return \Illuminate\Routing\Router::hasMacro($name);
+        }
+        
     }
 
 
@@ -7709,7 +8074,7 @@ namespace {
         }
         
         /**
-         * Sets the session ID
+         * Sets the session ID.
          *
          * @param string $id
          * @api 

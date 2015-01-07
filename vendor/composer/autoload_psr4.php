@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Subscribo\\Support\\' => array($vendorDir . '/subscribo/support/src/Subscribo/Support'),
     'Subscribo\\ServiceProvider\\' => array($vendorDir . '/subscribo/serviceprovider/src/Subscribo/ServiceProvider'),
     'Subscribo\\SchemaBuilder\\' => array($vendorDir . '/subscribo/schemabuilder/src/Subscribo/SchemaBuilder'),
     'Subscribo\\Modifier\\' => array($vendorDir . '/subscribo/modifier/src/Subscribo/Modifier'),

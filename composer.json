@@ -6,6 +6,7 @@
 	"type": "project",
 	"require": {
 		"laravel/framework": "~5.0",
+        "symfony/yaml": "2.6@stable",
         "subscribo/modifier": "@dev",
         "subscribo/modelbase": "@dev",
         "subscribo/config": "@dev"
