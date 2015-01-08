@@ -1,8 +1,9 @@
 # Subscribo Service Provider Package
 
 Contain abstract class to be extended by other ServiceProviders (Subscribo\ServiceProvider\ServiceProvider)
-as well as a slightly modified ServiceProvider from v4.2.12 of Laravel Framework Subscribo\ServiceProvider\Laravel\ServiceProvider
+as well as modified versions of ServiceProvider from v4.2.12 of Laravel Framework Subscribo\ServiceProvider\Laravel\ServiceProvider
 Subscribo\ServiceProvider\ServiceProvider extends Subscribo\ServiceProvider\Laravel\ServiceProvider
+Might contain also custom code
 
 ## Installation
 

@@ -4,5 +4,7 @@
  * Abstract Class ServiceProvider
  *
  * @package Subscribo\ServiceProvider
+ * @license proprietary
+ * @author Slavo
  */
-abstract class ServiceProvider extends Laravel\ServiceProvider {}
+abstract class ServiceProvider extends Laravel\Modified\ServiceProvider {}
