@@ -888,7 +888,21 @@ class Builder {
 	{
 		return $this->whereNotNull($column, 'or');
 	}
-
+	
+	/**
+	 * Add a "where date" statement to the query.
+	 *
+	 * @param  string  $column
+	 * @param  string   $operator
+	 * @param  int   $value
+	 * @param  string   $boolean
+	 * @return \Illuminate\Database\Query\Builder|static
+	 */
+	public function whereDate($column, $operator, $value, $boolean = 'and')
+	{
+		return $this->addDateBasedWhere('Date', $column, $operator, $value, $boolean);
+	}
+	
 	/**
 	 * Add a "where day" statement to the query.
 	 *
@@ -1316,20 +1330,18 @@ class Builder {
 	 * Execute the query and get the first result.
 	 *
 	 * @param  array   $columns
-	 * @return mixed|static
+	 * @return mixed
 	 */
 	public function first($columns = array('*'))
 	{
-		$results = $this->take(1)->get($columns);
-
-		return count($results) > 0 ? reset($results) : null;
+		return $this->take(1)->get($columns)->first();
 	}
 
 	/**
 	 * Execute the query as a "select" statement.
 	 *
 	 * @param  array  $columns
-	 * @return array|static[]
+	 * @return \Illuminate\Support\Collection
 	 */
 	public function get($columns = array('*'))
 	{
@@ -1340,13 +1352,15 @@ class Builder {
 	 * Execute the query as a fresh "select" statement.
 	 *
 	 * @param  array  $columns
-	 * @return array|static[]
+	 * @return \Illuminate\Support\Collection
 	 */
 	public function getFresh($columns = array('*'))
 	{
 		if (is_null($this->columns)) $this->columns = $columns;
 
-		return $this->processor->processSelect($this, $this->runSelect());
+		$results = $this->processor->processSelect($this, $this->runSelect());
+
+		return new Collection($results);
 	}
 
 	/**
@@ -1491,7 +1505,7 @@ class Builder {
 		// First we will just get all of the column values for the record result set
 		// then we can associate those values with the column if it was specified
 		// otherwise we can just give these values back without a specific key.
-		$results = new Collection($this->get($columns));
+		$results = $this->get($columns);
 
 		$values = $results->fetch($columns[0])->all();
 
@@ -1635,7 +1649,7 @@ class Builder {
 
 		$previousColumns = $this->columns;
 
-		$results = $this->get($columns);
+		$results = $this->get($columns)->all();
 
 		// Once we have executed the query, we will reset the aggregate property so
 		// that more select queries can be executed against the database without

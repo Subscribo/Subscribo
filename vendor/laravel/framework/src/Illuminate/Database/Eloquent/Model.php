@@ -495,11 +495,11 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 	/**
 	 * Create a collection of models from plain arrays.
 	 *
-	 * @param  array  $items
+	 * @param  array|\ArrayAccess  $items
 	 * @param  string  $connection
 	 * @return \Illuminate\Database\Eloquent\Collection
 	 */
-	public static function hydrate(array $items, $connection = null)
+	public static function hydrate($items, $connection = null)
 	{
 		$collection = with($instance = new static)->newCollection();
 
@@ -693,9 +693,9 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 	 */
 	public static function find($id, $columns = array('*'))
 	{
-		if (is_array($id) && empty($id)) return new Collection;
-
 		$instance = new static;
+
+		if (is_array($id) && empty($id)) return $instance->newCollection();
 
 		return $instance->newQuery()->find($id, $columns);
 	}

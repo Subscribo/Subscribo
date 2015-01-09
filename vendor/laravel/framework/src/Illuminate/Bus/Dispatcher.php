@@ -72,7 +72,7 @@ class Dispatcher implements DispatcherContract, QueueingDispatcher, HandlerResol
 	 * Marshal a command and dispatch it to its appropriate handler.
 	 *
 	 * @param  mixed  $command
-	 * @param  array  $array
+	 * @param  \ArrayAccess  $array
 	 * @return mixed
 	 */
 	public function dispatchFrom($command, ArrayAccess $source, $extras = [])
@@ -242,7 +242,14 @@ class Dispatcher implements DispatcherContract, QueueingDispatcher, HandlerResol
 			throw new \RuntimeException("Queue resolver did not return a Queue implementation.");
 		}
 
-		$queue->push($command);
+		if (method_exists($command, 'queue'))
+		{
+			$command->queue($queue, $command);
+		}
+		else
+		{
+			$queue->push($command);
+		}
 	}
 
 	/**

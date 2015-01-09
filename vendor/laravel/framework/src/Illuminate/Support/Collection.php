@@ -326,11 +326,11 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 	/**
 	 * Get the keys of the collection items.
 	 *
-	 * @return array
+	 * @return static
 	 */
 	public function keys()
 	{
-		return array_keys($this->items);
+		return new static(array_keys($this->items));
 	}
 
 	/**
@@ -715,9 +715,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 	 */
 	public function values()
 	{
-		$this->items = array_values($this->items);
-
-		return $this;
+		return new static(array_values($this->items));
 	}
 
 	/**
