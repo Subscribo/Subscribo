@@ -27,7 +27,7 @@
         "subscribo/config": "@dev"
     },
     "suggest": {
-        "laravel/framework": "This package have been build to work with The Laravel Framework version 4.2",
+        "laravel/framework": "This package have been build to work with The Laravel Framework version 5.0",
         "subscribo/api0": "This package has been developed to work with API version 0"
     },
     "autoload": {

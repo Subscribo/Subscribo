@@ -35,4 +35,4 @@ to app/start/global.php or to app/start/local.php or to another convenient place
 
 ## Usage
 
-navigate your browser to /checker url of your domain
+navigate your browser to /checker url of your domain (or to uri defined in your config files)
