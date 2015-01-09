@@ -30,7 +30,7 @@ or
     }
 ```
 
-in boostrap/app.php for conditional registration
+in bootstrap/app.php for conditional registration
 
 If used with package adding this dependency and registering this service provider for you, this step (1.2) is not necessary.
 

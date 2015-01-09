@@ -201,7 +201,7 @@ class Config {
      *        True - Main Package Config directory
      *        Null - Application root directory
      *        String - string to be prepended
-     * @param null $configuration
+     * @param \Symfony\Component\Config\Definition\ConfigurationInterface|null $configuration
      *
      * @return int How many files have been loaded
      */
@@ -316,10 +316,10 @@ class Config {
 
     protected function mergeConfigurations(array $configurations)
     {
-        $result = array();
+        $result = array_shift($configurations);
         foreach ($configurations as $configuration)
         {
-            $result = Arr::merge_natural($result, $configuration);
+            $result = Arr::mergeNatural($result, $configuration);
         }
         return $result;
     }
@@ -344,6 +344,9 @@ class Config {
         if ( ! is_string($baseDir)) {
             $baseDir = '';
         }
+        if ($baseDir) {
+            $baseDir = rtrim($baseDir, '/').'/';
+        }
         $content = $this->findAndParseFile($baseDir.$filePath);
         if (empty($content)) {
             return null;
@@ -355,6 +358,9 @@ class Config {
             } else {
                 $group = $fileNameBase;
             }
+        } elseif (true === $group) {
+            $fileNameBase = $this->extractFileNameBase($filePath);
+            $group = $fileNameBase;
         }
         if ($group) {
             $result = array($group => $content);
