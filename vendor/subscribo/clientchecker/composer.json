@@ -1,0 +1,44 @@
+{
+    "name": "subscribo/clientchecker",
+    "description": "Client Checker for testing communicating with API within a browser. Default url: /client",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "client",
+        "testing",
+        "checker"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "subscribo/modelbase": "@dev",
+        "subscribo/serviceprovider": "@dev",
+        "subscribo/config": "@dev",
+        "subscribo/restproxy": "@dev"
+    },
+    "suggest": {
+        "laravel/framework": "This package have been build to work with The Laravel Framework version 5.0",
+        "subscribo/api0": "This package has been developed to work with API version 0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\ClientChecker\\": "src/Subscribo/ClientChecker/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
