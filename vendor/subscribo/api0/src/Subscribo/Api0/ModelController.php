@@ -1,15 +1,18 @@
 <?php namespace Subscribo\Api0;
 
-use BaseController;
+use App\Http\Controllers\Controller;
 use Subscribo\ModelBase\AbstractModel;
 use Subscribo\ModelBase\ModelFactory;
 use Subscribo\Modifier\Modifier;
-use Subscribo\Api0\Exception\BadRequestHttpException;
-use Subscribo\Api0\Exception\InternalServerErrorHttpException;
-use Subscribo\Api0\Exception\NotFoundHttpException;
+use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
+use Subscribo\Exception\Exceptions\BadRequestHttpException;
+use Subscribo\Exception\Exceptions\InvalidInputHttpException;
+use Subscribo\Exception\Exceptions\InvalidQueryHttpException;
+use Subscribo\Exception\Exceptions\InternalServerErrorHttpException;
+use Subscribo\Exception\Exceptions\NotFoundHttpException;
 use Validator;
 use Input;
-use Str;
+use Subscribo\Support\Str;
 use Request;
 
 /**
@@ -17,7 +20,7 @@ use Request;
  *
  * @package Subscribo\Api0
  */
-class ModelController extends \App\Http\Controllers\Controller {
+class ModelController extends Controller {
 
     /**
      * @var \Subscribo\ModelBase\ModelFactory
@@ -75,7 +78,7 @@ class ModelController extends \App\Http\Controllers\Controller {
         $modifiedInput = $this->modifier->modifyMultiple(Input::all(), $model::$modificationRulesBeforeValidation);
         $validator = Validator::make($modifiedInput, $model::$rules);
         if ($validator->fails()) {
-            throw new BadRequestHttpException(null, array('validation_errors' => $validator->messages()->toArray()));
+            throw new InvalidInputHttpException($validator->messages()->all());
         }
         try {
             $toFill = $this->modifier->modifyMultiple($validator->valid(), $model::$modificationRulesAfterValidation);
@@ -86,7 +89,7 @@ class ModelController extends \App\Http\Controllers\Controller {
             }
             throw new \Exception('Attempt to save a new model failed');
         } catch (\Exception $e) {
-            throw new InternalServerErrorHttpException("Attempt to create a new model failed", array(), $e);
+            throw new InternalServerErrorHttpException("Attempt to create a new model failed", array(), 0, $e);
         }
     }
 
@@ -121,7 +124,7 @@ class ModelController extends \App\Http\Controllers\Controller {
             }
             throw new \Exception('Attempt to delete a model failed');
         } catch (\Exception $e) {
-            throw new InternalServerErrorHttpException("Attempt to delete this model failed", array(), $e);
+            throw new InternalServerErrorHttpException("Attempt to delete this model failed", array(), 0, $e);
         }
     }
 
@@ -131,8 +134,8 @@ class ModelController extends \App\Http\Controllers\Controller {
      * @param string $identifier
      * @param array $input
      * @return \Subscribo\ModelBase\AbstractModel
-     * @throws \Subscribo\Api0\Exception\BadRequestHttpException
-     * @throws \Subscribo\Api0\Exception\InternalServerErrorHttpException
+     * @throws \Subscribo\Exception\Exceptions\InternalServerErrorHttpException
+     * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException
      */
     private function _putOrModifyElement($model, $identifier, array $input)
     {
@@ -152,7 +155,7 @@ class ModelController extends \App\Http\Controllers\Controller {
         $modifiedInput = $this->modifier->modifyMultiple($differentInput, $model::$modificationRulesBeforeValidation);
         $validator = Validator::make($modifiedInput, $filteredRules);
         if ($validator->fails()) {
-            throw new BadRequestHttpException(null, array('validation_errors' => $validator->messages()->toArray()));
+            throw new InvalidInputHttpException($validator->messages()->all());
         }
         try {
             $toFill = $this->modifier->modifyMultiple($validator->valid(), $model::$modificationRulesAfterValidation);
@@ -163,7 +166,7 @@ class ModelController extends \App\Http\Controllers\Controller {
             }
             throw new \Exception('Attempt to save a modified model failed');
         } catch (\Exception $e) {
-            throw new InternalServerErrorHttpException("Attempt to change this model failed", array(), $e);
+            throw new InternalServerErrorHttpException("Attempt to change this model failed", array(), 0, $e);
         }
     }
 
@@ -171,8 +174,8 @@ class ModelController extends \App\Http\Controllers\Controller {
      * @param \Subscribo\ModelBase\AbstractModel $model
      * @param string $identifier
      * @return \Subscribo\ModelBase\AbstractModel
-     * @throws \Subscribo\Api0\Exception\BadRequestHttpException
-     * @throws \Subscribo\Api0\Exception\NotFoundHttpException
+     * @throws \Subscribo\Exception\Exceptions\BadRequestHttpException
+     * @throws \Subscribo\Exception\Exceptions\InstanceNotFoundHttpException
      */
     private function _findElement($model, $identifier)
     {
@@ -194,7 +197,7 @@ class ModelController extends \App\Http\Controllers\Controller {
         }
         $found = $query->first();
         if (empty($found)) {
-            throw new NotFoundHttpException("Requested model instance not found");
+            throw new InstanceNotFoundHttpException();
         }
         return $found;
     }
@@ -204,7 +207,7 @@ class ModelController extends \App\Http\Controllers\Controller {
      *
      * @param string $modelNameStub
      * @return \Subscribo\ModelBase\AbstractModel
-     * @throws \Subscribo\Api0\Exception\NotFoundHttpException
+     * @throws \Subscribo\Exception\Exceptions\NotFoundHttpException
      */
     protected function _retrieveModel($modelNameStub)
     {
@@ -296,7 +299,7 @@ class ModelController extends \App\Http\Controllers\Controller {
             } else {
                 $errorMessage = "Unrecognized parameter '".reset($unrecognizedParameterKeys)."'.";
             }
-            throw new BadRequestHttpException($errorMessage);
+            throw new InvalidQueryHttpException($errorMessage);
         }
         return $result;
     }
@@ -305,7 +308,7 @@ class ModelController extends \App\Http\Controllers\Controller {
     {
         $toParse = trim($requestParameters['with']);
         if (empty($toParse)) {
-            throw new BadRequestHttpException("Parameter 'with' should be non empty or not present at all.");
+            throw new InvalidQueryHttpException("Parameter 'with' should be non empty or not present at all.");
         }
         $parts = explode(',', $toParse);
         $result = array();
@@ -313,13 +316,13 @@ class ModelController extends \App\Http\Controllers\Controller {
         foreach ($parts as $part) {
             $processed = trim($part);
             if (empty($processed)) {
-                throw new BadRequestHttpException("Parameter 'with' contains empty element.");
+                throw new InvalidQueryHttpException("Parameter 'with' contains empty element.");
             }
             if (false === array_search($processed, $availableRelations)) {
                 $processed = Str::camel($part);
             }
             if (false === array_search($processed, $availableRelations)) {
-                throw new BadRequestHttpException("Parameter 'with' contain element '".$part."' which is not among available relations.");
+                throw new InvalidQueryHttpException("Parameter 'with' contain element '" . $part . "' which is not among available relations.");
             }
             $result[] = $processed;
         }
@@ -335,7 +338,7 @@ class ModelController extends \App\Http\Controllers\Controller {
         $value = $haystack[$needle];
         if ( ! self::_isNonNegativeInteger($value)) {
             $errorMessage = "Parameter '".$needle."' should have a non negative integer value.";
-            throw new BadRequestHttpException($errorMessage);
+            throw new InvalidQueryHttpException($errorMessage);
         }
         $result = intval($value);
         return $result;
