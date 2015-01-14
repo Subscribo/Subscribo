@@ -25,7 +25,9 @@
         "subscribo/modelbase": "@dev",
         "subscribo/serviceprovider": "@dev",
         "subscribo/config": "@dev",
-        "subscribo/restproxy": "@dev"
+        "subscribo/environment": "@dev",
+        "subscribo/restproxy": "@dev",
+        "illuminate/encryption": "~5.0"
     },
     "suggest": {
         "laravel/framework": "This package have been build to work with The Laravel Framework version 5.0",

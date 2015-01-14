@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Client Checker</title>
@@ -7,7 +8,7 @@
 
 <form onsubmit="makeRequest(); return false;">
     <label for="select_verb">Select:</label>
-    <select id="select_verb" onchange="document.getElementById('verb').value=this.value">
+    <select id="select_verb" onchange="document.getElementById('verb').value=this.value; document.getElementById('add_csrf_token').checked=( ! arrayContain(this.value, ['GET','OPTIONS','HEAD']))">
         <option value="GET">GET</option>
         <option value="POST">POST</option>
         <option value="PUT">PUT</option>
@@ -28,13 +29,14 @@
         }
         ?>
     </select>
+    <label for="add_csrf_token">Add CSRF Token</label>
+    <input id="add_csrf_token" type="checkbox" checked="checked">
     <br>
     <label for="verb">Verb:</label>
     <input type="text" value="GET" id="verb" style="width: 10em">
     <label for="url">URL:</label>
-    <input type="text" id="url" value="/api/v0/model/languages" style="width: 40em">
+    <input type="text" id="url" value="<?php echo $uriBase; ?>/" style="width: 40em">
     <input type="submit" value="RELOAD">
-
     <br>
     <label for="request_body">Request Body:</label>
     <br>
@@ -49,16 +51,26 @@
 <iframe id="output" style="width: 100%; height: 40%"></iframe>
 <script type="text/javascript">
 
+    function arrayContain(needle, haystack) {
+        for (var i = 0; i < haystack.length; i++) {
+            if (haystack[i] === needle) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function requestLoaded() {
         document.getElementById('response').value = this.responseText;
 
 
     }
+
     function loaded()
     {
 
-
     }
+
     function makeRequest()
     {
         var myRequest = new XMLHttpRequest();
@@ -68,12 +80,13 @@
         var requestBody = document.getElementById('request_body').value;
         myRequest.open(verb, url, true);
         myRequest.setRequestHeader('Content-Type', 'text/json');
-
-
+        if (document.getElementById('add_csrf_token').checked) {
+            myRequest.setRequestHeader('X-XSRF-TOKEN', <?php echo json_encode(Crypt::encrypt(csrf_token())); ?>);
+        }
         myRequest.send(requestBody);
         return false;
-
     }
+
     function display()
     {
         document.getElementById('output').contentDocument.body.innerHTML = document.getElementById('response').value
