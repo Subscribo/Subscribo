@@ -33,7 +33,7 @@ class Config {
     /**
      * @var string
      */
-    protected $projectBasePath;
+    protected $baseDirectory;
 
     /**
      * @var string
@@ -56,25 +56,39 @@ class Config {
     protected $loaderResolver;
 
     /**
-     * @param \Subscribo\Environment\EnvironmentInterface $environment
-     * @param string $projectBasePath
-     * @param string|null $mainConfigDirectory
+     * @param \Subscribo\Environment\EnvironmentInterface|null $environment
+     * @param string $baseDirectory Project Base Path or directory, where to start looking for files
+     * @param string|null|bool $mainConfigDirectory
      * @param string|null $packageConfigDirectory
      * @param string $environmentSubdirectoryName
+     * @throws \InvalidArgumentException if directories in correct format are not provided
      */
-    public function __construct(EnvironmentInterface $environment, $projectBasePath, $mainConfigDirectory = null, $packageConfigDirectory = null, $environmentSubdirectoryName = 'env')
+    public function __construct(EnvironmentInterface $environment = null, $baseDirectory, $mainConfigDirectory = null, $packageConfigDirectory = null, $environmentSubdirectoryName = 'env')
     {
-        $projectBasePath = rtrim($projectBasePath, '/').'/';
+        if ( ! is_string($baseDirectory)) {
+            throw new \InvalidArgumentException('$baseDirectory should be a string');
+        }
+        $baseDirectory = rtrim($baseDirectory, '/').'/';
         if (is_null($mainConfigDirectory)) {
-            $mainConfigDirectory = $projectBasePath.'subscribo/config/';
+            $mainConfigDirectory = $baseDirectory.'subscribo/config/';
+        } elseif (true === $mainConfigDirectory) {
+            $mainConfigDirectory = $baseDirectory.'config/';
+        } elseif (false === $mainConfigDirectory) {
+            $mainConfigDirectory = $baseDirectory;
+        }
+        if ( ! is_string($mainConfigDirectory)) {
+            throw new \InvalidArgumentException('$mainConfigDirectory should be string, bool or null');
         }
         $mainConfigDirectory = rtrim($mainConfigDirectory, '/').'/';
         if (is_null($packageConfigDirectory)) {
             $packageConfigDirectory = $mainConfigDirectory.'packages/';
         }
+        if ( ! is_string($packageConfigDirectory)) {
+            throw new \InvalidArgumentException('$packageConfigDirectory should be either null or string');
+        }
         $packageConfigDirectory = rtrim($packageConfigDirectory, '/').'/';
         $this->environmentInstance = $environment;
-        $this->projectBasePath = $projectBasePath;
+        $this->baseDirectory = $baseDirectory;
         $this->mainConfigDirectory = $mainConfigDirectory;
         $this->packageConfigDirectory = $packageConfigDirectory;
         $this->environmentSubdirectoryName = $environmentSubdirectoryName;
@@ -295,7 +309,7 @@ class Config {
                 $toProcess[] = $processedFile;
             }
         }
-        if ($environment) {
+        if ($environment and $this->environmentInstance) {
             foreach ($filePaths as $pathToFile) {
                 $environmentFilePath = $this->assembleEnvironmentFilePath($pathToFile, $environment);
                 $processedEnvironmentFile = $this->processFile($environmentFilePath, $group, $baseDir);
@@ -339,7 +353,7 @@ class Config {
     private function processFile($filePath, $group = null, $baseDir = null)
     {
         if (is_null($baseDir)) {
-            $baseDir = $this->projectBasePath;
+            $baseDir = $this->baseDirectory;
         }
         if ( ! is_string($baseDir)) {
             $baseDir = '';
