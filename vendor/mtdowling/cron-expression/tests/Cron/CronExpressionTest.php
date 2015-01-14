@@ -216,6 +216,33 @@ class CronExpressionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Cron\CronExpression::isDue
+     */
+    public function testIsDueHandlesDifferentTimezones()
+    {
+        $cron = CronExpression::factory('0 15 * * 3'); //Wednesday at 15:00
+        $date = '2014-01-01 15:00'; //Wednesday
+        $utc = new \DateTimeZone('UTC');
+        $amsterdam =  new \DateTimeZone('Europe/Amsterdam');
+        $tokyo = new \DateTimeZone('Asia/Tokyo');
+
+        date_default_timezone_set('UTC');
+        $this->assertTrue($cron->isDue(new DateTime($date, $utc)));
+        $this->assertFalse($cron->isDue(new DateTime($date, $amsterdam)));
+        $this->assertFalse($cron->isDue(new DateTime($date, $tokyo)));
+
+        date_default_timezone_set('Europe/Amsterdam');
+        $this->assertFalse($cron->isDue(new DateTime($date, $utc)));
+        $this->assertTrue($cron->isDue(new DateTime($date, $amsterdam)));
+        $this->assertFalse($cron->isDue(new DateTime($date, $tokyo)));
+
+        date_default_timezone_set('Asia/Tokyo');
+        $this->assertFalse($cron->isDue(new DateTime($date, $utc)));
+        $this->assertFalse($cron->isDue(new DateTime($date, $amsterdam)));
+        $this->assertTrue($cron->isDue(new DateTime($date, $tokyo)));
+    }
+
+    /**
      * @covers Cron\CronExpression::getPreviousRunDate
      */
     public function testCanGetPreviousRunDates()
@@ -282,7 +309,8 @@ class CronExpressionTest extends \PHPUnit_Framework_TestCase
         $cron = CronExpression::factory('* * * * *');
         $current = new DateTime('now');
         $next = $cron->getNextRunDate($current);
-        $this->assertEquals($current, $cron->getPreviousRunDate($next));
+        $nextPrev = $cron->getPreviousRunDate($next);
+        $this->assertEquals($current->format('Y-m-d H:i:00'), $nextPrev->format('Y-m-d H:i:s'));
     }
 
     /**
@@ -312,5 +340,37 @@ class CronExpressionTest extends \PHPUnit_Framework_TestCase
             '2013-03-10 00:00:00',
             $cron->getPreviousRunDate('2013-03-17 00:00:00')->format('Y-m-d H:i:s')
         );
+    }
+
+    /**
+     * @see https://github.com/mtdowling/cron-expression/issues/20
+     */
+    public function testIssue20() {
+        $e = CronExpression::factory('* * * * MON#1');
+        $this->assertTrue($e->isDue(new DateTime('2014-04-07 00:00:00')));
+        $this->assertFalse($e->isDue(new DateTime('2014-04-14 00:00:00')));
+        $this->assertFalse($e->isDue(new DateTime('2014-04-21 00:00:00')));
+
+        $e = CronExpression::factory('* * * * SAT#2');
+        $this->assertFalse($e->isDue(new DateTime('2014-04-05 00:00:00')));
+        $this->assertTrue($e->isDue(new DateTime('2014-04-12 00:00:00')));
+        $this->assertFalse($e->isDue(new DateTime('2014-04-19 00:00:00')));
+
+        $e = CronExpression::factory('* * * * SUN#3');
+        $this->assertFalse($e->isDue(new DateTime('2014-04-13 00:00:00')));
+        $this->assertTrue($e->isDue(new DateTime('2014-04-20 00:00:00')));
+        $this->assertFalse($e->isDue(new DateTime('2014-04-27 00:00:00')));
+    }
+
+    /**
+     * @covers Cron\CronExpression::getRunDate
+     */
+    public function testKeepOriginalTime()
+    {
+        $now = new \DateTime;
+        $strNow = $now->format(\DateTime::ISO8601);
+        $cron = CronExpression::factory('0 0 * * *');
+        $cron->getPreviousRunDate($now);
+        $this->assertEquals($strNow, $now->format(\DateTime::ISO8601));
     }
 }
