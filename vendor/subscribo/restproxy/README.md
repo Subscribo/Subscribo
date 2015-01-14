@@ -4,17 +4,17 @@ Package Subscribo RestProxy is providing proxy functionality to access Subscribo
 
 ## 1. Installation
 
-1.1 Add the following to your project's composer.json:
+1.1 Add repository containing this package to your project's composer.json
 
-1.1.1 Repository containing this package (note: you need to have access to this repository as well as to resources it points to)
+(note: you need to have access to this repository as well as to resources it points to)
 
-1.1.2 Dependency under "require" key
+1.2 Add to your project's composer.json dependency on this package under "require" key
 
 ```json
     "subscribo/RestProxy": "@dev"
 ```
 
-1.2. If you are using Laravel (5.0), you might want to add
+1.3 If you are using Laravel (5.0), you might want to add
 
 ```php
     '\\Subscribo\\RestProxy\\Integration\\Laravel\\RestProxyServiceProvider',
@@ -32,9 +32,9 @@ or
 
 in bootstrap/app.php for conditional registration
 
-If used with package adding this dependency and registering this service provider for you, this step (1.2) is not necessary.
+Note: If used with package adding this dependency and/or registering this service provider for you, respective steps might not be necessary.
 
-1.3 You might need to configure this package in subscribo/config/packages/restproxy
+1.4 You might need to configure this package in subscribo/config/packages/restproxy
 
 as well as its dependency subscribo/config/packages/restclient
 

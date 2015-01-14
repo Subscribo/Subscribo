@@ -16,6 +16,7 @@ class RestProxyServiceProvider extends ServiceProvider {
     public function register()
     {
         $this->app->register('Subscribo\\RestClient\\Integration\\Laravel\\RestClientServiceProvider');
+        $this->app->register('Subscribo\\Exception\\Integration\\Laravel\\ApiExceptionHandlerServiceProvider');
 
         $this->app->singleton('subscribo.restproxy', 'Subscribo\\RestProxy\\RestProxy');
 
@@ -39,9 +40,12 @@ class RestProxyServiceProvider extends ServiceProvider {
         /** @var \Illuminate\Routing\Router $router */
         $router = $this->app->make('router');
         $router->any($uriBase.'/{uri?}',
-            function($uri = null) use ($instance) {
-                return $instance->call($uri);
-            }
+            [
+                'middleware' => 'Illuminate\Foundation\Http\Middleware\VerifyCsrfToken',
+                function($uri = null) use ($instance) {
+                    return $instance->call($uri);
+                },
+            ]
         )->where('uri', '.*');
     }
 }

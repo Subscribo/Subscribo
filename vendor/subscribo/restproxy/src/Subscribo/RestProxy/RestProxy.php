@@ -1,7 +1,9 @@
 <?php namespace Subscribo\RestProxy;
 
+use Exception;
 use Illuminate\Http\Request;
 use Subscribo\RestClient\RestClient;
+use Subscribo\Exception\Interfaces\ExceptionHandlerInterface;
 
 /**
  * Class RestProxy
@@ -25,11 +27,17 @@ class RestProxy {
      */
     protected $request;
 
+    /**
+     * @var ExceptionHandlerInterface
+     */
+    protected $exceptionHandler;
 
-    public function __construct(Request $request, RestClient $client, array $settings = null)
+
+    public function __construct(Request $request, RestClient $client, ExceptionHandlerInterface $exceptionHandler, array $settings = null)
     {
         $this->restClient = $client;
         $this->request = $request;
+        $this->exceptionHandler = $exceptionHandler;
         if ($settings)
         {
             $this->setup($settings);
@@ -68,12 +76,16 @@ class RestProxy {
      */
     public function call($uri)
     {
-        $result = $this->restClient->process($uri,
-            $this->request->method(),
-            $this->request->query(),
-            $this->request->header(),
-            $this->request->getContent()
-        );
+        try {
+            $result = $this->restClient->process($uri,
+                $this->request->method(),
+                $this->request->query(),
+                $this->request->header(),
+                $this->request->getContent()
+            );
+        } catch (Exception $e) {
+            $result = $this->exceptionHandler->handle($e, $this->request);
+        }
         return $result;
     }
 }
