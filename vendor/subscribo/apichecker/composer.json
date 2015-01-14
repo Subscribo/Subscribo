@@ -24,7 +24,9 @@
         "php": "~5.4",
         "subscribo/modelbase": "@dev",
         "subscribo/serviceprovider": "@dev",
-        "subscribo/config": "@dev"
+        "subscribo/config": "@dev",
+        "subscribo/environment": "@dev",
+        "subscribo/restcommon": "@dev"
     },
     "suggest": {
         "laravel/framework": "This package have been build to work with The Laravel Framework version 5.0",

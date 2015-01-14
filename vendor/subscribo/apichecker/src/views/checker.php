@@ -72,7 +72,7 @@
         myRequest.open(verb, url, true);
         myRequest.setRequestHeader('Content-Type', 'text/json');
         if (accessToken) {
-            myRequest.setRequestHeader('Subscribo-Access-Token', accessToken);
+            myRequest.setRequestHeader(<?php echo json_encode(\Subscribo\RestCommon\RestCommon::ACCESS_TOKEN_HEADER_FIELD_NAME); ?>, accessToken);
         }
 
 
