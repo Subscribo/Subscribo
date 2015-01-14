@@ -50,30 +50,34 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
             }
             $defaultContentData = [
                 'message' => $message,
-                'statusCode' => $statusCode,
-                'exceptionCode' => $exceptionCode,
+                'metaData' => [
+                    'statusCode' => $statusCode,
+                    'exceptionCode' => $exceptionCode,
+                ],
             ];
             if ($suggestion) {
-                $defaultContentData['suggestion'] = $suggestion;
+                $defaultContentData['metaData']['suggestion'] = $suggestion;
             }
         } else {
             $statusCode = 500;
             $headers = array();
             $defaultContentData = [
                 'message' => 'Internal Server Error',
-                'statusCode' => $statusCode,
-                'suggestion' => 'Please contact an administrator or try again later'
+                'metaData' => [
+                    'statusCode' => $statusCode,
+                    'suggestion' => 'Please contact an administrator or try again later'
+                ],
             ];
             if ($mark) {
-                $defaultContentData['suggestion'] = "Please contact an administrator and provide following exception hash '".$mark."' together with current date and time as well as accessed url or try again later";
+                $defaultContentData['metaData']['suggestion'] = "Please contact an administrator and provide following exception hash '".$mark."' together with current date and time as well as accessed url or try again later";
             }
         }
         if ($mark) {
-            $defaultContentData['exceptionHash'] = $mark;
-            $defaultContentData['exceptionDateTime'] = date('Y-m-d H:i:s');
+            $defaultContentData['metaData']['exceptionHash'] = $mark;
+            $defaultContentData['metaData']['exceptionDateTime'] = date('Y-m-d H:i:s');
         }
         if ($request instanceof Request) {
-            $defaultContentData['accessedUrl'] = $request->getUri();
+            $defaultContentData['metaData']['accessedUrl'] = $request->getUri();
         }
         if ($e instanceof ContainDataInterface) {
             $content = $e->getOutputData($defaultContentData);

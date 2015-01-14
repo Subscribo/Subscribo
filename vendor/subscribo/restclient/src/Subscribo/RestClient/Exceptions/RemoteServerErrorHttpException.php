@@ -1,12 +1,13 @@
 <?php namespace Subscribo\RestClient\Exceptions;
 
 use Exception;
+use Subscribo\Exception\Exceptions\ServerErrorHttpException;
 
-class TokenConfigurationException extends ConfigurationException {
+class RemoteServerErrorHttpException extends ServerErrorHttpException {
 
-    const DEFAULT_STATUS_CODE = 571;
-    const DEFAULT_EXCEPTION_CODE = 70;
-    const DEFAULT_MESSAGE = 'Invalid Configuration: Access token not accepted by remote server';
+    const DEFAULT_STATUS_CODE = 502;
+    const DEFAULT_EXCEPTION_CODE = 80;
+    const DEFAULT_MESSAGE = 'Remote Server Error';
 
     public function __construct($responseStatusCode, $responseContent, $statusCode = true, $message = true, array $data = array(), $code = true, Exception $previous = null, array $headers = array())
     {

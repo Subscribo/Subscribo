@@ -1,5 +1,6 @@
 <?php namespace Subscribo\RestClient;
 
+use Subscribo\RestClient\Exceptions\ClientErrorHttpException;
 use Subscribo\RestCommon\RestCommon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\ResponseInterface;
@@ -7,8 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Subscribo\Support\Arr;
 use Subscribo\RestCommon\Exceptions\NoAccessTokenHttpException;
 use Subscribo\RestCommon\Exceptions\InvalidAccessTokenHttpException;
-use Subscribo\RestClient\Exceptions\TokenConfigurationException;
-use Subscribo\RestClient\Exceptions\RemoteServerErrorException;
+use Subscribo\RestClient\Exceptions\TokenConfigurationHttpException;
+use Subscribo\RestClient\Exceptions\RemoteServerErrorHttpException;
 
 /**
  * Class RestClient
@@ -109,6 +110,9 @@ class RestClient {
      * @param array $headers
      * @param null $body
      * @return Response
+     * @throws Exceptions\TokenConfigurationHttpException
+     * @throws Exceptions\ClientErrorHttpException
+     * @throws Exceptions\RemoteServerErrorHttpException
      */
     public function process($uri, $method = 'GET', $query = array(), $headers = array(), $body = null)
     {
@@ -122,25 +126,77 @@ class RestClient {
             $result->setStatusCode($responseStatusCode, $responseStatusMessage);
         }
         $this->checkForTokenErrors($result);
-        $this->checkForRemoteServerErrors($result);
+        $this->filterErrorResponses($responseContent, $responseStatusCode, $responseHeaders, $responseStatusMessage);
         return $result;
     }
 
+    /**
+     * @param Response $response
+     * @throws Exceptions\TokenConfigurationHttpException
+     */
     public function checkForTokenErrors(Response $response)
     {
         $statusCode = $response->getStatusCode();
         if ((NoAccessTokenHttpException::SERVER_STATUS_CODE === $statusCode)
             or (InvalidAccessTokenHttpException::SERVER_STATUS_CODE === $statusCode)) {
-            throw new TokenConfigurationException($statusCode, $response->getContent());
+            throw new TokenConfigurationHttpException($statusCode, $response->getContent());
         }
     }
 
+    /**
+     * @param Response $response
+     * @throws Exceptions\RemoteServerErrorHttpException
+     */
     public function checkForRemoteServerErrors(Response $response)
     {
         $statusCode = $response->getStatusCode();
         if ($statusCode >= 500) {
-            throw new RemoteServerErrorException($statusCode, $response->getContent());
+            throw new RemoteServerErrorHttpException($statusCode, $response->getContent());
         }
+    }
+
+    /**
+     * Throwing Exceptions for 4xx and 5xx responses
+     *
+     * @param $content
+     * @param $statusCode
+     * @param $headers
+     * @param $statusMessage
+     * @throws Exceptions\ClientErrorHttpException
+     * @throws Exceptions\RemoteServerErrorHttpException
+     */
+    public function filterErrorResponses($content, $statusCode, $headers, $statusMessage)
+    {
+        $statusCode = intval($statusCode);
+        if (($statusCode < 400)) {
+            return;
+        }
+        if (($statusCode >= 500)) {
+            throw new RemoteServerErrorHttpException($statusCode, $content);
+        }
+        $data = json_decode($content, true);
+
+        $message = (isset($data['message']) and is_string($data['message'])) ? $data['message'] : null;
+
+        $exceptionCode = (isset($data['metaData']['exceptionCode']) and is_numeric($data['metaData']['exceptionCode']))
+            ? intval($data['metaData']['exceptionCode']) : 0;
+
+        if ( ! empty(RestCommon::$responseContentItemsToRemove[$statusCode])) {
+            foreach (RestCommon::$responseContentItemsToRemove[$statusCode] as $keyToRemove) {
+                unset($data[$keyToRemove]);
+            }
+        }
+        if ( ! empty(RestCommon::$responseContentItemsToRemove['anyStatus'])) {
+            foreach (RestCommon::$responseContentItemsToRemove['anyStatus'] as $keyToRemove) {
+                unset($data[$keyToRemove]);
+            }
+        }
+        $exceptionData = ['output' => $data];
+        $e = new ClientErrorHttpException($statusCode, $message, $exceptionData, $exceptionCode, null, $headers);
+        if ($statusMessage) {
+            $e->setStatusMessage($statusMessage);
+        }
+        throw $e;
     }
 
     /**

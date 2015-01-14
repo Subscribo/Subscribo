@@ -2,4 +2,4 @@
 
 use Subscribo\Exception\Exceptions\ServerErrorHttpException;
 
-class ConfigurationException extends ServerErrorHttpException {}
+class ConfigurationHttpException extends ServerErrorHttpException {}
