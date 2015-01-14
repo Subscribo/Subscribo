@@ -14,5 +14,5 @@ Auxiliary package containing files common for Subscribo REST client and server (
     "subscribo/restcommon": "@dev"
 ```
 
-Note: If used with package adding this dependency for you (as is usually the case), no installation is necessary
+Note: If used with package adding this dependency for you (as is usually the case), no installation is necessary.
 

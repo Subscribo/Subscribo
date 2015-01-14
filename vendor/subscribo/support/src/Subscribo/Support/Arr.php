@@ -2,7 +2,7 @@
 
 /**
  * Class Arr
- * Simply extending Laravel Framework class
+ * Extending Laravel Framework class and providing some additional functionality
  *
  * @package Subscribo\Support
  */

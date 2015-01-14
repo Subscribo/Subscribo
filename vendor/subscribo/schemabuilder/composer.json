@@ -25,7 +25,7 @@
         "subscribo/serviceprovider": "@dev"
     },
     "suggest": {
-        "laravel/framework": "This package have been build to work with The Laravel Framework version 4.2",
+        "laravel/framework": "This package have been build to work with The Laravel Framework version 4.2. Version 5.0 can also be used.",
         "frozennode/administrator": "This package generates config files for Frozennode Administrator"
 
     },

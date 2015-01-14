@@ -20,6 +20,6 @@ class ModifierServiceProvider extends ServiceProvider {
             return new Modifier;
         });
         $aliasLoader = AliasLoader::getInstance();
-        $aliasLoader->alias('Subscribo\Modifier', 'Subscribo\\Modifier\\Integration\\Laravel\\Facades\\Modifier');
+        $aliasLoader->alias('Subscribo\\Modifier', 'Subscribo\\Modifier\\Integration\\Laravel\\Facades\\Modifier');
     }
 }
