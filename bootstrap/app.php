@@ -42,7 +42,7 @@ $app->singleton(
 
 $app->singleton(
 	'Illuminate\Contracts\Debug\ExceptionHandler',
-	'App\Exceptions\Handler'
+    'Subscribo\\Exception\\Interfaces\\ExceptionHandlerInterface'
 );
 
 if (class_exists('\\Subscribo\\SchemaBuilder\\SchemaBuilderServiceProvider')) {
@@ -55,6 +55,14 @@ if (class_exists('\\Subscribo\\Api0\\Api0ServiceProvider')) {
 
 if (class_exists('\\Subscribo\\ApiChecker\\ApiCheckerServiceProvider')) {
     $app->register('\\Subscribo\\ApiChecker\\ApiCheckerServiceProvider');
+}
+
+if (class_exists('\\Subscribo\\RestProxy\\Integration\\Laravel\\RestProxyServiceProvider')) {
+    $app->register('\\Subscribo\\RestProxy\\Integration\\Laravel\\RestProxyServiceProvider');
+}
+
+if (class_exists('\\Subscribo\\ClientChecker\\ClientCheckerServiceProvider')) {
+    $app->register('\\Subscribo\\ClientChecker\\ClientCheckerServiceProvider');
 }
 
 if (class_exists('\\Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider')) {

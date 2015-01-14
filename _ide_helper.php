@@ -1,7 +1,7 @@
 <?php
 /**
  * An helper file for Laravel 4, to provide autocomplete information to your IDE
- * Generated for Laravel 5.0-dev on 2015-01-07.
+ * Generated for Laravel 5.0-dev on 2015-01-14.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -152,7 +152,7 @@ namespace Subscribo{
          *        True - Main Package Config directory
          *        Null - Application root directory
          *        String - string to be prepended
-         * @param null $configuration
+         * @param \Symfony\Component\Config\Definition\ConfigurationInterface|null $configuration
          * @return int How many files have been loaded
          * @static 
          */
@@ -293,6 +293,235 @@ namespace Subscribo{
     }
 
 
+    class RestClient extends \Subscribo\RestClient\Integration\Laravel\Facades\RestClient{
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function setup($settings){
+            return \Subscribo\RestClient\RestClient::setup($settings);
+        }
+        
+        /**
+         * 
+         *
+         * @param string $uri
+         * @param string $method
+         * @param array $query
+         * @param array $headers
+         * @param null $body
+         * @return \GuzzleHttp\Message\FutureResponse|\GuzzleHttp\Message\ResponseInterface|\GuzzleHttp\Ring\Future\FutureInterface|mixed|null 
+         * @static 
+         */
+        public static function call($uri, $method = 'GET', $query = array(), $headers = array(), $body = null){
+            return \Subscribo\RestClient\RestClient::call($uri, $method, $query, $headers, $body);
+        }
+        
+        /**
+         * Process the call and format the result as Symfony Response
+         *
+         * @param string $uri
+         * @param string $method
+         * @param array $query
+         * @param array $headers
+         * @param null $body
+         * @return \Subscribo\RestClient\Response 
+         * @static 
+         */
+        public static function process($uri, $method = 'GET', $query = array(), $headers = array(), $body = null){
+            return \Subscribo\RestClient\RestClient::process($uri, $method, $query, $headers, $body);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function checkForTokenErrors($response){
+            return \Subscribo\RestClient\RestClient::checkForTokenErrors($response);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function checkForRemoteServerErrors($response){
+            return \Subscribo\RestClient\RestClient::checkForRemoteServerErrors($response);
+        }
+        
+        /**
+         * 
+         *
+         * @param array $headers
+         * @return array 
+         * @static 
+         */
+        public static function filterRequestHeaders($headers){
+            return \Subscribo\RestClient\RestClient::filterRequestHeaders($headers);
+        }
+        
+        /**
+         * 
+         *
+         * @param array $headers
+         * @return array 
+         * @static 
+         */
+        public static function filterResponseHeaders($headers){
+            return \Subscribo\RestClient\RestClient::filterResponseHeaders($headers);
+        }
+        
+        /**
+         * 
+         *
+         * @param \Subscribo\RestClient\ResponseInterface $response
+         * @return string 
+         * @static 
+         */
+        public static function extractResponseContent($response){
+            return \Subscribo\RestClient\RestClient::extractResponseContent($response);
+        }
+        
+        /**
+         * 
+         *
+         * @param \Subscribo\RestClient\ResponseInterface $response
+         * @return int 
+         * @static 
+         */
+        public static function extractResponseStatusCode($response){
+            return \Subscribo\RestClient\RestClient::extractResponseStatusCode($response);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function extractResponseStatusMessage($response){
+            return \Subscribo\RestClient\RestClient::extractResponseStatusMessage($response);
+        }
+        
+        /**
+         * 
+         *
+         * @param \Subscribo\RestClient\ResponseInterface $response
+         * @return array 
+         * @static 
+         */
+        public static function extractResponseHeaders($response){
+            return \Subscribo\RestClient\RestClient::extractResponseHeaders($response);
+        }
+        
+    }
+
+
+    class ApiExceptionHandler extends \Subscribo\Exception\Integration\Laravel\Facades\ApiExceptionHandler{
+        
+        /**
+         * 
+         *
+         * @param \Subscribo\Exception\Handlers\Request|null $request
+         * @param \Subscribo\Exception\Handlers\Exception $e
+         * @return \Subscribo\Exception\Handlers\LaravelResponse|\Subscribo\Exception\Handlers\Response 
+         * @static 
+         */
+        public static function render($request, $e){
+            return \Subscribo\Exception\Handlers\ApiExceptionHandler::render($request, $e);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function report($e){
+            return \Subscribo\Exception\Handlers\ApiExceptionHandler::report($e);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function remember($e, $request = null, $rememberMultiple = false){
+            return \Subscribo\Exception\Handlers\ApiExceptionHandler::remember($e, $request, $rememberMultiple);
+        }
+        
+        /**
+         * 
+         *
+         * @param \Subscribo\Exception\Handlers\Exception $e
+         * @param \Subscribo\Exception\Handlers\Request|null|bool $request
+         * @return \Subscribo\Exception\Handlers\LaravelResponse|mixed|\Subscribo\Exception\Handlers\Response 
+         * @static 
+         */
+        public static function handle($e, $request = null){
+            return \Subscribo\Exception\Handlers\ApiExceptionHandler::handle($e, $request);
+        }
+        
+        /**
+         * Render an exception to the console.
+         *
+         * @param \Symfony\Component\Console\Output\OutputInterface $output
+         * @param \Exception $e
+         * @return void 
+         * @static 
+         */
+        public static function renderForConsole($output, $e){
+            //Method inherited from \Illuminate\Foundation\Exceptions\Handler            
+            \Subscribo\Exception\Handlers\ApiExceptionHandler::renderForConsole($output, $e);
+        }
+        
+    }
+
+
+    class RestProxy extends \Subscribo\RestProxy\Integration\Laravel\Facades\RestProxy{
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function setup($settings){
+            return \Subscribo\RestProxy\RestProxy::setup($settings);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function setupRestClient($settings){
+            return \Subscribo\RestProxy\RestProxy::setupRestClient($settings);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function uriBase(){
+            return \Subscribo\RestProxy\RestProxy::uriBase();
+        }
+        
+        /**
+         * 
+         *
+         * @param $uri
+         * @return \Symfony\Component\HttpFoundation\Response 
+         * @static 
+         */
+        public static function call($uri){
+            return \Subscribo\RestProxy\RestProxy::call($uri);
+        }
+        
+    }
+
+
 }
 
 namespace {
@@ -410,6 +639,27 @@ namespace {
          */
         public static function storagePath(){
             return \Illuminate\Foundation\Application::storagePath();
+        }
+        
+        /**
+         * Set the environment file to be loaded during bootstrapping.
+         *
+         * @param string $file
+         * @return $this 
+         * @static 
+         */
+        public static function loadEnvironmentFrom($file){
+            return \Illuminate\Foundation\Application::loadEnvironmentFrom($file);
+        }
+        
+        /**
+         * Get the environment file the application is using.
+         *
+         * @return string 
+         * @static 
+         */
+        public static function environmentFile(){
+            return \Illuminate\Foundation\Application::environmentFile();
         }
         
         /**
@@ -609,6 +859,15 @@ namespace {
          */
         public static function booted($callback){
             \Illuminate\Foundation\Application::booted($callback);
+        }
+        
+        /**
+         * {@inheritdoc}
+         *
+         * @static 
+         */
+        public static function handle($request, $type = 1, $catch = true){
+            return \Illuminate\Foundation\Application::handle($request, $type, $catch);
         }
         
         /**
@@ -1015,57 +1274,22 @@ namespace {
          * @return void 
          * @static 
          */
-        public static function resolving($abstract, $callback){
+        public static function resolving($abstract, $callback = null){
             //Method inherited from \Illuminate\Container\Container            
             \Illuminate\Foundation\Application::resolving($abstract, $callback);
         }
         
         /**
-         * Register a new resolving callback for all types.
-         *
-         * @param \Closure $callback
-         * @return void 
-         * @static 
-         */
-        public static function resolvingAny($callback){
-            //Method inherited from \Illuminate\Container\Container            
-            \Illuminate\Foundation\Application::resolvingAny($callback);
-        }
-        
-        /**
          * Register a new after resolving callback for all types.
          *
+         * @param string $abstract
          * @param \Closure $callback
          * @return void 
          * @static 
          */
-        public static function afterResolvingAny($callback){
+        public static function afterResolving($abstract, $callback = null){
             //Method inherited from \Illuminate\Container\Container            
-            \Illuminate\Foundation\Application::afterResolvingAny($callback);
-        }
-        
-        /**
-         * 
-         *
-         * @param $type
-         * @param callable $callback
-         * @static 
-         */
-        public static function resolvingType($type, $callback){
-            //Method inherited from \Illuminate\Container\Container            
-            return \Illuminate\Foundation\Application::resolvingType($type, $callback);
-        }
-        
-        /**
-         * 
-         *
-         * @param $type
-         * @param callable $callback
-         * @static 
-         */
-        public static function afterResolvingType($type, $callback){
-            //Method inherited from \Illuminate\Container\Container            
-            return \Illuminate\Foundation\Application::afterResolvingType($type, $callback);
+            \Illuminate\Foundation\Application::afterResolving($abstract, $callback);
         }
         
         /**
