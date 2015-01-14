@@ -1,6 +1,6 @@
 {
     "name": "subscribo/restclient",
-    "description": "Package Subscribo Rest Client is for communicating with Subscribo API",
+    "description": "Package Subscribo REST Client for communicating with Subscribo API",
     "keywords": [
         "laravel",
         "subscribo",
@@ -22,8 +22,12 @@
     ],
     "require": {
         "php": "~5.4",
+        "subscribo/restcommon": "@dev",
+        "subscribo/exception": "@dev",
         "subscribo/config": "@dev",
+        "subscribo/environment": "@dev",
         "subscribo/support": "@dev",
+        "symfony/http-foundation": "~2.6",
         "guzzlehttp/guzzle": "~5.0"
     },
     "suggest": {

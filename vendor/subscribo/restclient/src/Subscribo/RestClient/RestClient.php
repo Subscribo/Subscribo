@@ -1,9 +1,14 @@
 <?php namespace Subscribo\RestClient;
 
+use Subscribo\RestCommon\RestCommon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Subscribo\Support\Arr;
+use Subscribo\RestCommon\Exceptions\NoAccessTokenHttpException;
+use Subscribo\RestCommon\Exceptions\InvalidAccessTokenHttpException;
+use Subscribo\RestClient\Exceptions\TokenConfigurationException;
+use Subscribo\RestClient\Exceptions\RemoteServerErrorException;
 
 /**
  * Class RestClient
@@ -76,8 +81,11 @@ class RestClient {
     {
         $client = $this->client();
         $processedHeaders = $this->filterRequestHeaders($headers);
-        $processedHeaders['Subscribo-Access-Token'] = $this->accessToken;
-        $options = array('headers' => $processedHeaders, 'exceptions' => false);
+        $processedHeaders[RestCommon::ACCESS_TOKEN_HEADER_FIELD_NAME] = $this->accessToken;
+        $options = [
+            'headers' => $processedHeaders,
+            'exceptions' => false,
+        ];
         if ($body) {
             $options['body'] = $body;
         }
@@ -105,14 +113,35 @@ class RestClient {
     public function process($uri, $method = 'GET', $query = array(), $headers = array(), $body = null)
     {
         $callResponse = $this->call($uri, $method, $query, $headers, $body);
-        $result = new Response(
-            $this->extractResponseContent($callResponse),
-            $this->extractResponseStatusCode($callResponse),
-            $this->extractResponseHeaders($callResponse)
-        );
+        $responseContent = $this->extractResponseContent($callResponse);
+        $responseStatusCode = $this->extractResponseStatusCode($callResponse);
+        $responseStatusMessage = $this->extractResponseStatusMessage($callResponse);
+        $responseHeaders = $this->extractResponseHeaders($callResponse);
+        $result = new Response($responseContent, $responseStatusCode, $responseHeaders);
+        if ($responseStatusMessage) {
+            $result->setStatusCode($responseStatusCode, $responseStatusMessage);
+        }
+        $this->checkForTokenErrors($result);
+        $this->checkForRemoteServerErrors($result);
         return $result;
     }
 
+    public function checkForTokenErrors(Response $response)
+    {
+        $statusCode = $response->getStatusCode();
+        if ((NoAccessTokenHttpException::SERVER_STATUS_CODE === $statusCode)
+            or (InvalidAccessTokenHttpException::SERVER_STATUS_CODE === $statusCode)) {
+            throw new TokenConfigurationException($statusCode, $response->getContent());
+        }
+    }
+
+    public function checkForRemoteServerErrors(Response $response)
+    {
+        $statusCode = $response->getStatusCode();
+        if ($statusCode >= 500) {
+            throw new RemoteServerErrorException($statusCode, $response->getContent());
+        }
+    }
 
     /**
      * @param array $headers
@@ -161,6 +190,11 @@ class RestClient {
     public function extractResponseStatusCode(ResponseInterface $response)
     {
         return $response->getStatusCode();
+    }
+
+    public function extractResponseStatusMessage(ResponseInterface $response)
+    {
+        return $response->getReasonPhrase();
     }
 
     /**
