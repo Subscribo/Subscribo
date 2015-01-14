@@ -1,63 +1,5 @@
 [
     {
-        "name": "danielstjules/stringy",
-        "version": "1.8.0",
-        "version_normalized": "1.8.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/danielstjules/Stringy.git",
-            "reference": "d661047fb347cc384591fe3dbe5f62886f203416"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/danielstjules/Stringy/zipball/d661047fb347cc384591fe3dbe5f62886f203416",
-            "reference": "d661047fb347cc384591fe3dbe5f62886f203416",
-            "shasum": ""
-        },
-        "require": {
-            "ext-mbstring": "*",
-            "php": ">=5.3.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "~4.0"
-        },
-        "time": "2015-01-04 06:54:13",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Stringy\\": "src/"
-            },
-            "files": [
-                "src/Create.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Daniel St. Jules",
-                "email": "danielst.jules@gmail.com",
-                "homepage": "http://www.danielstjules.com"
-            }
-        ],
-        "description": "A string manipulation library with multibyte support",
-        "homepage": "https://github.com/danielstjules/Stringy",
-        "keywords": [
-            "UTF",
-            "helpers",
-            "manipulation",
-            "methods",
-            "multibyte",
-            "string",
-            "utf-8",
-            "utility",
-            "utils"
-        ]
-    },
-    {
         "name": "doctrine/inflector",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
@@ -124,61 +66,6 @@
             "pluralize",
             "singularize",
             "string"
-        ]
-    },
-    {
-        "name": "symfony/var-dumper",
-        "version": "2.6.x-dev",
-        "version_normalized": "2.6.9999999.9999999-dev",
-        "target-dir": "Symfony/Component/VarDumper",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/var-dumper.git",
-            "reference": "36af986811340fd4c1bc39cf848da388bbdd8473"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/var-dumper/zipball/36af986811340fd4c1bc39cf848da388bbdd8473",
-            "reference": "36af986811340fd4c1bc39cf848da388bbdd8473",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "suggest": {
-            "ext-symfony_debug": ""
-        },
-        "time": "2015-01-01 13:28:01",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "Resources/functions/dump.php"
-            ],
-            "psr-0": {
-                "Symfony\\Component\\VarDumper\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Nicolas Grekas",
-                "email": "p@tchwork.com"
-            }
-        ],
-        "description": "Symfony mechanism for exploring and dumping PHP variables",
-        "homepage": "http://symfony.com",
-        "keywords": [
-            "debug",
-            "dump"
         ]
     },
     {
@@ -307,12 +194,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/flysystem.git",
-            "reference": "84ed39a44f117f7fed74c41e4e60dc47954edc47"
+            "reference": "59f43cc2624145ea2f091ce10ddaf389a4296d86"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/84ed39a44f117f7fed74c41e4e60dc47954edc47",
-            "reference": "84ed39a44f117f7fed74c41e4e60dc47954edc47",
+            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/59f43cc2624145ea2f091ce10ddaf389a4296d86",
+            "reference": "59f43cc2624145ea2f091ce10ddaf389a4296d86",
             "shasum": ""
         },
         "require": {
@@ -334,21 +221,20 @@
             "tedivm/stash": "~0.12.0"
         },
         "suggest": {
-            "aws/aws-sdk-php": "Allows you to use AWS S3 storage",
-            "barracuda/copy": "Allows you to use Copy.com storage",
-            "dropbox/dropbox-sdk": "Allows you to use Dropbox storage",
             "ext-fileinfo": "Required for MimeType",
-            "guzzlehttp/guzzle": "Allows you to use http files (reading only)",
             "league/event": "Required for EventableFilesystem",
+            "league/flysystem-aws-s3-v2": "Use S3 storage with AWS SDK v2",
+            "league/flysystem-aws-s3-v3": "Use S3 storage with AWS SDK v3",
             "league/flysystem-azure": "Allows you to use Windows Azure Blob storage",
+            "league/flysystem-copy": "Allows you to use Copy.com storage",
+            "league/flysystem-dropbox": "Use Dropbox storage",
+            "league/flysystem-rackspace": "Allows you to use Rackspace Cloud Files",
             "league/flysystem-webdav": "Allows you to use WebDAV storage",
             "phpseclib/phpseclib": "Allows SFTP server storage",
             "predis/predis": "Allows you to use Predis for caching",
-            "rackspace/php-opencloud": "Allows you to use Rackspace Cloud Files",
-            "sabre/dav": "Enables WebDav support",
             "tedivm/stash": "Allows you to use Stash as cache implementation"
         },
-        "time": "2015-01-07 15:26:54",
+        "time": "2015-01-11 15:40:33",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -388,49 +274,6 @@
             "s3",
             "sftp",
             "storage"
-        ]
-    },
-    {
-        "name": "mtdowling/cron-expression",
-        "version": "v1.0.3",
-        "version_normalized": "1.0.3.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/mtdowling/cron-expression.git",
-            "reference": "a47ac8d5ec15049013792401af5a4d13e3dbe7f6"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/mtdowling/cron-expression/zipball/a47ac8d5ec15049013792401af5a4d13e3dbe7f6",
-            "reference": "a47ac8d5ec15049013792401af5a4d13e3dbe7f6",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.2"
-        },
-        "time": "2013-11-23 19:48:39",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Cron": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Michael Dowling",
-                "email": "mtdowling@gmail.com",
-                "homepage": "https://github.com/mtdowling"
-            }
-        ],
-        "description": "CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due",
-        "keywords": [
-            "cron",
-            "schedule"
         ]
     },
     {
@@ -534,56 +377,6 @@
         ]
     },
     {
-        "name": "jeremeamia/SuperClosure",
-        "version": "1.0.1",
-        "version_normalized": "1.0.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/jeremeamia/super_closure.git",
-            "reference": "d05400085f7d4ae6f20ba30d36550836c0d061e8"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/jeremeamia/super_closure/zipball/d05400085f7d4ae6f20ba30d36550836c0d061e8",
-            "reference": "d05400085f7d4ae6f20ba30d36550836c0d061e8",
-            "shasum": ""
-        },
-        "require": {
-            "nikic/php-parser": "~0.9",
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "~3.7"
-        },
-        "time": "2013-10-09 04:20:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Jeremeamia\\SuperClosure": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Jeremy Lindblom"
-            }
-        ],
-        "description": "Doing interesting things with closures like serialization.",
-        "homepage": "https://github.com/jeremeamia/super_closure",
-        "keywords": [
-            "closure",
-            "function",
-            "parser",
-            "serializable",
-            "serialize",
-            "tokenizer"
-        ]
-    },
-    {
         "name": "symfony/finder",
         "version": "2.6.x-dev",
         "version_normalized": "2.6.9999999.9999999-dev",
@@ -630,114 +423,6 @@
             }
         ],
         "description": "Symfony Finder Component",
-        "homepage": "http://symfony.com"
-    },
-    {
-        "name": "symfony/filesystem",
-        "version": "2.7.x-dev",
-        "version_normalized": "2.7.9999999.9999999-dev",
-        "target-dir": "Symfony/Component/Filesystem",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/Filesystem.git",
-            "reference": "afaca2a33dc0d9442a7ca4d87def8aff7d937b87"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Filesystem/zipball/afaca2a33dc0d9442a7ca4d87def8aff7d937b87",
-            "reference": "afaca2a33dc0d9442a7ca4d87def8aff7d937b87",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "time": "2015-01-04 09:06:13",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.7-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Filesystem\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "Symfony Filesystem Component",
-        "homepage": "http://symfony.com"
-    },
-    {
-        "name": "symfony/console",
-        "version": "2.6.x-dev",
-        "version_normalized": "2.6.9999999.9999999-dev",
-        "target-dir": "Symfony/Component/Console",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/Console.git",
-            "reference": "6ac6491ff60c0e5a941db3ccdc75a07adbb61476"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Console/zipball/6ac6491ff60c0e5a941db3ccdc75a07adbb61476",
-            "reference": "6ac6491ff60c0e5a941db3ccdc75a07adbb61476",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "psr/log": "~1.0",
-            "symfony/event-dispatcher": "~2.1",
-            "symfony/process": "~2.1"
-        },
-        "suggest": {
-            "psr/log": "For using the console logger",
-            "symfony/event-dispatcher": "",
-            "symfony/process": ""
-        },
-        "time": "2015-01-06 17:50:02",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Console\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "Symfony Console Component",
         "homepage": "http://symfony.com"
     },
     {
@@ -907,71 +592,6 @@
         "homepage": "http://symfony.com"
     },
     {
-        "name": "symfony/security-core",
-        "version": "2.6.x-dev",
-        "version_normalized": "2.6.9999999.9999999-dev",
-        "target-dir": "Symfony/Component/Security/Core",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/security-core.git",
-            "reference": "db8c6964f9d69496b9ef21788c4afc4306113242"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/security-core/zipball/db8c6964f9d69496b9ef21788c4afc4306113242",
-            "reference": "db8c6964f9d69496b9ef21788c4afc4306113242",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "ircmaxell/password-compat": "1.0.*",
-            "psr/log": "~1.0",
-            "symfony/event-dispatcher": "~2.1",
-            "symfony/expression-language": "~2.6",
-            "symfony/http-foundation": "~2.4",
-            "symfony/translation": "~2.0,>=2.0.5",
-            "symfony/validator": "~2.5,>=2.5.5"
-        },
-        "suggest": {
-            "ircmaxell/password-compat": "For using the BCrypt password encoder in PHP <5.5",
-            "symfony/event-dispatcher": "",
-            "symfony/expression-language": "For using the expression voter",
-            "symfony/http-foundation": "",
-            "symfony/validator": "For using the user password constraint"
-        },
-        "time": "2015-01-05 20:59:13",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Security\\Core\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "Symfony Security Component - Core Library",
-        "homepage": "http://symfony.com"
-    },
-    {
         "name": "symfony/routing",
         "version": "2.6.x-dev",
         "version_normalized": "2.6.9999999.9999999-dev",
@@ -1088,259 +708,6 @@
             }
         ],
         "description": "Symfony Process Component",
-        "homepage": "http://symfony.com"
-    },
-    {
-        "name": "symfony/debug",
-        "version": "2.6.x-dev",
-        "version_normalized": "2.6.9999999.9999999-dev",
-        "target-dir": "Symfony/Component/Debug",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/Debug.git",
-            "reference": "7213c8200d60728c9d4c56d5830aa2d80ae3d25d"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Debug/zipball/7213c8200d60728c9d4c56d5830aa2d80ae3d25d",
-            "reference": "7213c8200d60728c9d4c56d5830aa2d80ae3d25d",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3",
-            "psr/log": "~1.0"
-        },
-        "require-dev": {
-            "symfony/class-loader": "~2.2",
-            "symfony/http-foundation": "~2.1",
-            "symfony/http-kernel": "~2.3.24|~2.5.9|~2.6,>=2.6.2"
-        },
-        "suggest": {
-            "symfony/http-foundation": "",
-            "symfony/http-kernel": ""
-        },
-        "time": "2015-01-05 17:41:06",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Debug\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "Symfony Debug Component",
-        "homepage": "http://symfony.com"
-    },
-    {
-        "name": "symfony/http-foundation",
-        "version": "2.6.x-dev",
-        "version_normalized": "2.6.9999999.9999999-dev",
-        "target-dir": "Symfony/Component/HttpFoundation",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/HttpFoundation.git",
-            "reference": "3f4ba2c658be910fe6cec46ed34ee900bd18bb01"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/3f4ba2c658be910fe6cec46ed34ee900bd18bb01",
-            "reference": "3f4ba2c658be910fe6cec46ed34ee900bd18bb01",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "symfony/expression-language": "~2.4"
-        },
-        "time": "2015-01-05 17:41:06",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\HttpFoundation\\": ""
-            },
-            "classmap": [
-                "Symfony/Component/HttpFoundation/Resources/stubs"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "Symfony HttpFoundation Component",
-        "homepage": "http://symfony.com"
-    },
-    {
-        "name": "symfony/event-dispatcher",
-        "version": "2.7.x-dev",
-        "version_normalized": "2.7.9999999.9999999-dev",
-        "target-dir": "Symfony/Component/EventDispatcher",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/EventDispatcher.git",
-            "reference": "f812eb83d21f4d8ab2ab67262590c508905922ee"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/f812eb83d21f4d8ab2ab67262590c508905922ee",
-            "reference": "f812eb83d21f4d8ab2ab67262590c508905922ee",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "psr/log": "~1.0",
-            "symfony/config": "~2.0,>=2.0.5|~3.0.0",
-            "symfony/dependency-injection": "~2.6|~3.0.0",
-            "symfony/expression-language": "~2.6|~3.0.0",
-            "symfony/stopwatch": "~2.3|~3.0.0"
-        },
-        "suggest": {
-            "symfony/dependency-injection": "",
-            "symfony/http-kernel": ""
-        },
-        "time": "2015-01-05 15:02:26",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.7-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\EventDispatcher\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "Symfony EventDispatcher Component",
-        "homepage": "http://symfony.com"
-    },
-    {
-        "name": "symfony/http-kernel",
-        "version": "2.6.x-dev",
-        "version_normalized": "2.6.9999999.9999999-dev",
-        "target-dir": "Symfony/Component/HttpKernel",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/HttpKernel.git",
-            "reference": "276be2d1ba1c3327af255b3ec64abb9caaf84844"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/276be2d1ba1c3327af255b3ec64abb9caaf84844",
-            "reference": "276be2d1ba1c3327af255b3ec64abb9caaf84844",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3",
-            "psr/log": "~1.0",
-            "symfony/debug": "~2.6,>=2.6.2",
-            "symfony/event-dispatcher": "~2.5.9|~2.6,>=2.6.2",
-            "symfony/http-foundation": "~2.5,>=2.5.4"
-        },
-        "require-dev": {
-            "symfony/browser-kit": "~2.3",
-            "symfony/class-loader": "~2.1",
-            "symfony/config": "~2.0,>=2.0.5",
-            "symfony/console": "~2.3",
-            "symfony/css-selector": "~2.0,>=2.0.5",
-            "symfony/dependency-injection": "~2.2",
-            "symfony/dom-crawler": "~2.0,>=2.0.5",
-            "symfony/expression-language": "~2.4",
-            "symfony/finder": "~2.0,>=2.0.5",
-            "symfony/process": "~2.0,>=2.0.5",
-            "symfony/routing": "~2.2",
-            "symfony/stopwatch": "~2.3",
-            "symfony/templating": "~2.2",
-            "symfony/translation": "~2.0,>=2.0.5",
-            "symfony/var-dumper": "~2.6"
-        },
-        "suggest": {
-            "symfony/browser-kit": "",
-            "symfony/class-loader": "",
-            "symfony/config": "",
-            "symfony/console": "",
-            "symfony/dependency-injection": "",
-            "symfony/finder": "",
-            "symfony/var-dumper": ""
-        },
-        "time": "2015-01-07 15:48:51",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\HttpKernel\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "Symfony HttpKernel Component",
         "homepage": "http://symfony.com"
     },
     {
@@ -1532,12 +899,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/laravel/framework.git",
-            "reference": "b454d5c343ca44a07c781be953fd8997e8c35eaa"
+            "reference": "5af31ee766de486162fe3e56c96ecaba3197996b"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/laravel/framework/zipball/b454d5c343ca44a07c781be953fd8997e8c35eaa",
-            "reference": "b454d5c343ca44a07c781be953fd8997e8c35eaa",
+            "url": "https://api.github.com/repos/laravel/framework/zipball/5af31ee766de486162fe3e56c96ecaba3197996b",
+            "reference": "5af31ee766de486162fe3e56c96ecaba3197996b",
             "shasum": ""
         },
         "require": {
@@ -1610,7 +977,7 @@
             "doctrine/dbal": "Allow renaming columns and dropping SQLite columns.",
             "guzzlehttp/guzzle": "Required for Mailgun and Mandrill mail drivers."
         },
-        "time": "2015-01-06 22:07:54",
+        "time": "2015-01-13 16:41:02",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1696,58 +1063,6 @@
                 "email": "mike.vanriel@naenius.com"
             }
         ]
-    },
-    {
-        "name": "symfony/class-loader",
-        "version": "2.6.x-dev",
-        "version_normalized": "2.6.9999999.9999999-dev",
-        "target-dir": "Symfony/Component/ClassLoader",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/ClassLoader.git",
-            "reference": "deac802f76910708ab50d039806cfd1866895b52"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/ClassLoader/zipball/deac802f76910708ab50d039806cfd1866895b52",
-            "reference": "deac802f76910708ab50d039806cfd1866895b52",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "require-dev": {
-            "symfony/finder": "~2.0,>=2.0.5"
-        },
-        "time": "2015-01-05 14:28:40",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\ClassLoader\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "Symfony ClassLoader Component",
-        "homepage": "http://symfony.com"
     },
     {
         "name": "barryvdh/laravel-ide-helper",
@@ -1862,228 +1177,6 @@
         ],
         "description": "Symfony Yaml Component",
         "homepage": "http://symfony.com"
-    },
-    {
-        "name": "symfony/config",
-        "version": "2.7.x-dev",
-        "version_normalized": "2.7.9999999.9999999-dev",
-        "target-dir": "Symfony/Component/Config",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/Config.git",
-            "reference": "d3b714e59323eb9fa53d955c26791cd49f5860bf"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Config/zipball/d3b714e59323eb9fa53d955c26791cd49f5860bf",
-            "reference": "d3b714e59323eb9fa53d955c26791cd49f5860bf",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3",
-            "symfony/filesystem": "~2.3|~3.0.0"
-        },
-        "time": "2015-01-05 15:02:26",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.7-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Config\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "Symfony Config Component",
-        "homepage": "http://symfony.com"
-    },
-    {
-        "name": "subscribo/support",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/users/slavo/projects/packages/workbench/subscribo/support",
-            "reference": "5787ecc458cad5ad2e78e89baaa996fddf9da58c"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-support-dev-master-44dcb7.zip",
-            "reference": "5787ecc458cad5ad2e78e89baaa996fddf9da58c",
-            "shasum": "cfc8dd9dd2fa69c51c1e59aef65486b32a320a7b"
-        },
-        "require": {
-            "php": "~5.4"
-        },
-        "suggest": {
-            "laravel/laravel": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2015-01-07 15:15:41",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\Support\\": "src/Subscribo/Support/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Support package with common shared functionality (Str, Arr) extending Laravel classes",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "laravel",
-            "subscribo",
-            "support"
-        ]
-    },
-    {
-        "name": "subscribo/environment",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/environment",
-            "reference": "528328e9625c82df697eefcfcf9a1a55f58486a1"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-environment-dev-master-e57222.zip",
-            "reference": "528328e9625c82df697eefcfcf9a1a55f58486a1",
-            "shasum": "b27bd4820a3605aed0ea248b2ad0b95ab0d37587"
-        },
-        "require": {
-            "php": "~5.4"
-        },
-        "suggest": {
-            "laravel/laravel": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2014-12-23 09:35:14",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\Environment\\": "src/Subscribo/Environment/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Package Environment is for getting current environment",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "environment",
-            "laravel",
-            "subscribo"
-        ]
-    },
-    {
-        "name": "subscribo/config",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/config",
-            "reference": "9b510b065d140afb898f0c67d8ab9b9e38a16dac"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-config-dev-master-2297fa.zip",
-            "reference": "9b510b065d140afb898f0c67d8ab9b9e38a16dac",
-            "shasum": "0f6df356cdb54104a94da304cf1e6079a3d5a292"
-        },
-        "require": {
-            "php": "~5.4",
-            "subscribo/environment": "@dev",
-            "subscribo/support": "@dev",
-            "symfony/config": "~2.6@stable",
-            "symfony/yaml": "~2.6@stable"
-        },
-        "suggest": {
-            "laravel/laravel": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2015-01-07 15:58:48",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\Config\\": "src/Subscribo/Config/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Config package for reading configuration",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "config",
-            "laravel",
-            "subscribo"
-        ]
     },
     {
         "name": "sebastian/version",
@@ -2849,12 +1942,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/sebastianbergmann/phpunit.git",
-            "reference": "42ee7e9b012d14d6bb008d723ee75b60662656e0"
+            "reference": "3ebeb6144d1f9da6ebf7784a868ab5d6d785cb95"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/42ee7e9b012d14d6bb008d723ee75b60662656e0",
-            "reference": "42ee7e9b012d14d6bb008d723ee75b60662656e0",
+            "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3ebeb6144d1f9da6ebf7784a868ab5d6d785cb95",
+            "reference": "3ebeb6144d1f9da6ebf7784a868ab5d6d785cb95",
             "shasum": ""
         },
         "require": {
@@ -2881,7 +1974,7 @@
         "suggest": {
             "phpunit/php-invoker": "~1.1"
         },
-        "time": "2015-01-05 05:30:53",
+        "time": "2015-01-11 10:18:47",
         "bin": [
             "phpunit"
         ],
@@ -2959,12 +2052,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/phpspec/phpspec.git",
-            "reference": "f00143140ef028fb003d559007ceac7fdea9edd0"
+            "reference": "214e2b666c711373ea0c513ec403509f87c2e5c9"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/phpspec/phpspec/zipball/f00143140ef028fb003d559007ceac7fdea9edd0",
-            "reference": "f00143140ef028fb003d559007ceac7fdea9edd0",
+            "url": "https://api.github.com/repos/phpspec/phpspec/zipball/214e2b666c711373ea0c513ec403509f87c2e5c9",
+            "reference": "214e2b666c711373ea0c513ec403509f87c2e5c9",
             "shasum": ""
         },
         "require": {
@@ -2987,7 +2080,7 @@
         "suggest": {
             "phpspec/nyan-formatters": "~1.0 – Adds Nyan formatters"
         },
-        "time": "2015-01-07 13:08:33",
+        "time": "2015-01-13 15:44:25",
         "bin": [
             "bin/phpspec"
         ],
@@ -3031,21 +2124,989 @@
         ]
     },
     {
-        "name": "subscribo/serviceprovider",
+        "name": "symfony/security-core",
+        "version": "2.6.x-dev",
+        "version_normalized": "2.6.9999999.9999999-dev",
+        "target-dir": "Symfony/Component/Security/Core",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/security-core.git",
+            "reference": "d855729fd74c0979ba360770c27c9202d5789dde"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/security-core/zipball/d855729fd74c0979ba360770c27c9202d5789dde",
+            "reference": "d855729fd74c0979ba360770c27c9202d5789dde",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "ircmaxell/password-compat": "1.0.*",
+            "psr/log": "~1.0",
+            "symfony/event-dispatcher": "~2.1",
+            "symfony/expression-language": "~2.6",
+            "symfony/http-foundation": "~2.4",
+            "symfony/translation": "~2.0,>=2.0.5",
+            "symfony/validator": "~2.5,>=2.5.5"
+        },
+        "suggest": {
+            "ircmaxell/password-compat": "For using the BCrypt password encoder in PHP <5.5",
+            "symfony/event-dispatcher": "",
+            "symfony/expression-language": "For using the expression voter",
+            "symfony/http-foundation": "",
+            "symfony/validator": "For using the user password constraint"
+        },
+        "time": "2015-01-08 10:46:13",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.6-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\Security\\Core\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Symfony Security Component - Core Library",
+        "homepage": "http://symfony.com"
+    },
+    {
+        "name": "danielstjules/stringy",
+        "version": "1.8.1",
+        "version_normalized": "1.8.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/danielstjules/Stringy.git",
+            "reference": "6a7b0391b2baf0bfdca3ec0c8d33ff379c2835ad"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/danielstjules/Stringy/zipball/6a7b0391b2baf0bfdca3ec0c8d33ff379c2835ad",
+            "reference": "6a7b0391b2baf0bfdca3ec0c8d33ff379c2835ad",
+            "shasum": ""
+        },
+        "require": {
+            "ext-mbstring": "*",
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.0"
+        },
+        "time": "2015-01-08 15:21:43",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Stringy\\": "src/"
+            },
+            "files": [
+                "src/Create.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Daniel St. Jules",
+                "email": "danielst.jules@gmail.com",
+                "homepage": "http://www.danielstjules.com"
+            }
+        ],
+        "description": "A string manipulation library with multibyte support",
+        "homepage": "https://github.com/danielstjules/Stringy",
+        "keywords": [
+            "UTF",
+            "helpers",
+            "manipulation",
+            "methods",
+            "multibyte",
+            "string",
+            "utf-8",
+            "utility",
+            "utils"
+        ]
+    },
+    {
+        "name": "react/promise",
+        "version": "v2.2.0",
+        "version_normalized": "2.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/reactphp/promise.git",
+            "reference": "365fcee430dfa4ace1fbc75737ca60ceea7eeeef"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/reactphp/promise/zipball/365fcee430dfa4ace1fbc75737ca60ceea7eeeef",
+            "reference": "365fcee430dfa4ace1fbc75737ca60ceea7eeeef",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4.0"
+        },
+        "time": "2014-12-30 13:32:42",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "React\\Promise\\": "src/"
+            },
+            "files": [
+                "src/functions_include.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Jan Sorgalla",
+                "email": "jsorgalla@googlemail.com"
+            }
+        ],
+        "description": "A lightweight implementation of CommonJS Promises/A for PHP"
+    },
+    {
+        "name": "guzzlehttp/streams",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/serviceprovider",
-            "reference": "d0e11856b0a37be4c6aee1e329899043daf28adb"
+            "url": "https://github.com/guzzle/streams.git",
+            "reference": "1fa6dfa8bca38fc32b189e91273b6a74c47df1ae"
         },
         "dist": {
             "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-serviceprovider-dev-master-806d5f.zip",
-            "reference": "d0e11856b0a37be4c6aee1e329899043daf28adb",
-            "shasum": "5f759cd55df3583f3eb58450aace94dcbb9c6d87"
+            "url": "https://api.github.com/repos/guzzle/streams/zipball/1fa6dfa8bca38fc32b189e91273b6a74c47df1ae",
+            "reference": "1fa6dfa8bca38fc32b189e91273b6a74c47df1ae",
+            "shasum": ""
         },
-        "time": "2014-12-18 18:36:57",
+        "require": {
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.0"
+        },
+        "time": "2015-01-11 22:40:57",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "GuzzleHttp\\Stream\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Michael Dowling",
+                "email": "mtdowling@gmail.com",
+                "homepage": "https://github.com/mtdowling"
+            }
+        ],
+        "description": "Provides a simple abstraction over streams of data",
+        "homepage": "http://guzzlephp.org/",
+        "keywords": [
+            "Guzzle",
+            "stream"
+        ]
+    },
+    {
+        "name": "guzzlehttp/ringphp",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/guzzle/RingPHP.git",
+            "reference": "a6dfe3ed43cba212a76773bc5329646042085459"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/guzzle/RingPHP/zipball/a6dfe3ed43cba212a76773bc5329646042085459",
+            "reference": "a6dfe3ed43cba212a76773bc5329646042085459",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/streams": "~3.0",
+            "php": ">=5.4.0",
+            "react/promise": "~2.0"
+        },
+        "require-dev": {
+            "ext-curl": "*",
+            "phpunit/phpunit": "~4.0"
+        },
+        "suggest": {
+            "ext-curl": "Guzzle will use specific adapters if cURL is present"
+        },
+        "time": "2015-01-05 18:46:17",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "GuzzleHttp\\Ring\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Michael Dowling",
+                "email": "mtdowling@gmail.com",
+                "homepage": "https://github.com/mtdowling"
+            }
+        ],
+        "description": "Provides a simple API and specification that abstracts away the details of HTTP into a single PHP function."
+    },
+    {
+        "name": "guzzlehttp/guzzle",
+        "version": "5.1.0",
+        "version_normalized": "5.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/guzzle/guzzle.git",
+            "reference": "f1085bb4e023766a66b7b051914ec73bdf7202b5"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f1085bb4e023766a66b7b051914ec73bdf7202b5",
+            "reference": "f1085bb4e023766a66b7b051914ec73bdf7202b5",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/ringphp": "~1.0",
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "ext-curl": "*",
+            "phpunit/phpunit": "~4.0",
+            "psr/log": "~1.0"
+        },
+        "time": "2014-12-19 20:27:15",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "5.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "GuzzleHttp\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Michael Dowling",
+                "email": "mtdowling@gmail.com",
+                "homepage": "https://github.com/mtdowling"
+            }
+        ],
+        "description": "Guzzle is a PHP HTTP client library and framework for building RESTful web service clients",
+        "homepage": "http://guzzlephp.org/",
+        "keywords": [
+            "client",
+            "curl",
+            "framework",
+            "http",
+            "http client",
+            "rest",
+            "web service"
+        ]
+    },
+    {
+        "name": "jeremeamia/SuperClosure",
+        "version": "1.0.x-dev",
+        "version_normalized": "1.0.9999999.9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/jeremeamia/super_closure.git",
+            "reference": "4d89ca74994feab128ea46d5b3add92e6cb84554"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/jeremeamia/super_closure/zipball/4d89ca74994feab128ea46d5b3add92e6cb84554",
+            "reference": "4d89ca74994feab128ea46d5b3add92e6cb84554",
+            "shasum": ""
+        },
+        "require": {
+            "nikic/php-parser": "~0.9",
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~3.7"
+        },
+        "time": "2015-01-10 01:09:28",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Jeremeamia\\SuperClosure": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Jeremy Lindblom"
+            }
+        ],
+        "description": "Doing interesting things with closures like serialization.",
+        "homepage": "https://github.com/jeremeamia/super_closure",
+        "keywords": [
+            "closure",
+            "function",
+            "parser",
+            "serializable",
+            "serialize",
+            "tokenizer"
+        ]
+    },
+    {
+        "name": "mtdowling/cron-expression",
+        "version": "v1.0.4",
+        "version_normalized": "1.0.4.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/mtdowling/cron-expression.git",
+            "reference": "fd92e883195e5dfa77720b1868cf084b08be4412"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/mtdowling/cron-expression/zipball/fd92e883195e5dfa77720b1868cf084b08be4412",
+            "reference": "fd92e883195e5dfa77720b1868cf084b08be4412",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.2"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "4.*"
+        },
+        "time": "2015-01-11 23:07:46",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Cron": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Michael Dowling",
+                "email": "mtdowling@gmail.com",
+                "homepage": "https://github.com/mtdowling"
+            }
+        ],
+        "description": "CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due",
+        "keywords": [
+            "cron",
+            "schedule"
+        ]
+    },
+    {
+        "name": "symfony/class-loader",
+        "version": "2.7.x-dev",
+        "version_normalized": "2.7.9999999.9999999-dev",
+        "target-dir": "Symfony/Component/ClassLoader",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/ClassLoader.git",
+            "reference": "8aaaa4399d8e3640f6a5a40bb55bebe0b1d474c3"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/ClassLoader/zipball/8aaaa4399d8e3640f6a5a40bb55bebe0b1d474c3",
+            "reference": "8aaaa4399d8e3640f6a5a40bb55bebe0b1d474c3",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.9"
+        },
+        "require-dev": {
+            "symfony/finder": "~2.0,>=2.0.5|~3.0.0"
+        },
+        "time": "2015-01-09 06:51:41",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.7-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\ClassLoader\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Symfony ClassLoader Component",
+        "homepage": "http://symfony.com"
+    },
+    {
+        "name": "symfony/var-dumper",
+        "version": "2.6.x-dev",
+        "version_normalized": "2.6.9999999.9999999-dev",
+        "target-dir": "Symfony/Component/VarDumper",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/var-dumper.git",
+            "reference": "4b5ce2f2d8023cd4c145cbc349adac1069e6a185"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/var-dumper/zipball/4b5ce2f2d8023cd4c145cbc349adac1069e6a185",
+            "reference": "4b5ce2f2d8023cd4c145cbc349adac1069e6a185",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "suggest": {
+            "ext-symfony_debug": ""
+        },
+        "time": "2015-01-13 14:49:42",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.6-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "Resources/functions/dump.php"
+            ],
+            "psr-0": {
+                "Symfony\\Component\\VarDumper\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            }
+        ],
+        "description": "Symfony mechanism for exploring and dumping PHP variables",
+        "homepage": "http://symfony.com",
+        "keywords": [
+            "debug",
+            "dump"
+        ]
+    },
+    {
+        "name": "symfony/filesystem",
+        "version": "2.7.x-dev",
+        "version_normalized": "2.7.9999999.9999999-dev",
+        "target-dir": "Symfony/Component/Filesystem",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/Filesystem.git",
+            "reference": "e681ca515e1e668a551b089177867e62e03d7d2d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/Filesystem/zipball/e681ca515e1e668a551b089177867e62e03d7d2d",
+            "reference": "e681ca515e1e668a551b089177867e62e03d7d2d",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.9"
+        },
+        "time": "2015-01-09 06:51:41",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.7-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\Filesystem\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Symfony Filesystem Component",
+        "homepage": "http://symfony.com"
+    },
+    {
+        "name": "symfony/console",
+        "version": "2.6.x-dev",
+        "version_normalized": "2.6.9999999.9999999-dev",
+        "target-dir": "Symfony/Component/Console",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/Console.git",
+            "reference": "3c48eafeb8ef205a62b724941367460893e5b141"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/Console/zipball/3c48eafeb8ef205a62b724941367460893e5b141",
+            "reference": "3c48eafeb8ef205a62b724941367460893e5b141",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "psr/log": "~1.0",
+            "symfony/event-dispatcher": "~2.1",
+            "symfony/process": "~2.1"
+        },
+        "suggest": {
+            "psr/log": "For using the console logger",
+            "symfony/event-dispatcher": "",
+            "symfony/process": ""
+        },
+        "time": "2015-01-13 07:22:24",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.6-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\Console\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Symfony Console Component",
+        "homepage": "http://symfony.com"
+    },
+    {
+        "name": "symfony/debug",
+        "version": "2.6.x-dev",
+        "version_normalized": "2.6.9999999.9999999-dev",
+        "target-dir": "Symfony/Component/Debug",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/Debug.git",
+            "reference": "dc705a40a6777baa9c1948f5514c304a7ea8a450"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/Debug/zipball/dc705a40a6777baa9c1948f5514c304a7ea8a450",
+            "reference": "dc705a40a6777baa9c1948f5514c304a7ea8a450",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3",
+            "psr/log": "~1.0"
+        },
+        "conflict": {
+            "symfony/http-kernel": ">=2.3,<2.3.24|~2.4.0|>=2.5,<2.5.9|>=2.6,<2.6.2"
+        },
+        "require-dev": {
+            "symfony/class-loader": "~2.2",
+            "symfony/http-foundation": "~2.1",
+            "symfony/http-kernel": "~2.3.24|~2.5.9|~2.6,>=2.6.2"
+        },
+        "suggest": {
+            "symfony/http-foundation": "",
+            "symfony/http-kernel": ""
+        },
+        "time": "2015-01-13 10:55:35",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.6-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\Debug\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Symfony Debug Component",
+        "homepage": "http://symfony.com"
+    },
+    {
+        "name": "symfony/http-foundation",
+        "version": "2.6.x-dev",
+        "version_normalized": "2.6.9999999.9999999-dev",
+        "target-dir": "Symfony/Component/HttpFoundation",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/HttpFoundation.git",
+            "reference": "30129c1955980027f0c13fdea918bf6e2a264748"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/30129c1955980027f0c13fdea918bf6e2a264748",
+            "reference": "30129c1955980027f0c13fdea918bf6e2a264748",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "symfony/expression-language": "~2.4"
+        },
+        "time": "2015-01-13 07:22:24",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.6-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\HttpFoundation\\": ""
+            },
+            "classmap": [
+                "Symfony/Component/HttpFoundation/Resources/stubs"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Symfony HttpFoundation Component",
+        "homepage": "http://symfony.com"
+    },
+    {
+        "name": "symfony/http-kernel",
+        "version": "2.6.x-dev",
+        "version_normalized": "2.6.9999999.9999999-dev",
+        "target-dir": "Symfony/Component/HttpKernel",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/HttpKernel.git",
+            "reference": "b5859161c4bf3c8bb624690c218c7b1f0ee9c875"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/b5859161c4bf3c8bb624690c218c7b1f0ee9c875",
+            "reference": "b5859161c4bf3c8bb624690c218c7b1f0ee9c875",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3",
+            "psr/log": "~1.0",
+            "symfony/debug": "~2.6,>=2.6.2",
+            "symfony/event-dispatcher": "~2.5.9|~2.6,>=2.6.2",
+            "symfony/http-foundation": "~2.5,>=2.5.4"
+        },
+        "require-dev": {
+            "symfony/browser-kit": "~2.3",
+            "symfony/class-loader": "~2.1",
+            "symfony/config": "~2.0,>=2.0.5",
+            "symfony/console": "~2.3",
+            "symfony/css-selector": "~2.0,>=2.0.5",
+            "symfony/dependency-injection": "~2.2",
+            "symfony/dom-crawler": "~2.0,>=2.0.5",
+            "symfony/expression-language": "~2.4",
+            "symfony/finder": "~2.0,>=2.0.5",
+            "symfony/process": "~2.0,>=2.0.5",
+            "symfony/routing": "~2.2",
+            "symfony/stopwatch": "~2.3",
+            "symfony/templating": "~2.2",
+            "symfony/translation": "~2.0,>=2.0.5",
+            "symfony/var-dumper": "~2.6"
+        },
+        "suggest": {
+            "symfony/browser-kit": "",
+            "symfony/class-loader": "",
+            "symfony/config": "",
+            "symfony/console": "",
+            "symfony/dependency-injection": "",
+            "symfony/finder": "",
+            "symfony/var-dumper": ""
+        },
+        "time": "2015-01-13 14:49:42",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.6-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\HttpKernel\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Symfony HttpKernel Component",
+        "homepage": "http://symfony.com"
+    },
+    {
+        "name": "symfony/config",
+        "version": "2.7.x-dev",
+        "version_normalized": "2.7.9999999.9999999-dev",
+        "target-dir": "Symfony/Component/Config",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/Config.git",
+            "reference": "2ab249d96805268879d6c1be9bb7078b89053034"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/Config/zipball/2ab249d96805268879d6c1be9bb7078b89053034",
+            "reference": "2ab249d96805268879d6c1be9bb7078b89053034",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.9",
+            "symfony/filesystem": "~2.3|~3.0.0"
+        },
+        "time": "2015-01-09 06:51:41",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.7-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\Config\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Symfony Config Component",
+        "homepage": "http://symfony.com"
+    },
+    {
+        "name": "symfony/event-dispatcher",
+        "version": "2.7.x-dev",
+        "version_normalized": "2.7.9999999.9999999-dev",
+        "target-dir": "Symfony/Component/EventDispatcher",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/EventDispatcher.git",
+            "reference": "eab88ace7a54741087fe4e0c7acd737d1f6186bf"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/eab88ace7a54741087fe4e0c7acd737d1f6186bf",
+            "reference": "eab88ace7a54741087fe4e0c7acd737d1f6186bf",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.9"
+        },
+        "require-dev": {
+            "psr/log": "~1.0",
+            "symfony/config": "~2.0,>=2.0.5|~3.0.0",
+            "symfony/dependency-injection": "~2.6|~3.0.0",
+            "symfony/expression-language": "~2.6|~3.0.0",
+            "symfony/stopwatch": "~2.3|~3.0.0"
+        },
+        "suggest": {
+            "symfony/dependency-injection": "",
+            "symfony/http-kernel": ""
+        },
+        "time": "2015-01-09 06:51:41",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.7-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Symfony\\Component\\EventDispatcher\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Symfony EventDispatcher Component",
+        "homepage": "http://symfony.com"
+    },
+    {
+        "name": "subscribo/clientchecker",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/clientchecker",
+            "reference": "4ca20d1a8081d53fb2ffbeeab3852417f64712f0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-clientchecker-dev-master-e6b854.zip",
+            "reference": "4ca20d1a8081d53fb2ffbeeab3852417f64712f0",
+            "shasum": "9d24bbf2dcabfd24245f604e0139334f09a4f273"
+        },
+        "require": {
+            "illuminate/encryption": "~5.0",
+            "php": "~5.4",
+            "subscribo/config": "@dev",
+            "subscribo/environment": "@dev",
+            "subscribo/modelbase": "@dev",
+            "subscribo/restproxy": "@dev",
+            "subscribo/serviceprovider": "@dev"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been build to work with The Laravel Framework version 5.0",
+            "subscribo/api0": "This package has been developed to work with API version 0"
+        },
+        "time": "2015-01-14 15:10:45",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3055,13 +3116,94 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "Subscribo\\ServiceProvider\\": "src/Subscribo/ServiceProvider/"
+                "Subscribo\\ClientChecker\\": "src/Subscribo/ClientChecker/"
             }
         },
         "license": [
-            "MIT"
+            "proprietary"
         ],
-        "description": "Contain Laravel 4.2 ServiceProvider to be used for now."
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Client Checker for testing communicating with API within a browser. Default url: /client",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "checker",
+            "client",
+            "laravel",
+            "subscribo",
+            "testing"
+        ]
+    },
+    {
+        "name": "subscribo/apichecker",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/apichecker",
+            "reference": "acf20cf3e7269ca2b1e18e7c9275d1802d04a2f1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-apichecker-dev-master-2f054a.zip",
+            "reference": "acf20cf3e7269ca2b1e18e7c9275d1802d04a2f1",
+            "shasum": "19636307f774b68e985f30130e7e97513826a224"
+        },
+        "require": {
+            "php": "~5.4",
+            "subscribo/config": "@dev",
+            "subscribo/environment": "@dev",
+            "subscribo/modelbase": "@dev",
+            "subscribo/restcommon": "@dev",
+            "subscribo/serviceprovider": "@dev"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been build to work with The Laravel Framework version 5.0",
+            "subscribo/api0": "This package has been developed to work with API version 0"
+        },
+        "time": "2015-01-14 15:09:49",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\ApiChecker\\": "src/Subscribo/ApiChecker/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "API Checker for testing API within a browser. Default url: /checker",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "api",
+            "checker",
+            "laravel",
+            "subscribo",
+            "testing"
+        ]
     },
     {
         "name": "subscribo/dependencyresolver",
@@ -3070,22 +3212,22 @@
         "source": {
             "type": "git",
             "url": "/users/slavo/projects/packages/workbench/subscribo/dependencyresolver",
-            "reference": "70258c85a8dc04997a34dd3b85c6bd3841924006"
+            "reference": "b2bb57106f5ca826bca3cb912f47a2c3cb12ac54"
         },
         "dist": {
             "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-dependencyresolver-dev-master-8fbf32.zip",
-            "reference": "70258c85a8dc04997a34dd3b85c6bd3841924006",
-            "shasum": "02be82a21525ff3cfeadbdbcdb3132eaa68f6f24"
+            "url": "http://satis.localhost/downloads/subscribo-dependencyresolver-dev-master-b853b6.zip",
+            "reference": "b2bb57106f5ca826bca3cb912f47a2c3cb12ac54",
+            "shasum": "4aafef9a453020f5511822a408b194f1c4b36fbe"
         },
         "require": {
             "php": "~5.4"
         },
         "suggest": {
-            "laravel/laravel": "This package have been developed to work with The Laravel Framework 4.2",
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 4.2. Version 5.0 can also be used.",
             "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
         },
-        "time": "2015-01-07 15:29:57",
+        "time": "2015-01-14 15:32:13",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3126,13 +3268,13 @@
         "source": {
             "type": "git",
             "url": "/Users/slavo/Projects/packages/workbench/subscribo/schemabuilder",
-            "reference": "ccabd2302f8c90a542a258209b0312843d489d06"
+            "reference": "a902846002d176419e9fef023681da9d82928e16"
         },
         "dist": {
             "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-schemabuilder-dev-master-dbe62b.zip",
-            "reference": "ccabd2302f8c90a542a258209b0312843d489d06",
-            "shasum": "263869632b5ada3a91f1c7682a4eaf12029fb7e4"
+            "url": "http://satis.localhost/downloads/subscribo-schemabuilder-dev-master-482433.zip",
+            "reference": "a902846002d176419e9fef023681da9d82928e16",
+            "shasum": "6b79d0db3453ddadf768fc45bb29e1e9b0a4e406"
         },
         "require": {
             "php": "~5.4",
@@ -3142,9 +3284,9 @@
         },
         "suggest": {
             "frozennode/administrator": "This package generates config files for Frozennode Administrator",
-            "laravel/framework": "This package have been build to work with The Laravel Framework version 4.2"
+            "laravel/framework": "This package have been build to work with The Laravel Framework version 4.2. Version 5.0 can also be used."
         },
-        "time": "2015-01-07 16:56:11",
+        "time": "2015-01-14 15:32:13",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3180,28 +3322,257 @@
         ]
     },
     {
+        "name": "subscribo/modelbase",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/modelbase",
+            "reference": "699dc813c0571ef83ba796c204cbbbe1df5de56b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-modelbase-dev-master-d79d3a.zip",
+            "reference": "699dc813c0571ef83ba796c204cbbbe1df5de56b",
+            "shasum": "07cd323be6d42cf49884a339de70b4df8a0e7d32"
+        },
+        "require": {
+            "php": "~5.4",
+            "subscribo/config": "@dev"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 4.2. Version 5.0 can also be used.",
+            "subscribo/schemabuilder": "Abstract class in this package is expected to extend models generated by Subscribo SchemaBuilder",
+            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
+        },
+        "time": "2015-01-14 15:32:13",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\ModelBase\\": "src/Subscribo/ModelBase/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Model Base provides Eloquent based abstract class to make models extending it as well as a factory for listing and generating models",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "laravel",
+            "model",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/serviceprovider",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/serviceprovider",
+            "reference": "37d351f0683c1a2fcef77edb04aa2d17f86a67cc"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-serviceprovider-dev-master-01ca56.zip",
+            "reference": "37d351f0683c1a2fcef77edb04aa2d17f86a67cc",
+            "shasum": "e5f706812d28ceb3534382e7189a1d93204568b5"
+        },
+        "require": {
+            "php": "~5.4"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-01-14 15:32:12",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\ServiceProvider\\": "src/Subscribo/ServiceProvider/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Contain Service Provider for Laravel to be extended by other packages as well as modified versions of Service Provider from Laravel 4.2.12",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "laravel",
+            "subscribo",
+            "transition"
+        ]
+    },
+    {
+        "name": "subscribo/environment",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/environment",
+            "reference": "9528ae3992d5b8387ed2a73a192a84f8bd4f0b58"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-environment-dev-master-732ad5.zip",
+            "reference": "9528ae3992d5b8387ed2a73a192a84f8bd4f0b58",
+            "shasum": "4d81c9b05dc7883368e8d4af7b370b4bcedefebb"
+        },
+        "require": {
+            "php": "~5.4"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
+        },
+        "time": "2015-01-14 15:32:13",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\Environment\\": "src/Subscribo/Environment/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package Environment is for getting current environment",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "environment",
+            "laravel",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/restcommon",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/restcommon",
+            "reference": "fc7ae660970cb1d8aabe437ac37d7b5db4d3e615"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-restcommon-dev-master-4d1203.zip",
+            "reference": "fc7ae660970cb1d8aabe437ac37d7b5db4d3e615",
+            "shasum": "77d0c5d5da499f583563c5664c77256d35d1ed12"
+        },
+        "require": {
+            "php": "~5.4",
+            "subscribo/exception": "@dev"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-01-14 15:32:13",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\RestCommon\\": "src/Subscribo/RestCommon/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package containing common files for Subscribo REST client and server",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "access token",
+            "common",
+            "exception",
+            "header field name",
+            "laravel",
+            "rest",
+            "subscribo"
+        ]
+    },
+    {
         "name": "subscribo/modifier",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
             "url": "/Users/slavo/Projects/packages/workbench/subscribo/modifier",
-            "reference": "69d457e37f766157083c65ec819554f51e006bad"
+            "reference": "7a7d3cf9fe85ff6bfe912bdf2ac0e6b655a0e285"
         },
         "dist": {
             "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-modifier-dev-master-e3a443.zip",
-            "reference": "69d457e37f766157083c65ec819554f51e006bad",
-            "shasum": "3d3916df6d4c4c73802d997bc208a4266d5d4d84"
+            "url": "http://satis.localhost/downloads/subscribo-modifier-dev-master-c09874.zip",
+            "reference": "7a7d3cf9fe85ff6bfe912bdf2ac0e6b655a0e285",
+            "shasum": "8ff3d47ebb0ff8e91df0e5534b9c24de92c8cc42"
         },
         "require": {
             "php": "~5.4"
         },
         "suggest": {
-            "laravel/laravel": "This package have been developed to work with The Laravel Framework 4.2",
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 4.2. Version 5.0 can also be used.",
             "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
         },
-        "time": "2015-01-07 15:29:57",
+        "time": "2015-01-14 15:32:13",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3238,30 +3609,31 @@
         ]
     },
     {
-        "name": "subscribo/modelbase",
+        "name": "subscribo/restproxy",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/modelbase",
-            "reference": "15e5bc38624d1465e465e3dd0163c1bfba1e6670"
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/restproxy",
+            "reference": "9f886c5df913f88fe54bd901d4cb1805341e3e12"
         },
         "dist": {
             "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-modelbase-dev-master-8addd0.zip",
-            "reference": "15e5bc38624d1465e465e3dd0163c1bfba1e6670",
-            "shasum": "04fc1fcf767bb7c756e5e6d912725b8ccde6db79"
+            "url": "http://satis.localhost/downloads/subscribo-restproxy-dev-master-e66753.zip",
+            "reference": "9f886c5df913f88fe54bd901d4cb1805341e3e12",
+            "shasum": "9d1d214082cba3c2fb2ae092ba19811a42d02320"
         },
         "require": {
             "php": "~5.4",
-            "subscribo/config": "@dev"
+            "subscribo/config": "@dev",
+            "subscribo/environment": "@dev",
+            "subscribo/restclient": "@dev"
         },
         "suggest": {
-            "laravel/laravel": "This package have been developed to work with The Laravel Framework 4.2",
-            "subscribo/schemabuilder": "Abstract class in this package is expected to extend models generated by Subscribo SchemaBuilder",
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
             "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
         },
-        "time": "2015-01-07 16:56:11",
+        "time": "2015-01-14 15:32:14",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3271,7 +3643,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "Subscribo\\ModelBase\\": "src/Subscribo/ModelBase/"
+                "Subscribo\\RestProxy\\": "src/Subscribo/RestProxy/"
             }
         },
         "license": [
@@ -3287,11 +3659,317 @@
                 "role": "owner"
             }
         ],
-        "description": "Model Base provides Eloquent based abstract class to make models extending it as well as a factory for listing and generating models",
+        "description": "Package Subscribo RestProxy is providing proxy functionality to Subscribo API",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "api",
+            "client",
+            "http",
+            "laravel",
+            "proxy",
+            "rest",
+            "server",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/support",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/users/slavo/projects/packages/workbench/subscribo/support",
+            "reference": "53e8cc49e385acb938dab8e16aec7271acf23e22"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-support-dev-master-fc5723.zip",
+            "reference": "53e8cc49e385acb938dab8e16aec7271acf23e22",
+            "shasum": "89be2ea1dc4e13bfbf220c44ebdad2c349b7fcd7"
+        },
+        "require": {
+            "php": "~5.4"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
+        },
+        "time": "2015-01-14 15:32:13",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\Support\\": "src/Subscribo/Support/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Support package with common shared functionality (Str, Arr) extending Laravel classes",
         "homepage": "http://www.subscribo.io",
         "keywords": [
             "laravel",
-            "model",
+            "subscribo",
+            "support"
+        ]
+    },
+    {
+        "name": "subscribo/config",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/config",
+            "reference": "a35124fbc848a0c9a315e93762591f60c0262927"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-config-dev-master-2a4992.zip",
+            "reference": "a35124fbc848a0c9a315e93762591f60c0262927",
+            "shasum": "a03e8ba1bc748e87e761ae4dc48a83a8489abef6"
+        },
+        "require": {
+            "php": "~5.4",
+            "subscribo/support": "@dev",
+            "symfony/config": "~2.6@stable",
+            "symfony/yaml": "~2.6@stable"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+            "subscribo/environment": "If Environment based configuration support is needed or if using ServiceProvider. Suggested version: @dev",
+            "subscribo/serviceprovider": "If using ServiceProvider for Laravel. Suggested version: @dev"
+        },
+        "time": "2015-01-14 15:32:13",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\Config\\": "src/Subscribo/Config/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Config package for reading configuration",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "config",
+            "laravel",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/exception",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/exception",
+            "reference": "e20f404a9968ab2d5fc8997de24dd3bb4499fd1f"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-exception-dev-master-a2f75c.zip",
+            "reference": "e20f404a9968ab2d5fc8997de24dd3bb4499fd1f",
+            "shasum": "7fc2bb4b44c577c36b590ce2a281c1766c9c16d6"
+        },
+        "require": {
+            "php": "~5.4",
+            "symfony/http-kernel": "~2.6"
+        },
+        "suggest": {
+            "illuminate/exception": "If exception handler functionality is used. Suggested version ~5.0",
+            "illuminate/http": "If exception handler functionality is used. Suggested version ~5.0",
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+            "subscribo/config": "If exception handler functionality (ApiExceptionHandler, ApiExceptionHandlerServiceProvider, ExceptionHandlerInterface) is being used",
+            "subscribo/serviceprovider": "If using ServiceProvider for Laravel",
+            "symfony/http-foundation": "If exception handler functionality is used. Suggested version ~2.6"
+        },
+        "time": "2015-01-14 15:38:47",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\Exception\\": "src/Subscribo/Exception/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package Exception contain shared functionality connected to exceptions and their handling",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "exception",
+            "laravel",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/restserver",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/restserver",
+            "reference": "6c50f6314cf79b4dad1ec1088bdb2eb8fa962d43"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-restserver-dev-master-2883dd.zip",
+            "reference": "6c50f6314cf79b4dad1ec1088bdb2eb8fa962d43",
+            "shasum": "aa5ce2971049e495c4405ea73f74a7cd7edb8918"
+        },
+        "require": {
+            "php": "~5.4",
+            "subscribo/restcommon": "@dev"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-01-14 15:32:14",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\RestServer\\": "src/Subscribo/RestServer/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Subscribo REST server base package",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "access token",
+            "laravel",
+            "middleware",
+            "rest",
+            "server",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/restclient",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/restclient",
+            "reference": "a43e673ac6953daf6ce3c66c31054177ff897fc7"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-restclient-dev-master-062ff4.zip",
+            "reference": "a43e673ac6953daf6ce3c66c31054177ff897fc7",
+            "shasum": "8fe48b99f6f5ab2de2507e4486df66b5928a6bb3"
+        },
+        "require": {
+            "guzzlehttp/guzzle": "~5.0",
+            "php": "~5.4",
+            "subscribo/config": "@dev",
+            "subscribo/environment": "@dev",
+            "subscribo/exception": "@dev",
+            "subscribo/restcommon": "@dev",
+            "subscribo/support": "@dev",
+            "symfony/http-foundation": "~2.6"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
+        },
+        "time": "2015-01-14 16:03:59",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\RestClient\\": "src/Subscribo/RestClient/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package Subscribo REST Client for communicating with Subscribo API",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "REST",
+            "client",
+            "http",
+            "laravel",
             "subscribo"
         ]
     },
@@ -3302,24 +3980,25 @@
         "source": {
             "type": "git",
             "url": "/Users/slavo/Projects/packages/workbench/subscribo/api0",
-            "reference": "8a651785c0ebe5925aa90bc3ce68e72ce42627ae"
+            "reference": "4a9182c3ab22f5a32d2176a1307ab7d826d28145"
         },
         "dist": {
             "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-api0-dev-master-a80222.zip",
-            "reference": "8a651785c0ebe5925aa90bc3ce68e72ce42627ae",
-            "shasum": "7d06d846ec9d546e00591cdffa0aa61929bc11d8"
+            "url": "http://satis.localhost/downloads/subscribo-api0-dev-master-4a7b0f.zip",
+            "reference": "4a9182c3ab22f5a32d2176a1307ab7d826d28145",
+            "shasum": "2e8b0ca3cf48188dd6ff2ad201e93042a9629c2e"
         },
         "require": {
             "php": "~5.4",
             "subscribo/modelbase": "@dev",
             "subscribo/modifier": "@dev",
+            "subscribo/restserver": "@dev",
             "subscribo/serviceprovider": "@dev"
         },
         "suggest": {
-            "laravel/laravel": "This package have been developed to work with The Laravel Framework 4.2"
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 4.2. Version 5.0 can also be used."
         },
-        "time": "2015-01-07 15:29:57",
+        "time": "2015-01-14 16:04:26",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3351,66 +4030,6 @@
             "API",
             "laravel",
             "subscribo"
-        ]
-    },
-    {
-        "name": "subscribo/apichecker",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/apichecker",
-            "reference": "c28d508b18c41492ea9210df673a33c1028ced0a"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-apichecker-dev-master-698cfb.zip",
-            "reference": "c28d508b18c41492ea9210df673a33c1028ced0a",
-            "shasum": "7dc2347fff38b1c8168fadadaa30adee87a984e0"
-        },
-        "require": {
-            "php": "~5.4",
-            "subscribo/modelbase": "@dev",
-            "subscribo/serviceprovider": "@dev"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been build to work with The Laravel Framework version 4.2",
-            "subscribo/api0": "This package has been developed to work with API version 0"
-        },
-        "time": "2015-01-07 15:29:57",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\ApiChecker\\": "src/Subscribo/ApiChecker/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "API Checker for testing API within a browser. Url: /checker",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "api",
-            "checker",
-            "laravel",
-            "subscribo",
-            "testing"
         ]
     }
 ]

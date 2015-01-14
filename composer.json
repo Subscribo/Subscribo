@@ -3,7 +3,6 @@
 	"description": "The Subscribo API Server project.",
 	"keywords": ["subscribo"],
 	"license": "proprietary",
-    "repositories": [{"type": "composer", "url": "http://satis.localhost"}],
 	"type": "project",
 	"require": {
 		"laravel/framework": "~5.0",
