@@ -1,0 +1,41 @@
+{
+    "name": "subscribo/restserver",
+    "description": "Subscribo REST server base package",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "server",
+        "rest",
+        "middleware",
+        "access token"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "subscribo/restcommon": "@dev"
+    },
+    "suggest": {
+        "laravel/laravel": "This package have been developed to work with The Laravel Framework 5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\RestServer\\": "src/Subscribo/RestServer/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
