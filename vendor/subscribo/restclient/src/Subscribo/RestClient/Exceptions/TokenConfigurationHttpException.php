@@ -10,7 +10,7 @@ class TokenConfigurationHttpException extends ConfigurationHttpException {
 
     public function __construct($responseStatusCode, $responseContent, $statusCode = true, $message = true, array $data = array(), $code = true, Exception $previous = null, array $headers = array())
     {
-        $data['remote'] = [
+        $data['originalResponse'] = [
             'statusCode' => $responseStatusCode,
             'content' => $responseContent,
         ];

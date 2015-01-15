@@ -10,6 +10,9 @@ use Subscribo\RestCommon\Exceptions\NoAccessTokenHttpException;
 use Subscribo\RestCommon\Exceptions\InvalidAccessTokenHttpException;
 use Subscribo\RestClient\Exceptions\TokenConfigurationHttpException;
 use Subscribo\RestClient\Exceptions\RemoteServerErrorHttpException;
+use Subscribo\RestClient\Exceptions\ConnectionToRemoteServerHttpException;
+use GuzzleHttp\Exception\TransferException;
+use GuzzleHttp\Exception\ConnectException;
 
 /**
  * Class RestClient
@@ -58,6 +61,97 @@ class RestClient {
     }
 
     /**
+     * Process the call and format the result as Symfony Response
+     *
+     * @param string $uri
+     * @param string $method
+     * @param array|null $query
+     * @param array $headers
+     * @param string|null $body
+     * @return Response
+     * @throws \GuzzleHttp\Exception\TransferException
+     * @throws Exceptions\TokenConfigurationHttpException
+     * @throws Exceptions\ClientErrorHttpException
+     * @throws Exceptions\RemoteServerErrorHttpException
+     * @throws Exceptions\ConnectionToRemoteServerHttpException
+     */
+    public function process($uri, $method = 'GET', array $query = null, array $headers = array(), $body = null)
+    {
+        try {
+            $callResponse = $this->call($uri, $method, $query, $headers, $body);
+        } catch (ConnectException $e) {
+            throw new ConnectionToRemoteServerHttpException($e);
+        }
+        $responseStatusCode = $this->extractResponseStatusCode($callResponse);
+
+        $this->checkForTokenErrors($callResponse, $responseStatusCode);
+        $this->filterErrorResponses($callResponse, $responseStatusCode);
+
+        $responseContent = $this->extractResponseContent($callResponse);
+        $responseStatusMessage = $this->extractResponseStatusMessage($callResponse);
+        $responseHeaders = $this->extractResponseHeaders($callResponse);
+        $result = new Response($responseContent, $responseStatusCode, $responseHeaders);
+        if ($responseStatusMessage) {
+            $result->setStatusCode($responseStatusCode, $responseStatusMessage);
+        }
+        return $result;
+    }
+
+
+    /**
+     * @param string $uri
+     * @param string $method
+     * @param array|null $query
+     * @param array $headers
+     * @param string|null $body
+     * @return \GuzzleHttp\Message\FutureResponse|\GuzzleHttp\Message\ResponseInterface|\GuzzleHttp\Ring\Future\FutureInterface|mixed|null
+     * @throws \GuzzleHttp\Exception\TransferException
+     */
+    public function call($uri, $method = 'GET', array $query = null, array $headers = array(), $body = null)
+    {
+        $processedHeaders = $this->filterRequestHeaders($headers);
+        $processedHeaders[RestCommon::ACCESS_TOKEN_HEADER_FIELD_NAME] = $this->accessToken;
+        if ($uri) {
+            $uri = '/'.trim($this->uriBase).'/'.ltrim($uri,'/');
+        }
+        $response = $this->callRaw($method, $uri, $query, $processedHeaders, $body);
+        return $response;
+    }
+
+    /**
+     * Creates and sends request
+     *
+     * @param string $method
+     * @param string|null $url
+     * @param array|null $query
+     * @param array|null $headers
+     * @param string|null $body
+     * @param array $options
+     * @param bool|null $exceptions Whether to throw exceptions on 4xx and 5xx responses
+     * @return \GuzzleHttp\Message\FutureResponse|ResponseInterface|\GuzzleHttp\Ring\Future\FutureInterface|mixed|null
+     * @throws \GuzzleHttp\Exception\TransferException
+     */
+    protected function callRaw($method = 'GET', $url = null, array $query = null, array $headers = null, $body = null, array $options = array(), $exceptions = false)
+    {
+        if ( ! is_null($exceptions)) {
+            $options['exceptions'] = $exceptions;
+        }
+        if ( ! is_null($headers)) {
+            $options['headers'] = $headers;
+        }
+        if ( ! is_null($body)) {
+            $options['body'] = $body;
+        }
+        if ( ! is_null($query)) {
+            $options['query'] = $query;
+        }
+        $client = $this->client();
+        $request = $client->createRequest($method, $url, $options);
+        $response = $client->send($request);
+        return $response;
+    }
+
+    /**
      * @return Client
      */
     protected function client()
@@ -71,110 +165,54 @@ class RestClient {
     }
 
     /**
-     * @param string $uri
-     * @param string $method
-     * @param array $query
-     * @param array $headers
-     * @param null $body
-     * @return \GuzzleHttp\Message\FutureResponse|\GuzzleHttp\Message\ResponseInterface|\GuzzleHttp\Ring\Future\FutureInterface|mixed|null
-     */
-    public function call($uri, $method = 'GET', $query = array(), $headers = array(), $body = null)
-    {
-        $client = $this->client();
-        $processedHeaders = $this->filterRequestHeaders($headers);
-        $processedHeaders[RestCommon::ACCESS_TOKEN_HEADER_FIELD_NAME] = $this->accessToken;
-        $options = [
-            'headers' => $processedHeaders,
-            'exceptions' => false,
-        ];
-        if ($body) {
-            $options['body'] = $body;
-        }
-        if ($query) {
-            $options['query'] = $query;
-        }
-        if ($uri) {
-            $uri = '/'.trim($this->uriBase).'/'.ltrim($uri,'/');
-        }
-        $request = $client->createRequest($method, $uri, $options);
-        $response = $client->send($request);
-        return $response;
-    }
-
-    /**
-     * Process the call and format the result as Symfony Response
-     *
-     * @param string $uri
-     * @param string $method
-     * @param array $query
-     * @param array $headers
-     * @param null $body
-     * @return Response
-     * @throws Exceptions\TokenConfigurationHttpException
-     * @throws Exceptions\ClientErrorHttpException
-     * @throws Exceptions\RemoteServerErrorHttpException
-     */
-    public function process($uri, $method = 'GET', $query = array(), $headers = array(), $body = null)
-    {
-        $callResponse = $this->call($uri, $method, $query, $headers, $body);
-        $responseContent = $this->extractResponseContent($callResponse);
-        $responseStatusCode = $this->extractResponseStatusCode($callResponse);
-        $responseStatusMessage = $this->extractResponseStatusMessage($callResponse);
-        $responseHeaders = $this->extractResponseHeaders($callResponse);
-        $result = new Response($responseContent, $responseStatusCode, $responseHeaders);
-        if ($responseStatusMessage) {
-            $result->setStatusCode($responseStatusCode, $responseStatusMessage);
-        }
-        $this->checkForTokenErrors($result);
-        $this->filterErrorResponses($responseContent, $responseStatusCode, $responseHeaders, $responseStatusMessage);
-        return $result;
-    }
-
-    /**
-     * @param Response $response
+     * @param ResponseInterface $response
+     * @param int|null $statusCode
      * @throws Exceptions\TokenConfigurationHttpException
      */
-    public function checkForTokenErrors(Response $response)
+    public function checkForTokenErrors(ResponseInterface $response, $statusCode = null)
     {
-        $statusCode = $response->getStatusCode();
+        if ( ! is_int($statusCode)) {
+            $statusCode = $this->extractResponseStatusCode($response);
+        }
         if ((NoAccessTokenHttpException::SERVER_STATUS_CODE === $statusCode)
             or (InvalidAccessTokenHttpException::SERVER_STATUS_CODE === $statusCode)) {
-            throw new TokenConfigurationHttpException($statusCode, $response->getContent());
+            throw new TokenConfigurationHttpException($statusCode, $this->extractResponseContent($response));
         }
     }
 
-    /**
-     * @param Response $response
-     * @throws Exceptions\RemoteServerErrorHttpException
-     */
-    public function checkForRemoteServerErrors(Response $response)
-    {
-        $statusCode = $response->getStatusCode();
-        if ($statusCode >= 500) {
-            throw new RemoteServerErrorHttpException($statusCode, $response->getContent());
-        }
-    }
 
     /**
      * Throwing Exceptions for 4xx and 5xx responses
      *
-     * @param $content
-     * @param $statusCode
-     * @param $headers
-     * @param $statusMessage
+     * @param ResponseInterface $response
+     * @param int|null $statusCode
      * @throws Exceptions\ClientErrorHttpException
      * @throws Exceptions\RemoteServerErrorHttpException
      */
-    public function filterErrorResponses($content, $statusCode, $headers, $statusMessage)
+    public function filterErrorResponses(ResponseInterface $response, $statusCode = null)
     {
-        $statusCode = intval($statusCode);
+        if ( ! is_int($statusCode)) {
+            $statusCode = $this->extractResponseStatusCode($response);
+        }
         if (($statusCode < 400)) {
             return;
         }
+        $responseContent = $this->extractResponseContent($response);
+        $statusMessage = $this->extractResponseStatusMessage($response);
+        $originalHeaders = $response->getHeaders();
+        $originalResponse = [
+            'content' => $responseContent,
+            'statusCode' => $statusCode,
+            'statusMessage' => $statusMessage,
+            'headers' => $originalHeaders,
+        ];
         if (($statusCode >= 500)) {
-            throw new RemoteServerErrorHttpException($statusCode, $content);
+            throw new RemoteServerErrorHttpException(['originalResponse' => $originalResponse]);
         }
-        $data = json_decode($content, true);
+
+        /* Processing 4xx errors */
+
+        $data = json_decode($responseContent, true);
 
         $message = (isset($data['message']) and is_string($data['message'])) ? $data['message'] : null;
 
@@ -191,8 +229,14 @@ class RestClient {
                 unset($data[$keyToRemove]);
             }
         }
-        $exceptionData = ['output' => $data];
-        $e = new ClientErrorHttpException($statusCode, $message, $exceptionData, $exceptionCode, null, $headers);
+
+        $exceptionData = [
+            'originalResponse' => $originalResponse,
+            'output' => $data,
+        ];
+        $filteredHeaders = $this->extractResponseHeaders($response);
+
+        $e = new ClientErrorHttpException($statusCode, $message, $exceptionData, $exceptionCode, null, $filteredHeaders);
         if ($statusMessage) {
             $e->setStatusMessage($statusMessage);
         }
@@ -245,7 +289,7 @@ class RestClient {
      */
     public function extractResponseStatusCode(ResponseInterface $response)
     {
-        return $response->getStatusCode();
+        return intval($response->getStatusCode());
     }
 
     public function extractResponseStatusMessage(ResponseInterface $response)
