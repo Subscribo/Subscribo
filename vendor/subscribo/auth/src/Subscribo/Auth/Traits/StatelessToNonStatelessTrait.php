@@ -18,12 +18,6 @@ trait StatelessToNonStatelessTrait {
         return $this->onceBasic($field);
     }
 
-    public function onceBasic($field = 'email')
-    {
-        $user = $this->user();
-        return null;
-    }
-
     public function viaRemember()
     {
         return false;

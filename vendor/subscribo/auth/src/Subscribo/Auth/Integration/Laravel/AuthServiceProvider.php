@@ -6,6 +6,7 @@ class AuthServiceProvider extends ServiceProvider {
 
     public function register()
     {
+        $this->app->when('Subscribo\\Auth\\Guards\\SimpleGuard')->needs('Symfony\\Component\\HttpFoundation\\Request')->give('Illuminate\\Http\\Request');
         $this->app->singleton('Subscribo\\Auth\\Interfaces\\StatelessAuthenticatableFactoryInterface', 'Subscribo\\Auth\\Factories\\UserFactory');
         $this->app->singleton('subscribo.auth', 'Subscribo\\Auth\\Guards\\SimpleGuard');
         $this->app->singleton('auth', 'subscribo.auth');
