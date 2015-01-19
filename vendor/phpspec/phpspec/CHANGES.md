@@ -1,7 +1,14 @@
-Upcoming
-========
+2.2.x-dev
+=========
 
+ * Support for TAP format output
+ * Remove deprecated usage of Symfony DialogHelper
  * Clearer error message when specs have incorrect namespace prefix
+
+Backward Compatibility
+----------------------
+
+ * The unused `ask` and `askAndValidate` methods on `Console\IO` have been removed
 
 2.1.1 / 2015-01-09
 ==================
