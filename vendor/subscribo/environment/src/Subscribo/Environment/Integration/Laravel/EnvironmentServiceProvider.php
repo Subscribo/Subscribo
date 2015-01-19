@@ -19,6 +19,6 @@ class EnvironmentServiceProvider extends ServiceProvider {
         $environmentInstance = EnvironmentRegistry::getInstance();
         $this->app->instance('subscribo.environment', $environmentInstance);
         $aliasLoader = AliasLoader::getInstance();
-        $aliasLoader->alias('Subscribo\Environment', 'Subscribo\\Environment\\Integration\\Laravel\\Facades\\Environment');
+        $aliasLoader->alias('Subscribo\\Environment', 'Subscribo\\Environment\\Integration\\Laravel\\Facades\\Environment');
     }
 }

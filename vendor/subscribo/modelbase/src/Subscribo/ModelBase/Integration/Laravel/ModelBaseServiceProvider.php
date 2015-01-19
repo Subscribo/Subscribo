@@ -19,7 +19,7 @@ class ModelBaseServiceProvider extends ServiceProvider {
             return new ModelFactory;
         });
         $aliasLoader = AliasLoader::getInstance();
-        $aliasLoader->alias('Subscribo\ModelFactory', 'Subscribo\\ModelBase\\Integration\\Laravel\\Facades\\ModelFactory');
+        $aliasLoader->alias('Subscribo\\ModelFactory', 'Subscribo\\ModelBase\\Integration\\Laravel\\Facades\\ModelFactory');
         $this->app->make('subscribo.config')->loadFileForPackage('modelbase','api');
     }
 }

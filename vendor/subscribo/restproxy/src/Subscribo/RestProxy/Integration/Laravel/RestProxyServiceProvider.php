@@ -21,7 +21,7 @@ class RestProxyServiceProvider extends ServiceProvider {
         $this->app->singleton('subscribo.restproxy', 'Subscribo\\RestProxy\\RestProxy');
 
         $aliasLoader = AliasLoader::getInstance();
-        $aliasLoader->alias('Subscribo\RestProxy', 'Subscribo\\RestProxy\\Integration\\Laravel\\Facades\\RestProxy');
+        $aliasLoader->alias('Subscribo\\RestProxy', 'Subscribo\\RestProxy\\Integration\\Laravel\\Facades\\RestProxy');
     }
 
     public function boot()

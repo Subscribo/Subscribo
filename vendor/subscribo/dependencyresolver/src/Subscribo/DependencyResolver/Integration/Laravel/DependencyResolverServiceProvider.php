@@ -20,6 +20,6 @@ class DependencyResolverServiceProvider extends ServiceProvider {
             return new DependencyResolver;
         });
         $aliasLoader = AliasLoader::getInstance();
-        $aliasLoader->alias('Subscribo\DependencyResolver', 'Subscribo\\DependencyResolver\\Integration\\Laravel\\Facades\\DependencyResolver');
+        $aliasLoader->alias('Subscribo\\DependencyResolver', 'Subscribo\\DependencyResolver\\Integration\\Laravel\\Facades\\DependencyResolver');
     }
 }
