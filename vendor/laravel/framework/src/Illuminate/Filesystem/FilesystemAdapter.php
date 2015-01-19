@@ -265,6 +265,16 @@ class FilesystemAdapter implements FilesystemContract, CloudFilesystemContract {
 	}
 
 	/**
+	 * Get the Flysystem driver.
+	 *
+	 * @return \League\Flysystem\FilesystemInterface
+	 */
+	public function getDriver()
+	{
+		return $this->driver;
+	}
+
+	/**
 	 * Filter directory contents by type.
 	 *
 	 * @param  array  $contents
