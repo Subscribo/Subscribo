@@ -2,7 +2,6 @@
 
 use Response;
 use Subscribo\ServiceProvider\ServiceProvider;
-use Subscribo\Api0\Exception\HttpException;
 
 
 /**
@@ -24,12 +23,12 @@ class Api0ServiceProvider extends ServiceProvider {
     public function boot()
     {
         $this->package('subscribo/api0');
-        $this->app->make('router')->get('api/v0/model/{model}/{identifier?}', ['middleware' => 'Subscribo\\RestServer\\Middleware\\CheckAccessToken', 'uses' => '\\Subscribo\Api0\ModelController@getIndex']);
-        $this->app->make('router')->post('api/v0/model/{model}', ['middleware' => 'Subscribo\\RestServer\\Middleware\\CheckAccessToken', 'uses' => '\\Subscribo\Api0\ModelController@addElement']);
-        $this->app->make('router')->post('api/v0/model/{model}/{identifier?}', ['middleware' => 'Subscribo\\RestServer\\Middleware\\CheckAccessToken', 'uses' => '\\Subscribo\Api0\ModelController@modifyElement']);
-        $this->app->make('router')->put('api/v0/model/{model}/{identifier}', ['middleware' => 'Subscribo\\RestServer\\Middleware\\CheckAccessToken', 'uses' => '\\Subscribo\Api0\ModelController@putElement']);
-        $this->app->make('router')->delete('api/v0/model/{model}/{identifier}', ['middleware' => 'Subscribo\\RestServer\\Middleware\\CheckAccessToken', 'uses' => '\\Subscribo\Api0\ModelController@deleteElement']);
-        $this->app->make('router')->options('api/v0/model/{model}/{identifier?}', ['middleware' => 'Subscribo\\RestServer\\Middleware\\CheckAccessToken', function() {
+        $this->app->make('router')->get('api/v0/model/{model}/{identifier?}', ['middleware' => [], 'uses' => '\\Subscribo\Api0\ModelController@getIndex']);
+        $this->app->make('router')->post('api/v0/model/{model}', ['middleware' => [], 'uses' => '\\Subscribo\Api0\ModelController@addElement']);
+        $this->app->make('router')->post('api/v0/model/{model}/{identifier?}', ['middleware' => [], 'uses' => '\\Subscribo\Api0\ModelController@modifyElement']);
+        $this->app->make('router')->put('api/v0/model/{model}/{identifier}', ['middleware' => [], 'uses' => '\\Subscribo\Api0\ModelController@putElement']);
+        $this->app->make('router')->delete('api/v0/model/{model}/{identifier}', ['middleware' => [], 'uses' => '\\Subscribo\Api0\ModelController@deleteElement']);
+        $this->app->make('router')->options('api/v0/model/{model}/{identifier?}', ['middleware' => [], function() {
             return Response::make(array("methods" => array("GET", "POST", "PUT", "DELETE", "OPTIONS")), 200, array('Allow' => "GET, POST, PUT, DELETE, OPTIONS"));
         }]);
 
