@@ -56,4 +56,17 @@ class Arr extends \Illuminate\Support\Arr {
         }
         return $result;
     }
+
+    public static function withoutKeyCaseInsensitively($needle, array $haystack)
+    {
+        $result = array();
+        $modifiedNeedle = strtolower($needle);
+        foreach ($haystack as $key => $value) {
+            $modifiedKey = strtolower($key);
+            if ($modifiedKey != $modifiedNeedle) {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
+    }
 }
