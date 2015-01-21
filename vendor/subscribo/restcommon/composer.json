@@ -8,7 +8,8 @@
         "rest",
         "access token",
         "header field name",
-        "exception"
+        "exception",
+        "authentication"
     ],
     "homepage": "http://www.subscribo.io",
     "license": "proprietary",
@@ -24,7 +25,11 @@
     ],
     "require": {
         "php": "~5.4",
-        "subscribo/exception": "@dev"
+        "subscribo/exception": "@dev",
+        "subscribo/support": "@dev",
+        "illuminate/contracts": "~5.0",
+        "illuminate/encryption": "~5.0",
+        "symfony/http-foundation": "~2.6"
     },
     "suggest": {
         "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
