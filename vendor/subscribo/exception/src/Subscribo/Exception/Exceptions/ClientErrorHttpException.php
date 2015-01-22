@@ -12,7 +12,7 @@ use Subscribo\Exception\Interfaces\HttpClientErrorInterface;
  */
 class ClientErrorHttpException extends HttpException implements HttpClientErrorInterface {
 
-    public function __construct($statusCode = 400, $message = null, $data = array(), $code = 0, Exception $previous = null, array $headers = array())
+    public function __construct($statusCode = 400, $message = null, array $data = array(), $code = 0, Exception $previous = null, array $headers = array())
     {
         parent::__construct($statusCode, $message, $data, $code, $previous, $headers);
     }

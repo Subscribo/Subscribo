@@ -23,7 +23,7 @@ class HttpException extends \Symfony\Component\HttpKernel\Exception\HttpExceptio
      * @param Exception|null $previous
      * @param array $headers
      */
-    public function __construct($statusCode, $message = null, $data = array(), $code = 0, Exception $previous = null, array $headers = array())
+    public function __construct($statusCode, $message = null, array $data = array(), $code = 0, Exception $previous = null, array $headers = array())
     {
         $this->_containedData = $data;
         parent::__construct($statusCode, $message, $previous, $headers, $code);

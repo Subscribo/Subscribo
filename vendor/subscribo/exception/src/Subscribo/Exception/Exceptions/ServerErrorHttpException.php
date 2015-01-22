@@ -14,7 +14,7 @@ use Subscribo\Exception\Traits\MarkableExceptionTrait;
 class ServerErrorHttpException extends HttpException implements MarkableExceptionInterface {
     use MarkableExceptionTrait;
 
-    public function __construct($statusCode = 500, $message = null, $data = array(), $code = 0, Exception $previous = null, array $headers = array())
+    public function __construct($statusCode = 500, $message = null, array $data = array(), $code = 0, Exception $previous = null, array $headers = array())
     {
         parent::__construct($statusCode, $message, $data, $code, $previous, $headers);
     }
