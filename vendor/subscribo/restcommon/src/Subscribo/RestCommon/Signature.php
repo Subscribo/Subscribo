@@ -1,5 +1,7 @@
 <?php namespace Subscribo\RestCommon;
 
+use Exception;
+use Closure;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Subscribo\RestCommon\RestCommon;
@@ -40,10 +42,185 @@ class Signature {
         return $headers;
     }
 
+    /**
+     * @param Request $request
+     * @param callable $tokenToTokenRing
+     * @param bool $enforcedSignatureType
+     * @param array $data
+     * @param array $options
+     * @param Encrypter $encrypter
+     * @param bool $throwExceptions
+     * @return bool|null|TokenRing
+     */
+    public static function verifyRequest(Request $request, Closure $tokenToTokenRing, $enforcedSignatureType = false, array $data = array(), array $options = array(), Encrypter $encrypter = null, $throwExceptions = false)
+    {
+        $headers = $request->headers->all();
+        $description = self::extractDescriptionFromHeaders($headers, $encrypter, $throwExceptions);
+        if (empty($description)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, "Signature::verifyRequest() description is missing or invalid");
+        }
+        $signatureType = self::extractSignatureTypeFromDescription($description);
+        if (empty($signatureType)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, "Signature::verifyRequest() signatureType is missing from description");
+        }
+        if (($enforcedSignatureType) and ($enforcedSignatureType !== $signatureType)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, "Signature::verifyRequest() signatureType in description ('%s') is different then enforcedSignatureType ('%s')", $signatureType, $enforcedSignatureType);
+        }
+        $token = self::extractTokenFromDescription($description);
+        if (empty($token)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, "Signature::verifyRequest() token missing");
+        }
+        $tokenRing = TokenRing::make($tokenToTokenRing($token, $signatureType));
+        if (empty($tokenRing)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, "Signature::verifyRequest() TokenRing has not been returned");
+        }
+        $data['requestUri'] = Arr::get($data, 'requestUri') ?: $request->getUri();
+        $data['requestMethod'] = Arr::get($data, 'requestMethod') ?: $request->getMethod();
+        $data['requestContent']= Arr::get($data, 'requestContent') ?: $request->getContent();
+        $verified = self::verifyDescription($description, $tokenRing, $data, $options, $throwExceptions);
+        if ( ! $verified) {
+            return self::throwExceptionOrReturnNull($throwExceptions, "Signature::verifyRequest() Description not verified");
+        }
+        $result = [
+            'verified' => $verified,
+            'description' => $description,
+            'token' => $token,
+            'tokenRing' => $tokenRing,
+            'signatureType' => $signatureType,
+        ];
+        return $result;
+    }
+
+    public static function extractDescriptionFromHeaders(array $headers, Encrypter $encrypter = null, $throwExceptions = false)
+    {
+        $headerName = RestCommon::ACCESS_TOKEN_HEADER_FIELD_NAME;
+        $headerContent = Arr::getSimpleCaseInsensitively($headers, $headerName);
+        if (is_array($headerContent)) {
+            $headerContent = reset($headerContent);
+        }
+        if (empty($headerContent)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, sprintf("Signature::extractDescriptionFromHeaders() authorization header '%s' not found or empty", $headerName));
+        }
+        $description = self::extractDescriptionFromHeaderContent($headerContent, $encrypter, $throwExceptions);
+        return $description;
+    }
 
 
+    public static function extractSignatureTypeFromDescription(array $description)
+    {
+        return $description['signatureType'];
+    }
 
-    public static function assembleAuthorizationHeaderContent(TokenRing $tokenRing, array $data = array(), array $options = array(), Encrypter $encrypter = null, array &$description = array())
+    public static function extractTokenFromDescription(array $description)
+    {
+        $signatureType = self::extractSignatureTypeFromDescription($description);
+        switch ($signatureType) {
+            case self::TYPE_SUBSCRIBO_BASIC:
+                return $description['subscriboBasicToken'];
+            case self::TYPE_SUBSCRIBO_DIGEST:
+                return $description['subscriboDigestToken'];
+        }
+        return null;
+    }
+
+
+    public static function verifyDescription(array $description, TokenRing $tokenRing, array $data = array(), array $options = array(), $throwExceptions = false)
+    {
+        $signatureType = self::extractSignatureTypeFromDescription($description);
+        switch ($signatureType) {
+            case self::TYPE_SUBSCRIBO_BASIC:
+                if ($tokenRing->basicToken !== self::extractTokenFromDescription($description)) {
+                    return self::throwExceptionOrReturnFalse($throwExceptions, 'Subscription::verifyDescription() SubscriboBasic: provided token is different than basicToken in TokenRing');
+                }
+                return true;
+            case self::TYPE_SUBSCRIBO_DIGEST:
+                return self::verifyDigestDescription($description, $tokenRing, $data, $options, $throwExceptions);
+        }
+        return self::throwExceptionOrReturnFalse($throwExceptions, sprintf("Subscription::verifyDescription() Unrecognized SignatureType '%s'", $signatureType));
+    }
+
+
+    protected static function extractDescriptionFromHeaderContent($headerContent, Encrypter $encrypter = null, $throwExceptions)
+    {
+        $headerContent = trim($headerContent);
+        $parts = explode(' ', $headerContent, 2);
+        $signatureType = array_shift($parts);
+        if (empty($signatureType)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, "Signature::extractDescriptionFromHeaderContent() signature type empty");
+        }
+        $data = array_shift($parts);
+        $data = trim($data);
+        switch ($signatureType) {
+            case self::TYPE_SUBSCRIBO_BASIC:
+                return self::assembleBasicDescription($data);
+            case self::TYPE_SUBSCRIBO_DIGEST:
+                $result = self::decode($data, $encrypter, $throwExceptions);
+                if (( ! is_array($result)) or empty($result['signatureType'])) {
+                    return self::throwExceptionOrReturnNull($throwExceptions, "Signature::extractDescriptionFromHeaderContent() signature has not been decoded properly or is invalid");
+                }
+                if (self::TYPE_SUBSCRIBO_DIGEST !== $result['signatureType']) {
+                    return self::throwExceptionOrReturnNull($throwExceptions, "Signature::extractDescriptionFromHeaderContent() signature type from header does not agree with signatureType in description");
+                }
+                return $result;
+        }
+        return self::throwExceptionOrReturnNull($throwExceptions, sprintf("Signature::extractDescriptionFromHeaderContent() signature type '%s' not recognized", $signatureType));
+    }
+
+
+    protected static function verifyDigestDescription(array $description, TokenRing $tokenRing, array $data = array(), array $options = array(), $throwExceptions = false)
+    {
+        \Log::info('throw', ['value' => $throwExceptions]);
+        if (self::TYPE_SUBSCRIBO_DIGEST  !== $description['signatureType']) {
+            return self::throwExceptionOrReturnFalse($throwExceptions, sprintf("Signature::verifyDigestDescription() signatureType in description ('%s') is different than required '%s'", $description['signatureType'], self::TYPE_SUBSCRIBO_DIGEST));
+        }
+        if (empty($description['signatureVersion'])) {
+            return self::throwExceptionOrReturnFalse($throwExceptions, "Signature::verifyDigestDescription() signatureVersion missing");
+        }
+        if (empty($description['nonce'])) {
+            return self::throwExceptionOrReturnFalse($throwExceptions, "Signature::verifyDigestDescription() nonce missing");
+        }
+        if (empty($description['salt'])) {
+            return self::throwExceptionOrReturnFalse($throwExceptions, "Signature::verifyDigestDescription() salt missing");
+        }
+        if (empty($description['timestamp'])) {
+            return self::throwExceptionOrReturnFalse($throwExceptions, "Signature::verifyDigestDescription() timestamp missing");
+        }
+        if ( ! empty($options['nonce'])) {
+            if ($options['nonce'] !== $description['nonce']) {
+                return self::throwExceptionOrReturnFalse($throwExceptions, sprintf("Signature::verifyDigestDescription() nonce in description ('%s') is different than nonce in options ('%s')", $description['nonce'], $options['nonce']));
+            }
+        }
+        if (empty($description['subscriboDigestToken'])) {
+            return self::throwExceptionOrReturnFalse($throwExceptions, "Signature::verifyDigestDescription() subscriboDigestToken missing");
+        }
+        if ($description['subscriboDigestToken'] !== $tokenRing->digestToken) {
+            return self::throwExceptionOrReturnFalse($throwExceptions, sprintf("Signature::verifyDigestDescription() subscriboDigestToken in description ('%s') is different than digestToken in TokenRing ('%s')", $description['subscriboDigestToken'], $tokenRing->digestToken));
+        }
+        if (empty($description['signature'])) {
+            return self::throwExceptionOrReturnFalse($throwExceptions, "Signature::verifyDigestDescription() signature missing");
+        }
+        $descriptionSignature = $description['signature'];
+        $descriptionCopy = $description;
+        unset($descriptionCopy['signature']);
+        $dataToUse = [];
+        if ( ! empty($description['dataKeys'])) {
+            foreach($description['dataKeys'] as $key) {
+                if ( ! array_key_exists($key, $data)) {
+                    return self::throwExceptionOrReturnFalse($throwExceptions, "Signature::verifyDigestDescription() missing data with key '%s'", $key);
+                }
+                $dataToUse[$key] = $data[$key];
+            }
+        }
+        $arrayToHash = ['description' => $descriptionCopy, 'data' => $dataToUse];
+        $recomputedSignature = self::computeSignature($arrayToHash, $tokenRing->digestSecret);
+        if ($recomputedSignature !== $descriptionSignature) {
+            return self::throwExceptionOrReturnFalse($throwExceptions, "Signature::verifyDigestDescription() provided signature is different than recomputed signature");
+        }
+        return true;
+    }
+
+
+    protected static function assembleAuthorizationHeaderContent(TokenRing $tokenRing, array $data = array(), array $options = array(), Encrypter $encrypter = null, array &$description = array())
     {
         $signatureType = Arr::get($options, 'signatureType') ?: $tokenRing->ascertainType();
         if (empty($signatureType)) {
@@ -54,6 +231,7 @@ class Signature {
         }
         switch ($signatureType) {
             case self::TYPE_SUBSCRIBO_BASIC:
+                $description = self::assembleBasicDescription($tokenRing->basicToken);
                 $result = self::TYPE_SUBSCRIBO_BASIC.' '.$tokenRing->basicToken;
                 return $result;
             case self::TYPE_SUBSCRIBO_DIGEST:
@@ -66,16 +244,21 @@ class Signature {
         }
     }
 
-    public static function assembleDigestDescription(TokenRing $tokenRing, array $data = array(), array $options = array())
+    protected static function assembleDigestDescription(TokenRing $tokenRing, array $data = array(), array $options = array())
     {
         $options['signatureType'] = Arr::get($options, 'signatureType', self::TYPE_SUBSCRIBO_DIGEST);
         $description = self::assembleDescriptionBase($tokenRing, $options);
         $description['dataKeys'] = Arr::get($options, 'dataKeys') ?: array_keys($data);
         $arrayToHash = ['description' => $description, 'data' => $data];
-        $stringToHash = json_encode($arrayToHash);
-        $signature = hash_hmac(self::HASH_HMAC_ALGORITHM, $stringToHash, $tokenRing->digestSecret);
-        $description['signature'] = $signature;
+        $description['signature'] = self::computeSignature($arrayToHash, $tokenRing->digestSecret);
         return $description;
+    }
+
+    protected static function computeSignature(array $data, $secret)
+    {
+        $stringToHash = json_encode($data);
+        $signature = hash_hmac(self::HASH_HMAC_ALGORITHM, $stringToHash, $secret);
+        return $signature;
     }
 
     protected static function assembleDescriptionBase(TokenRing $tokenRing, array $options)
@@ -93,6 +276,16 @@ class Signature {
         return $description;
     }
 
+    protected static function assembleBasicDescription($token)
+    {
+        $description = [
+            'signatureType' => self::TYPE_SUBSCRIBO_BASIC,
+            'signatureVersion' => '1.0',
+            'subscriboBasicToken' => $token,
+        ];
+        return $description;
+    }
+
     protected static function encode($data, Encrypter $encrypter = null)
     {
         if ( ! is_string($data)) {
@@ -106,7 +299,55 @@ class Signature {
         return $result;
     }
 
-    public static function generateSalt($length = 32)
+    protected static function decode($data, Encrypter $encrypter = null, $throwExceptions = false)
+    {
+        if (empty($data)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, 'Signature::decode() provided data empty');
+        }
+        $urlDecoded = urldecode($data);
+        if (empty($urlDecoded)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, 'Signature::decode() url decoded data empty');
+        }
+        $decoded = base64_decode($urlDecoded, true);
+        if (empty($decoded)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, 'Signature::decode() base 64 decoded data empty');
+        }
+        if ($encrypter) {
+            try {
+                $decoded =  $encrypter->decrypt($decoded);
+            } catch (Exception $e) {
+                return self::throwExceptionOrReturnNull($throwExceptions, 'Signature::decode() exception thrown during data decryption', 110, $e);
+            }
+        }
+        if (empty($decoded)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, 'Signature::decode() decrypted data empty');
+        }
+        $parsed = json_decode($decoded, true);
+        if (empty($parsed)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, 'Signature::decode() json parsing failed', json_last_error());
+        }
+        return $parsed;
+    }
+
+    protected static function throwExceptionOrReturnNull($throwException, $message = '', $code = 0, Exception $previous = null)
+    {
+        if (false === $throwException) {
+            return null;
+        }
+        $e = new InvalidArgumentException($message, $code, $previous);
+        throw $e;
+    }
+
+    protected static function throwExceptionOrReturnFalse($throwException, $message = '', $code = 0, Exception $previous = null)
+    {
+        if (false === $throwException) {
+            return false;
+        }
+        $e = new InvalidArgumentException($message, $code, $previous);
+        throw $e;
+    }
+
+    protected static function generateSalt($length = 32)
     {
         $bytes = openssl_random_pseudo_bytes($length);
         $printable = base64_encode($bytes);
@@ -114,7 +355,7 @@ class Signature {
         return $result;
     }
 
-    public static function generateTimestamp()
+    protected static function generateTimestamp()
     {
         $microTimeString = microtime();
         $microTimeParts = explode(' ', $microTimeString);
