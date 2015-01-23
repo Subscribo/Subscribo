@@ -2,6 +2,7 @@
 
 use Subscribo\Auth\Interfaces\StatelessGuardInterface;
 use Subscribo\Auth\Interfaces\StatelessAuthenticatableFactoryInterface;
+use Subscribo\Auth\Interfaces\CanBeGuestInterface;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class BaseStatelessGuard implements StatelessGuardInterface {
@@ -33,7 +34,15 @@ class BaseStatelessGuard implements StatelessGuardInterface {
 
     public function guest()
     {
-        return empty($this->user);
+        $user = $this->user();
+        if (empty($user)) {
+            return true;
+        }
+        if ($user instanceof CanBeGuestInterface)
+        {
+            return $user->isGuest();
+        }
+        return false;
     }
 
     public function user()

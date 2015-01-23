@@ -1,17 +1,88 @@
 <?php namespace Subscribo\Auth\Factories;
 
 use Subscribo\Auth\Interfaces\StatelessAuthenticatableFactoryInterface;
+use Subscribo\RestCommon\Interfaces\ByTokenIdentifiableFactoryInterface;
+use Subscribo\RestCommon\Interfaces\CommonSecretProviderInterface;
+use Subscribo\RestCommon\Interfaces\TokenRingProviderInterface;
 use Illuminate\Contracts\Auth\Authenticatable;
-use InvalidArgumentException;
-use Hash;
+use Illuminate\Contracts\Hashing\Hasher;
 use Model\User;
+use Model\UserToken;
+use Subscribo\Auth\Exceptions\InvalidArgumentException;
 
-class UserFactory implements StatelessAuthenticatableFactoryInterface {
+class UserFactory implements StatelessAuthenticatableFactoryInterface, ByTokenIdentifiableFactoryInterface
+{
+
+    /**
+     * @var \Illuminate\Contracts\Hashing\Hasher
+     */
+    protected $hasher;
+
+    /**
+     * @var CommonSecretProviderInterface
+     */
+    protected $commonSecretProvider;
+
+    public function __construct(Hasher $hasher, CommonSecretProviderInterface $commonSecretProvider)
+    {
+        $this->hasher = $hasher;
+        $this->commonSecretProvider = $commonSecretProvider;
+    }
+
+    /**
+     * @param array $data
+     * @return User
+     */
+    public function create(array $data = array())
+    {
+        if (array_key_exists('password', $data)) {
+            $hashedPassword = $this->hasher->make($data['password']);
+            $data['password'] = $hashedPassword;
+        }
+        $user = new User($data);
+        return $user;
+    }
+
+    public function setUserPassword(User $user, $newPassword)
+    {
+        $user->password = $this->hasher->make($newPassword);
+    }
+
+    /**
+     * Create token(s) of specified type(s) for given user. If user does not yet have id, saves it.
+     *
+     * @param User|int $user User object or user Id
+     * @param array|string|bool $tokenTypes (true for preselected set)
+     * @return array
+     * @throws InvalidArgumentException
+     */
+    public function addTokens($user, $tokenTypes = true)
+    {
+        if (true === $tokenTypes) {
+            $tokenTypes = [UserToken::TYPE_SUBSCRIBO_DIGEST, UserToken::TYPE_SUBSCRIBO_BASIC];
+        }
+        if ( ! is_array($tokenTypes)) {
+            $tokenTypes = [$tokenTypes];
+        }
+        if (empty($user)) {
+            throw new InvalidArgumentException('UserFactory::addTokens() user parameter should contain user object or user ID');
+        }
+        if ($user instanceof User and ( ! $user->id)) {
+            $user->save();
+        }
+        $commonSecret = ($this->commonSecretProvider) ? $this->commonSecretProvider->getCommonSecret() : null;
+        $result = [];
+        foreach ($tokenTypes as $tokenType) {
+            $result[] = UserToken::generateTokenForUser($user, $tokenType, $commonSecret);
+        }
+        return $result;
+    }
+
 
     /**
      * @param mixed $id
      * @return \Model\User|Authenticatable
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function retrieveById($id)
     {
@@ -26,7 +97,7 @@ class UserFactory implements StatelessAuthenticatableFactoryInterface {
     /**
      * @param array $credentials
      * @return \Model\User|Authenticatable
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function retrieveByCredentials(array $credentials)
     {
@@ -50,9 +121,36 @@ class UserFactory implements StatelessAuthenticatableFactoryInterface {
         if (empty($credentials['password'])) {
             throw new InvalidArgumentException('Credentials does not contain password or password is empty');
         }
-        $userPass = $user->getAuthPassword();
-        $result = Hash::check($credentials['password'], $userPass);
+        $result = $this->validatePassword($user, $credentials['password']);
         return $result;
 
+    }
+
+    public function validatePassword(Authenticatable $user, $passwordToValidate)
+    {
+        $result = $this->hasher->check($passwordToValidate, $user->getAuthPassword());
+        return $result;
+    }
+
+
+    /**
+     * @param TokenRingProviderInterface $tokenRingProvider
+     * @return null|\Subscribo\RestCommon\Interfaces\ByTokenIdentifiableInterface
+     */
+    public function findByTokenIdentifiableUsingTokenRingProvider(TokenRingProviderInterface $tokenRingProvider)
+    {
+        $user = $tokenRingProvider->provideByTokenIdentifiable();
+        return $user;
+    }
+
+    /**
+     * @param string $token
+     * @param string|null $tokenType
+     * @return UserToken|null|TokenRingProviderInterface
+     */
+    public function tokenToTokenRingProvider($token, $tokenType = null)
+    {
+        $userToken = UserToken::findByTokenAndType($token, $tokenType);
+        return $userToken;
     }
 }
