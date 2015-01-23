@@ -57,6 +57,24 @@ class Arr extends \Illuminate\Support\Arr {
         return $result;
     }
 
+    public static function getSimpleCaseInsensitively($array, $key, $default = null)
+    {
+        if (array_key_exists($key, $array)) {
+            return $array[$key];
+        }
+        $modifiedArray = array_change_key_case($array, CASE_LOWER);
+        $modifiedKey = strtolower($key);
+        if (array_key_exists($modifiedKey, $modifiedArray)) {
+            return $modifiedArray[$modifiedKey];
+        }
+        return $default;
+    }
+
+    /**
+     * @param string $needle
+     * @param array $haystack
+     * @return array
+     */
     public static function withoutKeyCaseInsensitively($needle, array $haystack)
     {
         $result = array();
