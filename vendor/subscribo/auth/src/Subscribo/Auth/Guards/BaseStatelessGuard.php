@@ -47,6 +47,9 @@ class BaseStatelessGuard implements StatelessGuardInterface {
 
     public function user()
     {
+        if ($this->loggedOut) {
+            return null;
+        }
         return $this->user;
     }
 
@@ -61,6 +64,7 @@ class BaseStatelessGuard implements StatelessGuardInterface {
             return false;
         }
         $this->user = $user;
+        $this->loggedOut = false;
         return true;
     }
 
@@ -78,11 +82,15 @@ class BaseStatelessGuard implements StatelessGuardInterface {
     public function login(Authenticatable $user, $remember = false)
     {
         $this->user = $user;
+        $this->loggedOut = false;
     }
 
     public function loginUsingId($id, $remember = false)
     {
         $user = $this->userFactory->retrieveById($id);
+        if ($user) {
+            $this->loggedOut = false;
+        }
         $this->user = $user;
         return $user;
     }

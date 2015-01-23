@@ -54,6 +54,14 @@ class SubscriboGuard extends BaseStatelessGuard implements GuardContract
      */
     public function user()
     {
+        if ($this->loggedOut) {
+            return null;
+        }
+
+        if ($this->user) {
+            return $this->user;
+        }
+
         if (empty($this->request)) {
             return null;
         }
