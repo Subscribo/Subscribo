@@ -13,6 +13,7 @@ use Subscribo\RestClient\Exceptions\RemoteServerErrorHttpException;
 use Subscribo\RestClient\Exceptions\ConnectionToRemoteServerHttpException;
 use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Exception\ConnectException;
+use Subscribo\RestCommon\Signer;
 
 /**
  * Class RestClient
@@ -30,8 +31,8 @@ class RestClient {
     /** @var  string $uriBase */
     protected $uriBase;
 
-    /** @var  string $accessToken */
-    protected $accessToken;
+    /** @var string|array */
+    protected $tokenRing;
 
     /** @var  Client $client */
     protected $client;
@@ -54,8 +55,8 @@ class RestClient {
         if (array_key_exists('uri_base', $settings)) {
             $this->uriBase = trim($settings['uri_base'],'/');
         }
-        if (array_key_exists('access_token', $settings)) {
-            $this->accessToken = $settings['access_token'];
+        if (array_key_exists('token_ring', $settings)) {
+            $this->tokenRing = $settings['token_ring'];
         }
         $this->client = null;
     }
@@ -110,7 +111,10 @@ class RestClient {
     public function call($uri, $method = 'GET', array $query = null, array $headers = array(), $body = null)
     {
         $processedHeaders = $this->filterRequestHeaders($headers);
-        $processedHeaders[RestCommon::ACCESS_TOKEN_HEADER_FIELD_NAME] = $this->accessToken;
+        if ($this->tokenRing) {
+            $signer = new Signer($this->tokenRing);
+            $processedHeaders = $signer->modifyHeaders($processedHeaders);
+        }
         if ($uri) {
             $uri = '/'.trim($this->uriBase).'/'.ltrim($uri,'/');
         }
