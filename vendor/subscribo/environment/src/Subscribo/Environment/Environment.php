@@ -26,6 +26,16 @@ class Environment implements EnvironmentInterface {
      */
     public function detectEnvironment()
     {
+        $environment = getenv('SUBSCRIBO_ENV');
+        if ($environment) {
+            return $environment;
+        }
+        if (array_key_exists('SUBSCRIBO_ENV', $_ENV)) {
+            return $_ENV['SUBSCRIBO_ENV'];
+        }
+        if (array_key_exists('SUBSCRIBO_ENV', $_SERVER)) {
+            return $_SERVER['SUBSCRIBO_ENV'];
+        }
         return self::PRODUCTION;
     }
 
