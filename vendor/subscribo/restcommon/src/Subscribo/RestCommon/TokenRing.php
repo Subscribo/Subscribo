@@ -19,11 +19,14 @@ class TokenRing implements Arrayable, Jsonable
     public $preferredType;
 
     /**
-     * @param $tokenRing
-     * @return TokenRing
+     * @param TokenRing|string|array $tokenRing
+     * @return TokenRing|null
      */
     public static function make($tokenRing)
     {
+        if (empty($tokenRing)) {
+            return null;
+        }
         if ($tokenRing instanceof self) {
             return $tokenRing;
         }

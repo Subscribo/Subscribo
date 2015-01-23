@@ -1,7 +1,6 @@
 <?php namespace Subscribo\RestCommon;
 
 use Exception;
-use Closure;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Subscribo\RestCommon\RestCommon;
@@ -9,6 +8,7 @@ use Subscribo\Support\Arr;
 use Subscribo\RestCommon\Exceptions\InvalidArgumentException;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Subscribo\RestCommon\TokenRing;
+use Subscribo\RestCommon\Interfaces\TokenRingProviderInterface;
 
 class Signature {
 
@@ -44,15 +44,15 @@ class Signature {
 
     /**
      * @param Request $request
-     * @param callable $tokenToTokenRing
-     * @param bool $enforcedSignatureType
+     * @param callable $tokenToTokenRingProvider
+     * @param Encrypter|null $encrypter
+     * @param string|bool $enforcedSignatureType
      * @param array $data
      * @param array $options
-     * @param Encrypter $encrypter
      * @param bool $throwExceptions
-     * @return bool|null|TokenRing
+     * @return array|null
      */
-    public static function verifyRequest(Request $request, Closure $tokenToTokenRing, $enforcedSignatureType = false, array $data = array(), array $options = array(), Encrypter $encrypter = null, $throwExceptions = false)
+    public static function verifyRequest(Request $request, callable $tokenToTokenRingProvider,  Encrypter $encrypter = null, $enforcedSignatureType = false, array $data = array(), array $options = array(), $throwExceptions = false)
     {
         $headers = $request->headers->all();
         $description = self::extractDescriptionFromHeaders($headers, $encrypter, $throwExceptions);
@@ -70,9 +70,20 @@ class Signature {
         if (empty($token)) {
             return self::throwExceptionOrReturnNull($throwExceptions, "Signature::verifyRequest() token missing");
         }
-        $tokenRing = TokenRing::make($tokenToTokenRing($token, $signatureType));
-        if (empty($tokenRing)) {
-            return self::throwExceptionOrReturnNull($throwExceptions, "Signature::verifyRequest() TokenRing has not been returned");
+        $tokenRingProvider = $tokenToTokenRingProvider($token, $signatureType);
+        if (empty($tokenRingProvider)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, "Signature::verifyRequest() TokenRingProvider has not been returned");
+        }
+        if ( ! ($tokenRingProvider instanceof TokenRingProviderInterface)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, "Signature::verifyRequest() returned TokenRingProvider is not an instance of TokenRingProviderInterface");
+        }
+        $tokenRingData = $tokenRingProvider->provideTokenRing();
+        if (empty($tokenRingData)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, "Signature::verifyRequest() TokenRingData has not been provided");
+        }
+        $tokenRing = TokenRing::make($tokenRingData);
+        if (empty($tokenRingData)) {
+            return self::throwExceptionOrReturnNull($throwExceptions, "Signature::verifyRequest() TokenRing has not been made");
         }
         $data['requestUri'] = Arr::get($data, 'requestUri') ?: $request->getUri();
         $data['requestMethod'] = Arr::get($data, 'requestMethod') ?: $request->getMethod();
@@ -85,8 +96,9 @@ class Signature {
             'verified' => $verified,
             'description' => $description,
             'token' => $token,
+            'tokenType' => $signatureType,
             'tokenRing' => $tokenRing,
-            'signatureType' => $signatureType,
+            'tokenRingProvider' => $tokenRingProvider,
         ];
         return $result;
     }
@@ -139,6 +151,13 @@ class Signature {
         return self::throwExceptionOrReturnFalse($throwExceptions, sprintf("Subscription::verifyDescription() Unrecognized SignatureType '%s'", $signatureType));
     }
 
+    public static function generateRandomString($length = 32)
+    {
+        $bytes = openssl_random_pseudo_bytes($length);
+        $printable = base64_encode($bytes);
+        $result = substr($printable, 0, $length);
+        return $result;
+    }
 
     protected static function extractDescriptionFromHeaderContent($headerContent, Encrypter $encrypter = null, $throwExceptions)
     {
@@ -169,7 +188,6 @@ class Signature {
 
     protected static function verifyDigestDescription(array $description, TokenRing $tokenRing, array $data = array(), array $options = array(), $throwExceptions = false)
     {
-        \Log::info('throw', ['value' => $throwExceptions]);
         if (self::TYPE_SUBSCRIBO_DIGEST  !== $description['signatureType']) {
             return self::throwExceptionOrReturnFalse($throwExceptions, sprintf("Signature::verifyDigestDescription() signatureType in description ('%s') is different than required '%s'", $description['signatureType'], self::TYPE_SUBSCRIBO_DIGEST));
         }
@@ -349,10 +367,7 @@ class Signature {
 
     protected static function generateSalt($length = 32)
     {
-        $bytes = openssl_random_pseudo_bytes($length);
-        $printable = base64_encode($bytes);
-        $result = substr($printable, 0, $length);
-        return $result;
+        return self::generateRandomString($length);
     }
 
     protected static function generateTimestamp()

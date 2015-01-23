@@ -4,6 +4,7 @@ use Subscribo\RestCommon\TokenRing;
 use Subscribo\RestCommon\Signature;
 use Illuminate\Encryption\Encrypter;
 use Symfony\Component\HttpFoundation\Request;
+use Subscribo\RestCommon\Exceptions\InvalidArgumentException;
 
 class Signer
 {
@@ -13,11 +14,10 @@ class Signer
 
     public function __construct($tokenRing)
     {
-        if ($tokenRing instanceof TokenRing) {
-            $this->tokenRing = $tokenRing;
-        } else {
-            $this->tokenRing =  new TokenRing($tokenRing);
+        if (empty($tokenRing)) {
+            throw new InvalidArgumentException('Signer::__construct() Parameter tokenRing should not be empty');
         }
+        $this->tokenRing =  TokenRing::make($tokenRing);
         if ($this->tokenRing->commonSecret) {
             $this->encrypter = new Encrypter($this->tokenRing->commonSecret);
         }
