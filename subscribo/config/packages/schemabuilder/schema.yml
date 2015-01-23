@@ -121,6 +121,21 @@ model_options:
     users:
         administrator_menu: ACL
 
+    user_tokens:
+        administrator_menu: ACL
+
+    customers:
+        administrator_menu: ACL
+
+    customer_tokens:
+        administrator_menu: ACL
+
+    clients:
+        administrator_menu: ACL
+
+    organizations:
+        administrator_menu: ACL
+
     persons:
         administrator_menu: Contact
 
@@ -282,18 +297,42 @@ model_fields:
         - element (bool) default false //true for element, false for collection
         - http_verb (enum from GET POST PUT DELETE OPTIONS)
 
-    users:
+    users: #Change: users with login access to backend
         - username
         - email null #guest superadmin does not have to have email address; moreover email addresses are not necessarily unique - to know which user is requested, we need service_id
-        - password (password) hidden null #guest does not have to have password
-        - type (enum from guest customer administrator superadmin) // (we should have here the basic separation between administrators and customers)
+        - password (password) null hidden #guest does not have to have password
+        - type (enum from guest server administrator superadmin) // (we should have here the basic separation between administrators and customers)
         - remember_token null hidden // (and other possible technical fields allowing logging in)
         - email_confirmed (bool) null
-        - oauth null
-        - fb_account null
+        - person_id null → persons
+
+    user_tokens:
+        - user_id -> users
+        - type (enum from PasswordUpdated Refresh SubscriboBasic SubscriboDigest CommonSecretOnly)
+        - token null
+        - secret null
+        - common_secret null
+        - token_ring null //Contain hashed string with token, type and possibly secret and other information, to be simply copied over
+        - status (enum from active processed used expired blocked_on_user_request blocked_by_admin blocked_because_of_security_concern)
+        - expire_at null
+        - blocked_at null
+        - comment null
+
+
+    customers:
+        - username null
+        - email null
+        - password (password) null hidden
+        - remember_token null hidden
         - person_id null → persons
         - default_delivery_address_id null → addresses
         - default_billing_details_id null → billing_details
+
+    customer_tokens:
+        - customer_id -> customers
+        - token
+        - type (enum from facebook twitter)
+        - comment null
 
 
 
