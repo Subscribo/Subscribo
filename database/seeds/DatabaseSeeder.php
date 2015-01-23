@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder {
 	{
 		Model::unguard();
 
+        $this->call('Subscribo\\App\\Seeder\\BasicSeeder');
+
 		// $this->call('UserTableSeeder');
 	}
 
