@@ -5,9 +5,9 @@ use Aws\S3\S3Client;
 use OpenCloud\Rackspace;
 use League\Flysystem\FilesystemInterface;
 use League\Flysystem\Filesystem as Flysystem;
-use League\Flysystem\Adapter\AwsS3 as S3Adapter;
+use League\Flysystem\Rackspace\RackspaceAdapter;
 use League\Flysystem\Adapter\Local as LocalAdapter;
-use League\Flysystem\Adapter\Rackspace as RackspaceAdapter;
+use League\Flysystem\AwsS3v2\AwsS3Adapter as S3Adapter;
 use Illuminate\Contracts\Filesystem\Factory as FactoryContract;
 
 class FilesystemManager implements FactoryContract {
@@ -15,7 +15,7 @@ class FilesystemManager implements FactoryContract {
 	/**
 	 * The application instance.
 	 *
-	 * @var \Illuminate\Foundation\Application
+	 * @var \Illuminate\Contracts\Foundation\Application
 	 */
 	protected $app;
 
@@ -25,7 +25,7 @@ class FilesystemManager implements FactoryContract {
 	 * @var array
 	 */
 	protected $disks = [];
-	
+
 	/**
 	 * The registered custom driver creators.
 	 *
@@ -36,12 +36,23 @@ class FilesystemManager implements FactoryContract {
 	/**
 	 * Create a new filesystem manager instance.
 	 *
-	 * @param  \Illuminate\Foundation\Application  $app
+	 * @param  \Illuminate\Contracts\Foundation\Application  $app
 	 * @return void
 	 */
 	public function __construct($app)
 	{
 		$this->app = $app;
+	}
+
+	/**
+	 * Get a filesystem instance.
+	 *
+	 * @param  string  $name
+	 * @return \Illuminate\Contracts\Filesystem\Filesystem
+	 */
+	public function drive($name = null)
+	{
+		return $this->disk($name);
 	}
 
 	/**
@@ -77,17 +88,15 @@ class FilesystemManager implements FactoryContract {
 	protected function resolve($name)
 	{
 		$config = $this->getConfig($name);
-		
+
 		if (isset($this->customCreators[$config['driver']]))
 		{
-		    return $this->callCustomCreator($config);
+			return $this->callCustomCreator($config);
 		}
-		else
-		{
-		    return $this->{"create".ucfirst($config['driver'])."Driver"}($config);
-		}	
+
+		return $this->{"create".ucfirst($config['driver'])."Driver"}($config);
 	}
-	
+
 	/**
 	 * Call a custom driver creator.
 	 *
@@ -96,16 +105,14 @@ class FilesystemManager implements FactoryContract {
 	 */
 	protected function callCustomCreator(array $config)
 	{
-	    $driver = $this->customCreators[$config['driver']]($this->app, $config);
-	    
-	    if ($driver instanceof FilesystemInterface)
-	    {
-	        return $this->adapt($driver);
-	    }
-	    else
-	    {
-	        return $driver;
-	    }
+		$driver = $this->customCreators[$config['driver']]($this->app, $config);
+
+		if ($driver instanceof FilesystemInterface)
+		{
+			return $this->adapt($driver);
+		}
+
+		return $driver;
 	}
 
 	/**
@@ -196,7 +203,7 @@ class FilesystemManager implements FactoryContract {
 	{
 		return $this->app['config']['filesystems.default'];
 	}
-	
+
 	/**
 	 * Register a custom driver creator Closure.
 	 *
@@ -206,9 +213,21 @@ class FilesystemManager implements FactoryContract {
 	 */
 	public function extend($driver, Closure $callback)
 	{
-	    $this->customCreators[$driver] = $callback;
-	    
-	    return $this;
+		$this->customCreators[$driver] = $callback;
+
+		return $this;
+	}
+
+	/**
+	 * Dynamically call the default driver instance.
+	 *
+	 * @param  string  $method
+	 * @param  array   $parameters
+	 * @return mixed
+	 */
+	public function __call($method, $parameters)
+	{
+		return call_user_func_array(array($this->disk(), $method), $parameters);
 	}
 
 }
