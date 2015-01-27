@@ -116,7 +116,8 @@ class RestClient {
             $processedHeaders = $signer->modifyHeaders($processedHeaders);
         }
         if ($uri) {
-            $uri = '/'.trim($this->uriBase).'/'.ltrim($uri,'/');
+            $uri = trim($this->uriBase, '/').'/'.ltrim($uri, '/');
+            $uri = '/'.ltrim($uri, '/');
         }
         $response = $this->callRaw($method, $uri, $query, $processedHeaders, $body);
         return $response;
@@ -271,7 +272,7 @@ class RestClient {
     public function filterResponseHeaders(array $headers)
     {
         $allowedResponseHeaders = [
-            'Content-Type', 'Content-Encoding',
+            'Content-Type',
             'Date',
         ];
         $result = Arr::filterCaseInsensitively($allowedResponseHeaders, $headers);
