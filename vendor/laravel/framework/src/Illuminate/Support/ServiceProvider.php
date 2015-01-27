@@ -44,6 +44,20 @@ abstract class ServiceProvider {
 	abstract public function register();
 
 	/**
+	 * Merge the given configuration with the existing configuration.
+	 *
+	 * @param  string  $key
+	 * @param  string  $path
+	 * @return void
+	 */
+	protected function mergeConfigFrom($key, $path)
+	{
+		$config = $this->app['config']->get($key, []);
+
+		$this->app['config']->set($key, config_merge(require $path, $config));
+	}
+
+	/**
 	 * Register a view file namespace.
 	 *
 	 * @param  string  $namespace
