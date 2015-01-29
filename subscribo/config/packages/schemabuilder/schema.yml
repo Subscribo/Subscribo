@@ -48,6 +48,10 @@ default_model_options:
     guarded: ['*']
     foreign_objects: []
     base_model_extends: "\\Subscribo\\ModelBase\\AbstractModel"
+    model_namespace: "Subscribo\\App\\Model"
+    model_directory: "app/Models/"
+    model_base_namespace: "Subscribo\\App\\Model\\Base"
+    model_base_directory: "app/Models/Base/"
     generate:
         migration: overwrite
         model:

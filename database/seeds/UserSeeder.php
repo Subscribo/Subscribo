@@ -1,8 +1,8 @@
 <?php namespace Subscribo\App\Seeder;
 
 use Illuminate\Database\Seeder;
-use Model\User;
-use Model\UserToken;
+use Subscribo\App\Model\User;
+use Subscribo\App\Model\UserToken;
 use Subscribo\Auth\Factories\UserFactory;
 use App;
 

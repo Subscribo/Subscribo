@@ -40,12 +40,12 @@ class BuildModelsCommand extends BuildCommandAbstract {
         $modelFields = $input['model_fields'];
         $modelOptions = $input['model_options'];
 
-        $this->_buildModels($modelFields, $modelOptions, self::MODELS_DIR, self::PACKAGES_CONFIG_DIR.'modelbase/');
+        $this->_buildModels($modelFields, $modelOptions, self::PACKAGES_CONFIG_DIR . 'modelbase/');
 
         $this->info('Building models finished.');
     }
 
-    private function _buildModels($modelFields, $modelOptions, $basePath, $configPath)
+    private function _buildModels($modelFields, $modelOptions, $configPath)
     {
         $modelsForApiConfiguration = array();
         foreach ($modelFields as $tableName => $fields)
@@ -59,13 +59,13 @@ class BuildModelsCommand extends BuildCommandAbstract {
             );
             if ( ! empty($options['generate']['model']['draft']))
             {
-                $draftFilePath = $basePath.$modelName.'.php';
+                $draftFilePath = $options['model_directory'].$modelName.'.php';
                 $draftContent = View::make('schemabuilder::commands.build.model_draft', $data);
                 $this->_createFile($draftFilePath, $draftContent, $options['generate']['model']['draft']);
             }
             if ( ! empty($options['generate']['model']['base']))
             {
-                $baseFilePath = $basePath.'base/'.$modelName.'.php';
+                $baseFilePath = $options['model_base_directory'].$modelName.'.php';
                 $baseContent = View::make('schemabuilder::commands.build.model_base', $data);
                 $this->_createFile($baseFilePath, $baseContent, $options['generate']['model']['base']);
             }
