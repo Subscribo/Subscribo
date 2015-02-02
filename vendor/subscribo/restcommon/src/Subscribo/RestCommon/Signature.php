@@ -42,6 +42,17 @@ class Signature {
         return $headers;
     }
 
+    public static function processIncomingRequest(Request $request, callable $tokenToTokenRingProvider,  Encrypter $encrypter = null, $enforcedSignatureType = false, array $data = array(), array $options = array(), $throwExceptions = false)
+    {
+        $data = self::verifyRequest($request, $tokenToTokenRingProvider,  $encrypter, $enforcedSignatureType, $data, $options, $throwExceptions);
+        if (empty($data)) {
+            return null;
+        }
+        //$data['originalRequest'] = $request;
+        $data['processedRequest'] = $request;
+        return $data;
+    }
+
     /**
      * @param Request $request
      * @param callable $tokenToTokenRingProvider
@@ -291,6 +302,14 @@ class Signature {
             'nonce' => $nonce,
             'timestamp' => $timestamp,
         ];
+        if (( ! empty($options['addToDescription']))) {
+            $add = is_array($options['addToDescription'])
+                ? $options['addToDescription']
+                : [$options['addToDescription'] => $options['addToDescription']];
+            foreach ($add as $key => $value) {
+                $description[$key] = $value;
+            }
+        }
         return $description;
     }
 
