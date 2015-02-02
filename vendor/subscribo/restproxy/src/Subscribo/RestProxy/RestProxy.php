@@ -65,9 +65,25 @@ class RestProxy {
         return $this;
     }
 
-    public function uriBase()
+    public function getUriBase()
     {
         return $this->uriBase;
+    }
+
+    public function getRemoteUriBase()
+    {
+        if (empty($this->restClient)) {
+            return null;
+        }
+        return $this->restClient->getUriBase();
+    }
+
+    public function getUriParameters()
+    {
+        if (empty($this->restClient)) {
+            return [];
+        }
+        return $this->restClient->getUriParameters();
     }
 
     /**
