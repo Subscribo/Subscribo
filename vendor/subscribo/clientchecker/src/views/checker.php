@@ -1,3 +1,11 @@
+<?php
+
+$uriBase = Subscribo\RestProxy::getUriBase();
+$remoteUriBase = Subscribo\RestProxy::getRemoteUriBase();
+$uriParameters = Subscribo\RestProxy::getUriParameters();
+
+
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,15 +28,9 @@
     &nbsp;&nbsp;&nbsp;&nbsp;
     <label for="select_url">Select:</label>
     <select id="select_url" onchange="document.getElementById('url').value=this.value">
-        <?php
-        $uriBase = Subscribo\RestProxy::uriBase();
-        $uriStubs = Subscribo\ModelFactory::listUriStubs();
-        asort($uriStubs);
-        foreach ($uriStubs as $uriStub) {
-            echo '            <option value="'.$uriBase.'/model/'.$uriStub.'">'.$uriStub.'</option>'."\n";
-        }
-        ?>
     </select>
+    <input type="button" onclick="initialize()" value="Initialize">
+
     <label for="add_csrf_token">Add CSRF Token</label>
     <input id="add_csrf_token" type="checkbox" checked="checked">
     <br>
@@ -71,20 +73,81 @@
 
     }
 
+    function initialize()
+    {
+        processRequest('GET', '<?php echo $uriBase; ?>', '', initializeFinish);
+    }
+
+    function initializeFinish()
+    {
+        var content = JSON.parse(this.responseText);
+        var selectUrl = document.getElementById('select_url');
+        var endpoints = content.endpoints;
+        var uriBase = String('<?php echo $uriBase; ?>');
+        if (uriBase) {
+            uriBase = '/' + uriBase + '/';
+        }
+        var remoteUriBase = String('<?php echo $remoteUriBase; ?>');
+        var parameters = [<?php
+$first = true;
+foreach ($uriParameters as $key => $value) {
+    if ( ! $first) {
+        echo ", ";
+    }
+    $first = false;
+    echo '{key:"'.$key.'", value:"'.$value.'"}';
+}
+?>];
+        for (var i = 0; i < endpoints.length; i++) {
+            var endpoint = endpoints[i];
+            console.log(endpoint);
+            if (endpoint.sameServer && (remoteUriBase === endpoint.prefix )) {
+                var option = document.createElement('option');
+                option.innerHTML = endpoint.name;
+                option.value = '';
+                if (endpoint.partialSimpleUri) {
+                    option.value =  uriBase + String(endpoint.partialSimpleUri);
+                }
+                if (endpoint.partialParametrizedUri) {
+                    option.value =  uriBase + exchangeParameters(endpoint.partialParametrizedUri, parameters);
+                }
+
+                selectUrl.appendChild(option);
+            }
+        }
+    }
+
+    function exchangeParameters(source, parameters)
+    {
+        var result = source;
+        for (var i = 0; i < parameters.length; i++) {
+            var parameter = parameters[i];
+            var needle = '{'+parameter.key+'}';
+            var replacement = parameter.value;
+            result = result.replace(needle, replacement)
+        }
+        return result;
+    }
+
     function makeRequest()
     {
-        var myRequest = new XMLHttpRequest();
-        myRequest.onload = requestLoaded;
         var verb = document.getElementById('verb').value;
         var url =  document.getElementById('url').value;
         var requestBody = document.getElementById('request_body').value;
+        processRequest(verb, url, requestBody, requestLoaded);
+        return false;
+    }
+
+    function processRequest(verb, url, requestBody, loaded)
+    {
+        var myRequest = new XMLHttpRequest();
+        myRequest.onload = loaded;
         myRequest.open(verb, url, true);
         myRequest.setRequestHeader('Content-Type', 'text/json');
         if (document.getElementById('add_csrf_token').checked) {
             myRequest.setRequestHeader('X-XSRF-TOKEN', <?php echo json_encode(Crypt::encrypt(csrf_token())); ?>);
         }
         myRequest.send(requestBody);
-        return false;
     }
 
     function display()
