@@ -14,6 +14,7 @@ use Subscribo\RestClient\Exceptions\ConnectionToRemoteServerHttpException;
 use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Exception\ConnectException;
 use Subscribo\RestCommon\Signer;
+use Subscribo\RestClient\Exceptions\InvalidArgumentException;
 
 /**
  * Class RestClient
@@ -31,6 +32,9 @@ class RestClient {
     /** @var  string $uriBase */
     protected $uriBase;
 
+    /**  @var array  */
+    protected $uriParameters = [];
+
     /** @var string|array */
     protected $tokenRing;
 
@@ -44,6 +48,16 @@ class RestClient {
         }
     }
 
+    public function getUriBase()
+    {
+        return $this->uriBase;
+    }
+
+    public function getUriParameters()
+    {
+        return $this->uriParameters;
+    }
+
     public function setup(array $settings)
     {
         if (array_key_exists('protocol', $settings)) {
@@ -53,10 +67,17 @@ class RestClient {
             $this->host = $settings['host'];
         }
         if (array_key_exists('uri_base', $settings)) {
-            $this->uriBase = trim($settings['uri_base'],'/');
+            $this->uriBase = $settings['uri_base'];
         }
         if (array_key_exists('token_ring', $settings)) {
             $this->tokenRing = $settings['token_ring'];
+        }
+        if ( ! empty($settings['uri_parameters'])) {
+            if (is_array($settings['uri_parameters'])) {
+                $this->uriParameters = $settings['uri_parameters'];
+            } else {
+                throw new InvalidArgumentException('RestClient::setup() : uri_parameters should be array if provided');
+            }
         }
         $this->client = null;
     }
