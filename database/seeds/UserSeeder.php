@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use Subscribo\App\Model\User;
 use Subscribo\App\Model\UserToken;
+use Subscribo\App\Model\Service;
 use Subscribo\Auth\Factories\UserFactory;
 use App;
 
@@ -23,9 +24,11 @@ class UserSeeder extends Seeder
         $superAdmin->type = User::TYPE_SUPER_ADMIN;
         $superAdmin->save();
 
+        $service = Service::first();
         $server = new User();
         $server->username = 'frontend';
         $server->type = User::TYPE_SERVER;
+        $server->service()->associate($service);
         $server->save();
         $userFactory->addTokens($server, UserToken::TYPE_SUBSCRIBO_DIGEST);
 
@@ -37,6 +40,7 @@ class UserSeeder extends Seeder
         $developer = $userFactory->create(['password' => 'developer']);
         $developer->username = 'developer';
         $developer->type = User::TYPE_ADMINISTRATOR;
+        $developer->service()->associate($service);
         $userFactory->addTokens($developer);
         $developer->save();
 
