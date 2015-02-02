@@ -6,8 +6,8 @@ use Subscribo\RestCommon\Interfaces\CommonSecretProviderInterface;
 use Subscribo\RestCommon\Interfaces\TokenRingProviderInterface;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher;
-use Model\User;
-use Model\UserToken;
+use Subscribo\App\Model\User;
+use Subscribo\App\Model\UserToken;
 use Subscribo\Auth\Exceptions\InvalidArgumentException;
 
 class UserFactory implements StatelessAuthenticatableFactoryInterface, ByTokenIdentifiableFactoryInterface
@@ -81,7 +81,7 @@ class UserFactory implements StatelessAuthenticatableFactoryInterface, ByTokenId
 
     /**
      * @param mixed $id
-     * @return \Model\User|Authenticatable
+     * @return User|Authenticatable
      * @throws InvalidArgumentException
      */
     public function retrieveById($id)
@@ -96,7 +96,7 @@ class UserFactory implements StatelessAuthenticatableFactoryInterface, ByTokenId
 
     /**
      * @param array $credentials
-     * @return \Model\User|Authenticatable
+     * @return User|Authenticatable
      * @throws InvalidArgumentException
      */
     public function retrieveByCredentials(array $credentials)

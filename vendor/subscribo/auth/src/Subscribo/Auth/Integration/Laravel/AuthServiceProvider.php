@@ -21,5 +21,7 @@ class AuthServiceProvider extends ServiceProvider {
 
     //    $this->app->singleton('auth', 'subscribo.auth');
         $this->app->singleton('Subscribo\\Auth\\Interfaces\\StatelessGuardInterface', 'subscribo.auth');
+        $this->app->singleton('Subscribo\\Auth\\Interfaces\\ApiGuardInterface', 'subscribo.auth');
+
     }
 }

@@ -3,6 +3,7 @@
 use Subscribo\Auth\Guards\BaseStatelessGuard;
 use Subscribo\RestCommon\Interfaces\ByTokenIdentifiableFactoryInterface;
 use Subscribo\Auth\Interfaces\StatelessAuthenticatableFactoryInterface;
+use Subscribo\Auth\Interfaces\ApiGuardInterface;
 use Subscribo\RestCommon\Signature;
 use Subscribo\RestCommon\Interfaces\CommonSecretProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +16,7 @@ use Subscribo\RestCommon\Exceptions\UnauthorizedHttpException;
  *
  * @package Subscribo\Auth
  */
-class SubscriboGuard extends BaseStatelessGuard implements GuardContract
+class SubscriboGuard extends BaseStatelessGuard implements GuardContract, ApiGuardInterface
 {
     use StatelessToNonStatelessTrait;
     /**
@@ -38,6 +39,11 @@ class SubscriboGuard extends BaseStatelessGuard implements GuardContract
      */
     protected $userWithTokenFactory;
 
+    /**
+     * @var array|null|bool
+     */
+    protected $processingResult = false;
+
     public function __construct(StatelessAuthenticatableFactoryInterface $userFactory, ByTokenIdentifiableFactoryInterface $userWithTokenFactory, Request $request, CommonSecretProviderInterface $commonSecretProvider)
     {
         $this->userWithTokenFactory = $userWithTokenFactory;
@@ -57,27 +63,52 @@ class SubscriboGuard extends BaseStatelessGuard implements GuardContract
         if ($this->loggedOut) {
             return null;
         }
-
         if ($this->user) {
             return $this->user;
         }
-
         if (empty($this->request)) {
             return null;
         }
+        $this->processRequest($this->request);
+
+        return $this->user;
+    }
+
+    /**
+     * @param Request $request
+     * @return Request|null
+     */
+    public function processRequest(Request $request)
+    {
+        $this->request = $request;
         $encrypter = ($this->commonSecretProvider) ? $this->commonSecretProvider->getCommonSecretEncrypter() : null;
-        $verificationResult = Signature::verifyRequest(
+        $this->processingResult = Signature::processIncomingRequest(
             $this->request,
             [$this->userWithTokenFactory, 'tokenToTokenRingProvider'],
             $encrypter,
             $this->enforcedSignatureType
         );
-        if (empty($verificationResult)) {
+        if (empty($this->processingResult)) {
+            $this->user = null;
+            $this->processingResult = null;
             return null;
         }
-        $this->user = $this->userWithTokenFactory->findByTokenIdentifiableUsingTokenRingProvider($verificationResult['tokenRingProvider']);
+        $this->user = $this->userWithTokenFactory->findByTokenIdentifiableUsingTokenRingProvider($this->processingResult['tokenRingProvider']);
+        if ($this->user) {
+            $this->loggedOut = false;
+        }
+        return $this->processingResult['processedRequest'];
+    }
 
-        return $this->user;
+    /**
+     * @return array|null
+     */
+    public function processingResult()
+    {
+        if (false === $this->processingResult) {
+            $this->processRequest($this->request);
+        }
+        return $this->processingResult;
     }
 
     /**
