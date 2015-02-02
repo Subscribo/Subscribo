@@ -109,6 +109,10 @@ model_options:
                 - service_pools
                 - apis
                 - languages (method_name_for services availableLanguages)
+            has_many:
+                - users
+                - accounts
+
 
 
     service_pools:
@@ -124,12 +128,19 @@ model_options:
 
     users:
         administrator_menu: ACL
+        relations:
+            has_many:
+                - user_tokens
 
     user_tokens:
         administrator_menu: ACL
 
     customers:
         administrator_menu: ACL
+        relation:
+            has_many:
+                - accounts
+                - customer_tokens
 
     customer_tokens:
         administrator_menu: ACL
