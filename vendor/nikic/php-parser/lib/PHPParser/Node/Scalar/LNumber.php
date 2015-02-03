@@ -1,9 +1,13 @@
 <?php
 
+namespace PhpParser\Node\Scalar;
+
+use PhpParser\Node\Scalar;
+
 /**
  * @property int $value Number value
  */
-class PHPParser_Node_Scalar_LNumber extends PHPParser_Node_Scalar
+class LNumber extends Scalar
 {
     /**
      * Constructs an integer number scalar node.
@@ -21,6 +25,8 @@ class PHPParser_Node_Scalar_LNumber extends PHPParser_Node_Scalar
     }
 
     /**
+     * @internal
+     *
      * Parses an LNUMBER token (dec, hex, oct and bin notations) like PHP would.
      *
      * @param string $str A string number

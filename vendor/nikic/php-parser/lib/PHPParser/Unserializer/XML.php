@@ -1,6 +1,12 @@
 <?php
 
-class PHPParser_Unserializer_XML implements PHPParser_Unserializer
+namespace PhpParser\Unserializer;
+
+use XMLReader;
+use DomainException;
+use PhpParser\Unserializer;
+
+class XML implements Unserializer
 {
     protected $reader;
 
@@ -43,9 +49,8 @@ class PHPParser_Unserializer_XML implements PHPParser_Unserializer
         }
     }
 
-    protected function readNode()
-    {
-        $className = 'PHPParser_Node_' . $this->reader->localName;
+    protected function readNode() {
+        $className = $this->getClassNameFromType($this->reader->localName);
 
         // create the node without calling it's constructor
         $node = unserialize(
@@ -122,12 +127,23 @@ class PHPParser_Unserializer_XML implements PHPParser_Unserializer
 
     protected function readComment() {
         $className = $this->reader->getAttribute('isDocComment') === 'true'
-            ? 'PHPParser_Comment_Doc'
-            : 'PHPParser_Comment'
+            ? 'PhpParser\Comment\Doc'
+            : 'PhpParser\Comment'
         ;
         return new $className(
             $this->reader->readString(),
             $this->reader->getAttribute('line')
         );
+    }
+
+    protected function getClassNameFromType($type) {
+        $className = 'PhpParser\\Node\\' . strtr($type, '_', '\\');
+        if (!class_exists($className)) {
+            $className .= '_';
+        }
+        if (!class_exists($className)) {
+            throw new DomainException(sprintf('Unknown node type "%s"', $type));
+        }
+        return $className;
     }
 }
