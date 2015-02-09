@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Debug\Dumper;
 
 if ( ! function_exists('append_config'))
@@ -358,38 +359,17 @@ if ( ! function_exists('class_uses_recursive'))
 	}
 }
 
-if ( ! function_exists('config_merge'))
+if ( ! function_exists('collect'))
 {
 	/**
-	 * Sensibly merge configuration arrays.
+	 * Create a collection from the given value.
 	 *
-	 * @param  array  ...$args
-	 * @return array
+	 * @param  mixed  $value
+	 * @return \Illuminate\Support\Collection
 	 */
-	function config_merge()
+	function collect($value = null)
 	{
-		$result = [];
-
-		foreach (func_get_args() as $arg)
-		{
-			foreach ($arg as $key => $value)
-			{
-				if (is_numeric($key))
-				{
-					$result[] = $value;
-				}
-				elseif (array_key_exists($key, $result) && is_array($result[$key]) && is_array($value))
-				{
-					$result[$key] = config_merge($result[$key], $value);
-				}
-				else
-				{
-					$result[$key] = $value;
-				}
-			}
-		}
-
-		return $result;
+		return new Collection($value);
 	}
 }
 

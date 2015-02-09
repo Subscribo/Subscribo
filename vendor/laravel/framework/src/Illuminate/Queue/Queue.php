@@ -3,8 +3,8 @@
 use Closure;
 use DateTime;
 use RuntimeException;
+use SuperClosure\Serializer;
 use Illuminate\Container\Container;
-use Illuminate\Support\SerializableClosure;
 use Illuminate\Contracts\Queue\QueueableEntity;
 use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 
@@ -20,7 +20,7 @@ abstract class Queue {
 	/**
 	 * Push a new job onto the queue.
 	 *
-	 * @param  stirng  $queue
+	 * @param  string  $queue
 	 * @param  string  $job
 	 * @param  mixed   $data
 	 * @return mixed
@@ -153,7 +153,7 @@ abstract class Queue {
 	 */
 	protected function createClosurePayload($job, $data)
 	{
-		$closure = $this->crypt->encrypt(serialize(new SerializableClosure($job)));
+		$closure = $this->crypt->encrypt((new Serializer)->serialize($job));
 
 		return ['job' => 'IlluminateQueueClosure', 'data' => compact('closure')];
 	}

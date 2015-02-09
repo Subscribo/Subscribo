@@ -1,8 +1,13 @@
 <?php namespace Illuminate\Foundation\Console;
 
+use FilesystemIterator;
 use Illuminate\Console\Command;
+use League\Flysystem\MountManager;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
+use League\Flysystem\Filesystem as Flysystem;
+use Symfony\Component\Console\Input\InputOption;
+use League\Flysystem\Adapter\Local as LocalAdapter;
 
 class VendorPublishCommand extends Command {
 
@@ -47,7 +52,11 @@ class VendorPublishCommand extends Command {
 	 */
 	public function fire()
 	{
-		foreach (ServiceProvider::pathsToPublish() as $from => $to)
+		$paths = ServiceProvider::pathsToPublish(
+			$this->option('provider'), $this->option('tag')
+		);
+
+		foreach ($paths as $from => $to)
 		{
 			if ($this->files->isFile($from))
 			{
@@ -71,7 +80,7 @@ class VendorPublishCommand extends Command {
 	 */
 	protected function publishFile($from, $to)
 	{
-		if ($this->files->exists($to))
+		if ($this->files->exists($to) && ! $this->option('force'))
 		{
 			return;
 		}
@@ -92,16 +101,18 @@ class VendorPublishCommand extends Command {
 	 */
 	protected function publishDirectory($from, $to)
 	{
-		if ($this->files->isDirectory($to))
+		$manager = new MountManager([
+			'from' => new Flysystem(new LocalAdapter($from)),
+			'to' => new Flysystem(new LocalAdapter($to)),
+		]);
+
+		foreach ($manager->listContents('from://', true) as $file)
 		{
-			return;
+			if ($file['type'] === 'file' && ( ! $manager->has('to://'.$file['path']) || $this->option('force')))
+			{
+				$manager->put('to://'.$file['path'], $manager->read('from://'.$file['path']));
+			}
 		}
-
-		$this->createParentDirectory($to);
-
-		$this->files->copyDirectory($from, $to);
-
-		$this->status($from, $to, 'Directory');
 	}
 
 	/**
@@ -133,6 +144,22 @@ class VendorPublishCommand extends Command {
 		$to = str_replace(base_path(), '', realpath($to));
 
 		$this->line('<info>Copied '.$type.'</info> <comment>['.$from.']</comment> <info>To</info> <comment>['.$to.']</comment>');
+	}
+
+	/**
+	 * Get the console command options.
+	 *
+	 * @return array
+	 */
+	protected function getOptions()
+	{
+		return array(
+			array('force', null, InputOption::VALUE_NONE, 'Overwrite any existing files.'),
+
+			array('provider', null, InputOption::VALUE_OPTIONAL, 'The service provider that has assets you want to publish.'),
+
+			array('tag', null, InputOption::VALUE_OPTIONAL, 'The tag that has assets you want to publish.'),
+		);
 	}
 
 }
