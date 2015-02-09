@@ -21,7 +21,7 @@ class Api1ServiceProvider extends ServiceProvider
         $options = ['middleware' => $middleware];
         $controllerRegistrar = new ControllerRegistrar($this->app->make('router'), '/api/v1', $options);
         $controllers = [
-
+            'Subscribo\\Api1\\Controllers\\CustomerController',
         ];
         $controllerRegistrar->registerControllers($controllers);
         $controllerRegistrar->addInfoRoute(['version' => 1]);

@@ -13,7 +13,7 @@ class ClientCheckerServiceProvider extends ServiceProvider {
 
     public function register()
     {
-        $this->app->register('\\Subscribo\\ModelBase\\Integration\\Laravel\\ModelBaseServiceProvider');
+
     }
 
     public function boot()

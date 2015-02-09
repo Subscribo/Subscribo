@@ -7,7 +7,7 @@ use Subscribo\Modifier\Modifier;
 use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
 use Subscribo\Exception\Exceptions\BadRequestHttpException;
 use Subscribo\Exception\Exceptions\InvalidInputHttpException;
-use Subscribo\Exception\Exceptions\InvalidQueryHttpException;
+use Subscribo\Api0\Exceptions\InvalidQueryHttpException;
 use Subscribo\Exception\Exceptions\InternalServerErrorHttpException;
 use Subscribo\Exception\Exceptions\NotFoundHttpException;
 use Validator;

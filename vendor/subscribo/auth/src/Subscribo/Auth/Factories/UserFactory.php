@@ -39,7 +39,8 @@ class UserFactory implements StatelessAuthenticatableFactoryInterface, ByTokenId
             $hashedPassword = $this->hasher->make($data['password']);
             $data['password'] = $hashedPassword;
         }
-        $user = new User($data);
+        $user = User::create($data);
+
         return $user;
     }
 

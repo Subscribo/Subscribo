@@ -1,12 +1,11 @@
 {
-    "name": "subscribo/clientchecker",
-    "description": "Client Checker for testing communicating with API within a browser. Default url: /client",
+    "name": "subscribo/apiclient",
+    "description": "Package API Client is an umbrella package for API Client functionality",
     "keywords": [
         "laravel",
         "subscribo",
-        "client",
-        "testing",
-        "checker"
+        "api",
+        "client"
     ],
     "homepage": "http://www.subscribo.io",
     "license": "proprietary",
@@ -22,18 +21,17 @@
     ],
     "require": {
         "php": "~5.4",
-        "subscribo/serviceprovider": "@dev",
-        "subscribo/config": "@dev",
-        "subscribo/environment": "@dev",
         "subscribo/restproxy": "@dev",
-        "illuminate/encryption": "~5.0"
+        "subscribo/apiclientauth": "@dev",
+        "subscribo/exception": "@dev"
     },
     "suggest": {
-        "laravel/framework": "This package have been build to work with The Laravel Framework version 5.0"
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+        "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
     },
     "autoload": {
         "psr-4": {
-            "Subscribo\\ClientChecker\\": "src/Subscribo/ClientChecker/"
+            "Subscribo\\ApiClient\\": "src/Subscribo/ApiClient/"
         }
     },
     "extra": {

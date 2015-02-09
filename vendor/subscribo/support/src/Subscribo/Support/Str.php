@@ -6,4 +6,12 @@
  *
  * @package Subscribo\Support
  */
-class Str extends \Illuminate\Support\Str {}
+class Str extends \Illuminate\Support\Str
+{
+    public static function natural($value)
+    {
+        $withSpaces = self::snake($value, ' ');
+        $result = ucfirst($withSpaces);
+        return $result;
+    }
+}

@@ -111,6 +111,9 @@ foreach ($uriParameters as $key => $value) {
                 if (endpoint.partialParametrizedUri) {
                     option.value =  uriBase + exchangeParameters(endpoint.partialParametrizedUri, parameters);
                 }
+                if ('/' === endpoint.partialSimpleUri) {
+                    option.value =  uriBase;
+                }
 
                 selectUrl.appendChild(option);
             }
