@@ -35,14 +35,26 @@ class UserSeeder extends Seeder
         $administrator = $userFactory->create(['password' => 'administrator']);
         $administrator->username = 'administrator';
         $administrator->type = User::TYPE_ADMINISTRATOR;
+        $userFactory->addTokens($administrator);
+        $administrator->service()->associate($service);
         $administrator->save();
 
+        $service2 = Service::firstByAttributes(['identifier' => 'TEST2']);
         $developer = $userFactory->create(['password' => 'developer']);
         $developer->username = 'developer';
         $developer->type = User::TYPE_ADMINISTRATOR;
-        $developer->service()->associate($service);
+        $developer->service()->associate($service2);
         $userFactory->addTokens($developer);
         $developer->save();
+
+        $anotherService = Service::firstByAttributes(['identifier' => 'ANOTHER']);
+        $anotherDeveloper = $userFactory->create(['password' => 'developer']);
+        $anotherDeveloper->username = 'developer5';
+        $anotherDeveloper->type = User::TYPE_ADMINISTRATOR;
+        $anotherDeveloper->service()->associate($anotherService);
+        $userFactory->addTokens($anotherDeveloper);
+        $anotherDeveloper->save();
+
 
 
 

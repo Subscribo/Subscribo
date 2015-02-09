@@ -15,6 +15,10 @@ Route::get('/', 'WelcomeController@index');
 
 Route::get('home', 'HomeController@index');
 
+Route::get('checker', function () {
+    return view('checker');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Authentication & Password Reset Controllers
