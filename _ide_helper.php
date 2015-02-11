@@ -1,7 +1,7 @@
 <?php
 /**
- * An helper file for Laravel 4, to provide autocomplete information to your IDE
- * Generated for Laravel 5.0-dev on 2015-01-14.
+ * An helper file for Laravel 5, to provide autocomplete information to your IDE
+ * Generated for Laravel 5.0.2 on 2015-02-11.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -244,29 +244,6 @@ namespace Subscribo{
     }
 
 
-    class Modifier extends \Subscribo\Modifier\Integration\Laravel\Facades\Modifier{
-        
-        /**
-         * 
-         *
-         * @static 
-         */
-        public static function modifyMultiple($values, $ruleSet){
-            return \Subscribo\Modifier\Modifier::modifyMultiple($values, $ruleSet);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */
-        public static function modifyOne($value, $rules){
-            return \Subscribo\Modifier\Modifier::modifyOne($value, $rules);
-        }
-        
-    }
-
-
     class ModelFactory extends \Subscribo\ModelBase\Integration\Laravel\Facades\ModelFactory{
         
         /**
@@ -300,23 +277,26 @@ namespace Subscribo{
          *
          * @static 
          */
-        public static function setup($settings){
-            return \Subscribo\RestClient\RestClient::setup($settings);
+        public static function getUriBase(){
+            return \Subscribo\RestClient\RestClient::getUriBase();
         }
         
         /**
          * 
          *
-         * @param string $uri
-         * @param string $method
-         * @param array $query
-         * @param array $headers
-         * @param null $body
-         * @return \GuzzleHttp\Message\FutureResponse|\GuzzleHttp\Message\ResponseInterface|\GuzzleHttp\Ring\Future\FutureInterface|mixed|null 
          * @static 
          */
-        public static function call($uri, $method = 'GET', $query = array(), $headers = array(), $body = null){
-            return \Subscribo\RestClient\RestClient::call($uri, $method, $query, $headers, $body);
+        public static function getUriParameters(){
+            return \Subscribo\RestClient\RestClient::getUriParameters();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function setup($settings){
+            return \Subscribo\RestClient\RestClient::setup($settings);
         }
         
         /**
@@ -324,32 +304,60 @@ namespace Subscribo{
          *
          * @param string $uri
          * @param string $method
-         * @param array $query
+         * @param array|null $query
          * @param array $headers
-         * @param null $body
+         * @param string|null $body
          * @return \Subscribo\RestClient\Response 
+         * @throws \GuzzleHttp\Exception\TransferException
+         * @throws Exceptions\TokenConfigurationHttpException
+         * @throws Exceptions\ClientErrorHttpException
+         * @throws Exceptions\RemoteServerErrorHttpException
+         * @throws Exceptions\ConnectionToRemoteServerHttpException
          * @static 
          */
-        public static function process($uri, $method = 'GET', $query = array(), $headers = array(), $body = null){
+        public static function process($uri, $method = 'GET', $query = null, $headers = array(), $body = null){
             return \Subscribo\RestClient\RestClient::process($uri, $method, $query, $headers, $body);
         }
         
         /**
          * 
          *
+         * @param string $uri
+         * @param string $method
+         * @param array|null $query
+         * @param array $headers
+         * @param string|null $body
+         * @return \GuzzleHttp\Message\FutureResponse|\GuzzleHttp\Message\ResponseInterface|\GuzzleHttp\Ring\Future\FutureInterface|mixed|null 
+         * @throws \GuzzleHttp\Exception\TransferException
          * @static 
          */
-        public static function checkForTokenErrors($response){
-            return \Subscribo\RestClient\RestClient::checkForTokenErrors($response);
+        public static function call($uri, $method = 'GET', $query = null, $headers = array(), $body = null){
+            return \Subscribo\RestClient\RestClient::call($uri, $method, $query, $headers, $body);
         }
         
         /**
          * 
          *
+         * @param \Subscribo\RestClient\ResponseInterface $response
+         * @param int|null $statusCode
+         * @throws Exceptions\TokenConfigurationHttpException
          * @static 
          */
-        public static function checkForRemoteServerErrors($response){
-            return \Subscribo\RestClient\RestClient::checkForRemoteServerErrors($response);
+        public static function checkForTokenErrors($response, $statusCode = null){
+            return \Subscribo\RestClient\RestClient::checkForTokenErrors($response, $statusCode);
+        }
+        
+        /**
+         * Throwing Exceptions for 4xx and 5xx responses
+         *
+         * @param \Subscribo\RestClient\ResponseInterface $response
+         * @param int|null $statusCode
+         * @throws Exceptions\ClientErrorHttpException
+         * @throws Exceptions\RemoteServerErrorHttpException
+         * @static 
+         */
+        public static function filterErrorResponses($response, $statusCode = null){
+            return \Subscribo\RestClient\RestClient::filterErrorResponses($response, $statusCode);
         }
         
         /**
@@ -455,7 +463,7 @@ namespace Subscribo{
          * 
          *
          * @param \Subscribo\Exception\Handlers\Exception $e
-         * @param \Subscribo\Exception\Handlers\Request|null|bool $request
+         * @param \Subscribo\Exception\Handlers\Request $request
          * @return \Subscribo\Exception\Handlers\LaravelResponse|mixed|\Subscribo\Exception\Handlers\Response 
          * @static 
          */
@@ -504,8 +512,26 @@ namespace Subscribo{
          *
          * @static 
          */
-        public static function uriBase(){
-            return \Subscribo\RestProxy\RestProxy::uriBase();
+        public static function getUriBase(){
+            return \Subscribo\RestProxy\RestProxy::getUriBase();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function getRemoteUriBase(){
+            return \Subscribo\RestProxy\RestProxy::getRemoteUriBase();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function getUriParameters(){
+            return \Subscribo\RestProxy\RestProxy::getUriParameters();
         }
         
         /**
@@ -639,6 +665,17 @@ namespace {
          */
         public static function storagePath(){
             return \Illuminate\Foundation\Application::storagePath();
+        }
+        
+        /**
+         * Set the storage directory.
+         *
+         * @param string $path
+         * @return $this 
+         * @static 
+         */
+        public static function useStoragePath($path){
+            return \Illuminate\Foundation\Application::useStoragePath($path);
         }
         
         /**
@@ -943,6 +980,27 @@ namespace {
          */
         public static function abort($code, $message = '', $headers = array()){
             \Illuminate\Foundation\Application::abort($code, $message, $headers);
+        }
+        
+        /**
+         * Register a terminating callback with the application.
+         *
+         * @param \Closure $callback
+         * @return $this 
+         * @static 
+         */
+        public static function terminating($callback){
+            return \Illuminate\Foundation\Application::terminating($callback);
+        }
+        
+        /**
+         * Terminate the application.
+         *
+         * @return void 
+         * @static 
+         */
+        public static function terminate(){
+            \Illuminate\Foundation\Application::terminate();
         }
         
         /**
@@ -1429,6 +1487,19 @@ namespace {
         }
         
         /**
+         * Terminate the application.
+         *
+         * @param \Symfony\Component\Console\Input\InputInterface $input
+         * @param int $status
+         * @return void 
+         * @static 
+         */
+        public static function terminate($input, $status){
+            //Method inherited from \Illuminate\Foundation\Console\Kernel            
+            \App\Console\Kernel::terminate($input, $status);
+        }
+        
+        /**
          * Run an Artisan console command by name.
          *
          * @param string $command
@@ -1778,7 +1849,7 @@ namespace {
         /**
          * Get the user provider used by the guard.
          *
-         * @return \Illuminate\Auth\Guard 
+         * @return \Illuminate\Contracts\Auth\UserProvider 
          * @static 
          */
         public static function getProvider(){
@@ -1788,7 +1859,7 @@ namespace {
         /**
          * Set the user provider used by the guard.
          *
-         * @param \Illuminate\Auth\UserProviderInterface $provider
+         * @param \Illuminate\Contracts\Auth\UserProvider $provider
          * @return void 
          * @static 
          */
@@ -2103,7 +2174,7 @@ namespace {
         /**
          * Create a new cache repository with the given implementation.
          *
-         * @param \Illuminate\Cache\StoreInterface $store
+         * @param \Illuminate\Contracts\Cache\Store $store
          * @return \Illuminate\Cache\Repository 
          * @static 
          */
@@ -2300,7 +2371,7 @@ namespace {
         /**
          * Get the cache store implementation.
          *
-         * @return \Illuminate\Cache\FileStore 
+         * @return \Illuminate\Contracts\Cache\Store 
          * @static 
          */
         public static function getStore(){
@@ -2928,7 +2999,7 @@ namespace {
         /**
          * Fire an event and call the listeners.
          *
-         * @param string $event
+         * @param string|object $event
          * @param mixed $payload
          * @param bool $halt
          * @return array|null 
@@ -3378,7 +3449,7 @@ namespace {
         }
         
         /**
-         * Set the default passwork work factor.
+         * Set the default password work factor.
          *
          * @param int $rounds
          * @return $this 
@@ -5696,6 +5767,35 @@ namespace {
         }
         
         /**
+         * Push a new job onto the queue.
+         *
+         * @param string $queue
+         * @param string $job
+         * @param mixed $data
+         * @return mixed 
+         * @static 
+         */
+        public static function pushOn($queue, $job, $data = ''){
+            //Method inherited from \Illuminate\Queue\Queue            
+            return \Illuminate\Queue\SyncQueue::pushOn($queue, $job, $data);
+        }
+        
+        /**
+         * Push a new job onto the queue after a delay.
+         *
+         * @param string $queue
+         * @param \DateTime|int $delay
+         * @param string $job
+         * @param mixed $data
+         * @return mixed 
+         * @static 
+         */
+        public static function laterOn($queue, $delay, $job, $data = ''){
+            //Method inherited from \Illuminate\Queue\Queue            
+            return \Illuminate\Queue\SyncQueue::laterOn($queue, $delay, $job, $data);
+        }
+        
+        /**
          * Marshal a push queue request and fire the job.
          *
          * @throws \RuntimeException
@@ -5910,34 +6010,6 @@ namespace {
          */
         public static function setSession($session){
             \Illuminate\Routing\Redirector::setSession($session);
-        }
-        
-    }
-
-
-    class Redis extends \Illuminate\Support\Facades\Redis{
-        
-        /**
-         * Get a specific Redis connection instance.
-         *
-         * @param string $name
-         * @return \Predis\ClientInterface 
-         * @static 
-         */
-        public static function connection($name = 'default'){
-            return \Illuminate\Redis\Database::connection($name);
-        }
-        
-        /**
-         * Run a command against the Redis database.
-         *
-         * @param string $method
-         * @param array $parameters
-         * @return mixed 
-         * @static 
-         */
-        public static function command($method, $parameters = array()){
-            return \Illuminate\Redis\Database::command($method, $parameters);
         }
         
     }
@@ -7728,6 +7800,17 @@ namespace {
         }
         
         /**
+         * Register an array of resource controllers.
+         *
+         * @param array $resources
+         * @return void 
+         * @static 
+         */
+        public static function resources($resources){
+            \Illuminate\Routing\Router::resources($resources);
+        }
+        
+        /**
          * Route a resource to a controller.
          *
          * @param string $name
@@ -7984,7 +8067,7 @@ namespace {
         }
         
         /**
-         * Call the given route's before filters.
+         * Call the given route's after filters.
          *
          * @param \Illuminate\Routing\Route $route
          * @param \Illuminate\Http\Request $request

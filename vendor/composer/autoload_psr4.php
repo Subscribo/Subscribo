@@ -6,10 +6,11 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'XdgBaseDir\\' => array($vendorDir . '/dnoegel/php-xdg-base-dir/src'),
+    'SuperClosure\\' => array($vendorDir . '/jeremeamia/SuperClosure/src'),
     'Subscribo\\Support\\' => array($vendorDir . '/subscribo/support/src/Subscribo/Support'),
     'Subscribo\\ServiceProvider\\' => array($vendorDir . '/subscribo/serviceprovider/src/Subscribo/ServiceProvider'),
     'Subscribo\\SchemaBuilder\\' => array($vendorDir . '/subscribo/schemabuilder/src/Subscribo/SchemaBuilder'),
-    'Subscribo\\RestServer\\' => array($vendorDir . '/subscribo/restserver/src/Subscribo/RestServer'),
     'Subscribo\\RestProxy\\' => array($vendorDir . '/subscribo/restproxy/src/Subscribo/RestProxy'),
     'Subscribo\\RestCommon\\' => array($vendorDir . '/subscribo/restcommon/src/Subscribo/RestCommon'),
     'Subscribo\\RestClient\\' => array($vendorDir . '/subscribo/restclient/src/Subscribo/RestClient'),
@@ -21,18 +22,18 @@ return array(
     'Subscribo\\Config\\' => array($vendorDir . '/subscribo/config/src/Subscribo/Config'),
     'Subscribo\\ClientChecker\\' => array($vendorDir . '/subscribo/clientchecker/src/Subscribo/ClientChecker'),
     'Subscribo\\ApiChecker\\' => array($vendorDir . '/subscribo/apichecker/src/Subscribo/ApiChecker'),
-    'Subscribo\\Api0\\' => array($vendorDir . '/subscribo/api0/src/Subscribo/Api0'),
     'Stringy\\' => array($vendorDir . '/danielstjules/stringy/src'),
     'React\\Promise\\' => array($vendorDir . '/react/promise/src'),
-    'Predis\\' => array($vendorDir . '/predis/predis/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Model\\' => array($baseDir . '/app/Models'),
     'League\\Flysystem\\' => array($vendorDir . '/league/flysystem/src'),
+    'Illuminate\\' => array($vendorDir . '/laravel/framework/src/Illuminate'),
     'GuzzleHttp\\Stream\\' => array($vendorDir . '/guzzlehttp/streams/src'),
     'GuzzleHttp\\Ring\\' => array($vendorDir . '/guzzlehttp/ringphp/src'),
     'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
     'Fuel\\Core\\' => array($vendorDir . '/subscribo/schemabuilder/src/lib/fuel/core/src/Fuel/Core'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
+    'ClassPreloader\\' => array($vendorDir . '/classpreloader/classpreloader/src'),
     'Barryvdh\\LaravelIdeHelper\\' => array($vendorDir . '/barryvdh/laravel-ide-helper/src'),
     'App\\' => array($baseDir . '/app'),
 );

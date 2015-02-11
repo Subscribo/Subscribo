@@ -47,9 +47,9 @@ class Generator
         // Find the drivers to add to the extra/interfaces
         $this->detectDrivers();
 
-        $this->extra = array_merge($this->extra, $this->config->get('laravel-ide-helper::extra'));
-        $this->magic = array_merge($this->magic, $this->config->get('laravel-ide-helper::magic'));
-        $this->interfaces = array_merge($this->interfaces, $this->config->get('laravel-ide-helper::interfaces'));
+        $this->extra = array_merge($this->extra, $this->config->get('ide-helper.extra'));
+        $this->magic = array_merge($this->magic, $this->config->get('ide-helper.magic'));
+        $this->interfaces = array_merge($this->interfaces, $this->config->get('ide-helper.interfaces'));
         // Make all interface classes absolute
         foreach ($this->interfaces as &$interface) {
             $interface = '\\' . ltrim($interface, '\\');
@@ -77,7 +77,7 @@ class Generator
     public function generatePhpHelper()
     {
         $app = app();
-        return $this->view->make('laravel-ide-helper::ide-helper')
+        return $this->view->make('ide-helper::helper')
             ->with('namespaces', $this->getNamespaces())
             ->with('helpers', $this->helpers)
             ->with('version', $app::VERSION)
@@ -114,7 +114,7 @@ class Generator
     protected function detectDrivers()
     {
         try{
-            if (class_exists('Auth')) {
+            if (class_exists('Auth') && is_a('Auth', '\Illuminate\Support\Facades\Auth', true)) {
                 $class = get_class(\Auth::driver());
                 $this->extra['Auth'] = array($class);
                 $this->interfaces['\Illuminate\Auth\UserProviderInterface'] = $class;
@@ -122,7 +122,7 @@ class Generator
         }catch (\Exception $e) {}
 
         try{
-            if (class_exists('DB')) {
+            if (class_exists('DB') && is_a('DB', '\Illuminate\Support\Facades\DB', true)) {
                 $class = get_class(\DB::connection());
                 $this->extra['DB'] = array($class);
                 $this->interfaces['\Illuminate\Database\ConnectionInterface'] = $class;
@@ -130,7 +130,7 @@ class Generator
         }catch (\Exception $e) {}
 
         try{
-            if (class_exists('Cache')) {
+            if (class_exists('Cache') && is_a('Cache', '\Illuminate\Support\Facades\Cache', true)) {
                 $driver = get_class(\Cache::driver());
                 $store = get_class(\Cache::getStore());
                 $this->extra['Cache'] = array($driver, $store);
@@ -139,7 +139,7 @@ class Generator
         }catch (\Exception $e) {}
 
         try{
-            if (class_exists('Queue')) {
+            if (class_exists('Queue') && is_a('Queue', '\Illuminate\Support\Facades\Queue', true)) {
                 $class = get_class(\Queue::connection());
                 $this->extra['Queue'] = array($class);
                 $this->interfaces['\Illuminate\Queue\QueueInterface'] = $class;
@@ -147,7 +147,7 @@ class Generator
         }catch (\Exception $e) {}
 
         try{
-            if (class_exists('SSH')){
+            if (class_exists('SSH') && is_a('SSH', '\Illuminate\Support\Facades\SSH', true)){
                 $class = get_class(\SSH::connection());
                 $this->extra['SSH'] = array($class);
                 $this->interfaces['\Illuminate\Remote\ConnectionInterface'] = $class;
@@ -167,6 +167,12 @@ class Generator
 
         // Get all aliases
         foreach (AliasLoader::getInstance()->getAliases() as $name => $facade) {
+            
+            // Skip the Redis facade, if not available (otherwise Fatal PHP Error)
+            if ($facade == 'Illuminate\Support\Facades\Redis' && !class_exists('Predis\Client')) {
+                continue;
+            }
+            
             $magicMethods = array_key_exists($name, $this->magic) ? $this->magic[$name] : array();
             $alias = new Alias($name, $facade, $magicMethods, $this->interfaces);
             if ($alias->isValid()) {

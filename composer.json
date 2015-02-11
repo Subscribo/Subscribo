@@ -5,8 +5,7 @@
 	"license": "proprietary",
 	"type": "project",
 	"require": {
-		"laravel/framework": "~5.0",
-        "symfony/yaml": "2.6@stable",
+		"laravel/framework": "5.0.*",
         "subscribo/modifier": "@dev",
         "subscribo/modelbase": "@dev",
         "subscribo/config": "@dev"
@@ -14,12 +13,10 @@
 	"require-dev": {
 		"phpunit/phpunit": "~4.0",
 		"phpspec/phpspec": "~2.1",
-        "subscribo/dependencyresolver": "@dev",
         "subscribo/schemabuilder": "@dev",
-        "subscribo/api0": "@dev",
         "subscribo/apichecker": "@dev",
         "subscribo/clientchecker": "@dev",
-        "barryvdh/laravel-ide-helper": "dev-master"
+		"barryvdh/laravel-ide-helper": "~2.0@dev"
 	},
 	"autoload": {
 		"classmap": [

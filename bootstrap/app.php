@@ -49,10 +49,6 @@ if (class_exists('\\Subscribo\\SchemaBuilder\\SchemaBuilderServiceProvider')) {
     $app->register('\\Subscribo\\SchemaBuilder\\SchemaBuilderServiceProvider');
 }
 
-if (class_exists('\\Subscribo\\Api0\\Api0ServiceProvider')) {
-    $app->register('\\Subscribo\\Api0\\Api0ServiceProvider');
-}
-
 if (class_exists('\\Subscribo\\ApiChecker\\ApiCheckerServiceProvider')) {
     $app->register('\\Subscribo\\ApiChecker\\ApiCheckerServiceProvider');
 }
@@ -64,11 +60,6 @@ if (class_exists('\\Subscribo\\RestProxy\\Integration\\Laravel\\RestProxyService
 if (class_exists('\\Subscribo\\ClientChecker\\ClientCheckerServiceProvider')) {
     $app->register('\\Subscribo\\ClientChecker\\ClientCheckerServiceProvider');
 }
-
-if (class_exists('\\Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider')) {
-    $app->register('\\Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider');
-}
-
 
 /*
 |--------------------------------------------------------------------------
