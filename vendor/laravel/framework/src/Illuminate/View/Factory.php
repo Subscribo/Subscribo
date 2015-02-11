@@ -446,7 +446,7 @@ class Factory implements FactoryContract {
 	 *
 	 * @param  string    $name
 	 * @param  \Closure  $callback
-	 * @param  integer   $priority
+	 * @param  int      $priority
 	 * @return void
 	 */
 	protected function addEventListener($name, $callback, $priority = null)
@@ -644,7 +644,11 @@ class Factory implements FactoryContract {
 			$sectionContent = $this->sections[$section];
 		}
 
-		return str_replace('@parent', '', $sectionContent);
+		$sectionContent = str_replace('@@parent', '--parent--holder--', $sectionContent);
+
+		return str_replace(
+			'--parent--holder--', '@parent', str_replace('@parent', '', $sectionContent)
+		);
 	}
 
 	/**

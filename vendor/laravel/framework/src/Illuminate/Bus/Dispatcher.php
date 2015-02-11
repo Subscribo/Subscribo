@@ -4,6 +4,7 @@ use Closure;
 use ArrayAccess;
 use ReflectionClass;
 use ReflectionParameter;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Queue\Queue;
 use Illuminate\Contracts\Bus\SelfHandling;
@@ -21,6 +22,20 @@ class Dispatcher implements DispatcherContract, QueueingDispatcher, HandlerResol
 	 * @var \Illuminate\Contracts\Container\Container
 	 */
 	protected $container;
+
+	/**
+	 * The pipeline instance for the bus.
+	 *
+	 * @var \Illuminate\Pipeline\Pipeline
+	 */
+	protected $pipeline;
+
+	/**
+	 * The pipes to send commands through before dispatching.
+	 *
+	 * @var array
+	 */
+	protected $pipes = [];
 
 	/**
 	 * The queue resolver callback.
@@ -54,6 +69,7 @@ class Dispatcher implements DispatcherContract, QueueingDispatcher, HandlerResol
 	{
 		$this->container = $container;
 		$this->queueResolver = $queueResolver;
+		$this->pipeline = new Pipeline($container);
 	}
 
 	/**
@@ -131,46 +147,22 @@ class Dispatcher implements DispatcherContract, QueueingDispatcher, HandlerResol
 	protected function getParameterValueForCommand($command, ArrayAccess $source,
                                                    ReflectionParameter $parameter, array $extras = array())
 	{
-		$value = $this->extractValueFromExtras($parameter, $extras);
-		
-		if (is_null($value))
+		if (array_key_exists($parameter->name, $extras))
 		{
-			$value = $this->extractValueFromSource($source, $parameter);
-		}
-		elseif (is_null($value) && $parameter->isDefaultValueAvailable())
-		{
-			$value = $parameter->getDefaultValue();
-		}
-		elseif (is_null($value))
-		{
-			MarshalException::whileMapping($command, $parameter);
+			return $extras[$parameter->name];
 		}
 
-		return $value;
-	}
+		if (isset($source[$parameter->name]))
+		{
+			return $source[$parameter->name];
+		}
 
-	/**
-	 * Attempt to extract the given parameter out of the given array.
-	 *
-	 * @param  \ReflectionParameter  $parameter
-	 * @param  array  $extras
-	 * @return mixed
-	 */
-	protected function extractValueFromExtras(ReflectionParameter $parameter, array $extras)
-	{
-		return array_get($extras, $parameter->name);
-	}
+		if ($parameter->isDefaultValueAvailable())
+		{
+			return $parameter->getDefaultValue();
+		}
 
-	/**
-	 * Attempt to extract the given parameter out of the source.
-	 *
-	 * @param  \ArrayAccess  $source
-	 * @param  \ReflectionParameter  $parameter
-	 * @return mixed
-	 */
-	protected function extractValueFromSource(ArrayAccess $source, ReflectionParameter $parameter)
-	{
-		return array_get($source, $parameter->name);
+		MarshalException::whileMapping($command, $parameter);
 	}
 
 	/**
@@ -201,17 +193,21 @@ class Dispatcher implements DispatcherContract, QueueingDispatcher, HandlerResol
 	 */
 	public function dispatchNow($command, Closure $afterResolving = null)
 	{
-		if ($command instanceof SelfHandling)
-			return $this->container->call([$command, 'handle']);
+		return $this->pipeline->send($command)->through($this->pipes)->then(function($command) use ($afterResolving)
+		{
+			if ($command instanceof SelfHandling)
+				return $this->container->call([$command, 'handle']);
 
-		$handler = $this->resolveHandler($command);
+			$handler = $this->resolveHandler($command);
 
-		if ($afterResolving)
-			call_user_func($afterResolving, $handler);
+			if ($afterResolving)
+				call_user_func($afterResolving, $handler);
 
-		return call_user_func(
-			[$handler, $this->getHandlerMethod($command)], $command
-		);
+			return call_user_func(
+				[$handler, $this->getHandlerMethod($command)], $command
+			);
+		});
+
 	}
 
 	/**
@@ -377,6 +373,19 @@ class Dispatcher implements DispatcherContract, QueueingDispatcher, HandlerResol
 		$command = str_replace($commandNamespace, '', get_class($command));
 
 		return $handlerNamespace.'\\'.trim($command, '\\').'Handler@handle';
+	}
+
+	/**
+	 * Set the pipes commands should be piped through before dispatching.
+	 *
+	 * @param  array  $pipes
+	 * @return $this
+	 */
+	public function pipeThrough(array $pipes)
+	{
+		$this->pipes = $pipes;
+
+		return $this;
 	}
 
 }
