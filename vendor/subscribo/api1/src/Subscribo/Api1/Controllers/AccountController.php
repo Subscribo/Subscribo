@@ -64,7 +64,7 @@ class AccountController extends AbstractController
     public function actionGetValidated()
     {
         $validated = $this->validateRequestQuery($this->commonValidationRules);
-        return $this->processValidation($validated);
+        return $this->processValidation($validated, 'GET');
     }
 
     /**
@@ -73,25 +73,28 @@ class AccountController extends AbstractController
     public function actionPostValidated()
     {
         $validated = $this->validateRequestBody($this->commonValidationRules);
-        return $this->processValidation($validated);
+        return $this->processValidation($validated, 'POST');
     }
 
 
     /**
-     * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException
+     * @param $validated
+     * @param string $method
+     * @return array
+     * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException|\Subscribo\Exception\Exceptions\InvalidQueryHttpException
      */
-    public function processValidation($validated)
+    public function processValidation($validated, $method)
     {
         /** @var \Subscribo\App\Model\Factories\CustomerFactory $customerFactory */
         $customerFactory = $this->applicationMake('Subscribo\\App\\Model\\Factories\\CustomerFactory');
         $found = $customerFactory->find($this->context->getServiceId(), $validated);
         if (empty($found)) {
-            throw $this->assembleCredentialsNotValidException();
+            throw $this->assembleCredentialsNotValidException($method);
         }
         if ($customerFactory->checkCustomerPassword($found['customer'], $validated['password'])) {
             return ['validated' => true, 'result' => $found];
         }
-        throw $this->assembleCredentialsNotValidException();
+        throw $this->assembleCredentialsNotValidException($method);
     }
 
     public function actionGetRemembered($accountId = null)
@@ -168,14 +171,19 @@ class AccountController extends AbstractController
     }
 
     /**
-     * @return InvalidInputHttpException
+     * @param $method
+     * @return InvalidInputHttpException|InvalidQueryHttpException
      */
-    protected function assembleCredentialsNotValidException()
+    protected function assembleCredentialsNotValidException($method)
     {
-        return new InvalidQueryHttpException([
+        $errors = [
             'email' => 'Credentials not valid for this service',
             'password' => 'Credentials not valid for this service',
-        ]);
+        ];
+        if ('GET' === $method) {
+            return new InvalidQueryHttpException($errors);
+        }
+        return new InvalidInputHttpException($errors);
     }
 
 }
