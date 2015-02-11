@@ -100,7 +100,6 @@ foreach ($uriParameters as $key => $value) {
 ?>];
         for (var i = 0; i < endpoints.length; i++) {
             var endpoint = endpoints[i];
-            console.log(endpoint);
             if (endpoint.sameServer && (remoteUriBase === endpoint.prefix )) {
                 var option = document.createElement('option');
                 option.innerHTML = endpoint.name;

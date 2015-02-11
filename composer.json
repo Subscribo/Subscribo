@@ -3,14 +3,11 @@
 	"description": "The Subscribo API Server project.",
 	"keywords": ["subscribo"],
 	"license": "proprietary",
-    "repositories": [{"type": "composer", "url": "http://satis.localhost"}],
 	"type": "project",
 	"require": {
 		"laravel/framework": "5.0.*",
-		"laravel/framework": "~5.0.0",
         "subscribo/apiserver": "@dev",
         "subscribo/apiclient": "@dev",
-        "symfony/yaml": "2.6@stable",
         "subscribo/modifier": "@dev",
         "subscribo/modelbase": "@dev",
         "subscribo/config": "@dev",
@@ -32,8 +29,6 @@
 			"App\\": "app/",
             "Subscribo\\App\\Model\\": "app/Models/",
             "Subscribo\\App\\Seeder\\": "database/seeds/"
-
-
 		}
 	},
 	"autoload-dev": {
