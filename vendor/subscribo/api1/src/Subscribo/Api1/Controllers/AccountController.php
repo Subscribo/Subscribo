@@ -4,19 +4,25 @@ use Subscribo\Api1\AbstractController;
 use Subscribo\App\Model\Customer;
 use Subscribo\Exception\Exceptions\InvalidInputHttpException;
 use Subscribo\Exception\Exceptions\InvalidQueryHttpException;
+use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
+use Subscribo\Exception\Exceptions\WrongServiceHttpException;
 use Subscribo\App\Model\ServicePool;
 use Subscribo\App\Model\Account;
 
 
-class CustomerController extends AbstractController
+class AccountController extends AbstractController
 {
 
-    public function actionPostRegister()
+    protected $commonValidationRules = [
+        'email' => 'required|email',
+        'password' => 'required|min:5',
+    ];
+
+    public function actionPostRegistration()
     {
-        $validated = $this->validateRequestBody([
-            'email' => 'required|email',
-            'password' => 'required|min:5',
-        ]);
+        $rules = $this->commonValidationRules;
+        $rules['name'] = '';
+        $validated = $this->validateRequestBody($rules);
         $alreadyRegisteredCustomers = Customer::findAllByEmail($validated['email']);
         $serviceId = $this->context->getServiceId();
 
@@ -55,12 +61,27 @@ class CustomerController extends AbstractController
     /**
      * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException
      */
-    public function actionGetValidate()
+    public function actionGetValidated()
     {
-        $validated = $this->validateRequestQuery([
-            'email' => 'required|email',
-            'password' => 'required|min:5',
-        ]);
+        $validated = $this->validateRequestQuery($this->commonValidationRules);
+        return $this->processValidation($validated);
+    }
+
+    /**
+     * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException
+     */
+    public function actionPostValidated()
+    {
+        $validated = $this->validateRequestBody($this->commonValidationRules);
+        return $this->processValidation($validated);
+    }
+
+
+    /**
+     * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException
+     */
+    public function processValidation($validated)
+    {
         /** @var \Subscribo\App\Model\Factories\CustomerFactory $customerFactory */
         $customerFactory = $this->applicationMake('Subscribo\\App\\Model\\Factories\\CustomerFactory');
         $found = $customerFactory->find($this->context->getServiceId(), $validated);
@@ -68,42 +89,72 @@ class CustomerController extends AbstractController
             throw $this->assembleCredentialsNotValidException();
         }
         if ($customerFactory->checkCustomerPassword($found['customer'], $validated['password'])) {
-            return ['validated' => $found];
+            return ['validated' => true, 'result' => $found];
         }
         throw $this->assembleCredentialsNotValidException();
     }
 
-    public function actionPostRemember()
+    public function actionGetRemembered($accountId = null)
     {
-        $validated = $this->validateRequestBody([
-            'id' => 'required|integer',
-            'token' => '',
-        ]);
-        /** @var Account $account */
-        $account = Account::find($validated['id']);
-        if (empty($account)) {
-            throw new InvalidInputHttpException(['id' => 'Account not found']);
-        }
-        $account->rememberToken = $validated['token'] ?: null;
-        $account->save();
-        return ['remembered' => $account];
-    }
-
-    public function actionGetRetrieve()
-    {
+        $accountId = is_null($accountId) ? $this->context->getAccountId() : $this->validatePositiveIdentifier($accountId);
         $validated = $this->validateRequestQuery([
-            'id' => 'required|integer',
             'token' => 'required',
         ]);
         /** @var Account $account */
-        $account = Account::findByIdAndToken($validated['id'], $validated['token']);
+        $account = Account::findRemembered($validated['token'], $accountId, $this->context->getServiceId());
         if (empty($account)) {
-            throw new InvalidInputHttpException(['id' => 'Account not found', 'token' => 'Account not found']);
+            throw new InvalidQueryHttpException(['token' => 'Account with given ID and token not found for this service']);
         }
-        return ['found' => [
+
+        return ['found' => true, 'result' => $this->assembleAccountResult($account)];
+    }
+
+    public function actionPutRemembered($accountId = null)
+    {
+        $validated = $this->validateRequestBody([
+            'token' => 'required_without:forget',
+            'forget' => 'boolean',
+        ]);
+        $account = $this->retrieveAccount($accountId);
+        $account->rememberToken = $validated['token'] ?: null;
+        $account->save();
+
+        return ['remembered' => true, 'result' => $this->assembleAccountResult($account)];
+    }
+
+
+    public function actionGetDetail($accountId = null)
+    {
+        $account = $this->retrieveAccount($accountId);
+
+        return ['found' => true, 'result' => $this->assembleAccountResult($account)];
+    }
+
+    /**
+     * @param int|null $accountId
+     * @return Account
+     * @throws \Subscribo\Exception\Exceptions\InstanceNotFoundHttpException
+     */
+    protected function retrieveAccount($accountId)
+    {
+        $accountId = is_null($accountId) ? $this->context->getAccountId() : $this->validatePositiveIdentifier($accountId);
+        $account = Account::find($accountId);
+        if (empty($account)) {
+            throw new InstanceNotFoundHttpException();
+        }
+        $this->context->checkServiceForAccount($account);
+        return $account;
+    }
+
+    protected function assembleAccountResult(Account $account)
+    {
+        $person = $account->customer ? $account->customer->person : null;
+        $result = [
             'account' => $account,
             'customer' => $account->customer,
-        ]];
+            'person' => $person,
+        ];
+        return $result;
     }
 
     protected function performRegistration(array $data, $serviceId)
@@ -112,11 +163,8 @@ class CustomerController extends AbstractController
         $customerFactory = $this->applicationMake('Subscribo\\App\\Model\\Factories\\CustomerFactory');
 
         $registered = $customerFactory->register($serviceId, $data);
-        $result = [
-            'registered' => $registered,
-            'accountId' => $registered['account']->id,
-        ];
-        return $result;
+
+        return  ['registered' => true, 'result' => $registered ];
     }
 
     /**

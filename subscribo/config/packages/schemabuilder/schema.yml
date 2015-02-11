@@ -137,6 +137,8 @@ model_options:
 
     customers:
         administrator_menu: ACL
+        hidden:
+            - accounts
         relations:
             has_many:
                 - accounts
@@ -358,7 +360,7 @@ model_fields:
     - infix null
     - last_name representative
     - suffix null
-    - gender (enum from man woman)
+    - gender (enum from man woman) null
     - date_of_birth (date) null
     - contact_id null → contacts
 

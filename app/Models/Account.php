@@ -17,11 +17,18 @@ class Account extends \Subscribo\App\Model\Base\Account
         return $account;
     }
 
-    public static function findByIdAndToken($id, $token)
+    /**
+     * @param string $rememberToken
+     * @param int $id
+     * @param int $serviceId
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public static function findRemembered($rememberToken, $id, $serviceId)
     {
         $query = self::query();
         $query->where('id', $id)
-            ->where('remember_token', $token);
+            ->where('remember_token', $rememberToken)
+            ->where('service_id', $serviceId);
         return $query->first();
     }
 

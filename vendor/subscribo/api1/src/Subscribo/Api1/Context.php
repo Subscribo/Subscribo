@@ -3,6 +3,7 @@
 use Subscribo\Auth\Interfaces\ApiGuardInterface;
 use Subscribo\App\Model\Account;
 use Subscribo\App\Model\Service;
+use Subscribo\Exception\Exceptions\WrongServiceHttpException;
 
 /**
  * Class Context
@@ -170,20 +171,25 @@ class Context
     }
 
     /**
+     * @param bool $autoCheck
      * @return null|Account
      */
-    public function getAccount()
+    public function getAccount($autoCheck = true)
     {
         if (false === $this->account) {
-            return $this->retrieveAccount();
+            return $this->retrieveAccount($autoCheck);
+        }
+        if ($autoCheck) {
+            $this->checkServiceForAccount($this->account);
         }
         return $this->account;
     }
 
     /**
+     * @param bool $autoCheck
      * @return null|Account
      */
-    public function retrieveAccount()
+    public function retrieveAccount($autoCheck = true)
     {
         $accountId = $this->retrieveAccountId();
         if (empty($accountId)) {
@@ -191,6 +197,23 @@ class Context
             return null;
         }
         $this->account = Account::find($accountId);
+        if ($autoCheck) {
+            $this->checkServiceForAccount($this->account);
+        }
         return $this->account;
+    }
+
+    /**
+     * @param Account|null $account
+     * @throws \Subscribo\Exception\Exceptions\WrongServiceHttpException
+     */
+    public function checkServiceForAccount(Account $account = null)
+    {
+        if (is_null($account)) {
+            return;
+        }
+        if ($account->serviceId !== $this->getServiceId()) {
+            throw new WrongServiceHttpException();
+        }
     }
 }

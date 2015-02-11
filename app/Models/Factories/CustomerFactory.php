@@ -4,6 +4,8 @@ use Illuminate\Contracts\Hashing\Hasher;
 use Subscribo\Api1\Exceptions\InvalidArgumentException;
 use Subscribo\App\Model\Customer;
 use Subscribo\App\Model\Account;
+use Subscribo\App\Model\Person;
+use Subscribo\Support\Arr;
 
 class CustomerFactory
 {
@@ -26,12 +28,16 @@ class CustomerFactory
 
     public function register($serviceId, array $data)
     {
+        $name = trim(Arr::get($data, 'name')) ?: Arr::get($data, 'email');
+        $person = Person::generate($name, Arr::get($data, 'gender'));
         $customer = $this->create($data);
+        $customer->person()->associate($person);
         $customer->save();
         $account = Account::generate($customer->id, $serviceId);
         $result = [
             'customer' => $customer,
             'account' => $account,
+            'person' => $person,
         ];
         return $result;
     }
@@ -46,7 +52,7 @@ class CustomerFactory
         foreach($customers as $customer) {
             foreach ($customer->accounts as $account) {
                 if ($account->serviceId === $serviceId) {
-                    return ['customer' => $customer, 'account' => $account];
+                    return ['customer' => $customer, 'account' => $account, 'person' => $customer->person];
                 }
             }
         }
