@@ -93,12 +93,8 @@ class RestProxy {
     public function call($uri)
     {
         try {
-            $result = $this->restClient->process($uri,
-                $this->request->method(),
-                $this->request->query(),
-                $this->request->header(),
-                $this->request->getContent()
-            );
+            $result = $this->restClient->forward($this->request, $uri, null, true);
+
         } catch (Exception $e) {
             $result = $this->exceptionHandler->handle($e, $this->request);
         }
