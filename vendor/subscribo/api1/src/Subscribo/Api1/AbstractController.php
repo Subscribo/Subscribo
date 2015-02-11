@@ -6,6 +6,14 @@ use Subscribo\Support\Str;
 use Illuminate\Routing\Controller;
 use Subscribo\Api1\Exceptions\InvalidArgumentException;
 use Subscribo\Api1\Context;
+use Validator;
+use App;
+use Subscribo\Exception\Exceptions\InvalidInputHttpException;
+use Subscribo\Exception\Exceptions\InvalidQueryHttpException;
+use Subscribo\Exception\Exceptions\InvalidIdentifierHttpException;
+
+use ReflectionMethod;
+
 
 /**
  * Class AbstractController
@@ -25,14 +33,67 @@ class AbstractController extends Controller implements SelfRegisteringController
 
     protected static $controllerUriStub;
 
+    /**
+     * @var Context
+     */
     protected $context;
 
-    protected $request;
 
     public function __construct(Context $context)
     {
         $this->context = $context;
     }
+
+    /**
+     * @param array $data
+     * @param array $rules
+     * @param array $messages
+     * @param array $customAttributes
+     * @return \Illuminate\Validation\Validator
+     */
+    protected function assembleValidator(array $data, array $rules, array $messages = array(), array $customAttributes = array())
+    {
+        $validator = Validator::make($data, $rules, $messages, $customAttributes);
+        return $validator;
+    }
+
+    protected function validateRequestBody(array $validationRules)
+    {
+        $data = array_intersect_key($this->context->getRequest()->json()->all(), $validationRules);
+        $validator = $this->assembleValidator($data, $validationRules);
+        if ($validator->fails()) {
+            throw new InvalidInputHttpException($validator->messages()->all());
+        }
+        return $validator->valid();
+    }
+
+    protected function validateRequestQuery(array $validationRules)
+    {
+        $data = array_intersect_key($this->context->getRequest()->query(), $validationRules);
+        $validator = $this->assembleValidator($data, $validationRules);
+        if ($validator->fails()) {
+            throw new InvalidQueryHttpException($validator->messages()->all());
+        }
+        return $validator->valid();
+    }
+
+    protected function validatePositiveIdentifier($id)
+    {
+        if ( ! (ctype_digit($id) or is_int($id))) {
+            throw new InvalidIdentifierHttpException(['id' => 'Identifier have to be a positive integer']);
+        }
+        return intval($id);
+    }
+
+    /**
+     * @param string $what
+     * @return mixed
+     */
+    protected function applicationMake($what)
+    {
+        return App::make($what);
+    }
+
 
 
     /**
@@ -58,6 +119,9 @@ class AbstractController extends Controller implements SelfRegisteringController
         foreach ($actions as $action) {
             $parsed = static::parseAction($action);
             $uri = $controllerUriStub.'/'.$parsed['uri'];
+            if ( ! empty($parsed['params'])) {
+                $uri .= self::paramsToUri($parsed['params']);
+            }
             $routerAction = $options;
             $routerAction['uses'] = get_called_class().'@'.$parsed['method'];
             $router->registerRoute($parsed['verb'], $uri, $routerAction);
@@ -70,6 +134,19 @@ class AbstractController extends Controller implements SelfRegisteringController
         foreach ($generatedDescriptions as $uri => $description) {
             $router->registerDescription($uri, $description);
         }
+    }
+
+    protected static function paramsToUri(array $params)
+    {
+        $result = '';
+        foreach ($params as $name => $paramData) {
+            $result .= '/{'.$name;
+            if ( ! empty($paramData['optional'])) {
+                $result .= '?';
+            }
+            $result .= '}';
+        }
+        return $result;
     }
 
     /**
@@ -114,7 +191,34 @@ class AbstractController extends Controller implements SelfRegisteringController
             array_pop($parts);
         }
         $uri = implode('/', $parts);
-        $result = ['method' => $action, 'verb' => $verb, 'uri' => $uri];
+        $params = self::analyseParams($action);
+        $result = ['method' => $action, 'verb' => $verb, 'uri' => $uri, 'params' => $params];
+        return $result;
+    }
+
+    protected static function analyseParams($action)
+    {
+        $reflection = new ReflectionMethod(get_called_class(), $action);
+        if (empty($reflection)) {
+            return [];
+        }
+        $result = [];
+        foreach ($reflection->getParameters() as $parameter) {
+            if ($parameter->getClass()) {
+                continue;
+            }
+            if ($parameter->isArray()) {
+                continue;
+            }
+            if ($parameter->isCallable()) {
+                continue;
+            }
+            if ($parameter->isOptional()) {
+                $result[$parameter->getName()] = ['optional' => true];
+            } else {
+                $result[$parameter->getName()] = ['optional' => false];
+            }
+        }
         return $result;
     }
 

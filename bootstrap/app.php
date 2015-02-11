@@ -30,6 +30,14 @@ if (class_exists('\\Subscribo\\Config\\Integration\\Laravel\\ConfigServiceProvid
     $app->register('\\Subscribo\\Config\\Integration\\Laravel\\ConfigServiceProvider');
 }
 
+if (class_exists('\\Subscribo\\ApiServer\\Integration\\Laravel\\ApiServerServiceProvider')) {
+    $app->register('\\Subscribo\\ApiServer\\Integration\\Laravel\\ApiServerServiceProvider');
+}
+
+if (class_exists('\\Subscribo\\ApiClient\\Integration\\Laravel\\ApiClientServiceProvider')) {
+    $app->register('\\Subscribo\\ApiClient\\Integration\\Laravel\\ApiClientServiceProvider');
+}
+
 $app->singleton(
 	'Illuminate\Contracts\Http\Kernel',
 	'App\Http\Kernel'
@@ -51,10 +59,6 @@ if (class_exists('\\Subscribo\\SchemaBuilder\\SchemaBuilderServiceProvider')) {
 
 if (class_exists('\\Subscribo\\ApiChecker\\ApiCheckerServiceProvider')) {
     $app->register('\\Subscribo\\ApiChecker\\ApiCheckerServiceProvider');
-}
-
-if (class_exists('\\Subscribo\\RestProxy\\Integration\\Laravel\\RestProxyServiceProvider')) {
-    $app->register('\\Subscribo\\RestProxy\\Integration\\Laravel\\RestProxyServiceProvider');
 }
 
 if (class_exists('\\Subscribo\\ClientChecker\\ClientCheckerServiceProvider')) {

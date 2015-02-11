@@ -60,7 +60,7 @@ class ControllerRegistrar implements ControllerRegistrarInterface
     }
 
 
-    public function addInfoRoute($defaults = array(), $uri = '/info', $rootRedirect = true)
+    public function addInfoRoute($defaults = array(), $uri = 'info', $rootRedirect = true)
     {
         $infoDescriptionBase = ['name' => 'Information about this API'];
         $infoDescription = $infoDescriptionBase;

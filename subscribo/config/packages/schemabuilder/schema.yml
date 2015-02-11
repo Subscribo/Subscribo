@@ -137,7 +137,9 @@ model_options:
 
     customers:
         administrator_menu: ACL
-        relation:
+        hidden:
+            - accounts
+        relations:
             has_many:
                 - accounts
                 - customer_tokens
@@ -338,7 +340,6 @@ model_fields:
         - username null
         - email null
         - password (password) null hidden
-        - remember_token null hidden
         - person_id null → persons
         - default_delivery_address_id null → addresses
         - default_billing_details_id null → billing_details
@@ -359,7 +360,7 @@ model_fields:
     - infix null
     - last_name representative
     - suffix null
-    - gender (enum from man woman)
+    - gender (enum from man woman) null
     - date_of_birth (date) null
     - contact_id null → contacts
 
@@ -427,8 +428,8 @@ model_fields:
 
     accounts: #    (former “accessors” - actually a pivot table - connection between a user account and a particular service – there is a possibility of one email to be linked to multiple users – to know with which actual user are we dealing with we need an information about service requested – this would give as an account)
     - id #id is particularly important in this pivot table
-    - user_id → users
-    - service_id → services
+    - remember_token null hidden
+
 
     translations:
     - table_id → tables

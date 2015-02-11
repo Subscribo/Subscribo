@@ -15,6 +15,7 @@ class RestClientServiceProvider extends ServiceProvider {
 
     public function register()
     {
+        $this->app->register('\\Subscribo\\Config\\Integration\\Laravel\\ConfigServiceProvider');
         $this->app->singleton('Subscribo\\RestClient\\RestClient');
         $this->app->singleton('subscribo.restclient', 'Subscribo\\RestClient\\RestClient');
         $aliasLoader = AliasLoader::getInstance();
