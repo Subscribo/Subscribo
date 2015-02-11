@@ -26,6 +26,8 @@ PHP 5.3+ and HHVM. Inspired by underscore.string.js.
     * [ensureRight](#ensureright)
     * [first](#first)
     * [getEncoding](#getencoding)
+    * [hasLowerCase](#haslowercase)
+    * [hasUpperCase](#hasuppercase)
     * [humanize](#humanize)
     * [insert](#insert)
     * [isAlpha](#isalpha)
@@ -83,7 +85,7 @@ in your composer.json file:
 ```json
 {
     "require": {
-        "danielstjules/stringy": "~1.8"
+        "danielstjules/stringy": "~1.9"
     }
 }
 ```
@@ -314,7 +316,7 @@ S::countSubstr('Ο συγγραφέας είπε', 'α', 'UTF-8');  // 2
 
 #### create
 
-S::create(mixed $str, [, $encoding ])
+S::create(mixed $str [, $encoding ])
 
 Creates a Stringy object and assigns both str and encoding properties
 the supplied values. $str is cast to a string prior to assignment, and if
@@ -403,6 +405,32 @@ Returns the encoding used by the Stringy object.
 
 ```php
 S::create('fòô bàř', 'UTF-8')->getEncoding();  // 'UTF-8'
+```
+
+#### hasLowerCase
+
+$stringy->hasLowerCase()
+
+S::hasLowerCase(string $str [, string $encoding ])
+
+Returns true if the string contains a lower case char, false otherwise.
+
+```php
+S::create('fòô bàř', 'UTF-8')->hasLowerCase();
+S::hasLowerCase('fòô bàř', 'UTF-8');  // true
+```
+
+#### hasUpperCase
+
+$stringy->hasUpperCase()
+
+S::hasUpperCase(string $str [, string $encoding ])
+
+Returns true if the string contains an upper case char, false otherwise.
+
+```php
+S::create('fòô bàř', 'UTF-8')->hasUpperCase();
+S::hasUpperCase('fòô bàř', 'UTF-8');  // false
 ```
 
 #### humanize
@@ -734,7 +762,7 @@ S::replace('fòô bàř fòô bàř', 'fòô ', '', 'UTF-8');  // 'bàř bàř'
 
 $stringy->reverse()
 
-S::reverse(string $str, [, string $encoding ])
+S::reverse(string $str [, string $encoding ])
 
 Returns a reversed string. A multibyte version of strrev().
 
@@ -745,9 +773,9 @@ S::reverse('fòô bàř', 'UTF-8');  // 'řàb ôòf'
 
 #### safeTruncate
 
-$stringy->safeTruncate(int $length, [, string $substring = '' ])
+$stringy->safeTruncate(int $length [, string $substring = '' ])
 
-S::safeTruncate(string $str, int $length, [, string $substring = '' [, string $encoding ]])
+S::safeTruncate(string $str, int $length [, string $substring = '' [, string $encoding ]])
 
 Truncates the string to a given length, while ensuring that it does not
 split words. If $substring is provided, and truncating occurs, the
@@ -881,10 +909,11 @@ S::titleize('i like to watch DVDs at home', $ignore, 'UTF-8');
 
 $stringy->toAscii()
 
-S::toAscii(string $str)
+S::toAscii(string $str [, boolean $removeUnsupported = true])
 
 Returns an ASCII version of the string. A set of non-ASCII characters are
-replaced with their closest ASCII counterparts, and the rest are removed.
+replaced with their closest ASCII counterparts, and the rest are removed
+unless instructed otherwise.
 
 ```php
 S::create('fòô bàř')->toAscii();
@@ -909,7 +938,7 @@ S::toLowerCase('FÒÔ BÀŘ', 'UTF-8');  // 'fòô bàř'
 
 $stringy->toSpaces([ tabLength = 4 ])
 
-S::toSpaces(string $str, [, int $tabLength = 4 ])
+S::toSpaces(string $str [, int $tabLength = 4 ])
 
 Converts each tab in the string to some number of spaces, as defined by
 $tabLength. By default, each tab is converted to 4 consecutive spaces.
@@ -923,7 +952,7 @@ S::toSpaces('   String speech = "Hi"');  // '    String speech = "Hi"'
 
 $stringy->toTabs([ tabLength = 4 ])
 
-S::toTabs(string $str, [, int $tabLength = 4 ])
+S::toTabs(string $str [, int $tabLength = 4 ])
 
 Converts each occurrence of some consecutive number of spaces, as defined
 by $tabLength, to a tab. By default, each 4 consecutive spaces are
@@ -976,9 +1005,9 @@ S::trim(' fòô bàř ');  // 'fòô bàř'
 
 #### truncate
 
-$stringy->truncate(int $length, [, string $substring = '' ])
+$stringy->truncate(int $length [, string $substring = '' ])
 
-S::truncate(string $str, int $length, [, string $substring = '' [, string $encoding ]])
+S::truncate(string $str, int $length [, string $substring = '' [, string $encoding ]])
 
 Truncates the string to a given length. If $substring is provided, and
 truncating occurs, the string is further truncated so that the substring

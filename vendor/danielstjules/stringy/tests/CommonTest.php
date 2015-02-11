@@ -174,9 +174,12 @@ abstract class CommonTest extends PHPUnit_Framework_TestCase
             array('test string', 'test string'),
             array('Ο συγγραφέας', '   Ο     συγγραφέας  '),
             array('123', ' 123 '),
-            array('', ' ', 'UTF-8'), // no-break space
-            array('1 2 3', '　　1　　2　　3　　', 'UTF-8'), // ideographic spaces
-            array('', '   ', 'UTF-8'), // thin space and space
+            array('', ' ', 'UTF-8'), // no-break space (U+00A0)
+            array('', '           ', 'UTF-8'), // spaces U+2000 to U+200A
+            array('', ' ', 'UTF-8'), // narrow no-break space (U+202F)
+            array('', ' ', 'UTF-8'), // medium mathematical space (U+205F)
+            array('', '　', 'UTF-8'), // ideographic space (U+3000)
+            array('1 2 3', '  1  2  3　　', 'UTF-8'),
             array('', ' '),
             array('', ''),
         );
@@ -187,14 +190,21 @@ abstract class CommonTest extends PHPUnit_Framework_TestCase
         return array(
             array('foo bar', 'fòô bàř'),
             array(' TEST ', ' ŤÉŚŢ '),
-            array(' = z = 3', 'φ = ź = 3'),
+            array('f = z = 3', 'φ = ź = 3'),
             array('perevirka', 'перевірка'),
             array('lysaya gora', 'лысая гора'),
             array('shchuka', 'щука'),
             array('', '漢字'),
-            array(' ', ' '), // no-break space
-            array('  1  2  3  ', '　　1　　2　　3　　'), // ideographic spaces
-            array('   ', '   '), // thin space and space
+            array('xin chao the gioi', 'xin chào thế giới'),
+            array('XIN CHAO THE GIOI', 'XIN CHÀO THẾ GIỚI'),
+            array('dam phat chet luon', 'đấm phát chết luôn'),
+            array(' ', ' '), // no-break space (U+00A0)
+            array('           ', '           '), // spaces U+2000 to U+200A
+            array(' ', ' '), // narrow no-break space (U+202F)
+            array(' ', ' '), // medium mathematical space (U+205F)
+            array(' ', '　'), // ideographic space (U+3000)
+            array('', '𐍉'), // some uncommon, unsupported character (U+10349)
+            array('𐍉', '𐍉', false),
         );
     }
 
@@ -365,7 +375,6 @@ abstract class CommonTest extends PHPUnit_Framework_TestCase
             array('foo-dbar', " Foo d'Bar "),
             array('a-string-with-dashes', 'A string-with-dashes'),
             array('using-strings-like-foo-bar', 'Using strings like fòô bàř'),
-            array('unrecognized-chars-like', 'unrecognized chars like συγγρ'),
             array('numbers-1234', 'numbers 1234'),
             array('perevirka-ryadka', 'перевірка рядка'),
             array('bukvar-s-bukvoy-y', 'букварь с буквой ы'),
@@ -832,9 +841,11 @@ abstract class CommonTest extends PHPUnit_Framework_TestCase
             array(false, "\n\t ' \v\f"),
             array(false, "\n\t 2 \v\f"),
             array(true, '', 'UTF-8'),
-            array(true, ' ', 'UTF-8'), // no-break space
-            array(true, '   ', 'UTF-8'), // thin space
-            array(true, '　　', 'UTF-8'), // ideographic spaces
+            array(true, ' ', 'UTF-8'), // no-break space (U+00A0)
+            array(true, '           ', 'UTF-8'), // spaces U+2000 to U+200A
+            array(true, ' ', 'UTF-8'), // narrow no-break space (U+202F)
+            array(true, ' ', 'UTF-8'), // medium mathematical space (U+205F)
+            array(true, '　', 'UTF-8'), // ideographic space (U+3000)
             array(false, '　z', 'UTF-8'),
             array(false, '　1', 'UTF-8'),
         );
@@ -874,6 +885,24 @@ abstract class CommonTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function hasLowerCaseProvider()
+    {
+        return array(
+            array(false, ''),
+            array(true, 'foobar'),
+            array(false, 'FOO BAR'),
+            array(true, 'fOO BAR'),
+            array(true, 'foO BAR'),
+            array(true, 'FOO BAr'),
+            array(true, 'Foobar'),
+            array(false, 'FÒÔBÀŘ', 'UTF-8'),
+            array(true, 'fòôbàř', 'UTF-8'),
+            array(true, 'fòôbàř2', 'UTF-8'),
+            array(true, 'Fòô bàř', 'UTF-8'),
+            array(true, 'fòôbÀŘ', 'UTF-8'),
+        );
+    }
+
     public function isSerializedProvider()
     {
         return array(
@@ -898,6 +927,24 @@ abstract class CommonTest extends PHPUnit_Framework_TestCase
             array(false, 'FÒÔBÀŘ2', 'UTF-8'),
             array(false, 'FÒÔ BÀŘ', 'UTF-8'),
             array(false, 'FÒÔBàř', 'UTF-8'),
+        );
+    }
+
+    public function hasUpperCaseProvider()
+    {
+        return array(
+            array(false, ''),
+            array(true, 'FOOBAR'),
+            array(false, 'foo bar'),
+            array(true, 'Foo bar'),
+            array(true, 'FOo bar'),
+            array(true, 'foo baR'),
+            array(true, 'fOOBAR'),
+            array(false, 'fòôbàř', 'UTF-8'),
+            array(true, 'FÒÔBÀŘ', 'UTF-8'),
+            array(true, 'FÒÔBÀŘ2', 'UTF-8'),
+            array(true, 'fÒÔ BÀŘ', 'UTF-8'),
+            array(true, 'FÒÔBàř', 'UTF-8'),
         );
     }
 

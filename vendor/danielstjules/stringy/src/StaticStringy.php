@@ -166,14 +166,17 @@ class StaticStringy
 
     /**
      * Returns an ASCII version of the string. A set of non-ASCII characters are
-     * replaced with their closest ASCII counterparts, and the rest are removed.
+     * replaced with their closest ASCII counterparts, and the rest are removed
+     * unless instructed otherwise.
      *
-     * @param  string $str A string with non-ASCII characters
+     * @param  string $str               A string with non-ASCII characters
+     * @param  bool   $removeUnsupported Whether or not to remove the
+     *                                   unsupported characters
      * @return string A string containing only ASCII characters
      */
-    public static function toAscii($str)
+    public static function toAscii($str, $removeUnsupported = true)
     {
-        return (string) Stringy::create($str)->toAscii();
+        return (string) Stringy::create($str)->toAscii($removeUnsupported);
     }
 
     /**
@@ -684,6 +687,32 @@ class StaticStringy
     }
 
     /**
+     * Returns true if the string contains a lower case char, false
+     * otherwise.
+     *
+     * @param  string $str      String to check
+     * @param  string $encoding The character encoding
+     * @return bool   Whether or not $str contains a lower case character.
+     */
+    public static function hasLowerCase($str, $encoding = null)
+    {
+        return Stringy::create($str, $encoding)->hasLowerCase();
+    }
+
+    /**
+     * Returns true if the string contains an upper case char, false
+     * otherwise.
+     *
+     * @param  string $str      String to check
+     * @param  string $encoding The character encoding
+     * @return bool   Whether or not $str contains an upper case character.
+     */
+    public static function hasUpperCase($str, $encoding = null)
+    {
+        return Stringy::create($str, $encoding)->hasUpperCase();
+    }
+
+    /**
      * Returns true if the string contains only alphabetic chars, false
      * otherwise.
      *
@@ -815,7 +844,7 @@ class StaticStringy
     public static function replace($str, $search, $replacement, $encoding = null)
     {
         return (string) Stringy::create($str, $encoding)
-            ->replace($search,$replacement);
+            ->replace($search, $replacement);
     }
 
     /**
