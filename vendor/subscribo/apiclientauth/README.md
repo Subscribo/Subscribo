@@ -16,7 +16,7 @@ contain functionality connected to customer authentication
 
 (Note: do not add trailing comma if it is the last item listed)
 
-### 1.3 If you are using Laravel (5.0), you might want to register ApiClientAuthServiceProvider:
+### 1.3 To use with Laravel (5.0), register ApiClientAuthServiceProvider:
 
 To do so, add
 
@@ -38,5 +38,19 @@ in bootstrap/app.php for conditional registration
 
 Note: If used with package adding this dependency and/or registering this service provider for you, respective steps might not be necessary.
 
+### 1.4 Set driver configuration to 'remote' in config/auth.php:
+
+```php
+'driver' => 'remote',
+```
+
+
+### 1.5 Important: You need to properly configure Subscribo RestClient package (see its documentation)
+
 ## 2. Usage
 
+### 2.1 Traits
+
+You may want to use trait Subscribo\ApiClientAuth\Traits\AuthenticatesAndRegistersUsersTrait
+in app/Http/Controllers/Auth/AuthController.php
+(instead of original trait AuthenticatesAndRegistersUsers) in order to handle possible exceptions / errors which might happen during servers communicating during login

@@ -1,6 +1,5 @@
 <?php namespace Subscribo\ApiClientAuth;
 
-use Exception;
 use Subscribo\ApiClientAuth\Exceptions\InvalidArgumentException;
 use Illuminate\Contracts\Auth\UserProvider;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -8,7 +7,8 @@ use Subscribo\Support\Arr;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Contracts\Events\Dispatcher;
-use Subscribo\RestClient\RestClient;
+use Subscribo\ApiClientAuth\Connectors\AccountConnector;
+use Psr\Log\LoggerInterface;
 
 class RemoteAccountProvider implements UserProvider
 {
@@ -20,9 +20,11 @@ class RemoteAccountProvider implements UserProvider
 
     protected $hasher;
 
-    protected $restClient;
+    protected $accountConnector;
 
-    public function __construct(SessionInterface $session, RestClient $restClient, Hasher $hasher, Dispatcher $dispatcher, $model = '\\Subscribo\\ApiClientAuth\\Account', $sessionKeyName = true)
+    protected $logger;
+
+    public function __construct(SessionInterface $session, AccountConnector $accountConnector, Hasher $hasher, Dispatcher $dispatcher, LoggerInterface $logger, $model = '\\Subscribo\\ApiClientAuth\\Account', $sessionKeyName = true)
     {
         if (true === $sessionKeyName) {
             $sessionKeyName = 'account_session_provider_'.md5(get_class($this));
@@ -32,7 +34,8 @@ class RemoteAccountProvider implements UserProvider
         $this->model = $model;
         $this->sessionKeyName = $sessionKeyName;
         $this->hasher = $hasher;
-        $this->restClient = $restClient;
+        $this->accountConnector = $accountConnector;
+        $this->logger = $logger;
         $dispatcher->listen('auth.logout', function ($event) {
             $this->clear();
         });
@@ -48,12 +51,9 @@ class RemoteAccountProvider implements UserProvider
         if ($entity) {
             return $entity;
         }
-        try {
-            $responseResult = $this->restClient->process('customer/info/'.$id, 'GET');
-        } catch (Exception $e) {
-            return null;
-        }
+        $data = $this->accountConnector->getDetail($id);
 
+        return $this->saveAsModelIfPossible($data, 'retrieveById');
     }
 
     public function retrieveByCredentials(array $credentials)
@@ -64,54 +64,37 @@ class RemoteAccountProvider implements UserProvider
         if (empty($credentials['email'])) {
             return null;
         }
-        try {
-            $responseResult = $this->restClient->process('customer/validate', 'GET', $credentials);
-        } catch (Exception $e) {
+        $data = $this->accountConnector->postValidation($credentials);
+
+        if (empty($data)) {
             return null;
         }
-        $responseData = json_decode($responseResult->getContent(), true);
-        if (empty($responseData['validated']['account']['id'])) {
-            return null;
-        }
-        $result = new $this->model([
-            'id' => $responseData['validated']['account']['id'],
-            'password' => $this->hasher->make($this->assembleHashSource($credentials)),
-            'email' => $responseData['validated']['customer']['email'],
-            'name' =>  $responseData['validated']['customer']['email'],
-        ]);
-        $this->save($responseData['validated']['account']['id'], $result);
-        return $result;
+        $data['password'] = $this->hasher->make($this->assembleHashSource($credentials));
+
+        return $this->saveAsModelIfPossible($data, 'retrieveByCredentials');
     }
 
     public function updateRememberToken(Authenticatable $account, $token)
     {
-        $account->setRememberToken($token);
-        $this->save($account->getAuthIdentifier(), $account);
-        try {
-            $responseResult = $this->restClient->process('customer/remember', 'POST', null, [], json_encode(['id' => $account->getAuthIdentifier(), 'token' => $token]));
-        } catch (Exception $e) {
-            return null;
+        $data = $this->accountConnector->putRemembered($account->getAuthIdentifier(), $token);
+
+        if ($data) {
+            $account->setRememberToken($token);
+            $this->save($account->getAuthIdentifier(), $account);
+        } else {
+            $this->logger->notice('RemoteAccountProvider: It was not possible to updateRememberToken');
         }
     }
 
     public function retrieveByToken($id, $token)
     {
-        try {
-            $responseResult = $this->restClient->process('customer/retrieve', 'GET', ['id' =>$id, 'token' => $token]);
-        } catch (Exception $e) {
-            return null;
+        if (empty($id)) {
+            throw new InvalidArgumentException('Id should not be empty');
         }
-        $responseData = json_decode($responseResult->getContent(), true);
-        if (empty($responseData['found']['account']['id'])) {
-            return null;
-        }
-        $result = new $this->model([
-            'id' => $responseData['found']['account']['id'],
-            'email' => $responseData['found']['customer']['email'],
-            'name' =>  $responseData['found']['customer']['email'],
-        ]);
-        $this->save($responseData['found']['account']['id'], $result);
-        return $result;
+
+        $data = $this->accountConnector->getRemembered($id, $token);
+
+        return $this->saveAsModelIfPossible($data, 'retrieveByToken');
     }
 
     public function validateCredentials(Authenticatable $account, array $credentials)
@@ -130,6 +113,21 @@ class RemoteAccountProvider implements UserProvider
         return $result;
     }
 
+    private function saveAsModelIfPossible(array $data = null, $logMethodName = false)
+    {
+        if (empty($data['id'])) {
+            if ($logMethodName) {
+                $this->logger->notice(
+                    'RemoteAccountProvider: It was not possible to save the model.',
+                    ['methodName' => $logMethodName]
+                );
+            }
+            return null;
+        }
+        $entity = new $this->model($data);
+        $this->save($data['id'], $entity);
+        return $entity;
+    }
 
     protected function load($key)
     {
@@ -153,7 +151,4 @@ class RemoteAccountProvider implements UserProvider
     {
         return $credentials['email'].'_already_validated_'.$credentials['password'];
     }
-
-
-
 }
