@@ -1,4 +1,0 @@
-protocol: http
-host: subscribo.localhost
-uri_base: /api/v1
-token_ring:

@@ -3,14 +3,13 @@
 use Exception;
 use Subscribo\Exception\Exceptions\HttpException;
 use Subscribo\RestClient\Exceptions\ClientErrorHttpException;
+use Subscribo\RestCommon\Exceptions\UnauthorizedHttpException;
 use Subscribo\RestCommon\RestCommon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Subscribo\Support\Arr;
-use Subscribo\RestCommon\Exceptions\NoAccessTokenHttpException;
-use Subscribo\RestCommon\Exceptions\InvalidAccessTokenHttpException;
 use Subscribo\RestClient\Exceptions\TokenConfigurationHttpException;
 use Subscribo\RestClient\Exceptions\RemoteServerErrorHttpException;
 use Subscribo\RestClient\Exceptions\ConnectionToRemoteServerHttpException;
@@ -63,16 +62,16 @@ class RestClient {
 
     public function setup(array $settings)
     {
-        if (array_key_exists('protocol', $settings)) {
+        if (isset($settings['protocol'])) {
             $this->protocol = $settings['protocol'];
         }
-        if (array_key_exists('host', $settings)) {
+        if (isset($settings['host'])) {
             $this->host = $settings['host'];
         }
-        if (array_key_exists('uri_base', $settings)) {
+        if (isset($settings['uri_base'])) {
             $this->uriBase = $settings['uri_base'];
         }
-        if (array_key_exists('token_ring', $settings)) {
+        if (isset($settings['token_ring'])) {
             $this->tokenRing = $settings['token_ring'];
         }
         if ( ! empty($settings['uri_parameters'])) {
@@ -131,7 +130,7 @@ class RestClient {
      * @param array|null $query
      * @param array|null $headers
      * @param array|null $signatureOptions
-     * @param bool $throwExceptions
+     * @param bool $nullOnClientError
      * @return array|null
      * @throws \Subscribo\Exception\Exceptions\HttpException
      * @throws \GuzzleHttp\Exception\TransferException
@@ -141,7 +140,7 @@ class RestClient {
      * @throws Exceptions\TokenConfigurationHttpException
      * @throws \Exception
      */
-    public function process($uriStub, $method = 'GET', $content = null, array $query = null, array $headers = null, array $signatureOptions = null, $throwExceptions = true)
+    public function process($uriStub, $method = 'GET', $content = null, array $query = null, array $headers = null, array $signatureOptions = null, $nullOnClientError = false)
     {
         try {
             $callResponse = $this->call($uriStub, $method, $content, $query, $headers, $signatureOptions, true);
@@ -154,12 +153,12 @@ class RestClient {
 
             return $data;
 
-        } catch (Exception $e) {
+        } catch (ClientErrorHttpException $e) {
 
-            if ($throwExceptions) {
-                throw $e;
+            if ($nullOnClientError) {
+                return null;
             }
-            return null;
+            throw $e;
         }
     }
 
@@ -186,7 +185,7 @@ class RestClient {
         }
         if ($this->tokenRing) {
             $signer = new Signer($this->tokenRing);
-            $processedHeaders = $signer->modifyHeaders($headers, array(), $signatureOptions);
+            $processedHeaders = $signer->modifyHeaders($processedHeaders, array(), $signatureOptions);
         }
         $uri = $this->prependUriBase($uriStub);
 
@@ -292,8 +291,7 @@ class RestClient {
         if ( ! is_int($statusCode)) {
             $statusCode = $this->extractResponseStatusCode($response);
         }
-        if ((NoAccessTokenHttpException::SERVER_STATUS_CODE === $statusCode)
-            or (InvalidAccessTokenHttpException::SERVER_STATUS_CODE === $statusCode)) {
+        if (UnauthorizedHttpException::SERVER_STATUS_CODE === $statusCode) {
             throw new TokenConfigurationHttpException($statusCode, $this->extractResponseContent($response));
         }
     }
@@ -329,7 +327,9 @@ class RestClient {
 
         /* Processing 4xx errors */
 
-        $data = json_decode($responseContent, true);
+        $dataFull = json_decode($responseContent, true);
+
+        $data = (empty($dataFull['error']) or ( ! is_array($dataFull['error']))) ? array() : $dataFull['error'];
 
         $message = (isset($data['message']) and is_string($data['message'])) ? $data['message'] : null;
 
@@ -349,7 +349,7 @@ class RestClient {
 
         $exceptionData = [
             'originalResponse' => $originalResponse,
-            'output' => $data,
+            'error' => $data,
         ];
         $filteredHeaders = $this->extractResponseHeaders($response);
 

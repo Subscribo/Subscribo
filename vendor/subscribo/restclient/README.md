@@ -34,3 +34,6 @@ in bootstrap/app.php for conditional registration
 
 Note: If used with package adding this dependency and/or registering this service provider for you, respective steps are not necessary.
 
+### 1.4 Configure your token_ring and if needed also host, uri_base, protocol
+in subscribo/config/packages/restcommon/default.yml (or default.php), in configuration overriding it
+(e.g. subscribo/config/packages/restproxy/default.yml) or in proper .env file
