@@ -2,9 +2,12 @@
 
 use Exception;
 use Subscribo\Support\Arr;
+use Subscribo\Exception\Exceptions\ClientErrorHttpException;
 
-class UnauthorizedHttpException extends \Subscribo\Exception\Exceptions\UnauthorizedHttpException
+class UnauthorizedHttpException extends ClientErrorHttpException
 {
+    const SERVER_STATUS_CODE = 401;
+
     const SERVER_EXCEPTION_CODE = 100;
 
     const DEFAULT_WWW_AUTHENTICATE_HEADER_CONTENT = 'SubscriboDigest';
@@ -20,6 +23,6 @@ class UnauthorizedHttpException extends \Subscribo\Exception\Exceptions\Unauthor
         if (true === $code) {
             $code = self::SERVER_EXCEPTION_CODE;
         }
-        parent::__construct($message, $data, $code, $previous, $headers);
+        parent::__construct(self::SERVER_STATUS_CODE, $message, $data, $code, $previous, $headers);
     }
 }
