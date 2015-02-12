@@ -18,7 +18,7 @@ class HttpException extends \Symfony\Component\HttpKernel\Exception\HttpExceptio
     /**
      * @param int|string $statusCode
      * @param string|null $message
-     * @param array $data important key is 'output' - this part is about to be rendered
+     * @param array $data important key is 'error' - this part is about to be rendered
      * @param int $code
      * @param Exception|null $previous
      * @param array $headers

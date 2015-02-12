@@ -80,9 +80,9 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
             $defaultContentData['metaData']['accessedUrl'] = $request->getUri();
         }
         if ($e instanceof ContainDataInterface) {
-            $content = $e->getOutputData($defaultContentData);
+            $content = $e->getOutputData(['error' => $defaultContentData]);
         } else {
-            $content = $defaultContentData;
+            $content = ['error' => $defaultContentData];
         }
         $response = new LaravelResponse($content, $statusCode, $headers);
         if ($e instanceof ExtendedHttpExceptionInterface) {

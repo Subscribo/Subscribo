@@ -29,20 +29,30 @@ trait ContainDataTrait {
      */
     public function getOutputData(array $default = null)
     {
-        $data = $this->getData();
-        if ( ! array_key_exists('output', $data)) {
+        $errorData = $this->getErrorData();
+        if (empty($errorData)) {
             return $default;
         }
-        $content = $data['output'];
+        $content = array('error' => $errorData);
         if (empty($default)) {
             return $content;
         }
-        if (is_array($content)) {
-            $result = Arr::mergeNatural($default, $content);
-        } else {
-            $result = $default;
-            $result['content'] = $content;
-        }
+        $result = Arr::mergeNatural($default, $content);
         return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrorData()
+    {
+        $data = $this->getData();
+        if (empty($data['error'])) {
+            return array();
+        }
+        if (is_array($data['error'])) {
+            return $data['error'];
+        }
+        return array('content' => $data['error']);
     }
 }

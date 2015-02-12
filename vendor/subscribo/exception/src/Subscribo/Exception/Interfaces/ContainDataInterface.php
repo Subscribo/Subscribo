@@ -24,4 +24,11 @@ interface ContainDataInterface {
      */
     public function getOutputData(array $default = null);
 
+    /**
+     * Plain Error data
+     *
+     * @return array
+     */
+    public function getErrorData();
+
 }

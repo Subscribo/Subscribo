@@ -23,7 +23,7 @@ class ValidationErrorsHttpException extends BadRequestHttpException
             $message = self::DEFAULT_MESSAGE;
         }
         if ( ! is_null($validationErrors)) {
-            $data['output']['validationErrors'] = $validationErrors;
+            $data['error']['validationErrors'] = $validationErrors;
         }
         parent::__construct($message, $data, $code, $previous, $headers);
     }
@@ -34,9 +34,9 @@ class ValidationErrorsHttpException extends BadRequestHttpException
     public function getValidationErrors()
     {
         $data = $this->getData();
-        if (empty($data['output']['validationErrors'])) {
+        if (empty($data['error']['validationErrors'])) {
             return array();
         }
-        return $data['output']['validationErrors'];
+        return $data['error']['validationErrors'];
     }
 }
