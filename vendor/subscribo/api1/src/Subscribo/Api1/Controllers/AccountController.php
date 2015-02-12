@@ -49,19 +49,20 @@ class AccountController extends AbstractController
             return $this->performRegistration($validated, $serviceId);
         }
         return [
-            'question' => [
+            'asking' => true,
+            'questions' => [[
                 'type' => 'select',
                 'text' => 'Would you like to merge your account with existing account?',
                 'code' => 10,
                 'options' => $compatibleServices,
-            ]
+            ]]
         ];
     }
 
     /**
      * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException
      */
-    public function actionGetValidated()
+    public function actionGetValidation()
     {
         $validated = $this->validateRequestQuery($this->commonValidationRules);
         return $this->processValidation($validated, 'GET');
@@ -70,7 +71,7 @@ class AccountController extends AbstractController
     /**
      * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException
      */
-    public function actionPostValidated()
+    public function actionPostValidation()
     {
         $validated = $this->validateRequestBody($this->commonValidationRules);
         return $this->processValidation($validated, 'POST');
@@ -89,12 +90,12 @@ class AccountController extends AbstractController
         $customerFactory = $this->applicationMake('Subscribo\\App\\Model\\Factories\\CustomerFactory');
         $found = $customerFactory->find($this->context->getServiceId(), $validated);
         if (empty($found)) {
-            throw $this->assembleCredentialsNotValidException($method);
+            return ['validated' => false];
         }
         if ($customerFactory->checkCustomerPassword($found['customer'], $validated['password'])) {
             return ['validated' => true, 'result' => $found];
         }
-        throw $this->assembleCredentialsNotValidException($method);
+        return ['validated' => false];
     }
 
     public function actionGetRemembered($accountId = null)
