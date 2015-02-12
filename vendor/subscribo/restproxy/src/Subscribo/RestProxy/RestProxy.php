@@ -46,7 +46,7 @@ class RestProxy {
 
     public function setup(array $settings)
     {
-        if (array_key_exists('uri', $settings)) {
+        if (isset($settings['uri'])) {
             $this->uriBase = $settings['uri'];
         }
         if ( ! empty($settings['remote'])) {

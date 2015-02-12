@@ -1,6 +1,6 @@
 uri: proxy
 remote:
-  host: subscribo.localhost
+  host:
   token_ring:
 
 
