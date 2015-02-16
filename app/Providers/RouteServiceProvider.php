@@ -14,10 +14,6 @@ class RouteServiceProvider extends ServiceProvider {
 	 */
 	protected $namespace = 'App\Http\Controllers';
 
-    protected $middleware = [
-        'csrf' => 'Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken',
-    ];
-
 	/**
 	 * Define your route model bindings, pattern filters, etc.
 	 *
@@ -34,11 +30,15 @@ class RouteServiceProvider extends ServiceProvider {
 	/**
 	 * Define the routes for the application.
 	 *
+	 * @param  \Illuminate\Routing\Router  $router
 	 * @return void
 	 */
-	public function map()
+	public function map(Router $router)
 	{
-		$this->loadRoutesFrom(app_path('Http/routes.php'));
+		$router->group(['namespace' => $this->namespace], function($router)
+		{
+			require app_path('Http/routes.php');
+		});
 	}
 
 }
