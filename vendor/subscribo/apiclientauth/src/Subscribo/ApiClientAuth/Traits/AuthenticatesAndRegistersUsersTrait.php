@@ -41,7 +41,7 @@ trait AuthenticatesAndRegistersUsersTrait
             return redirect()
                 ->refresh()
                 ->withInput($request->only('email', 'name'))
-                ->withErrors($response->getQuestions());
+                ->withErrors(['email' => 'This email has already been used for another service and account merging is not implemented yet. Please choose different email.']);
         }
 
         if ($response instanceof Authenticatable) {
