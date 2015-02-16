@@ -4,10 +4,23 @@ Client Checker for testing communicating with API from a browser.
 
 ## 1. Installation
 
-### 1.1 Add repository containing this package to your project's composer.json.
+### 1.1 Setup your project's composer.json
+
+(if it is not setup already)
+
+Add repository containing this package
+
+```json
+    "repositories": [{"type": "composer", "url": "http://your.resource.url"}],
+```
 
 (Note: you need to have access to this repository as well as to resources it points to)
 
+Set minimum stability to 'dev':
+
+```json
+    "minimum-stability": "dev"
+```
 ### 1.2 Add dependency on this package to your project's composer.json under "require" or "require-dev" keys
 
 ```json
