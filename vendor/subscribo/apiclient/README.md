@@ -14,15 +14,21 @@ Umbrella package for API Client functionality, to be used in Frontend Servers
     "subscribo/apiclient": "@dev"
 ```
 
-### 1.3 If you are using Laravel (5.0), you might want to add
+and update composer
+
+```sh
+    composer update
+```
+
+### 1.3 To register ApiClientServiceProvider with Laravel (5.0)
+
+add following under 'provider' key in config/app.php file:
 
 ```php
     '\\Subscribo\\ApiClient\\Integration\\Laravel\\ApiClientServiceProvider',
 ```
 
-under 'provider' key in config/app.php file.
-
-or
+or (for conditional registration) you can add following to bootstrap/app.php:
 
 ```php
     if (class_exists('\\Subscribo\\ApiClient\\Integration\\Laravel\\ApiClientServiceProvider')) {
@@ -30,7 +36,23 @@ or
     }
 ```
 
-in bootstrap/app.php for conditional registration
+### 1.4 [Configure](../restclient/README.md) Package Subscribo RestClient:
 
-Note: If used with package adding this dependency and/or registering this service provider for you, the respective steps are not necessary.
+setup token ring to be used (e.g. by setting SUBSCRIBO_REST_CLIENT_TOKEN_RING=your_token_ring in appropriate .env file)
 
+If you don't have your token ring, contact your Subscribo Administrator.
+
+You might need to setup also other Rest Client settings if you are not using the defaults.
+
+### 1.5 [Setup](../apiclientauth/README.md) Package Subscribo ApiClientAuth:
+
+Set driver configuration to 'remote' in config/auth.php:
+
+```php
+    'driver' => 'remote',
+```
+
+### 1.6 To use default Laravel (5.0) login and registration controllers with ApiClientAuth
+
+exchange in app/Http/Controllers/Auth/AuthController.php original trait AuthenticatesAndRegistersUsers
+for Subscribo\ApiClientAuth\Traits\AuthenticatesAndRegistersUsersTrait

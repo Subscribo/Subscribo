@@ -41,11 +41,11 @@ Note: If used with package adding this dependency and/or registering this servic
 ### 1.4 Set driver configuration to 'remote' in config/auth.php:
 
 ```php
-'driver' => 'remote',
+    'driver' => 'remote',
 ```
 
 
-### 1.5 Important: You need to properly configure Subscribo RestClient package (see its documentation)
+### 1.5 Important: You need to properly [configure](../restclient/README.md) Subscribo RestClient package
 
 ## 2. Usage
 

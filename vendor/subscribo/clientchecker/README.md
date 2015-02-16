@@ -14,6 +14,12 @@ Client Checker for testing communicating with API from a browser.
     "subscribo/clientchecker": "@dev"
 ```
 
+and update composer
+
+```sh
+    composer update
+```
+
 ### 1.3 To use with Laravel 5.0
 
 add
@@ -34,7 +40,21 @@ if (class_exists('\\Subscribo\\ClientChecker\\ClientCheckerServiceProvider')) {
 
 to bootstrap/app.php or to another convenient place
 
+### 1.4 If you have [installed and configured](../apiclient/README.md) package Subscribo ApiClient, you are done,
+ otherwise you might need to [configure](../restproxy/README.md) package Subscribo RestProxy (steps 1.4 and 1.5)
 
 ## 2. Usage
 
-Navigate your browser to /client url of your domain (or whatever url is defined in your config files)
+### 2.1 Navigate your browser to /client url of your domain
+
+(or whatever url is defined in your config files)
+
+### 2.2 Click on "Initialize"
+
+in order to populate the select with available API endpoints
+
+### 2.3 Select or fill in Verb, Select or fill in URL, optionally fill in json in Request Body and Click "Reload"
+
+### 2.4 You can click "Display"
+
+in order to interpret (possible) HTML response

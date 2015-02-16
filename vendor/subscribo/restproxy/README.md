@@ -4,25 +4,28 @@ Package Subscribo RestProxy is providing proxy functionality to access Subscribo
 
 ## 1. Installation
 
-1.1 Add repository containing this package to your project's composer.json
+### 1.1 Add repository containing this package to your project's composer.json
 
 (note: you need to have access to this repository as well as to resources it points to)
 
-1.2 Add to your project's composer.json dependency on this package under "require" key
+### 1.2 Add to your project's composer.json dependency on this package under "require" key
 
 ```json
     "subscribo/RestProxy": "@dev"
 ```
 
-1.3 If you are using Laravel (5.0), you might want to add
+and update composer
+
+### 1.3 Fore registering RestProxyServiceProvider with Laravel (5.0),
+
+add the following under 'provider' key in config/app.php file:
 
 ```php
     '\\Subscribo\\RestProxy\\Integration\\Laravel\\RestProxyServiceProvider',
 ```
 
-under 'provider' key in config/app.php file.
+or add following (for conditional registration) to bootstrap/app.php
 
-or
 
 ```php
     if (class_exists('\\Subscribo\\RestProxy\\Integration\\Laravel\\RestProxyServiceProvider')) {
@@ -30,13 +33,21 @@ or
     }
 ```
 
-in bootstrap/app.php for conditional registration
-
 Note: If used with package adding this dependency and/or registering this service provider for you, respective steps might not be necessary.
 
-1.4 You might need to configure this package in subscribo/config/packages/restproxy
+### 1.4 [Configure](../restclient/README.md) Package Subscribo RestClient:
 
-as well as its dependency subscribo/config/packages/restclient
+setup token ring to be used (e.g. by setting SUBSCRIBO_REST_CLIENT_TOKEN_RING=your_token_ring in appropriate .env file)
 
-You can find example files within package src/config/default.yml
+If you don't have your token ring, contact your Subscribo Administrator.
+
+You might need to setup also other Rest Client settings if you are not using the defaults.
+
+### 1.5 [Setup](../apiclientauth/README.md) Package Subscribo ApiClientAuth:
+
+Set driver configuration to 'remote' in config/auth.php:
+
+```php
+    'driver' => 'remote',
+```
 
