@@ -51,6 +51,6 @@ Note: If used with package adding this dependency and/or registering this servic
 
 ### 2.1 Traits
 
-You may want to use trait Subscribo\ApiClientAuth\Traits\AuthenticatesAndRegistersUsersTrait
+You may want to use trait \Subscribo\ApiClientAuth\Traits\AuthenticatesAndRegistersUsersTrait
 in app/Http/Controllers/Auth/AuthController.php
 (instead of original trait AuthenticatesAndRegistersUsers) in order to handle possible exceptions / errors which might happen during servers communicating during login

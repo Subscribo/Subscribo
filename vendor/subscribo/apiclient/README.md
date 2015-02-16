@@ -67,4 +67,4 @@ Set driver configuration to 'remote' in config/auth.php:
 ### 1.6 To use default Laravel (5.0) login and registration controllers with ApiClientAuth
 
 exchange in app/Http/Controllers/Auth/AuthController.php original trait AuthenticatesAndRegistersUsers
-for Subscribo\ApiClientAuth\Traits\AuthenticatesAndRegistersUsersTrait
+for trait \Subscribo\ApiClientAuth\Traits\AuthenticatesAndRegistersUsersTrait
