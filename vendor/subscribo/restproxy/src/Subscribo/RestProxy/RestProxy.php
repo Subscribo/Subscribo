@@ -4,6 +4,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Subscribo\RestClient\RestClient;
 use Subscribo\Exception\Interfaces\ExceptionHandlerInterface;
+use Illuminate\Contracts\Auth\Guard;
+use Subscribo\RestCommon\AccountIdTransport;
 
 /**
  * Class RestProxy
@@ -32,12 +34,18 @@ class RestProxy {
      */
     protected $exceptionHandler;
 
+    /**
+     * @var Guard
+     */
+    protected $auth;
 
-    public function __construct(Request $request, RestClient $client, ExceptionHandlerInterface $exceptionHandler, array $settings = null)
+
+    public function __construct(Request $request, RestClient $client, ExceptionHandlerInterface $exceptionHandler, Guard $auth, array $settings = null)
     {
         $this->restClient = $client;
         $this->request = $request;
         $this->exceptionHandler = $exceptionHandler;
+        $this->auth = $auth;
         if ($settings)
         {
             $this->setup($settings);
@@ -93,7 +101,9 @@ class RestProxy {
     public function call($uri)
     {
         try {
-            $result = $this->restClient->forward($this->request, $uri, null, true);
+            $user = $this->auth->user();
+            $signatureOptions = $user ? AccountIdTransport::setAccountId($user->getAuthIdentifier()) : array();
+            $result = $this->restClient->forward($this->request, $uri, $signatureOptions, true);
 
         } catch (Exception $e) {
             $result = $this->exceptionHandler->handle($e, $this->request);

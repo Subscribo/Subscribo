@@ -4,6 +4,7 @@ use Subscribo\Auth\Interfaces\ApiGuardInterface;
 use Subscribo\App\Model\Account;
 use Subscribo\App\Model\Service;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
+use Subscribo\RestCommon\AccountIdTransport;
 
 /**
  * Class Context
@@ -155,19 +156,21 @@ class Context
     public function retrieveAccountId()
     {
         $this->account = false;
-        $processingResult = $this->auth->processingResult();
-        if ( ! empty($processingResult['description']['accountId'])) {
-            $this->accountId = $processingResult['description']['accountId'];
-        } else {
-            $request = $this->getRequest();
-            $this->accountId = $request->query('account_id', null);
-        }
-        if ($this->accountId) {
-            $this->accountId = intval($this->accountId);
-        } else {
-            $this->accountId = null;
-        }
+
+        $this->accountId = $this->retrieveAccountIdFromRequestQuery()
+            ?: AccountIdTransport::extractAccountIdFromProcessIncomingRequestResult($this->auth->processingResult());
+
         return $this->accountId;
+    }
+
+    protected function retrieveAccountIdFromRequestQuery()
+    {
+        $request = $this->getRequest();
+        $accountIdInQuery = $request->query('account_id', null);
+        if (empty($accountIdInQuery)) {
+            return null;
+        }
+        return intval($accountIdInQuery);
     }
 
     /**

@@ -42,15 +42,42 @@ class Signature {
         return $headers;
     }
 
+    /**
+     * @param Request $request
+     * @param callable $tokenToTokenRingProvider
+     * @param Encrypter $encrypter
+     * @param bool $enforcedSignatureType
+     * @param array $data
+     * @param array $options
+     * @param bool $throwExceptions
+     * @return array|null
+     */
     public static function processIncomingRequest(Request $request, callable $tokenToTokenRingProvider,  Encrypter $encrypter = null, $enforcedSignatureType = false, array $data = array(), array $options = array(), $throwExceptions = false)
     {
-        $data = self::verifyRequest($request, $tokenToTokenRingProvider,  $encrypter, $enforcedSignatureType, $data, $options, $throwExceptions);
-        if (empty($data)) {
+        $result = self::verifyRequest($request, $tokenToTokenRingProvider,  $encrypter, $enforcedSignatureType, $data, $options, $throwExceptions);
+        if (empty($result)) {
             return null;
         }
-        //$data['originalRequest'] = $request;
-        $data['processedRequest'] = $request;
-        return $data;
+        //$result['originalRequest'] = $request;
+        $result['processedRequest'] = $request;
+        return $result;
+    }
+
+    /**
+     * Extract 'description' from result of calling Signature::processIncomingRequest()
+     *
+     * @param array|null $processIncomingRequestResult
+     * @return array
+     */
+    public static function extractDescriptionFromProcessIncomingRequestResult($processIncomingRequestResult)
+    {
+        if ( ! is_array($processIncomingRequestResult)) {
+            return array();
+        }
+        if (empty($processIncomingRequestResult['description'])) {
+            return array();
+        }
+        return $processIncomingRequestResult['description'];
     }
 
     /**
@@ -168,6 +195,12 @@ class Signature {
         $printable = base64_encode($bytes);
         $result = substr($printable, 0, $length);
         return $result;
+    }
+
+    public static function addToDescription(array $toAdd, array $options = array())
+    {
+        $toMerge = ['addToDescription' => $toAdd];
+        return Arr::mergeNatural($options, $toMerge);
     }
 
     protected static function extractDescriptionFromHeaderContent($headerContent, Encrypter $encrypter = null, $throwExceptions)
