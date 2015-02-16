@@ -20,7 +20,7 @@ Api version 1
     '\\Subscribo\\Api1\\Integration\\Laravel\\Api1ServiceProvider',
 ```
 
-under 'provider' key in config/app.php file.
+under 'providers' key in config/app.php file.
 
 or
 

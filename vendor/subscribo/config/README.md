@@ -28,7 +28,7 @@ Config package for reading configuration
     '\\Subscribo\\Config\\Integration\\Laravel\\ConfigServiceProvider',
 ```
 
-under 'provider' key in config/app.php file.
+under 'providers' key in config/app.php file.
 
 or
 

@@ -34,7 +34,7 @@ and update composer
 
 ### 1.3 To register ApiClientServiceProvider with Laravel (5.0)
 
-add following under 'provider' key in config/app.php file:
+add following under 'providers' key in config/app.php file:
 
 ```php
     '\\Subscribo\\ApiClient\\Integration\\Laravel\\ApiClientServiceProvider',

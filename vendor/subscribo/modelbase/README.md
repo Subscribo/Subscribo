@@ -20,7 +20,7 @@ Model Base provides Eloquent based abstract class to make models extending it as
     '\\Subscribo\\ModelBase\\Integration\\Laravel\\ModelBaseServiceProvider',
 ```
 
-under 'provider' key in app/config/app.php file.
+under 'providers' key in app/config/app.php file.
 
 and
 

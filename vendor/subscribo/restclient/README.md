@@ -25,7 +25,7 @@ update composer
 
 ### 1.3 For registering RestClientServiceProvider with Laravel (5.0)
 
-add the following under 'provider' key in config/app.php file:
+add the following under 'providers' key in config/app.php file:
 
 ```php
     '\\Subscribo\\RestClient\\Integration\\Laravel\\RestClientServiceProvider',

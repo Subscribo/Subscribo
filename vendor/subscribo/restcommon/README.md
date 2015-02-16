@@ -20,7 +20,7 @@ Auxiliary package containing files common for Subscribo REST client and server (
     '\\Subscribo\\RestCommon\\Integration\\Laravel\\CommonSecretServiceProvider',
 ```
 
-under 'provider' key in config/app.php file.
+under 'providers' key in config/app.php file.
 
 or
 

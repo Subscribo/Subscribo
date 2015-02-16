@@ -22,7 +22,7 @@ add
     '\\Subscribo\\ApiChecker\\ApiCheckerServiceProvider',
 ```
 
-under 'provider' key in app/config/app.php file.
+under 'providers' key in app/config/app.php file.
 
 or (for conditional inclusion) add
 
@@ -42,7 +42,7 @@ add
     '\\Subscribo\\ApiChecker\\ApiCheckerServiceProvider',
 ```
 
-under 'provider' key in config/app.php file.
+under 'providers' key in config/app.php file.
 
 or
 

@@ -20,7 +20,7 @@ Modifier allows modifying multiple values using set of predefined rules
     '\\Subscribo\\Modifier\\Integration\\Laravel\\ModifierServiceProvider',
 ```
 
-under 'provider' key in app/config/app.php file.
+under 'providers' key in app/config/app.php file.
 
 and
 

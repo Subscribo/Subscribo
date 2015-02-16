@@ -33,7 +33,7 @@ To do so, add
     '\\Subscribo\\Auth\\Integration\\Laravel\\AuthServiceProvider',
 ```
 
-under 'provider' key in config/app.php file.
+under 'providers' key in config/app.php file.
 
 or
 

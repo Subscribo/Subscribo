@@ -20,7 +20,7 @@ Umbrella package for API Server functionality, to be used in Backend Servers
     '\\Subscribo\\ApiServer\\Integration\\Laravel\\ApiServerServiceProvider',
 ```
 
-under 'provider' key in config/app.php file.
+under 'providers' key in config/app.php file.
 
 or
 

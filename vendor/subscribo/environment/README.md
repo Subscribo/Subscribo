@@ -20,7 +20,7 @@ Package for getting current environment
     '\\Subscribo\\Environment\\Integration\\Laravel\\EnvironmentServiceProvider',
 ```
 
-under 'provider' key in config/app.php file.
+under 'providers' key in config/app.php file.
 
 or
 

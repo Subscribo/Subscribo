@@ -20,7 +20,7 @@ Dependency Resolver for resolving dependencies
     '\\Subscribo\\DependencyResolver\\Integration\\Laravel\\DependencyResolverServiceProvider',
 ```
 
-under 'provider' key in app/config/app.php file.
+under 'providers' key in app/config/app.php file.
 
 and
 

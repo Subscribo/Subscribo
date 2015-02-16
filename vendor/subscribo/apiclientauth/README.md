@@ -24,7 +24,7 @@ To do so, add
     '\\Subscribo\\ApiClientAuth\\Integration\\Laravel\\ApiClientAuthServiceProvider',
 ```
 
-under 'provider' key in config/app.php file.
+under 'providers' key in config/app.php file.
 
 or
 

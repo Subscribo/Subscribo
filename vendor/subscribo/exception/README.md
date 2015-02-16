@@ -33,7 +33,7 @@ To do so, add
     '\\Subscribo\\Exception\\Integration\\Laravel\\ApiExceptionHandlerServiceProvider',
 ```
 
-under 'provider' key in config/app.php file.
+under 'providers' key in config/app.php file.
 
 or
 

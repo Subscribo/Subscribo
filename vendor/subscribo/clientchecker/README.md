@@ -41,7 +41,7 @@ add
     '\\Subscribo\\ClientChecker\\ClientCheckerServiceProvider',
 ```
 
-under 'provider' key in config/app.php file.
+under 'providers' key in config/app.php file.
 
 or (for conditional inclusion) add
 
