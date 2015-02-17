@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7f321a194dba6e379bc48050578f8dff",
+    "hash": "fe8239d14d5df9f07c0daad425a28730",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -573,12 +573,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "2ad7ead6705939a3170c26f23e4d42ec3929387c"
+                "reference": "5a4b2b37f41866c072eec28d3817f1a27063c401"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/2ad7ead6705939a3170c26f23e4d42ec3929387c",
-                "reference": "2ad7ead6705939a3170c26f23e4d42ec3929387c",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/5a4b2b37f41866c072eec28d3817f1a27063c401",
+                "reference": "5a4b2b37f41866c072eec28d3817f1a27063c401",
                 "shasum": ""
             },
             "require": {
@@ -690,7 +690,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2015-02-10 20:25:05"
+            "time": "2015-02-17 04:53:19"
         },
         {
             "name": "league/flysystem",
@@ -698,12 +698,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "f31699eafc5299f93ae55f9ca48cfe4f4695b8b7"
+                "reference": "853a71ad0d6c87ebf2ada3ab28e799a9640f9f91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/f31699eafc5299f93ae55f9ca48cfe4f4695b8b7",
-                "reference": "f31699eafc5299f93ae55f9ca48cfe4f4695b8b7",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/853a71ad0d6c87ebf2ada3ab28e799a9640f9f91",
+                "reference": "853a71ad0d6c87ebf2ada3ab28e799a9640f9f91",
                 "shasum": ""
             },
             "require": {
@@ -721,15 +721,15 @@
             },
             "suggest": {
                 "ext-fileinfo": "Required for MimeType",
-                "league/flysystem-aws-s3-v2": "Use S3 storage with AWS SDK v2",
-                "league/flysystem-aws-s3-v3": "Use S3 storage with AWS SDK v3",
+                "league/flysystem-aws-s3-v2": "Allows you to use S3 storage with AWS SDK v2",
+                "league/flysystem-aws-s3-v3": "Allows you to use S3 storage with AWS SDK v3",
                 "league/flysystem-azure": "Allows you to use Windows Azure Blob storage",
                 "league/flysystem-cached-adapter": "Flysystem adapter decorator for metadata caching",
                 "league/flysystem-copy": "Allows you to use Copy.com storage",
-                "league/flysystem-dropbox": "Use Dropbox storage",
+                "league/flysystem-dropbox": "Allows you to use Dropbox storage",
                 "league/flysystem-eventable-filesystem": "Allows you to use EventableFilesystem",
                 "league/flysystem-rackspace": "Allows you to use Rackspace Cloud Files",
-                "league/flysystem-sftp": "Allows SFTP server storage via phpseclib",
+                "league/flysystem-sftp": "Allows you to use SFTP server storage via phpseclib",
                 "league/flysystem-webdav": "Allows you to use WebDAV storage",
                 "league/flysystem-ziparchive": "Allows you to use ZipArchive adapter",
                 "predis/predis": "Allows you to use Predis for caching"
@@ -773,7 +773,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2015-02-07 09:24:21"
+            "time": "2015-02-15 18:02:18"
         },
         {
             "name": "monolog/monolog",
@@ -781,12 +781,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "7583a2b96b9fda7ece90e34a23cd46e4858b3352"
+                "reference": "f05ed3a44a8e40533d4cf60a0669db6b1887b499"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/7583a2b96b9fda7ece90e34a23cd46e4858b3352",
-                "reference": "7583a2b96b9fda7ece90e34a23cd46e4858b3352",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/f05ed3a44a8e40533d4cf60a0669db6b1887b499",
+                "reference": "f05ed3a44a8e40533d4cf60a0669db6b1887b499",
                 "shasum": ""
             },
             "require": {
@@ -845,7 +845,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2015-01-29 16:05:08"
+            "time": "2015-02-11 14:20:33"
         },
         {
             "name": "mtdowling/cron-expression",
@@ -943,12 +943,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "1366e833a16c4267883187da6da7b317f0582dd7"
+                "reference": "53eac36a3f7a116103f50dee0669451ccec35a44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/1366e833a16c4267883187da6da7b317f0582dd7",
-                "reference": "1366e833a16c4267883187da6da7b317f0582dd7",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/53eac36a3f7a116103f50dee0669451ccec35a44",
+                "reference": "53eac36a3f7a116103f50dee0669451ccec35a44",
                 "shasum": ""
             },
             "require": {
@@ -980,7 +980,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2015-01-31 21:59:38"
+            "time": "2015-02-13 17:03:18"
         },
         {
             "name": "psr/log",
@@ -1031,12 +1031,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "86f35e29d5ec39d21b78a325f207026646e7766d"
+                "reference": "7fd995d8b781efb7ff2d10a7ccb1c6cd8f9d6d5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/86f35e29d5ec39d21b78a325f207026646e7766d",
-                "reference": "86f35e29d5ec39d21b78a325f207026646e7766d",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/7fd995d8b781efb7ff2d10a7ccb1c6cd8f9d6d5f",
+                "reference": "7fd995d8b781efb7ff2d10a7ccb1c6cd8f9d6d5f",
                 "shasum": ""
             },
             "require": {
@@ -1086,14 +1086,14 @@
                 }
             ],
             "description": "An interactive shell for modern PHP.",
-            "homepage": "https://github.com/bobthecow/psysh",
+            "homepage": "http://psysh.org",
             "keywords": [
                 "REPL",
                 "console",
                 "interactive",
                 "shell"
             ],
-            "time": "2015-02-03 19:31:20"
+            "time": "2015-02-15 18:50:21"
         },
         {
             "name": "react/promise",
@@ -1145,17 +1145,18 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/api1",
-                "reference": "855a0dc70fc31eeb159c0521a083c0430ff1847f"
+                "reference": "8952494212a84649c9bd30489a23c1deee117083"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-api1-dev-master-865d2e.zip",
-                "reference": "855a0dc70fc31eeb159c0521a083c0430ff1847f",
-                "shasum": "42b1958fc9800deffbde4c8bb3caee97b30fec9c"
+                "url": "http://satis.localhost/downloads/subscribo-api1-dev-master-b14204.zip",
+                "reference": "8952494212a84649c9bd30489a23c1deee117083",
+                "shasum": "975feedd40a00c2b84045eb7498128a33a4e133e"
             },
             "require": {
                 "php": "~5.4",
-                "subscribo/auth": "@dev"
+                "subscribo/auth": "@dev",
+                "subscribo/restcommon": "@dev"
             },
             "suggest": {
                 "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
@@ -1193,7 +1194,7 @@
                 "subscribo",
                 "v1"
             ],
-            "time": "2015-02-11 13:47:44"
+            "time": "2015-02-16 14:42:32"
         },
         {
             "name": "subscribo/apiclient",
@@ -1201,23 +1202,23 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiclient",
-                "reference": "2dc6d350b7d27ef42e1afd738eecf89ff9a403c0"
+                "reference": "84e2a0b163146791b657f72f2ea3e934d7798382"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-apiclient-dev-master-89140d.zip",
-                "reference": "2dc6d350b7d27ef42e1afd738eecf89ff9a403c0",
-                "shasum": "a7dfd93d2b13729fbb7b98cf9d38e5efecdbc024"
+                "url": "http://satis.localhost/downloads/subscribo-apiclient-dev-master-64128c.zip",
+                "reference": "84e2a0b163146791b657f72f2ea3e934d7798382",
+                "shasum": "ce9cc728c8fa6c37fc7b5018e2794f176c37f47d"
             },
             "require": {
                 "php": "~5.4",
                 "subscribo/apiclientauth": "@dev",
                 "subscribo/exception": "@dev",
-                "subscribo/restproxy": "@dev"
+                "subscribo/restproxy": "@dev",
+                "subscribo/serviceprovider": "@dev"
             },
             "suggest": {
-                "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-                "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
+                "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
             },
             "type": "library",
             "extra": {
@@ -1251,7 +1252,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-02-02 12:49:32"
+            "time": "2015-02-16 14:42:49"
         },
         {
             "name": "subscribo/apiclientauth",
@@ -1259,13 +1260,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiclientauth",
-                "reference": "b6a92ea63e3d860769e1058ccfe335e2208b27b3"
+                "reference": "f3ff2064160b4882a5ef238fcc12cb3a8607f72e"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-apiclientauth-dev-master-5fc2ff.zip",
-                "reference": "b6a92ea63e3d860769e1058ccfe335e2208b27b3",
-                "shasum": "02f09f64c5a0940e4978db0ff7befaaba274e4c1"
+                "url": "http://satis.localhost/downloads/subscribo-apiclientauth-dev-master-2ef502.zip",
+                "reference": "f3ff2064160b4882a5ef238fcc12cb3a8607f72e",
+                "shasum": "055874be21a504852256f53bce6eca71bca3b89a"
             },
             "require": {
                 "illuminate/auth": "~5.0",
@@ -1273,6 +1274,7 @@
                 "php": "~5.4"
             },
             "suggest": {
+                "illuminate/foundation": "(already contained in laravel/framework) - If using AuthenticatesAndRegistersUsersTrait",
                 "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
                 "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
             },
@@ -1309,7 +1311,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-02-11 13:47:44"
+            "time": "2015-02-16 14:42:31"
         },
         {
             "name": "subscribo/apiserver",
@@ -1317,13 +1319,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiserver",
-                "reference": "62b34a2d2ed428498496df0c9d8c845f9edf6385"
+                "reference": "6d07b81929c457c7abd1fba9aed2bbec098c4d4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-apiserver-dev-master-5af61f.zip",
-                "reference": "62b34a2d2ed428498496df0c9d8c845f9edf6385",
-                "shasum": "48c30780fe0cb4b124aa74f825454200e122d6f6"
+                "url": "http://satis.localhost/downloads/subscribo-apiserver-dev-master-9cc671.zip",
+                "reference": "6d07b81929c457c7abd1fba9aed2bbec098c4d4f",
+                "shasum": "73e2ba11f63b30e8b242fd81f3c1edf1371bb554"
             },
             "require": {
                 "php": "~5.4",
@@ -1366,7 +1368,7 @@
                 "server",
                 "subscribo"
             ],
-            "time": "2015-02-02 12:49:56"
+            "time": "2015-02-16 14:42:31"
         },
         {
             "name": "subscribo/auth",
@@ -1374,13 +1376,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/auth",
-                "reference": "3254d75df563df343331bb2aace48b220bc90039"
+                "reference": "3957e89dbc13e2276ab3e0849402af93abe98c9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-auth-dev-master-47de4f.zip",
-                "reference": "3254d75df563df343331bb2aace48b220bc90039",
-                "shasum": "a8e9f3e1cc96e151891ca37be7d342178c8b5078"
+                "url": "http://satis.localhost/downloads/subscribo-auth-dev-master-d8bff1.zip",
+                "reference": "3957e89dbc13e2276ab3e0849402af93abe98c9c",
+                "shasum": "b097ece7250459117cb0866e8dd558181649cfbb"
             },
             "require": {
                 "illuminate/contracts": "~5.0",
@@ -1422,7 +1424,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-02-03 10:03:27"
+            "time": "2015-02-16 14:42:31"
         },
         {
             "name": "subscribo/config",
@@ -1430,13 +1432,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/config",
-                "reference": "1970962389c72c3a2011383b5e171254f2a74123"
+                "reference": "0d60befc3f50cb5ac0437b0078706a51fcc5afe2"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-config-dev-master-ff0767.zip",
-                "reference": "1970962389c72c3a2011383b5e171254f2a74123",
-                "shasum": "16522408bf1830aff4de788539f02ff32c4ed200"
+                "url": "http://satis.localhost/downloads/subscribo-config-dev-master-36b210.zip",
+                "reference": "0d60befc3f50cb5ac0437b0078706a51fcc5afe2",
+                "shasum": "ec55eda80c2eafbd3ef222310af25fe7c071d151"
             },
             "require": {
                 "php": "~5.4",
@@ -1480,7 +1482,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-01-26 16:37:43"
+            "time": "2015-02-16 14:42:31"
         },
         {
             "name": "subscribo/environment",
@@ -1488,13 +1490,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/environment",
-                "reference": "9396d89a829c523b7eeff91355445bec46295a4a"
+                "reference": "b4340ef0d56f86c4eb4a653b9bf0f6dc6d3a1110"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-environment-dev-master-9b6481.zip",
-                "reference": "9396d89a829c523b7eeff91355445bec46295a4a",
-                "shasum": "d394162387d43701fdd500de0521407b81e1e9cd"
+                "url": "http://satis.localhost/downloads/subscribo-environment-dev-master-591557.zip",
+                "reference": "b4340ef0d56f86c4eb4a653b9bf0f6dc6d3a1110",
+                "shasum": "35f96fdc0228adb078e87ebdb5a17183119301e6"
             },
             "require": {
                 "php": "~5.4"
@@ -1534,7 +1536,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-01-26 16:36:02"
+            "time": "2015-02-16 14:42:31"
         },
         {
             "name": "subscribo/exception",
@@ -1542,13 +1544,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/exception",
-                "reference": "73acc2a3fcee57e88f2ee3ce1ce25b03bf6688f8"
+                "reference": "0654c073e9ed37dc9123e631ed777cbc76f498bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-exception-dev-master-50c3ca.zip",
-                "reference": "73acc2a3fcee57e88f2ee3ce1ce25b03bf6688f8",
-                "shasum": "1aa5a2cb210ed15a4296d647805f5ee1c2d0fe40"
+                "url": "http://satis.localhost/downloads/subscribo-exception-dev-master-2812ad.zip",
+                "reference": "0654c073e9ed37dc9123e631ed777cbc76f498bb",
+                "shasum": "f7728a9ba8f8dc6004fdcb1c16c081ff964c5ac9"
             },
             "require": {
                 "php": "~5.4",
@@ -1593,7 +1595,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-02-11 13:47:44"
+            "time": "2015-02-16 14:42:32"
         },
         {
             "name": "subscribo/modelbase",
@@ -1601,13 +1603,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/modelbase",
-                "reference": "8a853b01c8bd54b7aea858a135f17e1fb8e1057f"
+                "reference": "b4c2a813ae3b2eba06a583061263e7910bc40d4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-modelbase-dev-master-f7ca02.zip",
-                "reference": "8a853b01c8bd54b7aea858a135f17e1fb8e1057f",
-                "shasum": "22eec2ba6c2cc839166dd269b9fdd74c53b92f4d"
+                "url": "http://satis.localhost/downloads/subscribo-modelbase-dev-master-7aa67b.zip",
+                "reference": "b4c2a813ae3b2eba06a583061263e7910bc40d4e",
+                "shasum": "c348e42650dfe43afe244a58321129624eacdbd1"
             },
             "require": {
                 "php": "~5.4",
@@ -1649,7 +1651,7 @@
                 "model",
                 "subscribo"
             ],
-            "time": "2015-01-26 16:37:43"
+            "time": "2015-02-16 14:42:32"
         },
         {
             "name": "subscribo/modifier",
@@ -1657,13 +1659,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/modifier",
-                "reference": "7a7d3cf9fe85ff6bfe912bdf2ac0e6b655a0e285"
+                "reference": "2edc6b6f386413a51f85b3f33864b0a3e4122162"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-modifier-dev-master-c09874.zip",
-                "reference": "7a7d3cf9fe85ff6bfe912bdf2ac0e6b655a0e285",
-                "shasum": "8ff3d47ebb0ff8e91df0e5534b9c24de92c8cc42"
+                "url": "http://satis.localhost/downloads/subscribo-modifier-dev-master-9f1601.zip",
+                "reference": "2edc6b6f386413a51f85b3f33864b0a3e4122162",
+                "shasum": "b862cd68b0b60b78c791b779d0760245f3bbeb64"
             },
             "require": {
                 "php": "~5.4"
@@ -1705,7 +1707,7 @@
                 "sanitize",
                 "subscribo"
             ],
-            "time": "2015-01-14 15:32:13"
+            "time": "2015-02-16 14:42:31"
         },
         {
             "name": "subscribo/restclient",
@@ -1713,13 +1715,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/restclient",
-                "reference": "5857d020d0c0555984794e5e73898efcf8c78f3f"
+                "reference": "b991caabaf6867f0d7421c3c1b7b200e198071e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-restclient-dev-master-c98383.zip",
-                "reference": "5857d020d0c0555984794e5e73898efcf8c78f3f",
-                "shasum": "9e48b88a037bc01f53f2e9108ee7a9d45f804696"
+                "url": "http://satis.localhost/downloads/subscribo-restclient-dev-master-316a48.zip",
+                "reference": "b991caabaf6867f0d7421c3c1b7b200e198071e3",
+                "shasum": "df5d68e93030536d79b0a2be4cb7b41052c5dd25"
             },
             "require": {
                 "guzzlehttp/guzzle": "~5.0",
@@ -1768,7 +1770,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-02-11 13:47:44"
+            "time": "2015-02-16 14:42:31"
         },
         {
             "name": "subscribo/restcommon",
@@ -1776,13 +1778,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/restcommon",
-                "reference": "cf9df036128917cd36d06826b3dc8332397220bd"
+                "reference": "119c0b99f2b60b7468c871a1f56d5bb18793efa1"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-restcommon-dev-master-a2aee3.zip",
-                "reference": "cf9df036128917cd36d06826b3dc8332397220bd",
-                "shasum": "97482748d5d05cce4bc6d4181003a8d305eb4162"
+                "url": "http://satis.localhost/downloads/subscribo-restcommon-dev-master-e72ee8.zip",
+                "reference": "119c0b99f2b60b7468c871a1f56d5bb18793efa1",
+                "shasum": "d1eeab424bdb9b096026adeaa60e9a03704d7549"
             },
             "require": {
                 "illuminate/contracts": "~5.0",
@@ -1832,7 +1834,7 @@
                 "rest",
                 "subscribo"
             ],
-            "time": "2015-02-02 12:44:46"
+            "time": "2015-02-16 14:42:32"
         },
         {
             "name": "subscribo/restproxy",
@@ -1840,19 +1842,20 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/restproxy",
-                "reference": "7d730eddd85cbfee00fa38eb9abb7678b59d1dcc"
+                "reference": "cadaa90a5ebc5701ee77b955b2a40cbdd034a639"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-restproxy-dev-master-153dc1.zip",
-                "reference": "7d730eddd85cbfee00fa38eb9abb7678b59d1dcc",
-                "shasum": "7e397a45ceb88b9f3950e9f58735c816b67afb5d"
+                "url": "http://satis.localhost/downloads/subscribo-restproxy-dev-master-234686.zip",
+                "reference": "cadaa90a5ebc5701ee77b955b2a40cbdd034a639",
+                "shasum": "e4f861786046f76a140e02109761fa6d61bba8eb"
             },
             "require": {
                 "php": "~5.4",
                 "subscribo/config": "@dev",
                 "subscribo/environment": "@dev",
-                "subscribo/restclient": "@dev"
+                "subscribo/restclient": "@dev",
+                "subscribo/restcommon": "@dev"
             },
             "suggest": {
                 "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
@@ -1894,7 +1897,60 @@
                 "server",
                 "subscribo"
             ],
-            "time": "2015-02-11 13:47:44"
+            "time": "2015-02-16 14:42:33"
+        },
+        {
+            "name": "subscribo/serviceprovider",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "/Users/slavo/Projects/packages/workbench/subscribo/serviceprovider",
+                "reference": "37d351f0683c1a2fcef77edb04aa2d17f86a67cc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://satis.localhost/downloads/subscribo-serviceprovider-dev-master-01ca56.zip",
+                "reference": "37d351f0683c1a2fcef77edb04aa2d17f86a67cc",
+                "shasum": "e5f706812d28ceb3534382e7189a1d93204568b5"
+            },
+            "require": {
+                "php": "~5.4"
+            },
+            "suggest": {
+                "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Subscribo\\ServiceProvider\\": "src/Subscribo/ServiceProvider/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Slavo",
+                    "role": "developer"
+                },
+                {
+                    "name": "Kochabo",
+                    "role": "owner"
+                }
+            ],
+            "description": "Contain Service Provider for Laravel to be extended by other packages as well as modified versions of Service Provider from Laravel 4.2.12",
+            "homepage": "http://www.subscribo.io",
+            "keywords": [
+                "laravel",
+                "subscribo",
+                "transition"
+            ],
+            "time": "2015-01-14 15:32:12"
         },
         {
             "name": "subscribo/support",
@@ -2057,12 +2113,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "4a40378a231505579b16cf9c9c7fa9c27d2e8217"
+                "reference": "5610f00f66dd32a42dc5173ac935bbd923ccc002"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/4a40378a231505579b16cf9c9c7fa9c27d2e8217",
-                "reference": "4a40378a231505579b16cf9c9c7fa9c27d2e8217",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/5610f00f66dd32a42dc5173ac935bbd923ccc002",
+                "reference": "5610f00f66dd32a42dc5173ac935bbd923ccc002",
                 "shasum": ""
             },
             "require": {
@@ -2105,7 +2161,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2015-02-11 07:12:14"
+            "time": "2015-02-12 11:03:23"
         },
         {
             "name": "symfony/debug",
@@ -2232,12 +2288,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Filesystem.git",
-                "reference": "177e0a8e29fab3f0556f7a973b5a42935e42a4d7"
+                "reference": "cb5db1cf2440ceb68760ef0e70f9d1d4ba135444"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/177e0a8e29fab3f0556f7a973b5a42935e42a4d7",
-                "reference": "177e0a8e29fab3f0556f7a973b5a42935e42a4d7",
+                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/cb5db1cf2440ceb68760ef0e70f9d1d4ba135444",
+                "reference": "cb5db1cf2440ceb68760ef0e70f9d1d4ba135444",
                 "shasum": ""
             },
             "require": {
@@ -2270,7 +2326,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "http://symfony.com",
-            "time": "2015-02-11 07:17:51"
+            "time": "2015-02-16 09:13:25"
         },
         {
             "name": "symfony/finder",
@@ -2379,12 +2435,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpKernel.git",
-                "reference": "c17f240642f54f207bf5cdbb0d21cf6b7cfbfa16"
+                "reference": "6ec9c1ac244d789aec71f674dc0ee295392718dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/c17f240642f54f207bf5cdbb0d21cf6b7cfbfa16",
-                "reference": "c17f240642f54f207bf5cdbb0d21cf6b7cfbfa16",
+                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/6ec9c1ac244d789aec71f674dc0ee295392718dd",
+                "reference": "6ec9c1ac244d789aec71f674dc0ee295392718dd",
                 "shasum": ""
             },
             "require": {
@@ -2447,7 +2503,7 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "http://symfony.com",
-            "time": "2015-02-11 07:12:14"
+            "time": "2015-02-14 22:44:52"
         },
         {
             "name": "symfony/process",
@@ -2848,12 +2904,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-ide-helper.git",
-                "reference": "800ac05377ab427fe1b53408f632257eed59d0f1"
+                "reference": "1f5e436d0078ca6abbcb07e5e08bcef126a8a14f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/800ac05377ab427fe1b53408f632257eed59d0f1",
-                "reference": "800ac05377ab427fe1b53408f632257eed59d0f1",
+                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/1f5e436d0078ca6abbcb07e5e08bcef126a8a14f",
+                "reference": "1f5e436d0078ca6abbcb07e5e08bcef126a8a14f",
                 "shasum": ""
             },
             "require": {
@@ -2903,7 +2959,7 @@
                 "phpstorm",
                 "sublime"
             ],
-            "time": "2015-02-07 22:18:26"
+            "time": "2015-02-12 09:50:01"
         },
         {
             "name": "doctrine/instantiator",
@@ -2965,12 +3021,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "09352d340640520f1047ff29f7a8e73129e2eb1c"
+                "reference": "ff902a0beb121a13a4d3c604bd6778a25aeae07a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/09352d340640520f1047ff29f7a8e73129e2eb1c",
-                "reference": "09352d340640520f1047ff29f7a8e73129e2eb1c",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/ff902a0beb121a13a4d3c604bd6778a25aeae07a",
+                "reference": "ff902a0beb121a13a4d3c604bd6778a25aeae07a",
                 "shasum": ""
             },
             "require": {
@@ -3006,7 +3062,7 @@
                     "email": "mike.vanriel@naenius.com"
                 }
             ],
-            "time": "2015-02-03 20:57:02"
+            "time": "2015-02-12 12:17:11"
         },
         {
             "name": "phpspec/php-diff",
@@ -3126,12 +3182,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "3a9204c44667c302049ab4eadb02daab789e19ed"
+                "reference": "9ed07757cd5c46fe33d28826327d274bd142a143"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/3a9204c44667c302049ab4eadb02daab789e19ed",
-                "reference": "3a9204c44667c302049ab4eadb02daab789e19ed",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/9ed07757cd5c46fe33d28826327d274bd142a143",
+                "reference": "9ed07757cd5c46fe33d28826327d274bd142a143",
                 "shasum": ""
             },
             "require": {
@@ -3178,7 +3234,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2015-02-09 17:43:38"
+            "time": "2015-02-16 14:11:36"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -3928,13 +3984,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/apichecker",
-                "reference": "acf20cf3e7269ca2b1e18e7c9275d1802d04a2f1"
+                "reference": "59690b374f3dceaf90846c6e3dfadffacd939c55"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-apichecker-dev-master-2f054a.zip",
-                "reference": "acf20cf3e7269ca2b1e18e7c9275d1802d04a2f1",
-                "shasum": "19636307f774b68e985f30130e7e97513826a224"
+                "url": "http://satis.localhost/downloads/subscribo-apichecker-dev-master-31c3f6.zip",
+                "reference": "59690b374f3dceaf90846c6e3dfadffacd939c55",
+                "shasum": "fa80b781c95f1c5ad474f9463801321c4b6d42b0"
             },
             "require": {
                 "php": "~5.4",
@@ -3981,7 +4037,7 @@
                 "subscribo",
                 "testing"
             ],
-            "time": "2015-01-14 15:09:49"
+            "time": "2015-02-16 14:42:32"
         },
         {
             "name": "subscribo/clientchecker",
@@ -3989,13 +4045,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/clientchecker",
-                "reference": "ff2bce87ead3b08aaa133156ca33684e5a6c1922"
+                "reference": "85f78d83fa1236f61872d675455ead9adccf3fb0"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-clientchecker-dev-master-f2e7bc.zip",
-                "reference": "ff2bce87ead3b08aaa133156ca33684e5a6c1922",
-                "shasum": "65fa8b6e0c88537e4fd6ed5fcda29e1ac2e91cfe"
+                "url": "http://satis.localhost/downloads/subscribo-clientchecker-dev-master-e3e86d.zip",
+                "reference": "85f78d83fa1236f61872d675455ead9adccf3fb0",
+                "shasum": "812676b37f11337d2b1807d15e53e1ce8e75e4d3"
             },
             "require": {
                 "illuminate/encryption": "~5.0",
@@ -4041,7 +4097,7 @@
                 "subscribo",
                 "testing"
             ],
-            "time": "2015-02-11 13:47:44"
+            "time": "2015-02-16 14:42:32"
         },
         {
             "name": "subscribo/dependencyresolver",
@@ -4049,13 +4105,13 @@
             "source": {
                 "type": "git",
                 "url": "/users/slavo/projects/packages/workbench/subscribo/dependencyresolver",
-                "reference": "48a311d80e5b50062838a13e557f9bdfe3c8eccc"
+                "reference": "e29120208fb73cae434d79a21c98399859a2e876"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-dependencyresolver-dev-master-751164.zip",
-                "reference": "48a311d80e5b50062838a13e557f9bdfe3c8eccc",
-                "shasum": "ca923448a580294070c87cf9150cab2cc9ba2b52"
+                "url": "http://satis.localhost/downloads/subscribo-dependencyresolver-dev-master-e70561.zip",
+                "reference": "e29120208fb73cae434d79a21c98399859a2e876",
+                "shasum": "1bb9980cacc8fe3000036f6754d37c9d8139dd5b"
             },
             "require": {
                 "php": "~5.4"
@@ -4095,7 +4151,7 @@
                 "resolving dependencies",
                 "subscribo"
             ],
-            "time": "2015-01-26 16:37:43"
+            "time": "2015-02-16 14:42:32"
         },
         {
             "name": "subscribo/schemabuilder",
@@ -4103,13 +4159,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/schemabuilder",
-                "reference": "057391394dbbd5dc6be405c89676f8870f550824"
+                "reference": "1ecfff3a3edcd3dc2a9b776827e6e6d187f29b4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-schemabuilder-dev-master-d25a5c.zip",
-                "reference": "057391394dbbd5dc6be405c89676f8870f550824",
-                "shasum": "cbc8b0e59e2cdfd0c5364565ba1e74cd1f01a019"
+                "url": "http://satis.localhost/downloads/subscribo-schemabuilder-dev-master-102f17.zip",
+                "reference": "1ecfff3a3edcd3dc2a9b776827e6e6d187f29b4b",
+                "shasum": "bc8691da7fcb25b5bc6865100f46bb0ca1cedc98"
             },
             "require": {
                 "php": "~5.4",
@@ -4153,60 +4209,7 @@
                 "schema",
                 "subscribo"
             ],
-            "time": "2015-02-02 12:44:46"
-        },
-        {
-            "name": "subscribo/serviceprovider",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "/Users/slavo/Projects/packages/workbench/subscribo/serviceprovider",
-                "reference": "37d351f0683c1a2fcef77edb04aa2d17f86a67cc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-serviceprovider-dev-master-01ca56.zip",
-                "reference": "37d351f0683c1a2fcef77edb04aa2d17f86a67cc",
-                "shasum": "e5f706812d28ceb3534382e7189a1d93204568b5"
-            },
-            "require": {
-                "php": "~5.4"
-            },
-            "suggest": {
-                "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Subscribo\\ServiceProvider\\": "src/Subscribo/ServiceProvider/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "authors": [
-                {
-                    "name": "Slavo",
-                    "role": "developer"
-                },
-                {
-                    "name": "Kochabo",
-                    "role": "owner"
-                }
-            ],
-            "description": "Contain Service Provider for Laravel to be extended by other packages as well as modified versions of Service Provider from Laravel 4.2.12",
-            "homepage": "http://www.subscribo.io",
-            "keywords": [
-                "laravel",
-                "subscribo",
-                "transition"
-            ],
-            "time": "2015-01-14 15:32:12"
+            "time": "2015-02-16 14:42:32"
         },
         {
             "name": "symfony/class-loader",
