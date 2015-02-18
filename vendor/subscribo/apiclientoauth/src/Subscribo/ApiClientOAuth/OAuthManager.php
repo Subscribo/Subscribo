@@ -45,6 +45,10 @@ class OAuthManager extends SocialiteManager
         return $this->with($driver)->redirect();
     }
 
+    /**
+     * @param string $driver
+     * @return null|\Laravel\Socialite\Contracts\User|\Laravel\Socialite\AbstractUser
+     */
     public function getUser($driver)
     {
         try {
