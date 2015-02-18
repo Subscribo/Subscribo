@@ -1,6 +1,6 @@
 <?php namespace Subscribo\ApiServer\Integration\Laravel;
 
-use Subscribo\ServiceProvider\ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
 
 /**
@@ -14,7 +14,7 @@ class ApiServerServiceProvider extends ServiceProvider {
 
     public function register()
     {
-        $this->app->register('\\Subscribo\\RestCommon\\Integration\\Laravel\\CommonSecretServiceProvider');
+        $this->app->register('\\Subscribo\\RestCommon\\Integration\\Laravel\\CommonSecretServiceProvider'); //For Seeders
         $this->app->register('\\Subscribo\\Api1\\Integration\\Laravel\\Api1ServiceProvider');
         $this->app->register('\\Subscribo\\Exception\\Integration\\Laravel\\ApiExceptionHandlerServiceProvider');
 

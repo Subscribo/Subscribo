@@ -1,6 +1,6 @@
 <?php namespace Subscribo\RestProxy\Integration\Laravel;
 
-use Subscribo\ServiceProvider\ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
 
 

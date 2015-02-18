@@ -1,7 +1,6 @@
 <?php namespace Subscribo\ApiClient\Integration\Laravel;
 
-use Subscribo\ServiceProvider\ServiceProvider;
-
+use Illuminate\Support\ServiceProvider;
 
 /**
  * Class ApiClientServiceProvider
@@ -14,12 +13,10 @@ class ApiClientServiceProvider extends ServiceProvider {
 
     public function register()
     {
-        $this->app->register('\\Subscribo\\RestCommon\\Integration\\Laravel\\CommonSecretServiceProvider');
-        $this->app->register('\\Subscribo\\ApiClientAuth\\Integration\\Laravel\\ApiClientAuthServiceProvider');
         $this->app->register('\\Subscribo\\Exception\\Integration\\Laravel\\ApiExceptionHandlerServiceProvider');
+        $this->app->register('\\Subscribo\\ApiClientAuth\\Integration\\Laravel\\ApiClientAuthServiceProvider');
+        $this->app->register('\\Subscribo\\ApiClientOAuth\\Integration\\Laravel\\ApiClientOAuthServiceProvider');
         $this->app->register('\\Subscribo\\RestProxy\\Integration\\Laravel\\RestProxyServiceProvider');
-
     }
-
 
 }

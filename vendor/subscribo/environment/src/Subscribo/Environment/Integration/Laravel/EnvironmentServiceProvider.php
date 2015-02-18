@@ -1,6 +1,7 @@
 <?php namespace Subscribo\Environment\Integration\Laravel;
 
-use Subscribo\ServiceProvider\ServiceProvider;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\AliasLoader;
 use Subscribo\Environment\EnvironmentRegistry;
 
@@ -11,6 +12,11 @@ use Subscribo\Environment\EnvironmentRegistry;
  * @package Subscribo\Environment
  */
 class EnvironmentServiceProvider extends ServiceProvider {
+
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
 
     protected $defer = false;
 
