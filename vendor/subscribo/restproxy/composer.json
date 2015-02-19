@@ -1,0 +1,47 @@
+{
+    "name": "subscribo/restproxy",
+    "description": "Package Subscribo RestProxy is providing proxy functionality to Subscribo API",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "proxy",
+        "rest",
+        "http",
+        "client",
+        "server",
+        "api"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "subscribo/config": "@dev",
+        "subscribo/environment": "@dev",
+        "subscribo/restclient": "@dev",
+        "subscribo/restcommon": "@dev"
+    },
+    "suggest": {
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+        "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\RestProxy\\": "src/Subscribo/RestProxy/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}

@@ -16,7 +16,7 @@ if ( ! empty($options['is_pivot_table'])):
     endif;
 endif;
 if ( ! empty($options['model_name'])):
-    echo ' * Creates table for model \\Model\\'.\Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($options['model_name'])."\n";
+    echo ' * Creates table for model \\'.\Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($options['model_namespace'].'\\'.$options['model_name'])."\n";
 endif;
 ?>
  */

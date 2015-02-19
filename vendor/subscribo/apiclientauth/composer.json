@@ -1,0 +1,43 @@
+{
+    "name": "subscribo/apiclientauth",
+    "description": "Subscribo Authentication package for API Client",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "auth",
+        "authentication",
+        "api client"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "illuminate/contracts": "~5.0",
+        "illuminate/auth": "~5.0"
+    },
+    "suggest": {
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+        "subscribo/serviceprovider": "If using ServiceProvider for Laravel",
+        "illuminate/foundation": "(already contained in laravel/framework) - If using AuthenticatesAndRegistersUsersTrait"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\ApiClientAuth\\": "src/Subscribo/ApiClientAuth/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}

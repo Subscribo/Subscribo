@@ -1,11 +1,11 @@
 <?php namespace Illuminate\Support;
 
 use Closure;
-use Illuminate\Support\Traits\MacroableTrait;
+use Illuminate\Support\Traits\Macroable;
 
 class Arr {
 
-	use MacroableTrait;
+	use Macroable;
 
 	/**
 	 * Add an element to an array using "dot" notation if it doesn't exist.
@@ -110,9 +110,10 @@ class Arr {
 
 			foreach ($array as $value)
 			{
-				$value = (array) $value;
-
-				$results[] = $value[$segment];
+				if (array_key_exists($segment, $value = (array) $value))
+				{
+					$results[] = $value[$segment];
+				}
 			}
 
 			$array = array_values($results);
@@ -227,6 +228,32 @@ class Arr {
 	}
 
 	/**
+	 * Check if an item exists in an array using "dot" notation.
+	 *
+	 * @param  array   $array
+	 * @param  string  $key
+	 * @return bool
+	 */
+	public static function has($array, $key)
+	{
+		if (empty($array) || is_null($key)) return false;
+
+		if (array_key_exists($key, $array)) return true;
+
+		foreach (explode('.', $key) as $segment)
+		{
+			if ( ! is_array($array) || ! array_key_exists($segment, $array))
+			{
+				return false;
+			}
+
+			$array = $array[$segment];
+		}
+
+		return true;
+	}
+
+	/**
 	 * Get a subset of the items from the given array.
 	 *
 	 * @param  array  $array
@@ -252,7 +279,7 @@ class Arr {
 
 		foreach ($array as $item)
 		{
-			$itemValue = is_object($item) ? $item->{$value} : $item[$value];
+			$itemValue = data_get($item, $value);
 
 			// If the key is "null", we will just append the value to the array and keep
 			// looping. Otherwise we will key the array using the value of the key we
@@ -263,7 +290,7 @@ class Arr {
 			}
 			else
 			{
-				$itemKey = is_object($item) ? $item->{$key} : $item[$key];
+				$itemKey = data_get($item, $key);
 
 				$results[$itemKey] = $itemValue;
 			}

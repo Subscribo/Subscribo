@@ -2,7 +2,7 @@
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Yaml\Yaml;
+use Subscribo\Config;
 use Fuel\Core\Arr;
 
 use App;
@@ -34,17 +34,18 @@ class BuildModelsCommand extends BuildCommandAbstract {
         $fileName = $this->argument('file');
         $this->info('Building models starting. Using file: '. $fileName);
         $this->info('Environment: '. App::environment());
-        $file = file_get_contents($fileName);
-        $input = Yaml::parse($file);
+        Config::setForPackage('schemabuilder', 'parsed_schema', array());
+        Config::loadFileForPackage('schemabuilder', $fileName, 'parsed_schema', true, null);
+        $input = Config::getForPackage('schemabuilder', 'parsed_schema');
         $modelFields = $input['model_fields'];
         $modelOptions = $input['model_options'];
 
-        $this->_buildModels($modelFields, $modelOptions, 'app/models/', 'app/config/');
+        $this->_buildModels($modelFields, $modelOptions, self::PACKAGES_CONFIG_DIR . 'modelbase/');
 
         $this->info('Building models finished.');
     }
 
-    private function _buildModels($modelFields, $modelOptions, $basePath, $configPath)
+    private function _buildModels($modelFields, $modelOptions, $configPath)
     {
         $modelsForApiConfiguration = array();
         foreach ($modelFields as $tableName => $fields)
@@ -58,13 +59,13 @@ class BuildModelsCommand extends BuildCommandAbstract {
             );
             if ( ! empty($options['generate']['model']['draft']))
             {
-                $draftFilePath = $basePath.$modelName.'.php';
+                $draftFilePath = $options['model_directory'].$modelName.'.php';
                 $draftContent = View::make('schemabuilder::commands.build.model_draft', $data);
                 $this->_createFile($draftFilePath, $draftContent, $options['generate']['model']['draft']);
             }
             if ( ! empty($options['generate']['model']['base']))
             {
-                $baseFilePath = $basePath.'base/'.$modelName.'.php';
+                $baseFilePath = $options['model_base_directory'].$modelName.'.php';
                 $baseContent = View::make('schemabuilder::commands.build.model_base', $data);
                 $this->_createFile($baseFilePath, $baseContent, $options['generate']['model']['base']);
             }
@@ -78,7 +79,7 @@ class BuildModelsCommand extends BuildCommandAbstract {
         $apiConfigContent = View::make('schemabuilder::commands.build.api_config', array('apiConfiguration' => array(
             'models' => $modelsForApiConfiguration,
         )));
-        $apiConfigFilePath = $configPath.'api/configuration.php';
+        $apiConfigFilePath = $configPath.'api.php';
         $this->_createFile($apiConfigFilePath, $apiConfigContent, 'overwrite');
     }
 
@@ -90,7 +91,7 @@ class BuildModelsCommand extends BuildCommandAbstract {
 	protected function getArguments()
 	{
 		return array(
-			array('file', InputArgument::OPTIONAL, 'File used for schema.', 'parsed_schema.yml'),
+			array('file', InputArgument::OPTIONAL, 'File used for schema.', self::SCHEMA_DIR.'parsed_schema.yml'),
 		);
 	}
 

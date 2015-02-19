@@ -1,13 +1,13 @@
 <?php namespace Subscribo\ModelBase;
 
-use Eloquent;
+use Illuminate\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class AbstractModel
  *
  * @package Subscribo\ModelBase
  */
-abstract class AbstractModel extends \Eloquent {
+abstract class AbstractModel extends Eloquent {
 
     /**
      * Rules for validation

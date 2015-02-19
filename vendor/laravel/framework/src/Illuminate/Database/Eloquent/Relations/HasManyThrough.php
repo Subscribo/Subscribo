@@ -29,9 +29,10 @@ class HasManyThrough extends Relation {
 	protected $secondKey;
 
 	/**
-	 * Create a new has many relationship instance.
+	 * Create a new has many through relationship instance.
 	 *
 	 * @param  \Illuminate\Database\Eloquent\Builder  $query
+	 * @param  \Illuminate\Database\Eloquent\Model  $farParent
 	 * @param  \Illuminate\Database\Eloquent\Model  $parent
 	 * @param  string  $firstKey
 	 * @param  string  $secondKey
@@ -233,7 +234,7 @@ class HasManyThrough extends Relation {
 		return array_merge($columns, array($this->parent->getTable().'.'.$this->firstKey));
 	}
 
-	/**
+	/*
 	 * Get a paginator for the "select" statement.
 	 *
 	 * @param  int    $perPage
@@ -244,19 +245,7 @@ class HasManyThrough extends Relation {
 	{
 		$this->query->addSelect($this->getSelectColumns($columns));
 
-		$pager = $this->query->paginate($perPage, $columns);
-
-		return $pager;
-	}
-
-	/**
-	 * Get the key name of the parent model.
-	 *
-	 * @return string
-	 */
-	protected function getQualifiedParentKeyName()
-	{
-		return $this->parent->getQualifiedKeyName();
+		return $this->query->paginate($perPage, $columns);
 	}
 
 	/**

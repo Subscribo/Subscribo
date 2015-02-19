@@ -1,6 +1,6 @@
 {
     "name": "subscribo/apichecker",
-    "description": "API Checker for testing API within a browser. Url: /checker",
+    "description": "API Checker for testing API within a browser. Default url: /checker",
     "keywords": [
         "laravel",
         "subscribo",
@@ -22,10 +22,14 @@
     ],
     "require": {
         "php": "~5.4",
-        "subscribo/modelbase": "@dev"
+        "subscribo/modelbase": "@dev",
+        "subscribo/serviceprovider": "@dev",
+        "subscribo/config": "@dev",
+        "subscribo/environment": "@dev",
+        "subscribo/restcommon": "@dev"
     },
     "suggest": {
-        "laravel/framework": "This package have been build to work with The Laravel Framework version 4.2",
+        "laravel/framework": "This package have been build to work with The Laravel Framework version 5.0",
         "subscribo/api0": "This package has been developed to work with API version 0"
     },
     "autoload": {

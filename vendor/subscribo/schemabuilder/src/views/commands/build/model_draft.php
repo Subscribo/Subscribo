@@ -1,7 +1,6 @@
 <?php echo "<?php"; ?>
+ namespace <?php echo $options['model_namespace']; ?>;
 
-
-namespace Model;
 
 /**
  * Model <?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($modelName); ?>
@@ -19,6 +18,6 @@ if($options['comments']) {
  *
  * Model class for being changed and used in the application
  */
-class <?php echo $modelName; ?> extends Base\<?php echo $modelName; ?> {
+class <?php echo $modelName; ?> extends \<?php echo $options['model_base_namespace'].'\\'.$modelName; ?> {
 
 }

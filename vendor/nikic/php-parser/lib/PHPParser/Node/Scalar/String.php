@@ -1,9 +1,13 @@
 <?php
 
+namespace PhpParser\Node\Scalar;
+
+use PhpParser\Node\Scalar;
+
 /**
  * @property string $value String value
  */
-class PHPParser_Node_Scalar_String extends PHPParser_Node_Scalar
+class String extends Scalar
 {
     protected static $replacements = array(
         '\\' => '\\',
@@ -32,6 +36,8 @@ class PHPParser_Node_Scalar_String extends PHPParser_Node_Scalar
     }
 
     /**
+     * @internal
+     *
      * Parses a string token.
      *
      * @param string $str String token content
@@ -56,6 +62,8 @@ class PHPParser_Node_Scalar_String extends PHPParser_Node_Scalar
     }
 
     /**
+     * @internal
+     *
      * Parses escape sequences in strings (all string types apart from single quoted).
      *
      * @param string      $str   String without quotes
@@ -75,7 +83,7 @@ class PHPParser_Node_Scalar_String extends PHPParser_Node_Scalar
         );
     }
 
-    public static function parseCallback($matches) {
+    private static function parseCallback($matches) {
         $str = $matches[1];
 
         if (isset(self::$replacements[$str])) {
@@ -88,6 +96,8 @@ class PHPParser_Node_Scalar_String extends PHPParser_Node_Scalar
     }
 
     /**
+     * @internal
+     *
      * Parses a constant doc string.
      *
      * @param string $startToken Doc string start token content (<<<SMTHG)

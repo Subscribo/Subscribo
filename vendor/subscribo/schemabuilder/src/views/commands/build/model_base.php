@@ -1,18 +1,14 @@
 <?php echo "<?php"; ?>
-
-
-namespace Model\Base;
-
-use Model\AbstractModel;
+ namespace <?php echo $options['model_base_namespace']; ?>;
 
 /**
  * Model <?php echo $modelName; ?>
 
  * Automatically generated abstract model class
  *
- * @method \Model\<?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($modelName); ?>[] get() public static function get(array $columns = array()) returns an array of models <?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($modelName); ?>
+ * @method \<?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($options['model_namespace'].'\\'.$modelName); ?>[] get() public static function get(array $columns = array()) returns an array of models <?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($modelName); ?>
 
- * @method null|\Model\<?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($modelName); ?> first() public static function first(array $columns = array()) returns model <?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($modelName); ?>
+ * @method null|\<?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($options['model_namespace'].'\\'.$modelName); ?> first() public static function first(array $columns = array()) returns model <?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($modelName); ?>
 
  *
 <?php
@@ -27,7 +23,7 @@ foreach($fields as $field) {
 foreach ($options['foreign_objects'] as $foreignObject) {
     echo " * @property-read ";
     if (is_array($foreignObject['foreign_model_name'])) {
-        echo '\\Model\\AbstractModel';
+        echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($options['base_model_extends']);
         echo $foreignObject['returns_array'] ? '[]' : '';
         foreach ($foreignObject['foreign_model_name'] as $foreignModelName) {
             echo '|';

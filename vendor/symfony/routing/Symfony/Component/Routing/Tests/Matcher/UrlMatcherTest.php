@@ -363,7 +363,7 @@ class UrlMatcherTest extends \PHPUnit_Framework_TestCase
         $subColl->add('bar', new Route('/bar'));
         $subColl->addPrefix('/prefix');
         // overwrite the pattern, so the prefix is not valid anymore for this route in the collection
-        $subColl->get('bar')->setPattern('/new');
+        $subColl->get('bar')->setPath('/new');
 
         $coll->addCollection($subColl);
 
@@ -404,5 +404,26 @@ class UrlMatcherTest extends \PHPUnit_Framework_TestCase
 
         $matcher = new UrlMatcher($coll, new RequestContext('', 'GET', 'example.com'));
         $matcher->match('/foo/bar');
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     */
+    public function testPathIsCaseSensitive()
+    {
+        $coll = new RouteCollection();
+        $coll->add('foo', new Route('/locale', array(), array('locale' => 'EN|FR|DE')));
+
+        $matcher = new UrlMatcher($coll, new RequestContext());
+        $matcher->match('/en');
+    }
+
+    public function testHostIsCaseInsensitive()
+    {
+        $coll = new RouteCollection();
+        $coll->add('foo', new Route('/', array(), array('locale' => 'EN|FR|DE'), array(), '{locale}.example.com'));
+
+        $matcher = new UrlMatcher($coll, new RequestContext('', 'GET', 'en.example.com'));
+        $this->assertEquals(array('_route' => 'foo', 'locale' => 'en'), $matcher->match('/'));
     }
 }

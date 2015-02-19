@@ -2,7 +2,7 @@
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Yaml\Yaml;
+use Subscribo\Config;
 use Fuel\Core\Arr;
 
 use App;
@@ -34,12 +34,13 @@ class BuildAdministratorConfigsCommand extends BuildCommandAbstract {
         $fileName = $this->argument('file');
         $this->info('Building Frozennode Administrator configuration files starting. Using file: '. $fileName);
         $this->info('Environment: '. App::environment());
-        $file = file_get_contents($fileName);
-        $input = Yaml::parse($file);
+        Config::setForPackage('schemabuilder', 'parsed_schema', array());
+        Config::loadFileForPackage('schemabuilder', $fileName, 'parsed_schema', true, null);
+        $input = Config::getForPackage('schemabuilder', 'parsed_schema');
         $modelFields = $input['model_fields'];
         $modelOptions = $input['model_options'];
 
-        $this->_buildAdministratorConfigs($modelFields, $modelOptions, 'app/config/administrator/');
+        $this->_buildAdministratorConfigs($modelFields, $modelOptions, self::CONFIG_DIR.'administrator/');
 
         $this->info('Build Frozennode Administrator configuration files finished.');
     }
@@ -289,7 +290,7 @@ class BuildAdministratorConfigsCommand extends BuildCommandAbstract {
 	protected function getArguments()
 	{
 		return array(
-			array('file', InputArgument::OPTIONAL, 'File used for schema.', 'parsed_schema.yml'),
+			array('file', InputArgument::OPTIONAL, 'File used for schema.', self::SCHEMA_DIR.'parsed_schema.yml'),
 		);
 	}
 

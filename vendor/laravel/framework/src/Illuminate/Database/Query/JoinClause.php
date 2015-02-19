@@ -105,13 +105,25 @@ class JoinClause {
 	/**
 	 * Add an "on where is null" clause to the join
 	 *
-	 * @param  $column
-	 * @param  string $boolean
+	 * @param  string  $column
+	 * @param  string  $boolean
 	 * @return \Illuminate\Database\Query\JoinClause
 	 */
 	public function whereNull($column, $boolean = 'and')
 	{
 		return $this->on($column, 'is', new Expression('null'), $boolean, false);
+	}
+
+	/**
+	 * Add an "on where is not null" clause to the join
+	 *
+	 * @param  string  $column
+	 * @param  string  $boolean
+	 * @return \Illuminate\Database\Query\JoinClause
+	 */
+	public function whereNotNull($column, $boolean = 'and')
+	{
+		return $this->on($column, 'is', new Expression('not null'), $boolean, false);
 	}
 
 }

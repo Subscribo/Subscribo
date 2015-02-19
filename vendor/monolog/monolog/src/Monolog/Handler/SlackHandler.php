@@ -12,6 +12,7 @@
 namespace Monolog\Handler;
 
 use Monolog\Logger;
+use Monolog\Formatter\LineFormatter;
 
 /**
  * Sends notifications through Slack API
@@ -52,6 +53,23 @@ class SlackHandler extends SocketHandler
     private $useAttachment;
 
     /**
+     * Whether the the message that is added to Slack as attachment is in a short style (or not)
+     * @var bool
+     */
+    private $useShortAttachment;
+
+    /**
+     * Whether the attachment should include extra data (or not)
+     * @var bool
+     */
+    private $includeExtra;
+
+    /**
+     * @var LineFormatter
+     */
+    private $lineFormatter;
+
+    /**
      * @param string      $token         Slack API token
      * @param string      $channel       Slack channel (encoded ID or name)
      * @param string      $username      Name of a bot
@@ -60,7 +78,7 @@ class SlackHandler extends SocketHandler
      * @param int         $level         The minimum logging level at which this handler will be triggered
      * @param bool        $bubble        Whether the messages that are handled can bubble up the stack or not
      */
-    public function __construct($token, $channel, $username = 'Monolog', $useAttachment = true, $iconEmoji = null, $level = Logger::CRITICAL, $bubble = true)
+    public function __construct($token, $channel, $username = 'Monolog', $useAttachment = true, $iconEmoji = null, $level = Logger::CRITICAL, $bubble = true, $useShortAttachment = false, $includeExtra = false)
     {
         if (!extension_loaded('openssl')) {
             throw new MissingExtensionException('The OpenSSL PHP extension is required to use the SlackHandler');
@@ -73,6 +91,11 @@ class SlackHandler extends SocketHandler
         $this->username = $username;
         $this->iconEmoji = trim($iconEmoji, ':');
         $this->useAttachment = $useAttachment;
+        $this->useShortAttachment = $useShortAttachment;
+        $this->includeExtra = $includeExtra;
+        if ($this->includeExtra) {
+            $this->lineFormatter = new LineFormatter;
+        }
     }
 
     /**
@@ -105,26 +128,80 @@ class SlackHandler extends SocketHandler
         );
 
         if ($this->useAttachment) {
-            $dataArray['attachments'] = json_encode(
-                array(
-                    array(
-                        'fallback' => $record['message'],
-                        'color' => $this->getAttachmentColor($record['level']),
-                        'fields' => array(
-                            array(
-                                'title' => 'Message',
-                                'value' => $record['message'],
-                                'short' => false
-                            ),
-                            array(
-                                'title' => 'Level',
-                                'value' => $record['level_name'],
-                                'short' => true
-                            )
-                        )
-                    )
-                )
+            $attachment = array(
+                'fallback' => $record['message'],
+                'color' => $this->getAttachmentColor($record['level'])
             );
+
+            if ($this->useShortAttachment) {
+                $attachment['fields'] = array(
+                    array(
+                        'title' => $record['level_name'],
+                        'value' => $record['message'],
+                        'short' => false
+                    )
+                );
+            } else {
+                $attachment['fields'] = array(
+                    array(
+                        'title' => 'Message',
+                        'value' => $record['message'],
+                        'short' => false
+                    ),
+                    array(
+                        'title' => 'Level',
+                        'value' => $record['level_name'],
+                        'short' => true
+                    )
+                );
+            }
+
+            if ($this->includeExtra) {
+
+                if (!empty($record['extra'])) {
+
+                    if ($this->useShortAttachment) {
+
+                        $attachment['fields'][] = array(
+                            'title' => "Extra",
+                            'value' => $this->stringify($record['extra']),
+                            'short' => $this->useShortAttachment
+                        );
+                    } else {
+                        // Add all extra fields as individual fields in attachment
+                        foreach ($record['extra'] as $var => $val) {
+                           $attachment['fields'][] = array(
+                                'title' => $var,
+                                'value' => $val,
+                                'short' => $this->useShortAttachment
+                           );
+                        }
+                    }
+                }
+
+                if (!empty($record['context'])) {
+
+                    if ($this->useShortAttachment) {
+
+                        $attachment['fields'][] = array(
+                            'title' => "Context",
+                            'value' => $this->stringify($record['context']),
+                            'short' => $this->useShortAttachment
+                        );
+                    } else {
+                        // Add all context fields as individual fields in attachment
+                        foreach ($record['context'] as $var => $val) {
+                           $attachment['fields'][] = array(
+                                'title' => $var,
+                                'value' => $val,
+                                'short' => $this->useShortAttachment
+                           );
+                        }
+                    }
+                }
+            }
+
+            $dataArray['attachments'] = json_encode(array($attachment));
         } else {
             $dataArray['text'] = $record['message'];
         }
@@ -183,5 +260,24 @@ class SlackHandler extends SocketHandler
             default:
                 return '#e3e4e6';
         }
+    }
+
+    /**
+     * Stringifys an array of key/value pairs to be used in attachment fields
+     *
+     * @param array $fields
+     * @access protected
+     * @return string
+     */
+    protected function stringify($fields)
+    {
+        $string = '';
+        foreach ($fields as $var => $val) {
+            $string .= $var.': '.$this->lineFormatter->stringify($val)." | ";
+        }
+
+        $string = rtrim($string, " |");
+
+        return $string;
     }
 }

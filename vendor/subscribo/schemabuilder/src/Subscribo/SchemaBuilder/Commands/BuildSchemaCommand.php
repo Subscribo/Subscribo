@@ -4,10 +4,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Yaml\Yaml;
 use Fuel\Core\Arr;
+use Subscribo\Config;
 
 use App;
 use Exception;
-use Str;
+use Illuminate\Support\Str;
 
 class BuildSchemaCommand extends BuildCommandAbstract {
 
@@ -38,8 +39,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         $outputFileName = $this->argument('output_file');
         $this->info('Schema build starting. Using input file: '. $inputFileName.' output file: '.$outputFileName);
         $this->info('Environment: '. App::environment());
-        $file = file_get_contents($inputFileName);
-        $input = Yaml::parse($file);
+        Config::loadFileForPackage('schemabuilder', $inputFileName, 'schema', true, null);
+        $input = Config::getForPackage('schemabuilder', 'schema');
         $doctype = $input['doctype'];
         if (false === in_array($doctype, array('MODEL_SCHEMA-v1.0', 'PARSED_MODEL_SCHEMA-v1.0'))) {
             throw new \Exception ("Unsupported doctype. You can use for example: 'MODEL_SCHEMA-v1.0'");
@@ -106,7 +107,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 $item['singular'] = str_replace('_', ' ', str_singular($item['table_name']));
             }
             if (empty($item['model_full_name'])) {
-                $item['model_full_name'] = '\\Model\\'.$item['model_name'];
+                $item['model_full_name'] = '\\'.$item['model_namespace'].'\\'.$item['model_name'];
             }
             if (empty($item['api_stub'])) {
                 $item['api_stub'] = str_replace('_', '-', $item['table_name']);
@@ -122,6 +123,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         $forbiddenModelNames = array('base', 'abstractmodel');
         foreach($modelOptions as $modelKey => $options)
         {
+            $baseModelExtends = $options['base_model_extends'];
             if (empty($modelFields[$modelKey])) {
                 $this->error("Warning: Key: '".$modelKey."' in modelOptions does not have counterpart in modelFields");
             }
@@ -163,7 +165,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 if ( ! preg_match('#^[A-Za-z0-9]+$#', $foreignObject['name'])) {
                     $this->error("Warning: Relation name: '".$foreignObject['name']."' contains not allowed characters (modelKey: '".$modelKey."')");
                 }
-                $collision = $this->_findCollision($foreignObject['name']);
+                $collision = $this->_findCollision($foreignObject['name'], $baseModelExtends);
                 if ($collision) {
                     throw new \Exception(ucfirst($collision['type']). " from ".$collision['from']." '".$collision['name']."' used for a relation name (modelKey: '".$modelKey."' field name: '".$foreignObject['name']."')");
                 }
@@ -189,7 +191,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 if (empty($field['title'])) {
                     $this->error("Warning: Title empty for field. (modelKey: '".$modelKey."' fieldKey: '".$fieldKey."')");
                 }
-                $collision = $this->_findCollision($field['name']);
+                $collision = $this->_findCollision($field['name'], $baseModelExtends);
                 if ($collision) {
                     throw new \Exception(ucfirst($collision['type']). " from ".$collision['from']." '".$collision['name']."' used for a field name (modelKey: '".$modelKey."' field name: '".$field['name']."')");
                 }
@@ -211,7 +213,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
 
     }
 
-    private function _findCollision($name)
+    private function _findCollision($name, $baseModelExtends)
     {
         $prefixes = array('get_', 'set_', 'unset_','compare_');
         $prefixed = array($name);
@@ -241,7 +243,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         }
         $wordsToCheck = $preUnderScored;
         foreach ($wordsToCheck as $toCheck) {
-            $collision = $this->_checkForCollisions($toCheck);
+            $collision = $this->_checkForCollisions($toCheck, $baseModelExtends);
             if (false !== $collision) {
                 return $collision;
             }
@@ -251,14 +253,14 @@ class BuildSchemaCommand extends BuildCommandAbstract {
 
 
 
-    private function _checkForCollisions($name)
+    private function _checkForCollisions($name, $baseModelExtends)
     {
         $keywords = array('callback', 'format', 'without', 'page', ); //Keywords for API, which are not at the same time property or method checked below
         $keywordKey = array_search($name, $keywords);
         if (false !== $keywordKey) {
             return array('type' => 'keyword', 'from' => 'keywords', 'name' => $keywords[$keywordKey]);
         }
-        $classNames = array('\\Illuminate\\Database\\Eloquent\\Builder', '\\Illuminate\\Database\\Query\\Builder', '\\Illuminate\\Database\\Eloquent\\Model', '\\Model\\AbstractModel');
+        $classNames = array('\\Illuminate\\Database\\Eloquent\\Builder', '\\Illuminate\\Database\\Query\\Builder', '\\Illuminate\\Database\\Eloquent\\Model', $baseModelExtends);
         foreach($classNames as $className) {
             if (property_exists($className, $name)) {
                 return array('from' => $className, 'type' => 'property', 'name' => $name);
@@ -2060,7 +2062,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             $tableName = $options['table_name'];
             $fields = $modelFields[$modelKey];
             $objects = Arr::get($options, 'foreign_objects', array());
-            $newObjects = $this->_assembleForeignObjectsForModel($tableName, $fields, $relations);
+            $baseModelExtends = $options['base_model_extends'];
+            $newObjects = $this->_assembleForeignObjectsForModel($tableName, $fields, $relations, $modelOptions, $baseModelExtends);
             foreach ($newObjects as $newObject) {
                 if ( ! array_key_exists($newObject['name'], $objects)) {
                     $objects[$newObject['name']] = $newObject;
@@ -2074,7 +2077,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         return $result;
     }
 
-    private function _assembleForeignObjectsForModel($tableName, array $fields, array $relations)
+    private function _assembleForeignObjectsForModel($tableName, array $fields, array $relations, array $modelOptions, $baseModelExtends)
     {
         $foreignObjectsStack = array();
         foreach ($relations as $relationTypeKey => $relationTypeSet) {
@@ -2082,7 +2085,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 continue;
             }
             foreach ($relationTypeSet[$tableName] as $relationFieldKey => $relation) {
-                $objectsToStack = $this->_assembleForeignObjectsFromRelation($relation);
+                $objectsToStack = $this->_assembleForeignObjectsFromRelation($relation, $modelOptions);
                 $foreignObjectsStack = array_merge($foreignObjectsStack, array_values($objectsToStack));
             }
         }
@@ -2098,7 +2101,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             }
             if (empty($collidingNames[$newObject['name']])
                 and empty($result[$newObject['name']])
-                and ( ! $this->_findCollision($newObject['name']))) {
+                and ( ! $this->_findCollision($newObject['name'], $baseModelExtends))) {
                 $result[$newObject['name']] = $newObject;
                 continue;
             }
@@ -2123,16 +2126,16 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         return $result;
     }
 
-    private function _assembleForeignObjectsFromRelation(array $relation)
+    private function _assembleForeignObjectsFromRelation(array $relation, array $modelOptions)
     {
         if ('many_morphed_by_many' === $relation['type']) {
-            return $this->_assembleForeignObjectsFromManyMorphedByManyRelation($relation);
+            return $this->_assembleForeignObjectsFromManyMorphedByManyRelation($relation, $modelOptions);
         }
-        $foreignObject = $this->_assembleForeignObjectFromRelation($relation);
+        $foreignObject = $this->_assembleForeignObjectFromRelation($relation, $modelOptions);
         return array($foreignObject);
     }
 
-    private function _assembleForeignObjectsFromManyMorphedByManyRelation($relation)
+    private function _assembleForeignObjectsFromManyMorphedByManyRelation($relation, array $modelOptions)
     {
         $tablesTo = empty($relation['tables_to']) ? array() : $relation['tables_to'];
         if ( ! empty($relation['table_to'])) {
@@ -2148,13 +2151,13 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         foreach ($tablesTo as $tableTo) {
             $relationToProcess = $relationPrototype;
             $relationToProcess['table_to'] = $tableTo;
-            $result[] = $this->_assembleForeignObjectFromRelation($relationToProcess);
+            $result[] = $this->_assembleForeignObjectFromRelation($relationToProcess, $modelOptions);
         }
         return $result;
     }
 
 
-    private function _assembleForeignObjectFromRelation(array $relation)
+    private function _assembleForeignObjectFromRelation(array $relation, array $modelOptions)
     {
         if (empty($relation)) {
             return null;
@@ -2177,7 +2180,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 $methodNameBase = $relation['table_to'];
             }
             $fallbackMethodNameBase .= '_'.$relation['table_to'];
-            $foreignObjectDefaultName = '\\Model\\'.Str::studly(Str::singular($relation['table_to']));
+            $foreignOptions = $this->_findOptionsByTableName($modelOptions, $relation['table_to']);
+            $foreignObjectDefaultName = '\\'.$foreignOptions['model_namespace'].'\\'.Str::studly(Str::singular($relation['table_to']));
         }
         if ( ! empty($relation['polymorphic'])) {
             $methodNameBase = $this->_obtainPolymorphicRelationMethodNameBase($relation);
@@ -2193,7 +2197,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             $tablesTo = array_unique($tablesTo);
             $foreignObjectDefaultName = array();
             foreach($tablesTo as $tableTo) {
-                $foreignObjectDefaultName[] = '\\Model\\'.Str::studly(Str::singular($tableTo));
+                $foreignOptions = $this->_findOptionsByTableName($modelOptions, $tableTo);
+                $foreignObjectDefaultName[] = '\\'.$foreignOptions['model_namespace'].'\\'.Str::studly(Str::singular($tableTo));
             }
         }
         $foreignObjectName = Arr::get($relation, 'foreign_object_name', $foreignObjectDefaultName);
@@ -2308,7 +2313,9 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 $fallbackMethodName = Str::camel(Str::plural($fallbackMethodNameBase));
                 $method = 'hasManyThrough';
                 $returnsArray = true;
-                $throughObjectDefaultName = '\\Model\\'.Str::studly(Str::singular($relation['table_through']));
+                $throughOptions = $this->_findOptionsByTableName($modelOptions, $relation['table_through']);
+                $throughNamespace = $throughOptions['model_namespace'];
+                $throughObjectDefaultName = '\\'.$throughNamespace.'\\'.Str::studly(Str::singular($relation['table_through']));
                 $throughObjectName = Arr::get($relation, 'through_object_name', $throughObjectDefaultName);
                 if ( ! empty($relation['key_to'])) {
                     $methodParameters = array(0 => $foreignObjectName, 1 => $throughObjectName, 2 => $this->_obtainKeyThrough($relation), 3 => $relation['key_to']);
@@ -2939,8 +2946,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
     protected function getArguments()
     {
         return array(
-            array('input_file', InputArgument::OPTIONAL, 'File used for input schema.', 'schema.yml'),
-            array('output_file', InputArgument::OPTIONAL, 'File used for output schema.', 'parsed_schema.yml'),
+            array('input_file', InputArgument::OPTIONAL, 'File used for input schema.', self::SCHEMA_DIR.'schema.yml'),
+            array('output_file', InputArgument::OPTIONAL, 'File used for output schema.', self::SCHEMA_DIR.'parsed_schema.yml'),
         );
     }
 

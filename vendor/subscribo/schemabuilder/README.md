@@ -20,7 +20,7 @@ Schema builder for building models, migrations, etc from schema
     '\\Subscribo\\SchemaBuilder\\SchemaBuilderServiceProvider',
 ```
 
-under 'provider' key in app/config/app.php file
+under 'providers' key in app/config/app.php file
 
 or
 

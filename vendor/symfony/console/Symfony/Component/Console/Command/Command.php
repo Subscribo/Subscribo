@@ -65,7 +65,7 @@ class Command
         $this->configure();
 
         if (!$this->name) {
-            throw new \LogicException('The command name cannot be empty.');
+            throw new \LogicException(sprintf('The command defined in "%s" cannot have an empty name.', get_class($this)));
         }
     }
 
@@ -129,7 +129,7 @@ class Command
     }
 
     /**
-     * Checks whether the command is enabled or not in the current environment
+     * Checks whether the command is enabled or not in the current environment.
      *
      * Override this to check for x or y and return false if the command can not
      * run properly under the current conditions.
@@ -162,7 +162,8 @@ class Command
      * @return null|int null or 0 if everything went fine, or an error code
      *
      * @throws \LogicException When this abstract method is not implemented
-     * @see    setCode()
+     *
+     * @see setCode()
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

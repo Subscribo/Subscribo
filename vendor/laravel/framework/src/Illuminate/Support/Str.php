@@ -1,11 +1,33 @@
 <?php namespace Illuminate\Support;
 
-use Patchwork\Utf8;
-use Illuminate\Support\Traits\MacroableTrait;
+use RuntimeException;
+use Stringy\StaticStringy;
+use Illuminate\Support\Traits\Macroable;
 
 class Str {
 
-	use MacroableTrait;
+	use Macroable;
+
+	/**
+	 * The cache of snake-cased words.
+	 *
+	 * @var array
+	 */
+	protected static $snakeCache = [];
+
+	/**
+	 * The cache of camel-cased words.
+	 *
+	 * @var array
+	 */
+	protected static $camelCache = [];
+
+	/**
+	 * The cache of studly-cased words.
+	 *
+	 * @var array
+	 */
+	protected static $studlyCache = [];
 
 	/**
 	 * Transliterate a UTF-8 value to ASCII.
@@ -15,7 +37,7 @@ class Str {
 	 */
 	public static function ascii($value)
 	{
-		return Utf8::toAscii($value);
+		return StaticStringy::toAscii($value);
 	}
 
 	/**
@@ -26,7 +48,12 @@ class Str {
 	 */
 	public static function camel($value)
 	{
-		return lcfirst(static::studly($value));
+		if (isset(static::$camelCache[$value]))
+		{
+			return static::$camelCache[$value];
+		}
+
+		return static::$camelCache[$value] = lcfirst(static::studly($value));
 	}
 
 	/**
@@ -186,19 +213,19 @@ class Str {
 	 */
 	public static function random($length = 16)
 	{
-		if (function_exists('openssl_random_pseudo_bytes'))
+		if ( ! function_exists('openssl_random_pseudo_bytes'))
 		{
-			$bytes = openssl_random_pseudo_bytes($length * 2);
-
-			if ($bytes === false)
-			{
-				throw new \RuntimeException('Unable to generate random string.');
-			}
-
-			return substr(str_replace(array('/', '+', '='), '', base64_encode($bytes)), 0, $length);
+			throw new RuntimeException('OpenSSL extension is required.');
 		}
 
-		return static::quickRandom($length);
+		$bytes = openssl_random_pseudo_bytes($length * 2);
+
+		if ($bytes === false)
+		{
+			throw new RuntimeException('Unable to generate random string.');
+		}
+
+		return substr(str_replace(array('/', '+', '='), '', base64_encode($bytes)), 0, $length);
 	}
 
 	/**
@@ -213,7 +240,7 @@ class Str {
 	{
 		$pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-		return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
+		return substr(str_shuffle(str_repeat($pool, $length)), 0, $length);
 	}
 
 	/**
@@ -283,11 +310,19 @@ class Str {
 	 */
 	public static function snake($value, $delimiter = '_')
 	{
-		if (ctype_lower($value)) return $value;
+		$key = $value.$delimiter;
 
-		$replace = '$1'.$delimiter.'$2';
+		if (isset(static::$snakeCache[$key]))
+		{
+			return static::$snakeCache[$key];
+		}
 
-		return strtolower(preg_replace('/(.)([A-Z])/', $replace, $value));
+		if ( ! ctype_lower($value))
+		{
+			$value = strtolower(preg_replace('/(.)(?=[A-Z])/', '$1'.$delimiter, $value));
+		}
+
+		return static::$snakeCache[$key] = $value;
 	}
 
 	/**
@@ -315,9 +350,16 @@ class Str {
 	 */
 	public static function studly($value)
 	{
+		$key = $value;
+
+		if (isset(static::$studlyCache[$key]))
+		{
+			return static::$studlyCache[$key];
+		}
+
 		$value = ucwords(str_replace(array('-', '_'), ' ', $value));
 
-		return str_replace(' ', '', $value);
+		return static::$studlyCache[$key] = str_replace(' ', '', $value);
 	}
 
 }

@@ -1,11 +1,14 @@
 <html>
 <head>
-    <title>Checker</title>
+    <title>API Checker</title>
 </head>
 <body onload="loaded()">
 <h1>API Checker</h1>
 
 <form onsubmit="makeRequest(); return false;">
+    <label for="access_token">Access token:</label>
+    <input type="text" id="access_token">
+    <br>
     <label for="select_verb">Select:</label>
     <select id="select_verb" onchange="document.getElementById('verb').value=this.value">
         <option value="GET">GET</option>
@@ -65,8 +68,12 @@
         var verb = document.getElementById('verb').value;
         var url =  document.getElementById('url').value;
         var requestBody = document.getElementById('request_body').value;
+        var accessToken = document.getElementById('access_token').value;
         myRequest.open(verb, url, true);
         myRequest.setRequestHeader('Content-Type', 'text/json');
+        if (accessToken) {
+            myRequest.setRequestHeader(<?php echo json_encode(\Subscribo\RestCommon\RestCommon::ACCESS_TOKEN_HEADER_FIELD_NAME); ?>, accessToken);
+        }
 
 
         myRequest.send(requestBody);
