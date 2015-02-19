@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 abstract class BuildCommandAbstract extends Command {
 
     const CONFIG_DIR = 'config/';
-    const PACKAGES_CONFIG_DIR = 'subscribo/config/packages/';
     const MIGRATIONS_DIR = 'database/migrations/';
     const SCHEMA_DIR = 'subscribo/config/packages/schemabuilder/';
 
