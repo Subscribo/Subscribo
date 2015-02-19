@@ -1,13 +1,14 @@
-<?php namespace Subscribo\App\Model\Factories;
+<?php namespace Subscribo\Api1\Factories;
 
 use Illuminate\Contracts\Hashing\Hasher;
 use Subscribo\Api1\Exceptions\InvalidArgumentException;
-use Subscribo\App\Model\Customer;
-use Subscribo\App\Model\Account;
-use Subscribo\App\Model\Person;
+use Subscribo\ModelCore\Models\Customer;
+use Subscribo\ModelCore\Models\Account;
+use Subscribo\ModelCore\Models\AccountToken;
+use Subscribo\ModelCore\Models\Person;
 use Subscribo\Support\Arr;
 
-class CustomerFactory
+class AccountFactory
 {
     protected $hasher;
 
@@ -46,7 +47,7 @@ class CustomerFactory
     {
         $serviceId = intval($serviceId);
         if (empty($data['email'])) {
-            throw new InvalidArgumentException('CustomerFactory::find() Data should contain email');
+            throw new InvalidArgumentException('AccountFactory::find() Data should contain email');
         }
         $customers = Customer::findAllByEmail($data['email']);
         foreach($customers as $customer) {

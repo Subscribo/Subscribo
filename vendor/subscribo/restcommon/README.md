@@ -4,6 +4,8 @@ Auxiliary package containing files common for Subscribo REST client and server (
 
 ## 1. Installation
 
+Note: If used with package adding this dependency and registering service provider for you, steps 1.1-1.3 are not necessary.
+
 ### 1.1 Add repository containing this package to your project's composer.json:
 
 (note: you need to have access to this repository as well as to resources it points to)
@@ -32,8 +34,12 @@ or
 
 in bootstrap/app.php for conditional registration
 
+### 1.4 SUBSCRIBO_COMMON_SECRET
 
-Note: If used with package adding this dependency for you, no installation is necessary.
+If you are using (directly or indirectly - via other package) CommonSecretServiceProvider,
+you need to set environment variable SUBSCRIBO_COMMON_SECRET to a string with length of 16, 24, or 32 characters
+for example via proper (used by your environment) .env file [example](/docs/.env.example)
+
 
 ## 2. Usage
 

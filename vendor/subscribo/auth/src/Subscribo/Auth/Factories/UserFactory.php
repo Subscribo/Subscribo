@@ -1,14 +1,14 @@
 <?php namespace Subscribo\Auth\Factories;
 
 use Subscribo\Auth\Interfaces\StatelessAuthenticatableFactoryInterface;
+use Subscribo\Auth\Exceptions\InvalidArgumentException;
 use Subscribo\RestCommon\Interfaces\ByTokenIdentifiableFactoryInterface;
 use Subscribo\RestCommon\Interfaces\CommonSecretProviderInterface;
 use Subscribo\RestCommon\Interfaces\TokenRingProviderInterface;
+use Subscribo\ModelCore\Models\User;
+use Subscribo\ModelCore\Models\UserToken;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher;
-use Subscribo\App\Model\User;
-use Subscribo\App\Model\UserToken;
-use Subscribo\Auth\Exceptions\InvalidArgumentException;
 
 class UserFactory implements StatelessAuthenticatableFactoryInterface, ByTokenIdentifiableFactoryInterface
 {

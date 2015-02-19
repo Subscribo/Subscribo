@@ -1,8 +1,8 @@
 <?php namespace Subscribo\Api1;
 
 use Subscribo\Auth\Interfaces\ApiGuardInterface;
-use Subscribo\App\Model\Account;
-use Subscribo\App\Model\Service;
+use Subscribo\ModelCore\Models\Account;
+use Subscribo\ModelCore\Models\Service;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
 use Subscribo\RestCommon\AccountIdTransport;
 
@@ -20,7 +20,7 @@ class Context
     protected $auth;
 
     /**
-     * @var null|bool|\Subscribo\App\Model\User
+     * @var null|bool|\Subscribo\ModelCore\Models\User
      */
     protected $user = false;
 
@@ -66,7 +66,7 @@ class Context
     }
 
     /**
-     * @return null|\Subscribo\App\Model\User
+     * @return null|\Subscribo\ModelCore\Models\User
      */
     public function getUser()
     {
@@ -79,7 +79,7 @@ class Context
 
 
     /**
-     * @return null|\Subscribo\App\Model\User
+     * @return null|\Subscribo\ModelCore\Models\User
      */
     public function retrieveUser()
     {
