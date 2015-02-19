@@ -15,6 +15,7 @@ class ModelBaseServiceProvider extends ServiceProvider {
 
     public function register()
     {
+        //todo refactor and check - ServiceProvider, subscribo.config to boot, subscribo.config service provider registration
         $this->app->bind('subscribo.modelfactory', function() {
             return new ModelFactory;
         });

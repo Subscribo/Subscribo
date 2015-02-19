@@ -1,6 +1,6 @@
 <?php namespace Subscribo\ApiClientAuth\Integration\Laravel;
 
-use Subscribo\ServiceProvider\ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
 /**
  * Class ApiClientAuthServiceProvider

@@ -1,7 +1,7 @@
 <?php namespace Subscribo\RestCommon\Integration\Laravel;
 
 use Subscribo\RestCommon\CommonSecretProvider;
-use Subscribo\ServiceProvider\ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
 /**
  * Class CommonSecretServiceProvider

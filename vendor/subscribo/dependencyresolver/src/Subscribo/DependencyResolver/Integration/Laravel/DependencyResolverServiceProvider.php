@@ -1,6 +1,6 @@
 <?php namespace Subscribo\DependencyResolver\Integration\Laravel;
 
-use Subscribo\ServiceProvider\ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
 use Subscribo\DependencyResolver\DependencyResolver;
 
