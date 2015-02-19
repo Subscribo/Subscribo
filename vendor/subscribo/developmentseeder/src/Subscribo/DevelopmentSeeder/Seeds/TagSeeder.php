@@ -1,8 +1,8 @@
-<?php namespace Subscribo\App\Seeder;
+<?php namespace Subscribo\DevelopmentSeeder\Seeds;
 
 use Illuminate\Database\Seeder;
-use Subscribo\App\Model\TagGroup;
-use Subscribo\App\Model\Tag;
+use Subscribo\ModelCore\Models\TagGroup;
+use Subscribo\ModelCore\Models\Tag;
 
 class TagSeeder extends Seeder {
 
