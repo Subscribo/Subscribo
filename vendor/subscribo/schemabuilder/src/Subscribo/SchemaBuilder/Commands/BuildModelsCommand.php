@@ -40,14 +40,13 @@ class BuildModelsCommand extends BuildCommandAbstract {
         $modelFields = $input['model_fields'];
         $modelOptions = $input['model_options'];
 
-        $this->_buildModels($modelFields, $modelOptions, self::PACKAGES_CONFIG_DIR . 'modelbase/');
+        $this->_buildModels($modelFields, $modelOptions);
 
         $this->info('Building models finished.');
     }
 
-    private function _buildModels($modelFields, $modelOptions, $configPath)
+    private function _buildModels($modelFields, $modelOptions)
     {
-        $modelsForApiConfiguration = array();
         foreach ($modelFields as $tableName => $fields)
         {
             $options = Arr::get($modelOptions, $tableName, array());
@@ -69,18 +68,7 @@ class BuildModelsCommand extends BuildCommandAbstract {
                 $baseContent = View::make('schemabuilder::commands.build.model_base', $data);
                 $this->_createFile($baseFilePath, $baseContent, $options['generate']['model']['base']);
             }
-            if ( ! empty($options['generate']['api']))
-            {
-                $modelsForApiConfiguration[$options['api_stub']] = array(
-                    'model_full_name' => $options['model_full_name']
-                );
-            }
         }
-        $apiConfigContent = View::make('schemabuilder::commands.build.api_config', array('apiConfiguration' => array(
-            'models' => $modelsForApiConfiguration,
-        )));
-        $apiConfigFilePath = $configPath.'api.php';
-        $this->_createFile($apiConfigFilePath, $apiConfigContent, 'overwrite');
     }
 
 	/**

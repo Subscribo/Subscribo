@@ -1,9 +1,9 @@
-<?php namespace Subscribo\App\Seeder;
+<?php namespace Subscribo\DevelopmentSeeder\Seeds;
 
 use Illuminate\Database\Seeder;
-use Subscribo\App\Model\Service;
-use Subscribo\App\Model\ServicePool;
-use Subscribo\App\Model\Language;
+use Subscribo\ModelCore\Models\Service;
+use Subscribo\ModelCore\Models\ServicePool;
+use Subscribo\ModelCore\Models\Language;
 
 class ServiceSeeder extends Seeder {
 

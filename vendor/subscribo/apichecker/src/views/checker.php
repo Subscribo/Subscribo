@@ -22,13 +22,7 @@
     &nbsp;&nbsp;&nbsp;&nbsp;
     <label for="select_url">Select:</label>
     <select id="select_url" onchange="document.getElementById('url').value=this.value">
-        <?php
-        $uriStubs = Subscribo\ModelFactory::listUriStubs();
-        asort($uriStubs);
-        foreach ($uriStubs as $uriStub) {
-            echo '            <option value="/api/v0/model/'.$uriStub.'">'.$uriStub.'</option>'."\n";
-        }
-        ?>
+
     </select>
     <br>
     <label for="verb">Verb:</label>

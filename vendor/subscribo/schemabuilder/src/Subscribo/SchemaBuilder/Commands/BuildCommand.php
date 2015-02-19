@@ -38,6 +38,9 @@ class BuildCommand extends BuildCommandAbstract {
 	 */
 	public function fire()
 	{
+        if ($this->option('publish')) {
+            $this->call('vendor:publish', array('--tag' => 'modelschema', '--force' => true));
+        }
 
         $inputFile = $this->argument('input_file');
         $outputFile = $this->argument('output_file');
@@ -83,6 +86,7 @@ class BuildCommand extends BuildCommandAbstract {
 	{
 		return array(
 			array('stdin', null, InputOption::VALUE_NONE, 'Use stdin instead of file (Not implemented).', null),
+            array('publish', null, InputOption::VALUE_NONE, 'Before running force publish schema files from packages', null)
 		);
 	}
 

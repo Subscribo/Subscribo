@@ -1,7 +1,7 @@
-<?php namespace Subscribo\App\Seeder;
+<?php namespace Subscribo\DevelopmentSeeder\Seeds;
 
 use Illuminate\Database\Seeder;
-use Subscribo\App\Model\Country;
+use Subscribo\ModelCore\Models\Country;
 
 class CountrySeeder extends Seeder {
 

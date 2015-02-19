@@ -1,3 +1,5 @@
+
+
 doctype: MODEL_SCHEMA-v1.0
 
 default_model_options:
@@ -55,7 +57,8 @@ default_model_options:
         model:
             base: overwrite
             draft: skip
-        administrator: false
+        administrator: overwrite
+        api: true
     administrator_menu: Other
     administrator_menu_order: null
     is_pivot_table: null
@@ -123,9 +126,6 @@ model_options:
     api_methods:
         administrator_menu: Services and Apis
 
-    oauth_configurations:
-        administrator_menu: Services and Apis
-
     users:
         administrator_menu: ACL
         relations:
@@ -142,6 +142,10 @@ model_options:
         relations:
             has_many:
                 - accounts
+                - customer_tokens
+
+    customer_tokens:
+        administrator_menu: ACL
 
     clients:
         administrator_menu: ACL
@@ -174,13 +178,7 @@ model_options:
         administrator_menu: Contact
 
     accounts: #    (former “accessors” - connection between a user account and a particular service – there is a possibility of one email to be linked to multiple users – to know with which actual user are we dealing with we need an information about service requested – this would give as an account)
-        administrator_menu: ACL
-        hidden:
-            - accountTokens
-
-
-    account_tokens: #OAuth authentication details for customers
-           administrator_menu: ACL
+       administrator_menu: ACL
 
     translations:
        administrator_menu: Localization
@@ -316,14 +314,6 @@ model_fields:
         - element (bool) default false //true for element, false for collection
         - http_verb (enum from GET POST PUT DELETE OPTIONS)
 
-    oauth_configurations:
-        - service_id
-        - provider
-        - identifier
-        - secret
-        - redirect null
-        - scopes null
-
     users: #Change: users with login access to backend
         - username
         - email null #guest superadmin does not have to have email address; moreover email addresses are not necessarily unique - to know which user is requested, we need service_id
@@ -354,12 +344,10 @@ model_fields:
         - default_delivery_address_id null → addresses
         - default_billing_details_id null → billing_details
 
-    account_tokens:
-        - account_id
-        - provider (enum from facebook twitter)
-        - identifier
-        - token null
-        - secret null
+    customer_tokens:
+        - customer_id -> customers
+        - token
+        - type (enum from facebook twitter)
         - comment null
 
 
