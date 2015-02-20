@@ -1,31 +1,18 @@
 <?php namespace Subscribo\ApiClientOAuth;
 
-use Laravel\Socialite\SocialiteManager;
+use Subscribo\OAuthCommon\AbstractOAuthManager;
 use Subscribo\ApiClientOAuth\Connectors\OAuthConnector;
-use Subscribo\ApiClientOAuth\Providers\FacebookProvider;
-use Subscribo\ApiClientOAuth\Exceptions\ErrorResponseException;
 
 /**
  * Class OAuthManager
  *
  * @package Subscribo\ApiClientOAuth
  */
-class OAuthManager extends SocialiteManager
+class OAuthManager extends AbstractOAuthManager
 {
     protected $driverConfigurations = array();
 
     protected $defaultScopes = array();
-
-
-    public static function getAvailableDrivers()
-    {
-        return ['facebook', 'test'];
-    }
-
-    public function getDefaultDriver()
-    {
-        return 'facebook';
-    }
 
     public function getDefaultScopes($driver)
     {
@@ -44,20 +31,6 @@ class OAuthManager extends SocialiteManager
         }
         return $this->with($driver)->redirect();
     }
-
-    /**
-     * @param string $driver
-     * @return null|\Laravel\Socialite\Contracts\User|\Laravel\Socialite\AbstractUser
-     */
-    public function getUser($driver)
-    {
-        try {
-            return $this->with($driver)->user();
-        } catch(ErrorResponseException $e) {
-            return null;
-        }
-    }
-
 
 
     protected function getDriverConfiguration($driver)
@@ -78,15 +51,5 @@ class OAuthManager extends SocialiteManager
         $this->driverConfigurations[$driver] = $result['config'];
         $this->defaultScopes[$driver] = isset($result['scopes']) ? $result['scopes'] : false;
         return $result;
-    }
-
-
-    /**
-     * @return FacebookProvider
-     */
-    protected function createFacebookDriver()
-    {
-        $config = $this->getDriverConfiguration('facebook');
-        return $this->buildProvider('Subscribo\\ApiClientOAuth\\Providers\\FacebookProvider', $config);
     }
 }
