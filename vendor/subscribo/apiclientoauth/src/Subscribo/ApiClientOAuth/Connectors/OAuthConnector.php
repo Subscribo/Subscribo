@@ -19,9 +19,9 @@ class OAuthConnector
         $this->restClient = $restClient;
     }
 
-    public function getConfig($driver, array $signatureOptions = null)
+    public function getConfig($driver, array $query = null, array $signatureOptions = null)
     {
-        $responseData = $this->restClient->process('oauth/config/'.$driver, 'GET', null, null, null, $signatureOptions, false);
+        $responseData = $this->restClient->process('oauth/config/'.$driver, 'GET', null, $query, null, $signatureOptions, false);
 
         return $responseData['result'][$driver];
     }

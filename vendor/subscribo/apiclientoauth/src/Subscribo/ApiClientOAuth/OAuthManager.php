@@ -47,9 +47,26 @@ class OAuthManager extends AbstractOAuthManager
     {
         /** @var OAuthConnector $oauthConnector */
         $oauthConnector = $this->app->make('Subscribo\\ApiClientOAuth\\Connectors\\OAuthConnector');
-        $result = $oauthConnector->getConfig($driver);
+        $redirect = $this->assembleRedirectUrl($driver);
+        $query = $redirect ? ['redirect' => $redirect] : null;
+        $result = $oauthConnector->getConfig($driver, $query);
         $this->driverConfigurations[$driver] = $result['config'];
         $this->defaultScopes[$driver] = isset($result['scopes']) ? $result['scopes'] : false;
+        return $result;
+    }
+
+    /**
+     * @param string $driver
+     * @return null|string
+     */
+    protected function assembleRedirectUrl($driver)
+    {
+        /** @var \Illuminate\Http\Request $request */
+        $request = $this->app->make('request');
+        if (empty($request)) {
+            return null;
+        }
+        $result = $request->getSchemeAndHttpHost().'/oauth/handle/'.$driver;
         return $result;
     }
 }
