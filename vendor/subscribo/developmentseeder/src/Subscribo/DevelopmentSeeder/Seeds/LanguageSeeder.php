@@ -1,7 +1,7 @@
-<?php namespace Subscribo\App\Seeder;
+<?php namespace Subscribo\DevelopmentSeeder\Seeds;
 
 use Illuminate\Database\Seeder;
-use Subscribo\App\Model\Language;
+use Subscribo\ModelCore\Models\Language;
 
 class LanguageSeeder extends Seeder {
 

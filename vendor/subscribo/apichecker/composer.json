@@ -22,7 +22,6 @@
     ],
     "require": {
         "php": "~5.4",
-        "subscribo/modelbase": "@dev",
         "subscribo/serviceprovider": "@dev",
         "subscribo/config": "@dev",
         "subscribo/environment": "@dev",

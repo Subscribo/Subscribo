@@ -2,14 +2,14 @@
 
 use LogicException;
 use Subscribo\Api1\AbstractController;
-use Subscribo\App\Model\AccountToken;
-use Subscribo\App\Model\Customer;
+use Subscribo\ModelCore\Models\AccountToken;
+use Subscribo\ModelCore\Models\Customer;
 use Subscribo\Exception\Exceptions\InvalidInputHttpException;
 use Subscribo\Exception\Exceptions\InvalidQueryHttpException;
 use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
-use Subscribo\App\Model\ServicePool;
-use Subscribo\App\Model\Account;
+use Subscribo\ModelCore\Models\ServicePool;
+use Subscribo\ModelCore\Models\Account;
 
 
 class AccountController extends AbstractController
@@ -73,13 +73,13 @@ class AccountController extends AbstractController
      */
     public function processValidation($validated, $method)
     {
-        /** @var \Subscribo\App\Model\Factories\CustomerFactory $customerFactory */
-        $customerFactory = $this->applicationMake('Subscribo\\App\\Model\\Factories\\CustomerFactory');
-        $found = $customerFactory->find($this->context->getServiceId(), $validated);
+        /** @var \Subscribo\Api1\Factories\AccountFactory $accountFactory */
+        $accountFactory = $this->applicationMake('Subscribo\\Api1\\Factories\\AccountFactory');
+        $found = $accountFactory->find($this->context->getServiceId(), $validated);
         if (empty($found)) {
             return ['validated' => false];
         }
-        if ($customerFactory->checkCustomerPassword($found['customer'], $validated['password'])) {
+        if ($accountFactory->checkCustomerPassword($found['customer'], $validated['password'])) {
             return ['validated' => true, 'result' => $found];
         }
         return ['validated' => false];
@@ -155,10 +155,10 @@ class AccountController extends AbstractController
      */
     private function performRegistration(array $data, $serviceId)
     {
-        /** @var \Subscribo\App\Model\Factories\CustomerFactory $customerFactory */
-        $customerFactory = $this->applicationMake('Subscribo\\App\\Model\\Factories\\CustomerFactory');
+        /** @var \Subscribo\Api1\Factories\AccountFactory $accountFactory */
+        $accountFactory = $this->applicationMake('Subscribo\\Api1\\Factories\\AccountFactory');
 
-        $registered = $customerFactory->register($serviceId, $data);
+        $registered = $accountFactory->register($serviceId, $data);
 
         return  ['registered' => true, 'result' => $registered ];
     }

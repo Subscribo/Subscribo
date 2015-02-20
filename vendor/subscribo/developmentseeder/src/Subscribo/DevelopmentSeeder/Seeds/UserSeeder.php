@@ -1,9 +1,9 @@
-<?php namespace Subscribo\App\Seeder;
+<?php namespace Subscribo\DevelopmentSeeder\Seeds;
 
 use Illuminate\Database\Seeder;
-use Subscribo\App\Model\User;
-use Subscribo\App\Model\UserToken;
-use Subscribo\App\Model\Service;
+use Subscribo\ModelCore\Models\User;
+use Subscribo\ModelCore\Models\UserToken;
+use Subscribo\ModelCore\Models\Service;
 use Subscribo\Auth\Factories\UserFactory;
 use App;
 
