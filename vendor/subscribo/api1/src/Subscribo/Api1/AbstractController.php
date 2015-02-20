@@ -62,7 +62,7 @@ class AbstractController extends Controller implements SelfRegisteringController
         $data = array_intersect_key($this->context->getRequest()->json()->all(), $validationRules);
         $validator = $this->assembleValidator($data, $validationRules);
         if ($validator->fails()) {
-            throw new InvalidInputHttpException($validator->messages()->all());
+            throw new InvalidInputHttpException($validator->errors()->all());
         }
         return $validator->valid();
     }
@@ -72,7 +72,7 @@ class AbstractController extends Controller implements SelfRegisteringController
         $data = array_intersect_key($this->context->getRequest()->query(), $validationRules);
         $validator = $this->assembleValidator($data, $validationRules);
         if ($validator->fails()) {
-            throw new InvalidQueryHttpException($validator->messages()->all());
+            throw new InvalidQueryHttpException($validator->errors()->all());
         }
         return $validator->valid();
     }

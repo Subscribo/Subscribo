@@ -40,6 +40,9 @@ class AccountFactory
             'account' => $account,
             'person' => $person,
         ];
+        if ( ! empty($data['oauth'])) {
+            AccountToken::generate($data['oauth'], $account->id);
+        }
         return $result;
     }
 

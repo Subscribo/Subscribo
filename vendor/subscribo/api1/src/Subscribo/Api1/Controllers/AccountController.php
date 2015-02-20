@@ -10,6 +10,7 @@ use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
 use Subscribo\ModelCore\Models\ServicePool;
 use Subscribo\ModelCore\Models\Account;
+use Subscribo\OAuthCommon\AbstractOAuthManager;
 
 
 class AccountController extends AbstractController
@@ -212,10 +213,12 @@ class AccountController extends AbstractController
         if (empty($data['oauth']) or ( ! is_array($data['oauth']))) {
             throw new InvalidInputHttpException(['oauth' => 'OAuth data empty']);
         }
+        $availableProvidersRule = AbstractOAuthManager::getAvailableDrivers();
+        array_unshift($availableProvidersRule, 'in');
         $oAuthData = $data['oauth'];
         $rules = [
             'identifier'    => 'required|max:255',
-            'provider'      => 'required|in:facebook',
+            'provider'      => ['required', $availableProvidersRule],
             'token'         => 'max:255',
         ];
         $validator = $this->assembleValidator($oAuthData, $rules);
