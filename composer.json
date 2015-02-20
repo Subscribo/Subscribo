@@ -9,9 +9,7 @@
         "subscribo/apiserver": "@dev",
         "subscribo/apiclient": "@dev",
         "subscribo/modifier": "@dev",
-        "subscribo/modelbase": "@dev",
-        "subscribo/config": "@dev",
-        "subscribo/auth": "@dev"
+        "subscribo/developmentseeder": "@dev"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "~4.0",

@@ -123,7 +123,7 @@ model_options:
     api_methods:
         administrator_menu: Services and Apis
 
-    oauth_configurations:
+    o_auth_configurations:
         administrator_menu: Services and Apis
 
     users:
@@ -316,7 +316,7 @@ model_fields:
         - element (bool) default false //true for element, false for collection
         - http_verb (enum from GET POST PUT DELETE OPTIONS)
 
-    oauth_configurations:
+    o_auth_configurations:
         - service_id
         - provider
         - identifier
@@ -356,7 +356,7 @@ model_fields:
 
     account_tokens:
         - account_id
-        - provider (enum from facebook twitter)
+        - provider
         - identifier
         - token null
         - secret null
