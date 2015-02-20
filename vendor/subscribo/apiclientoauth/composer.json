@@ -22,8 +22,9 @@
     ],
     "require": {
         "php": "~5.4",
-        "laravel/socialite": "~2.0",
+        "subscribo/oauthcommon": "@dev",
         "illuminate/routing": "~5.0",
+        "illuminate/http": "~5.0",
         "symfony/http-kernel": "~2.6",
         "subscribo/restclient": "@dev",
         "subscribo/apiclientauth": "@dev"

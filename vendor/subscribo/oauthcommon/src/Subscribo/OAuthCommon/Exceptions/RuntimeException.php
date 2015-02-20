@@ -1,8 +1,8 @@
-<?php namespace Subscribo\ApiClientOAuth\Exceptions;
+<?php namespace Subscribo\OAuthCommon\Exceptions;
 
 /**
  * Class RuntimeException
  *
- * @package Subscribo\ApiClientOAuth
+ * @package Subscribo\OAuthCommon
  */
 class RuntimeException extends \RuntimeException {}

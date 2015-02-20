@@ -1,13 +1,13 @@
-<?php namespace Subscribo\ApiClientOAuth\Traits;
+<?php namespace Subscribo\OAuthCommon\Traits;
 
-use Subscribo\ApiClientOAuth\Exceptions\EmptyCodeException;
-use Subscribo\ApiClientOAuth\Exceptions\ErrorResponseException;
+use Subscribo\OAuthCommon\Exceptions\EmptyCodeException;
+use Subscribo\OAuthCommon\Exceptions\ErrorResponseException;
 
 /**
  * Class ResponseErrorsTrait
  * To be used for classes extending \Laravel\Socialite\Two\AbstractProvider
  *
- * @package Subscribo\ApiClientOAuth
+ * @package Subscribo\OAuthCommon
  */
 trait ResponseErrorsTrait
 {

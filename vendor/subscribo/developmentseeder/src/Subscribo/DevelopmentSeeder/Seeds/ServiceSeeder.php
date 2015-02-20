@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 use Subscribo\ModelCore\Models\Service;
 use Subscribo\ModelCore\Models\ServicePool;
 use Subscribo\ModelCore\Models\Language;
+use Subscribo\ModelCore\Models\OAuthConfiguration;
 
 class ServiceSeeder extends Seeder {
 
@@ -12,10 +13,20 @@ class ServiceSeeder extends Seeder {
         $american = Language::firstOrNew(['identifier' => 'EN_US']);
         $british = Language::firstOrNew(['identifier' => 'EN_UK']);
         $testService = Service::firstOrNew(['identifier' => 'TEST']);
+        $testService->url = 'http://frontend.sio.kochabo.at';
         $testService->defaultLanguage()->associate($american);
         $testService->save();
         $testService->availableLanguages()->attach($american);
         $testService->availableLanguages()->attach($british);
+
+        $oAuthConfiguration = new OAuthConfiguration();
+        $oAuthConfiguration->serviceId = $testService->id;
+        $oAuthConfiguration->provider = 'facebook';
+        $oAuthConfiguration->identifier = env('FACEBOOK_APP_CLIENT_ID');
+        $oAuthConfiguration->secret = env('FACEBOOK_APP_CLIENT_SECRET');
+        $oAuthConfiguration->scopes = json_encode('email');
+        $oAuthConfiguration->redirect = null;
+        $oAuthConfiguration->save();
 
         $test2Service = Service::firstOrNew(['identifier' => 'TEST2']);
         $test2Service->defaultLanguage()->associate($american);

@@ -1,12 +1,12 @@
-<?php namespace Subscribo\ApiClientOAuth\Providers;
+<?php namespace Subscribo\OAuthCommon\Providers;
 
 use Laravel\Socialite\Two\FacebookProvider as Base;
-use Subscribo\ApiClientOAuth\Traits\ResponseErrorsTrait;
+use Subscribo\OAuthCommon\Traits\ResponseErrorsTrait;
 
 /**
  * Class FacebookProvider
  *
- * @package Subscribo\ApiClientOAuth
+ * @package Subscribo\OAuthCommon
  */
 class FacebookProvider extends Base
 {

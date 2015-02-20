@@ -4,6 +4,7 @@ use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Exception;
+use LogicException;
 use Subscribo\ApiClientAuth\Registrar;
 use Subscribo\ApiClientAuth\QuestionList;
 use Subscribo\ApiClientAuth\Exceptions\ValidationException;
@@ -48,7 +49,7 @@ trait AuthenticatesAndRegistersUsersTrait
             $this->auth->login($response);
             return redirect($this->redirectPath());
         }
-        throw new Exception('Response is neither instance of QuestionList nor Authenticatable');
+        throw new LogicException('Response is neither instance of QuestionList nor Authenticatable');
     }
 
     public function postLogin(Request $request)
