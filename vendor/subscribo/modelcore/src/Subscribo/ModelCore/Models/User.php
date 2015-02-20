@@ -18,14 +18,20 @@ class User extends \Subscribo\ModelCore\Bases\User implements Authenticatable, B
     const TYPE_ADMINISTRATOR = 'administrator';
     const TYPE_SERVER = 'server';
 
+    /**
+     * @return bool
+     */
     public function isGuest()
     {
         return $this->type === self::TYPE_GUEST;
     }
 
+    /**
+     * @return CanBeGuestInterface|User|static|null
+     */
     public static function findGuest()
     {
-        $query = self::query();
+        $query = static::query();
         $query->where('type', self::TYPE_GUEST);
         $result = $query->first();
         return $result;

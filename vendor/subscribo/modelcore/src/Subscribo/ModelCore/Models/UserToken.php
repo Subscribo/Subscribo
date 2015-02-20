@@ -1,5 +1,6 @@
 <?php namespace Subscribo\ModelCore\Models;
 
+use InvalidArgumentException;
 use Subscribo\RestCommon\TokenRing;
 use Subscribo\RestCommon\Signature;
 use Subscribo\RestCommon\Interfaces\TokenRingProviderInterface;
@@ -26,6 +27,9 @@ class UserToken extends \Subscribo\ModelCore\Bases\UserToken implements TokenRin
         $this->refreshTokenRing();
     }
 
+    /**
+     * @return $this
+     */
     public function refreshTokenRing()
     {
         $tokenRing = new TokenRing();
@@ -46,11 +50,17 @@ class UserToken extends \Subscribo\ModelCore\Bases\UserToken implements TokenRin
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function provideTokenRing()
     {
         return $this->tokenRing;
     }
 
+    /**
+     * @return null|User|\Subscribo\RestCommon\Interfaces\ByTokenIdentifiableInterface
+     */
     public function provideByTokenIdentifiable()
     {
         return $this->user;
@@ -59,11 +69,11 @@ class UserToken extends \Subscribo\ModelCore\Bases\UserToken implements TokenRin
     /**
      * @param $token
      * @param null $tokenType
-     * @return self|null
+     * @return UserToken|static|null
      */
     public static function findByTokenAndType($token, $tokenType = null)
     {
-        $query = self::query();
+        $query = static::query();
         $query->where('token', $token);
         if ($tokenType) {
             $query->where('type', $tokenType);
@@ -72,13 +82,24 @@ class UserToken extends \Subscribo\ModelCore\Bases\UserToken implements TokenRin
         return $result;
     }
 
+    /**
+     * @param int|User $user
+     * @param bool $tokenType
+     * @param null $commonSecret
+     * @return UserToken|static
+     * @throws InvalidArgumentException
+     */
     public static function generateTokenForUser($user, $tokenType = true, $commonSecret = null)
     {
-        $userId = ($user instanceof User) ?  $user = $user->id : $user;
+        $userId = ($user instanceof User) ? $user->id : $user;
+        if (( ! is_int($userId)) and ( ! ctype_digit($userId))) {
+            throw new InvalidArgumentException('user should be either instance of User, int or int string');
+        }
+        $userId = intval($userId);
         if (true === $tokenType) {
             $tokenType = self::DEFAULT_TOKEN_TYPE;
         }
-        $instance = new self();
+        $instance = new static();
         $instance->type = $tokenType;
         $instance->userId = $userId;
         $instance->status = self::STATUS_ACTIVE;
@@ -86,11 +107,11 @@ class UserToken extends \Subscribo\ModelCore\Bases\UserToken implements TokenRin
 
         switch ($tokenType) {
             case self::TYPE_SUBSCRIBO_DIGEST:
-                $instance->secret = self::assembleToken();
-                $instance->token = self::assembleToken();
+                $instance->secret = static::assembleToken();
+                $instance->token = static::assembleToken();
                 break;
             case self::TYPE_SUBSCRIBO_BASIC:
-                $instance->token = self::assembleToken();
+                $instance->token = static::assembleToken();
                 break;
             case self::TYPE_COMMON_SECRET_ONLY:
         }

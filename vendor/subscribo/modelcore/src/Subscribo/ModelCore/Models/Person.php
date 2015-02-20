@@ -21,18 +21,26 @@ class Person extends \Subscribo\ModelCore\Bases\Person
 
     protected static $prefixes = ['Herr', 'Frau', 'Dr.', 'Dipl.-Ing.', 'Ing.', 'Bc.', 'Mag.', 'LAbg.', 'HR', 'Abg.z.NR',  'Prof.', 'Univ.Prof.', 'doc.', 'Mgr.', 'et.' ];
 
+    /**
+     * @param string $name
+     * @param string|null $gender
+     * @return Person|static
+     */
     public static function generate($name, $gender = null)
     {
         if (filter_var($name, FILTER_VALIDATE_EMAIL)) {
-            $name = self::deriveNameFromEmail($name);
+            $name = static::deriveNameFromEmail($name);
         }
-        $instance = new self();
+        $instance = new static();
         $instance->gender = $gender;
         $instance->assignName($name);
         $instance->save();
         return $instance;
     }
 
+    /**
+     * @param string $name
+     */
     protected function assignName($name)
     {
         $this->clearName();
@@ -46,7 +54,7 @@ class Person extends \Subscribo\ModelCore\Bases\Person
             $this->suffix = reset($commaSeparated) ?: null;
         } elseif (count($parts) > 2) {
             $last = end($parts);
-            foreach (self::$suffixes as $suffix) {
+            foreach (static::$suffixes as $suffix) {
                 if ($last === $suffix) {
                     $this->suffix = array_pop($parts);
                     break;
@@ -57,7 +65,7 @@ class Person extends \Subscribo\ModelCore\Bases\Person
         $this->lastName = array_pop($parts);
         /** Infix handling */
         $last = end($parts);
-        foreach (self::$infixes as $infix) {
+        foreach (static::$infixes as $infix) {
             if ($last === $infix) {
                 $this->infix = array_pop($parts);
             }
@@ -65,7 +73,7 @@ class Person extends \Subscribo\ModelCore\Bases\Person
         /** Prefix Handling */
         while ($parts) {
             $first = reset($parts);
-            $found = array_search($first, self::$prefixes, true);
+            $found = array_search($first, static::$prefixes, true);
             if (false === $found) {
                 break;
             }
@@ -89,6 +97,10 @@ class Person extends \Subscribo\ModelCore\Bases\Person
         $this->suffix = null;
     }
 
+    /**
+     * @param string $email
+     * @return string
+     */
     private static function deriveNameFromEmail($email)
     {
         $username = strstr($email, '@', true);
@@ -105,6 +117,9 @@ class Person extends \Subscribo\ModelCore\Bases\Person
         return $result;
     }
 
+    /**
+     * @return string
+     */
     public function getNameAttribute()
     {
         $result = $this->prefix.' '.$this->firstName.' '.$this->middleNames.' '.$this->infix.' '.$this->lastName.', '.$this->suffix;

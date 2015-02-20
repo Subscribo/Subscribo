@@ -10,11 +10,11 @@ class AccountToken extends \Subscribo\ModelCore\Bases\AccountToken {
     /**
      * @param $identifier
      * @param $serviceId
-     * @return null|self
+     * @return AccountToken|static|null
      */
     public static function findByIdentifierAndServiceId($identifier, $serviceId)
     {
-        $result = self::query()
+        $result = static::query()
             ->where('identifier', $identifier)
             ->whereHas('account', function ($query) use ($serviceId) {
                 $query->where('service_id', $serviceId);
@@ -25,11 +25,11 @@ class AccountToken extends \Subscribo\ModelCore\Bases\AccountToken {
     /**
      * @param array $data
      * @param int $accountId
-     * @return AccountToken
+     * @return AccountToken|static
      */
     public static function generate(array $data, $accountId)
     {
-        $accountToken = new self(array_only($data, array('provider', 'identifier', 'token', 'secret')));
+        $accountToken = new static(array_only($data, array('provider', 'identifier', 'token', 'secret')));
         $accountToken->accountId = $accountId;
         $accountToken->save();
         return $accountToken;
