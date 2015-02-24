@@ -20,6 +20,6 @@ class YamlFileLoader extends FileLoader {
         if ( ! is_string($resource)) {
             return false;
         }
-        return self::compareExtensions($resource, array('yml', 'yaml'));
+        return $this->compareExtensions($resource, array('yml', 'yaml'));
     }
 }

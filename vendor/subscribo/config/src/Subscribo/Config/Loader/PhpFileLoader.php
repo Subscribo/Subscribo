@@ -17,6 +17,6 @@ class PhpFileLoader extends FileLoader {
         if ( ! is_string($resource)) {
             return false;
         }
-        return self::compareExtensions($resource, 'php');
+        return $this->compareExtensions($resource, 'php');
     }
 }

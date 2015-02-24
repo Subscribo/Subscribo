@@ -12,10 +12,10 @@ class WrongServiceHttpException extends ForbiddenHttpException
     public function __construct($message = true, array $data = array(), $code = true, Exception $previous = null, array $headers = array())
     {
         if (true === $code) {
-            $code = self::DEFAULT_EXCEPTION_CODE;
+            $code = $this::DEFAULT_EXCEPTION_CODE;
         }
         if (true === $message) {
-            $message = self::DEFAULT_MESSAGE;
+            $message = $this::DEFAULT_MESSAGE;
         }
         parent::__construct($message, $data, $code, $previous, $headers);
     }

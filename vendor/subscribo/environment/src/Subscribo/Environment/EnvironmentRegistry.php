@@ -12,10 +12,10 @@ class EnvironmentRegistry {
      */
     public static function getInstance($key = 'default')
     {
-        if ( ! isset(self::$_instances[$key])) {
-            self::$_instances[$key] = self::make($key);
+        if ( ! isset(static::$_instances[$key])) {
+            static::$_instances[$key] = static::make($key);
         }
-        return self::$_instances[$key];
+        return static::$_instances[$key];
     }
 
     /**

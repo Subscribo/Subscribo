@@ -97,7 +97,7 @@ class UserToken extends \Subscribo\ModelCore\Bases\UserToken implements TokenRin
         }
         $userId = intval($userId);
         if (true === $tokenType) {
-            $tokenType = self::DEFAULT_TOKEN_TYPE;
+            $tokenType = static::DEFAULT_TOKEN_TYPE;
         }
         $instance = new static();
         $instance->type = $tokenType;

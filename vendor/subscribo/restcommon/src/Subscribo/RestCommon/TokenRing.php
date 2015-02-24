@@ -20,7 +20,7 @@ class TokenRing implements Arrayable, Jsonable
 
     /**
      * @param TokenRing|string|array $tokenRing
-     * @return TokenRing|null
+     * @return TokenRing|static|null
      */
     public static function make($tokenRing)
     {
@@ -30,7 +30,7 @@ class TokenRing implements Arrayable, Jsonable
         if ($tokenRing instanceof self) {
             return $tokenRing;
         }
-        return new self($tokenRing);
+        return new static($tokenRing);
     }
 
     /**
@@ -40,7 +40,7 @@ class TokenRing implements Arrayable, Jsonable
     {
         if ( ! empty($data))
         {
-            $this->load(self::analyse($data));
+            $this->load(static::analyse($data));
         }
     }
 
@@ -145,7 +145,7 @@ class TokenRing implements Arrayable, Jsonable
     public function export($format = null)
     {
         if (is_null($format)) {
-            $format = self::DEFAULT_FORMAT;
+            $format = static::DEFAULT_FORMAT;
         }
         switch ($format) {
             case self::FORMAT_ARRAY:

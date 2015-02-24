@@ -12,13 +12,13 @@ class RemoteServerErrorHttpException extends ServerErrorHttpException {
     public function __construct(array $data = array(), $statusCode = true, $message = true, $code = true, Exception $previous = null, array $headers = array())
     {
         if (true === $statusCode) {
-            $statusCode = self::DEFAULT_STATUS_CODE;
+            $statusCode = $this::DEFAULT_STATUS_CODE;
         }
         if (true === $code) {
-            $code = self::DEFAULT_EXCEPTION_CODE;
+            $code = $this::DEFAULT_EXCEPTION_CODE;
         }
         if (true === $message) {
-            $message = self::DEFAULT_MESSAGE;
+            $message = $this::DEFAULT_MESSAGE;
         }
         parent::__construct($statusCode, $message, $data, $code, $previous, $headers);
     }

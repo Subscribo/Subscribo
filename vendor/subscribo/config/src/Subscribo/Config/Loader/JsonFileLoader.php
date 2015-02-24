@@ -17,6 +17,6 @@ class JsonFileLoader extends FileLoader {
         if ( ! is_string($resource)) {
             return false;
         }
-        return self::compareExtensions($resource, 'json');
+        return $this->compareExtensions($resource, 'json');
     }
 }

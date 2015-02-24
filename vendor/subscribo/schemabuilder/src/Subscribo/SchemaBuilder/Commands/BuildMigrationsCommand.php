@@ -51,7 +51,7 @@ class BuildMigrationsCommand extends BuildCommandAbstract {
         $modelFields = DependencyResolver::reorder($modelFields, $migrationBuildOrder, true, true);
         $modelOptions = DependencyResolver::reorder($modelOptions, $migrationBuildOrder, true, true);
 
-        $this->_buildMigrations($modelFields, $modelOptions, self::MIGRATIONS_DIR);
+        $this->_buildMigrations($modelFields, $modelOptions, $this::MIGRATIONS_DIR);
 
         $this->info('Building migrations finished.');
     }
@@ -124,7 +124,7 @@ class BuildMigrationsCommand extends BuildCommandAbstract {
 	protected function getArguments()
 	{
 		return array(
-			array('file', InputArgument::OPTIONAL, 'File used for schema.', self::SCHEMA_DIR.'parsed_schema.yml'),
+			array('file', InputArgument::OPTIONAL, 'File used for schema.', $this::SCHEMA_DIR.'parsed_schema.yml'),
 		);
 	}
 

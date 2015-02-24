@@ -15,13 +15,13 @@ class TokenConfigurationHttpException extends ConfigurationHttpException {
             'content' => $responseContent,
         ];
         if (true === $code) {
-            $code = self::DEFAULT_EXCEPTION_CODE;
+            $code = $this::DEFAULT_EXCEPTION_CODE;
         }
         if (true === $statusCode) {
-            $statusCode = self::DEFAULT_STATUS_CODE;
+            $statusCode = $this::DEFAULT_STATUS_CODE;
         }
         if (true === $message) {
-            $message = self::DEFAULT_MESSAGE;
+            $message = $this::DEFAULT_MESSAGE;
         }
 
         parent::__construct($statusCode, $message, $data, $code, $previous, $headers);

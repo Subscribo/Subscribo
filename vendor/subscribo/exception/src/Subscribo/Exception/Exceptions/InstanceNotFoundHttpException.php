@@ -17,7 +17,7 @@ class InstanceNotFoundHttpException extends NotFoundHttpException {
     public function __construct($instanceName = true, $message = true, array $data = array(), $code = true, Exception $previous = null, array $headers = array())
     {
         if (true === $code) {
-            $code = self::DEFAULT_EXCEPTION_CODE;
+            $code = $this::DEFAULT_EXCEPTION_CODE;
         }
         if (true === $instanceName) {
             $instanceName = 'Requested instance';

@@ -24,7 +24,7 @@ class Arr extends \Illuminate\Support\Arr {
         $result = $array1;
         foreach ($array2 as $key => $value) {
             if (isset($result[$key]) and is_array($result[$key]) and is_array($value)) {
-                $result[$key] = self::mergeNatural($result[$key], $value);
+                $result[$key] = static::mergeNatural($result[$key], $value);
             } elseif ( ( ! isset($result[$key]) or ( ! is_null($value)))) {
                 $result[$key] = $value;
             }

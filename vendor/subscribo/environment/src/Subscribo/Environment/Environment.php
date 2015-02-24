@@ -36,7 +36,7 @@ class Environment implements EnvironmentInterface {
         if (array_key_exists('SUBSCRIBO_ENV', $_SERVER)) {
             return $_SERVER['SUBSCRIBO_ENV'];
         }
-        return self::PRODUCTION;
+        return $this::PRODUCTION;
     }
 
     /**

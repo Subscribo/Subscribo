@@ -120,7 +120,7 @@ class AbstractController extends Controller implements SelfRegisteringController
             $parsed = static::parseAction($action);
             $uri = $controllerUriStub.'/'.$parsed['uri'];
             if ( ! empty($parsed['params'])) {
-                $uri .= self::paramsToUri($parsed['params']);
+                $uri .= static::paramsToUri($parsed['params']);
             }
             $routerAction = $options;
             $routerAction['uses'] = get_called_class().'@'.$parsed['method'];
@@ -191,7 +191,7 @@ class AbstractController extends Controller implements SelfRegisteringController
             array_pop($parts);
         }
         $uri = implode('/', $parts);
-        $params = self::analyseParams($action);
+        $params = static::analyseParams($action);
         $result = ['method' => $action, 'verb' => $verb, 'uri' => $uri, 'params' => $params];
         return $result;
     }

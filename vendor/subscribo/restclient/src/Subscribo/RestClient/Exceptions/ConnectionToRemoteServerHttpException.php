@@ -13,13 +13,13 @@ class ConnectionToRemoteServerHttpException extends ServerErrorHttpException {
     public function __construct(Exception $previous = null, $statusCode = true, $message = true, array $data = array(), $code = true, array $headers = array())
     {
         if (true === $statusCode) {
-            $statusCode = self::DEFAULT_STATUS_CODE;
+            $statusCode = $this::DEFAULT_STATUS_CODE;
         }
         if (true === $code) {
-            $code = self::DEFAULT_EXCEPTION_CODE;
+            $code = $this::DEFAULT_EXCEPTION_CODE;
         }
         if (true === $message) {
-            $message = self::DEFAULT_MESSAGE;
+            $message = $this::DEFAULT_MESSAGE;
         }
         if ($previous instanceof ConnectException) {
             $data['connection']['error']['message'] = $previous->getMessage();

@@ -39,6 +39,6 @@ class AccountIdTransport
     public static function extractAccountIdFromProcessIncomingRequestResult($processIncomingRequestResult)
     {
         $description = Signature::extractDescriptionFromProcessIncomingRequestResult($processIncomingRequestResult);
-        return self::getAccountIdFromDescription($description);
+        return static::getAccountIdFromDescription($description);
     }
 }

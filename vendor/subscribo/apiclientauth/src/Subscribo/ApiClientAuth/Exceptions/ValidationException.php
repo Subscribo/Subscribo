@@ -13,10 +13,10 @@ class ValidationException extends Exception
     public function __construct(array $validationErrors, Exception $previous = null, $message = true, $code = true)
     {
         if (true === $code) {
-            $code = self::DEFAULT_EXCEPTION_CODE;
+            $code = $this::DEFAULT_EXCEPTION_CODE;
         }
         if (true === $message) {
-            $message = self::DEFAULT_MESSAGE;
+            $message = $this::DEFAULT_MESSAGE;
         }
         $this->validationErrors = $validationErrors;
         parent::__construct($message, $code, $previous);
