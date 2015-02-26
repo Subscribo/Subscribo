@@ -23,14 +23,18 @@
     "require": {
         "php": "~5.4",
         "subscribo/oauthcommon": "@dev",
-        "illuminate/routing": "~5.0",
-        "illuminate/http": "~5.0",
-        "symfony/http-kernel": "~2.6",
-        "subscribo/restclient": "@dev",
-        "subscribo/apiclientauth": "@dev"
+        "subscribo/apiclientcommon": "@dev"
     },
     "suggest": {
-        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+        "illuminate/foundation": "(already contained in laravel/framework) - If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version ~5.0)",
+        "illuminate/session": "(already contained in laravel/framework) - If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version ~5.0)",
+        "illuminate/routing": "(already contained in laravel/framework) - If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version ~5.0)",
+        "illuminate/http": "(already contained in laravel/framework) - If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version ~5.0)",
+        "illuminate/support": "(already contained in laravel/framework) - If using ApiClientOAuthServiceProvider (recommended version ~5.0)",
+        "subscribo/apiclientauth": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)",
+        "subscribo/exception": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)",
+        "subscribo/restcommon": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)"
     },
     "autoload": {
         "psr-4": {

@@ -1,24 +1,14 @@
 <?php namespace Subscribo\ApiClientOAuth\Connectors;
 
-use Subscribo\RestClient\RestClient;
+use Subscribo\ApiClientCommon\AbstractConnector;
 
 /**
  * Class OAuthConnector
  *
  * @package Subscribo\ApiClientOAuth
  */
-class OAuthConnector
+class OAuthConnector extends AbstractConnector
 {
-    /**
-     * @var \Subscribo\RestClient\RestClient
-     */
-    protected $restClient;
-
-    public function __construct(RestClient $restClient)
-    {
-        $this->restClient = $restClient;
-    }
-
     public function getConfig($driver, array $query = null, array $signatureOptions = null)
     {
         $responseData = $this->restClient->process('oauth/config/'.$driver, 'GET', null, $query, null, $signatureOptions, false);
