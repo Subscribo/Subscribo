@@ -17,6 +17,8 @@ use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Exception\ConnectException;
 use Subscribo\RestCommon\Signer;
 use Subscribo\RestClient\Exceptions\InvalidArgumentException;
+use Subscribo\RestCommon\Factories\ServerRequestHttpExceptionFactory;
+use Subscribo\RestClient\Exceptions\InvalidRemoteServerResponseHttpException;
 
 /**
  * Class RestClient
@@ -196,6 +198,7 @@ class RestClient {
         }
         if ($errorResponseToException) {
             $responseStatusCode = $this->extractResponseStatusCode($response);
+            $this->filterServerRequests($response, $responseStatusCode);
             $this->checkForTokenErrors($response, $responseStatusCode);
             $this->filterErrorResponses($response, $responseStatusCode);
         }
@@ -284,6 +287,38 @@ class RestClient {
     /**
      * @param ResponseInterface $response
      * @param int|null $statusCode
+     * @throws Exceptions\InvalidRemoteServerResponseHttpException
+     * @throws \Subscribo\RestCommon\Exceptions\ServerRequestHttpException
+     */
+    public function filterServerRequests(ResponseInterface $response, $statusCode = null)
+    {
+        if ( ! is_int($statusCode)) {
+            $statusCode = $this->extractResponseStatusCode($response);
+        }
+        if ( ! ServerRequestHttpExceptionFactory::isServerRequestResponse($statusCode)) {
+            return;
+        }
+        $responseContent = $this->extractResponseContent($response);
+        $statusMessage = $this->extractResponseStatusMessage($response);
+        $originalHeaders = $response->getHeaders();
+        $originalResponse = [
+            'content' => $responseContent,
+            'statusCode' => $statusCode,
+            'statusMessage' => $statusMessage,
+            'headers' => $originalHeaders,
+        ];
+        try {
+            $dataFull = json_decode($responseContent, true);
+            $serverRequestException = ServerRequestHttpExceptionFactory::make($statusCode, $dataFull);
+        } catch (Exception $e) {
+            throw new InvalidRemoteServerResponseHttpException(['originalResponse' => $originalResponse], true, true, true, $e);
+        }
+        throw $serverRequestException;
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @param int|null $statusCode
      * @throws Exceptions\TokenConfigurationHttpException
      */
     public function checkForTokenErrors(ResponseInterface $response, $statusCode = null)
@@ -328,8 +363,9 @@ class RestClient {
         /* Processing 4xx errors */
 
         $dataFull = json_decode($responseContent, true);
+        $keyName = ClientErrorHttpException::getKey();
 
-        $data = (empty($dataFull['error']) or ( ! is_array($dataFull['error']))) ? array() : $dataFull['error'];
+        $data = (empty($dataFull[$keyName]) or ( ! is_array($dataFull[$keyName]))) ? array() : $dataFull[$keyName];
 
         $message = (isset($data['message']) and is_string($data['message'])) ? $data['message'] : null;
 
@@ -349,7 +385,7 @@ class RestClient {
 
         $exceptionData = [
             'originalResponse' => $originalResponse,
-            'error' => $data,
+            $keyName => $data,
         ];
         $filteredHeaders = $this->extractResponseHeaders($response);
 
