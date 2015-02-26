@@ -24,11 +24,16 @@
         "subscribo/apiclientauth": "@dev",
         "subscribo/apiclientoauth": "@dev",
         "subscribo/restproxy": "@dev",
+        "subscribo/restcommon": "@dev",
         "subscribo/exception": "@dev",
         "subscribo/config": "@dev",
-        "symfony/http-foundation": "~2.6",
+        "illuminate/foundation": "~5.0",
         "illuminate/exception": "~5.0",
-        "illuminate/http": "~5.0"
+        "illuminate/http": "~5.0",
+        "illuminate/session": "~5.0",
+        "illuminate/routing": "~5.0",
+        "illuminate/support": "~5.0",
+        "symfony/http-foundation": "~2.6"
     },
     "suggest": {
         "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
