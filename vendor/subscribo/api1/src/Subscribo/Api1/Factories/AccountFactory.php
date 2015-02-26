@@ -6,6 +6,7 @@ use Subscribo\ModelCore\Models\Customer;
 use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\AccountToken;
 use Subscribo\ModelCore\Models\Person;
+use Subscribo\ModelCore\Models\CustomerRegistration;
 use Subscribo\Support\Arr;
 
 class AccountFactory
@@ -27,8 +28,20 @@ class AccountFactory
         return $customer;
     }
 
-    public function register($serviceId, array $data)
+    /**
+     * @param CustomerRegistration|array $data
+     * @param int $serviceId
+     * @return array
+     * @throws \Subscribo\Api1\Exceptions\InvalidArgumentException
+     */
+    public function register($data, $serviceId)
     {
+        if ($data instanceof CustomerRegistration) {
+            return $this->registerFromCustomerRegistration($data, $serviceId);
+        }
+        if ( ! is_array($data)) {
+            throw new InvalidArgumentException('AccountFactory::register() data have to be either array or instance of CustomerRegistration');
+        }
         $name = trim(Arr::get($data, 'name')) ?: Arr::get($data, 'email');
         $person = Person::generate($name, Arr::get($data, 'gender'));
         $customer = $this->create($data);
@@ -42,6 +55,31 @@ class AccountFactory
         ];
         if ( ! empty($data['oauth'])) {
             AccountToken::generate($data['oauth'], $account->id);
+        }
+        return $result;
+    }
+
+    public function registerFromCustomerRegistration(CustomerRegistration $customerRegistration, $serviceId)
+    {
+        $name = trim($customerRegistration->name) ?: $customerRegistration->email;
+        $person = Person::generate($name);//todo add gender if implemented
+        $customer = new Customer();
+        $customer->email = $customerRegistration->email;
+        $customer->password = $customerRegistration->password;
+        $customer->person()->associate($person);
+        $customer->save();
+        $account = Account::generate($customer->id, $serviceId);
+        $result = [
+            'customer' => $customer,
+            'account' => $account,
+            'person' => $person,
+        ];
+        if ($customerRegistration->accountTokenId) {
+            $accountToken = AccountToken::find($customerRegistration->accountTokenId);
+            if ($accountToken) {
+                $accountToken->accountId = $account->id;
+                $accountToken->save();
+            }
         }
         return $result;
     }

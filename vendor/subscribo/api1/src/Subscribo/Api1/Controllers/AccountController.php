@@ -1,17 +1,23 @@
 <?php namespace Subscribo\Api1\Controllers;
 
-use LogicException;
-use Subscribo\Api1\AbstractController;
+use RuntimeException;
 use Subscribo\ModelCore\Models\AccountToken;
+use Subscribo\ModelCore\Models\ActionInterruption;
 use Subscribo\ModelCore\Models\Customer;
+use Subscribo\ModelCore\Models\Service;
+use Subscribo\ModelCore\Models\CustomerRegistration;
 use Subscribo\Exception\Exceptions\InvalidInputHttpException;
 use Subscribo\Exception\Exceptions\InvalidQueryHttpException;
 use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
-use Subscribo\Exception\Exceptions\WrongServiceHttpException;
 use Subscribo\ModelCore\Models\ServicePool;
 use Subscribo\ModelCore\Models\Account;
 use Subscribo\OAuthCommon\AbstractOAuthManager;
-
+use Subscribo\RestCommon\Questionary;
+use Subscribo\Api1\AbstractController;
+use Subscribo\Api1\Factories\AccountFactory;
+use Subscribo\Api1\Factories\CustomerRegistrationFactory;
+use Subscribo\Api1\Factories\QuestionaryFactory;
+use Subscribo\Api1\Context;
 
 class AccountController extends AbstractController
 {
@@ -34,17 +40,11 @@ class AccountController extends AbstractController
         if ( ! empty($validated['oauth'])) {
             return $this->oAuthRegistration($validated, $serviceId);
         }
-        $emailUsed = $this->checkEmailUsed($validated['email'], $serviceId);
-        if (false === $emailUsed) {
-            return $this->performRegistration($validated, $serviceId);
-        }
-        if (true === $emailUsed) {
+        $emailUsed = $this->checkEmailUsed($validated['email'], $serviceId, $validated);
+        if ($emailUsed) {
             throw new InvalidInputHttpException(['email' => 'Email already used for this service']);
         }
-        if (is_array($emailUsed)) {
-            return $emailUsed;
-        }
-        throw new LogicException('checkEmailUsed should return bool or array');
+        return $this->performRegistration($validated, $serviceId);
     }
 
     /**
@@ -72,7 +72,7 @@ class AccountController extends AbstractController
      * @return array
      * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException|\Subscribo\Exception\Exceptions\InvalidQueryHttpException
      */
-    public function processValidation($validated, $method)
+    private function processValidation($validated, $method)
     {
         /** @var \Subscribo\Api1\Factories\AccountFactory $accountFactory */
         $accountFactory = $this->applicationMake('Subscribo\\Api1\\Factories\\AccountFactory');
@@ -122,6 +122,52 @@ class AccountController extends AbstractController
         return ['found' => true, 'result' => $this->assembleAccountResult($account)];
     }
 
+    public function resumeRegistration(ActionInterruption $actionInterruption, array $data, Context $context, Questionary $questionary)
+    {
+        if ($data['service'] === 'new') {
+            $extraData = $actionInterruption->extraData;
+            $customerRegistration = CustomerRegistration::find($extraData['customerRegistrationId']);
+            if (empty($customerRegistration)) {
+                throw new RuntimeException(sprintf("CustomerRegistration with id '%s' not found", $extraData['customerRegistrationId']));
+            }
+            $actionInterruption->answer = $data;
+            return $this->performRegistration($customerRegistration, $context->getServiceId(), $actionInterruption);
+        }
+        throw new \RuntimeException('Not implemented');
+        //todo implement
+
+    }
+
+    public function resumeOAuthMissingEmail(ActionInterruption $actionInterruption, array $data, Context $context, Questionary $questionary)
+    {
+        $extraData = $actionInterruption->extraData;
+        $customerRegistration = CustomerRegistration::find($extraData['customerRegistrationId']);
+        if (empty($customerRegistration)) {
+            throw new RuntimeException(sprintf("CustomerRegistration with id '%s' not found", $extraData['customerRegistrationId']));
+        }
+        $emailUsed = $this->checkEmailUsed($data['email'], $context->getServiceId(), $customerRegistration);
+        $customerRegistration->email = $data['email'];
+        $customerRegistration->save();
+        if ($emailUsed) {
+            $extraData = ['customerRegistrationId' => $customerRegistration->id];
+            return $this->askQuestion(Questionary::CODE_LOGIN_OR_NEW_ACCOUNT, $extraData, 'resumeOAuthExistingEmail');
+        }
+        $actionInterruption->answer = $data;
+        return $this->performRegistration($customerRegistration, $context->getServiceId(), $actionInterruption);
+    }
+
+    public function resumeOAuthExistingEmail(ActionInterruption $actionInterruption, array $data, Context $context, Questionary $questionary)
+    {
+        throw new \RuntimeException('NOT IMPLEMENTED');
+        //todo implement
+    }
+    private function generateCustomerRegistration(array $data, $serviceId)
+    {
+        /** @var CustomerRegistrationFactory $customerRegistrationFactory */
+        $customerRegistrationFactory = $this->applicationMake('Subscribo\\Api1\\Factories\\CustomerRegistrationFactory');
+        return $customerRegistrationFactory->generate($data, $serviceId);
+    }
+
     /**
      * @param int|null $accountId
      * @return Account
@@ -150,35 +196,25 @@ class AccountController extends AbstractController
     }
 
     /**
-     * @param array $data
+     * @param CustomerRegistration|array $data
      * @param int $serviceId
+     * @param ActionInterruption $actionInterruption
      * @return array
      */
-    private function performRegistration(array $data, $serviceId)
+    private function performRegistration($data, $serviceId, ActionInterruption $actionInterruption = null)
     {
         /** @var \Subscribo\Api1\Factories\AccountFactory $accountFactory */
         $accountFactory = $this->applicationMake('Subscribo\\Api1\\Factories\\AccountFactory');
 
-        $registered = $accountFactory->register($serviceId, $data);
+        $registered = $accountFactory->register($data, $serviceId);
 
+        if ($actionInterruption) {
+            $actionInterruption->status = ActionInterruption::STATUS_PROCESSED;
+            $actionInterruption->save();
+        }
         return  ['registered' => true, 'result' => $registered ];
     }
 
-    /**
-     * @param $method
-     * @return InvalidInputHttpException|InvalidQueryHttpException
-     */
-    private function assembleCredentialsNotValidException($method)
-    {
-        $errors = [
-            'email' => 'Credentials not valid for this service',
-            'password' => 'Credentials not valid for this service',
-        ];
-        if ('GET' === $method) {
-            return new InvalidQueryHttpException($errors);
-        }
-        return new InvalidInputHttpException($errors);
-    }
 
     private function oAuthRegistration(array $data, $serviceId)
     {
@@ -188,19 +224,17 @@ class AccountController extends AbstractController
             return ['registered' => true, 'result' => $this->assembleAccountResult($alreadyRegistered->account)];
         }
         if (empty($data['email']) or ( ! $this->isEmailAcceptable($data['email']))) {
-            return $this->assembleAskForEmail();
+            $customerRegistration = $this->generateCustomerRegistration($data, $serviceId);
+            $extraData = ['customerRegistrationId' => $customerRegistration->id];
+            return $this->askQuestion(Questionary::CODE_NEW_CUSTOMER_EMAIL, $extraData, 'resumeOAuthMissingEmail');
         }
-        $emailUsed = $this->checkEmailUsed($data['email'], $serviceId);
-        if (false === $emailUsed) {
-            return $this->performRegistration($data, $serviceId);
+        $emailUsed = $this->checkEmailUsed($data['email'], $serviceId, $data);
+        if ($emailUsed) {
+            $customerRegistration = $this->generateCustomerRegistration($data, $serviceId);
+            $extraData = ['customerRegistrationId' => $customerRegistration->id];
+            return $this->askQuestion(Questionary::CODE_LOGIN_OR_NEW_ACCOUNT, $extraData, 'resumeOAuthExistingEmail');
         }
-        if (true === $emailUsed) {
-            return $this->assembleAskForEmailOrPassword();
-        }
-        if (is_array($emailUsed)) {
-            return $emailUsed;
-        }
-        throw new LogicException('checkEmailUsed should be bool or array');
+        return $this->performRegistration($data, $serviceId);
     }
 
     /**
@@ -228,13 +262,13 @@ class AccountController extends AbstractController
         return $validator->valid();
     }
 
-
     /**
      * @param string $email
      * @param int $serviceId
-     * @return array|bool
+     * @param CustomerRegistration|array $data
+     * @return bool
      */
-    private function checkEmailUsed($email, $serviceId)
+    private function checkEmailUsed($email, $serviceId, $data)
     {
         $alreadyRegisteredCustomers = Customer::findAllByEmail($email);
 
@@ -260,54 +294,26 @@ class AccountController extends AbstractController
         if (empty($compatibleServices)) {
             return false;
         }
-        return [
-            'asking' => true,
-            'questions' => [[
-                'type' => 'select',
-                'text' => 'Would you like to merge your account with existing account?',
-                'code' => 10,
-                'options' => $compatibleServices,
-            ]]
-        ];
+        $serviceList = array();
+        foreach ($compatibleServices as $serviceIdToAdd) {
+            $service = Service::find($serviceIdToAdd);
+            $serviceList[$serviceIdToAdd] = $service->name;
+        }
+        $additionalData = ['samePoolServices' => $serviceList];
+        $questionary = QuestionaryFactory::make(Questionary::CODE_MERGE_OR_NEW_ACCOUNT, $additionalData);
 
-    }
-
-    private function assembleAskForEmail()
-    {
-        return [
-            'asking' => true,
-            'questions' => [[
-                'type' => 'email',
-                'text' => 'Your email:',
-                'code' => 20,
-            ]],
-        ];
-    }
-
-    private function assembleAskForEmailOrPassword()
-    {
-        return [
-            'asking' => true,
-            'title' => 'Would you like to login to your current account or provide a new one?',
-            'questions' => [
-                [
-                    'type' => 'email',
-                    'text' => 'Your email:',
-                    'code' => 30,
-                ],
-                [
-                    'type' => 'password',
-                    'text' => 'Password to your current account',
-                    'code' => 40,
-                ]
-            ],
-        ];
+        $customerRegistration = ($data instanceof CustomerRegistration) ? $data : $this->generateCustomerRegistration($data, $serviceId);
+        $extraData = ['customerRegistrationId' => $customerRegistration->id];
+        $this->askQuestion($questionary, $extraData, 'resumeRegistration');
     }
 
     private function isEmailAcceptable($email)
     {
+        $domain = trim(strtolower(strstr($email, '@')));
+        if ('@facebook.com' === $domain) {
+            return false;
+        }
         return true;
-
     }
 
 }
