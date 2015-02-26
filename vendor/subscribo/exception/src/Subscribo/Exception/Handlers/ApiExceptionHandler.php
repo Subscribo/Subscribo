@@ -80,7 +80,7 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
             $defaultContentData['metaData']['accessedUrl'] = $request->getUri();
         }
         if ($e instanceof ContainDataInterface) {
-            $content = $e->getOutputData(['error' => $defaultContentData]);
+            $content = $e->getOutputData([$e->getKey() => $defaultContentData]);
         } else {
             $content = ['error' => $defaultContentData];
         }
@@ -106,6 +106,9 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
         }
         if (400 <= $statusCode) {
             return 'Other Client Error';
+        }
+        if (300 <= $statusCode) {
+            return 'Other Redirect';
         }
         return 'Other Error';
 

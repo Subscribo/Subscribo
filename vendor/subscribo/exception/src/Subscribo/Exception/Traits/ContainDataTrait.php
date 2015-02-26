@@ -29,11 +29,12 @@ trait ContainDataTrait {
      */
     public function getOutputData(array $default = null)
     {
-        $errorData = $this->getErrorData();
-        if (empty($errorData)) {
+        $keyName = $this->getKey();
+        $keyData = $this->getKeyData();
+        if (empty($keyData)) {
             return $default;
         }
-        $content = array('error' => $errorData);
+        $content = array($keyName => $keyData);
         if (empty($default)) {
             return $content;
         }
@@ -44,15 +45,24 @@ trait ContainDataTrait {
     /**
      * @return array
      */
-    public function getErrorData()
+    public function getKeyData()
     {
+        $keyName = $this->getKey();
         $data = $this->getData();
-        if (empty($data['error'])) {
+        if (empty($data[$keyName])) {
             return array();
         }
-        if (is_array($data['error'])) {
-            return $data['error'];
+        if (is_array($data[$keyName])) {
+            return $data[$keyName];
         }
-        return array('content' => $data['error']);
+        return array('content' => $data[$keyName]);
+    }
+
+    /**
+     * @return string
+     */
+    public static function getKey()
+    {
+        return 'error';
     }
 }
