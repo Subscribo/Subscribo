@@ -2,21 +2,11 @@
 
 use Subscribo\ApiClientAuth\Exceptions\ValidationException;
 use Subscribo\RestClient\Exceptions\ClientErrorHttpException;
-use Subscribo\RestClient\RestClient;
 use Subscribo\RestClient\Exceptions\InvalidRemoteServerResponseHttpException;
-use Subscribo\ApiClientAuth\QuestionList;
+use Subscribo\ApiClientCommon\AbstractConnector;
 
-class AccountConnector
+class AccountConnector extends AbstractConnector
 {
-    /**
-     * @var \Subscribo\RestClient\RestClient
-     */
-    protected $restClient;
-
-    public function __construct(RestClient $restClient)
-    {
-        $this->restClient = $restClient;
-    }
 
     /**
      * @param int $id
@@ -71,7 +61,7 @@ class AccountConnector
     /**
      * @param array $data
      * @param array $signatureOptions
-     * @return array|null|QuestionList
+     * @return array|null
      * @throws \Subscribo\ApiClientAuth\Exceptions\ValidationException
      */
     public function postRegistration(array $data, array $signatureOptions = null)
@@ -79,15 +69,16 @@ class AccountConnector
         try {
             $responseData = $this->restClient->process('account/registration', 'POST', $data, null, null, $signatureOptions, false);
         } catch (ClientErrorHttpException $e) {
-            $data = $e->getErrorData();
+            $data = $e->getKeyData();
             $validationErrors = empty($data['validationErrors']) ? ['Registration did not proceeded. Try different email or contact an administrator.'] : $data['validationErrors'];
             throw new ValidationException($validationErrors);
         }
-        $account = $this->assembleResult($responseData, 'registered');
-        if ($account) {
-            return $account;
-        }
-        return $this->assembleQuestionList($responseData);
+        return $this->assembleResult($responseData, 'registered');
+    }
+
+    public function resumePostRegistration(array $responseData)
+    {
+        return $this->assembleResult($responseData, 'registered');
     }
 
 
@@ -108,7 +99,7 @@ class AccountConnector
         $keysToCheck = is_array($keyToCheck) ? $keyToCheck : array($keyToCheck);
         foreach ($keysToCheck as $key) {
             if (empty($source[$key])) {
-                return null;
+                throw new InvalidRemoteServerResponseHttpException();
             }
         }
         if (empty($source['result']['account']['id'])
@@ -124,26 +115,4 @@ class AccountConnector
         return $result;
     }
 
-    /**
-     * @param $source
-     * @return null|QuestionList
-     * @throws \Subscribo\RestClient\Exceptions\InvalidRemoteServerResponseHttpException
-     */
-    protected function assembleQuestionList($source)
-    {
-        if (empty($source)) {
-            return null;
-        }
-        if ( ! is_array($source)) {
-            throw new InvalidRemoteServerResponseHttpException();
-        }
-        if (empty($source['asking'])) {
-            return null;
-        }
-        if (( ! array_key_exists('questions', $source) or ( ! is_array($source['questions'])))) {
-            throw new InvalidRemoteServerResponseHttpException();
-        }
-        return new QuestionList($source['questions']);
-
-    }
 }

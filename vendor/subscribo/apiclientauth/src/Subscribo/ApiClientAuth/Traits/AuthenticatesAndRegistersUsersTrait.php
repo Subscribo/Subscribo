@@ -2,19 +2,33 @@
 
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Session\Store;
 use Illuminate\Http\Request;
 use Exception;
 use LogicException;
 use Subscribo\ApiClientAuth\Registrar;
-use Subscribo\ApiClientAuth\QuestionList;
 use Subscribo\ApiClientAuth\Exceptions\ValidationException;
-use Illuminate\Contracts\Auth\Authenticatable;
+use Subscribo\RestCommon\Exceptions\ServerRequestHttpException;
+use Subscribo\ApiClientCommon\Traits\HandleServerRequestHttpExceptionTrait;
 
 
 trait AuthenticatesAndRegistersUsersTrait
 {
     use ValidatesRequests;
     use AuthenticatesAndRegistersUsers;
+    use HandleServerRequestHttpExceptionTrait;
+
+    public function getRegister(Registrar $registrar, Store $session)
+    {
+        $resultInSession = $session->pull($this->sessionKeyQuestionaryAnswerResult);
+        $account = $resultInSession ? $registrar->resumeAttempt($resultInSession) : null;
+        if ($account) {
+            $this->auth->login($account);
+            return redirect($this->redirectPath());
+        }
+        return view('auth.register');
+    }
 
 
     public function postRegister(Registrar $registrar, Request $request)
@@ -23,10 +37,13 @@ trait AuthenticatesAndRegistersUsersTrait
         $this->validate($request, $rules);
 
         try {
-            $response  = $registrar->attempt($request->only(array_keys($rules)));
-            if (empty($response)) {
-                throw new Exception('Empty response.');
+            $account = $registrar->attempt($request->only(array_keys($rules)));
+            if (empty($account)) {
+                throw new Exception('Empty account.');
             }
+        } catch (ServerRequestHttpException $e) {
+            return $this->handleServerRequestHttpException($e, $request->path());
+
         } catch (ValidationException $e) {
             return redirect()
                 ->refresh()
@@ -38,18 +55,8 @@ trait AuthenticatesAndRegistersUsersTrait
                 ->withInput($request->only('email', 'name'))
                 ->withErrors('Registration attempt failed. Please try again later or contact an administrator.');
         }
-        if ($response instanceof QuestionList) {
-            return redirect()
-                ->refresh()
-                ->withInput($request->only('email', 'name'))
-                ->withErrors(['email' => 'This email has already been used for another service and account merging is not implemented yet. Please choose different email.']);
-        }
-
-        if ($response instanceof Authenticatable) {
-            $this->auth->login($response);
-            return redirect($this->redirectPath());
-        }
-        throw new LogicException('Response is neither instance of QuestionList nor Authenticatable');
+        $this->auth->login($account);
+        return redirect($this->redirectPath());
     }
 
     public function postLogin(Request $request)
