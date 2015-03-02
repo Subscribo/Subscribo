@@ -46,7 +46,6 @@ class ServerRequestHttpException extends HttpException implements HttpExceptionI
         }
 
         $data[$keyName]['type'] = isset($data[$keyName]['type']) ? $data[$keyName]['type'] : $this->getServerRequest()->getType();
-        \Log::notice('', $data);
         $this->setStatusMessage($message);
         parent::__construct($this::STATUS_CODE, $message, $data, $code, $previous, $headers);
     }

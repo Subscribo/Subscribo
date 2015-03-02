@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Exception;
 use Subscribo\ApiClientAuth\Registrar;
 use Subscribo\RestCommon\Exceptions\ServerRequestHttpException;
-use Subscribo\RestClient\Exceptions\ValidationErrorsHttpException;
+use Subscribo\RestClient\Exceptions\ValidationErrorsException;
 use Subscribo\ApiClientCommon\Traits\HandleServerRequestHttpExceptionTrait;
 
 /**
@@ -46,7 +46,7 @@ trait AuthenticatesAndRegistersUsersTrait
         } catch (ServerRequestHttpException $e) {
             return $this->handleServerRequestHttpException($e, $request->path());
 
-        } catch (ValidationErrorsHttpException $e) {
+        } catch (ValidationErrorsException $e) {
             return redirect()
                 ->refresh()
                 ->withInput($request->only('email', 'name'))

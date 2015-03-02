@@ -5,7 +5,7 @@ use Illuminate\Session\Store;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Contracts\Auth\Guard;
-use Subscribo\RestClient\Exceptions\ValidationErrorsHttpException;
+use Subscribo\RestClient\Exceptions\ValidationErrorsException;
 use Subscribo\RestCommon\Questionary;
 use Subscribo\RestCommon\AccountIdTransport;
 use Subscribo\RestCommon\Exceptions\ServerRequestHttpException;
@@ -49,7 +49,7 @@ trait QuestionaryControllerTrait
             $redirectUri = $session->pull($this->sessionKeyRedirectFromQuestionary);
             $questionary = $session->pull($this->sessionKeyQuestionary);
             return $this->handleServerRequestHttpException($e, $redirectUri);
-        } catch (ValidationErrorsHttpException $e) {
+        } catch (ValidationErrorsException $e) {
             return redirect()
                 ->refresh()
                 ->withInput($data)

@@ -1,6 +1,6 @@
 <?php namespace Subscribo\ApiClientAuth\Connectors;
 
-use Subscribo\RestClient\Exceptions\InvalidRemoteServerResponseHttpException;
+use Subscribo\RestClient\Exceptions\InvalidResponseException;
 use Subscribo\ApiClientCommon\AbstractConnector;
 
 class AccountConnector extends AbstractConnector
@@ -78,7 +78,7 @@ class AccountConnector extends AbstractConnector
      * @param null|array $source
      * @param string|array $keyToCheck
      * @return array|null
-     * @throws \Subscribo\RestClient\Exceptions\InvalidRemoteServerResponseHttpException
+     * @throws \Subscribo\RestClient\Exceptions\InvalidResponseException
      */
     protected function assembleResult($source, $keyToCheck = array())
     {
@@ -86,18 +86,18 @@ class AccountConnector extends AbstractConnector
             return null;
         }
         if ( ! is_array($source)) {
-            throw new InvalidRemoteServerResponseHttpException();
+            throw new InvalidResponseException();
         }
         $keysToCheck = is_array($keyToCheck) ? $keyToCheck : array($keyToCheck);
         foreach ($keysToCheck as $key) {
             if (empty($source[$key])) {
-                throw new InvalidRemoteServerResponseHttpException();
+                throw new InvalidResponseException();
             }
         }
         if (empty($source['result']['account']['id'])
           or empty($source['result']['customer']['email'])
           or ( ! isset($source['result']['person']['name']))) {
-            throw new InvalidRemoteServerResponseHttpException();
+            throw new InvalidResponseException();
         }
         $result = [
             'id'    => $source['result']['account']['id'],

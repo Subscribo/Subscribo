@@ -1,25 +1,28 @@
 <?php namespace Subscribo\RestClient;
 
 use Exception;
-use Subscribo\Exception\Exceptions\HttpException;
+use Subscribo\RestClient\Exceptions\InvalidArgumentException;
+use Subscribo\RestClient\Exceptions\ClientErrorException;
 use Subscribo\RestClient\Exceptions\ClientErrorHttpException;
-use Subscribo\RestClient\Exceptions\ValidationErrorsHttpException;
+use Subscribo\RestClient\Exceptions\ResponseException;
+use Subscribo\RestClient\Exceptions\ValidationErrorsException;
+use Subscribo\RestClient\Exceptions\TokenConfigurationException;
+use Subscribo\RestClient\Exceptions\TokenConfigurationHttpException;
+use Subscribo\RestClient\Exceptions\ServerErrorException;
+use Subscribo\RestClient\Exceptions\RemoteServerErrorHttpException;
+use Subscribo\RestClient\Exceptions\ConnectionException;
+use Subscribo\RestClient\Exceptions\ConnectionToRemoteServerHttpException;
+use Subscribo\RestClient\Exceptions\InvalidResponseException;
+use Subscribo\RestClient\Exceptions\InvalidRemoteServerResponseHttpException;
 use Subscribo\RestCommon\Exceptions\UnauthorizedHttpException;
 use Subscribo\RestCommon\RestCommon;
+use Subscribo\RestCommon\Signer;
+use Subscribo\RestCommon\Factories\ServerRequestHttpExceptionFactory;
+use Subscribo\Support\Arr;
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Subscribo\Support\Arr;
-use Subscribo\RestClient\Exceptions\TokenConfigurationHttpException;
-use Subscribo\RestClient\Exceptions\RemoteServerErrorHttpException;
-use Subscribo\RestClient\Exceptions\ConnectionToRemoteServerHttpException;
-use GuzzleHttp\Exception\TransferException;
-use GuzzleHttp\Exception\ConnectException;
-use Subscribo\RestCommon\Signer;
-use Subscribo\RestClient\Exceptions\InvalidArgumentException;
-use Subscribo\RestCommon\Factories\ServerRequestHttpExceptionFactory;
-use Subscribo\RestClient\Exceptions\InvalidRemoteServerResponseHttpException;
 
 /**
  * Class RestClient
@@ -95,23 +98,27 @@ class RestClient {
      * @param array|null $signatureOptions
      * @param bool $errorToException
      * @return Response
-     * @throws \GuzzleHttp\Exception\TransferException
-     * @throws Exceptions\ConnectionToRemoteServerHttpException
      * @throws Exceptions\ClientErrorHttpException
+     * @throws Exceptions\ConnectionToRemoteServerHttpException
+     * @throws Exceptions\InvalidRemoteServerResponseHttpException
      * @throws Exceptions\RemoteServerErrorHttpException
      * @throws Exceptions\TokenConfigurationHttpException
      */
     public function forward(Request $request, $uriStub, array $signatureOptions = null, $errorToException = true)
     {
-        $callResponse = $this->call(
-            $uriStub,
-            $request->getMethod(),
-            $request->getContent(),
-            $request->query->all(),
-            $request->headers->all(),
-            $signatureOptions,
-            $errorToException
-        );
+        try {
+            $callResponse = $this->call(
+                $uriStub,
+                $request->getMethod(),
+                $request->getContent(),
+                $request->query->all(),
+                $request->headers->all(),
+                $signatureOptions,
+                $errorToException
+            );
+        } catch (Exception $e) {
+            throw $this->transformExceptions($e);
+        }
         $responseContent = $this->extractResponseContent($callResponse);
         $responseStatusCode = $this->extractResponseStatusCode($callResponse);
         $responseStatusMessage = $this->extractResponseStatusMessage($callResponse);
@@ -135,13 +142,13 @@ class RestClient {
      * @param array|null $signatureOptions
      * @param bool $nullOnClientError
      * @return array|null
-     * @throws \Subscribo\Exception\Exceptions\HttpException
-     * @throws \GuzzleHttp\Exception\TransferException
-     * @throws Exceptions\ConnectionToRemoteServerHttpException
-     * @throws Exceptions\ClientErrorHttpException
-     * @throws Exceptions\RemoteServerErrorHttpException
-     * @throws Exceptions\TokenConfigurationHttpException
-     * @throws \Exception
+     * @throws Exceptions\ConnectionException
+     * @throws Exceptions\ResponseException
+     * @throws Exceptions\ServerErrorException
+     * @throws Exceptions\ClientErrorException
+     * @throws Exceptions\ValidationErrorsException
+     * @throws Exceptions\TokenConfigurationException
+     * @throws \Subscribo\RestCommon\Exceptions\ServerRequestHttpException
      */
     public function process($uriStub, $method = 'GET', $content = null, array $query = null, array $headers = null, array $signatureOptions = null, $nullOnClientError = false)
     {
@@ -150,13 +157,13 @@ class RestClient {
             $responseStatusCode = $this->extractResponseStatusCode($callResponse);
 
             if (($responseStatusCode < 200) or ($responseStatusCode >= 300)){
-                throw new HttpException($responseStatusCode);
+                throw new ResponseException($responseStatusCode);
             }
             $data = $this->extractResponseData($callResponse, true);
 
             return $data;
 
-        } catch (ClientErrorHttpException $e) {
+        } catch (ClientErrorException $e) {
 
             if ($nullOnClientError) {
                 return null;
@@ -175,7 +182,12 @@ class RestClient {
      * @param array|null $signatureOptions
      * @param bool $errorResponseToException
      * @return \GuzzleHttp\Message\FutureResponse|ResponseInterface|\GuzzleHttp\Ring\Future\FutureInterface|mixed|null
-     * @throws Exceptions\ConnectionToRemoteServerHttpException
+     * @throws Exceptions\ConnectionException
+     * @throws Exceptions\ServerErrorException
+     * @throws Exceptions\ClientErrorException
+     * @throws Exceptions\ValidationErrorsException
+     * @throws Exceptions\TokenConfigurationException
+     * @throws \Subscribo\RestCommon\Exceptions\ServerRequestHttpException
      */
     public function call($uriStub, $method = 'GET', $content = null, array $query = null, array $headers = null, array $signatureOptions = null, $errorResponseToException = true)
     {
@@ -194,8 +206,8 @@ class RestClient {
 
         try {
             $response = $this->callRaw($uri, $method, $content,$query, $processedHeaders);
-        } catch (ConnectException $e) {
-            throw new ConnectionToRemoteServerHttpException($e);
+        } catch (Exception $e) {
+            throw new ConnectionException($e);
         }
         if ($errorResponseToException) {
             $responseStatusCode = $this->extractResponseStatusCode($response);
@@ -288,7 +300,7 @@ class RestClient {
     /**
      * @param ResponseInterface $response
      * @param int|null $statusCode
-     * @throws Exceptions\InvalidRemoteServerResponseHttpException
+     * @throws Exceptions\InvalidResponseException
      * @throws \Subscribo\RestCommon\Exceptions\ServerRequestHttpException
      */
     public function filterServerRequests(ResponseInterface $response, $statusCode = null)
@@ -312,7 +324,7 @@ class RestClient {
             $dataFull = json_decode($responseContent, true);
             $serverRequestException = ServerRequestHttpExceptionFactory::make($statusCode, $dataFull);
         } catch (Exception $e) {
-            throw new InvalidRemoteServerResponseHttpException(['originalResponse' => $originalResponse], true, true, true, $e);
+            throw new InvalidResponseException(['originalResponse' => $originalResponse], true, true, $e);
         }
         throw $serverRequestException;
     }
@@ -320,7 +332,7 @@ class RestClient {
     /**
      * @param ResponseInterface $response
      * @param int|null $statusCode
-     * @throws Exceptions\TokenConfigurationHttpException
+     * @throws Exceptions\TokenConfigurationException
      */
     public function checkForTokenErrors(ResponseInterface $response, $statusCode = null)
     {
@@ -328,7 +340,7 @@ class RestClient {
             $statusCode = $this->extractResponseStatusCode($response);
         }
         if (UnauthorizedHttpException::SERVER_STATUS_CODE === $statusCode) {
-            throw new TokenConfigurationHttpException($statusCode, $this->extractResponseContent($response));
+            throw new TokenConfigurationException($statusCode, $this->extractResponseContent($response));
         }
     }
 
@@ -337,8 +349,9 @@ class RestClient {
      *
      * @param ResponseInterface $response
      * @param int|null $statusCode
-     * @throws Exceptions\ClientErrorHttpException
-     * @throws Exceptions\RemoteServerErrorHttpException
+     * @throws Exceptions\ServerErrorException
+     * @throws Exceptions\ClientErrorException
+     * @throws Exceptions\ValidationErrorsException
      */
     public function filterErrorResponses(ResponseInterface $response, $statusCode = null)
     {
@@ -358,13 +371,13 @@ class RestClient {
             'headers' => $originalHeaders,
         ];
         if (($statusCode >= 500)) {
-            throw new RemoteServerErrorHttpException(['originalResponse' => $originalResponse]);
+            throw new ServerErrorException($statusCode, $statusMessage, ['originalResponse' => $originalResponse]);
         }
 
         /* Processing 4xx errors */
 
         $dataFull = json_decode($responseContent, true);
-        $keyName = ClientErrorHttpException::getKey();
+        $keyName = ClientErrorException::getKey();
 
         $data = (empty($dataFull[$keyName]) or ( ! is_array($dataFull[$keyName]))) ? array() : $dataFull[$keyName];
 
@@ -390,9 +403,9 @@ class RestClient {
         ];
         $filteredHeaders = $this->extractResponseHeaders($response);
         if (empty($data['validationErrors'])) {
-            $e = new ClientErrorHttpException($statusCode, $message, $exceptionData, $exceptionCode, null, $filteredHeaders);
+            $e = new ClientErrorException($statusCode, $message, $exceptionData, $exceptionCode, null, $filteredHeaders);
         } else {
-            $e = new ValidationErrorsHttpException($statusCode, $message, $exceptionData, $exceptionCode, null, $filteredHeaders);
+            $e = new ValidationErrorsException($statusCode, $message, $exceptionData, $exceptionCode, null, $filteredHeaders);
         }
         if ($statusMessage) {
             $e->setStatusMessage($statusMessage);
@@ -466,6 +479,30 @@ class RestClient {
         $originalHeaders = $response->getHeaders();
         $filteredHeaders = $this->filterResponseHeaders($originalHeaders);
         return $filteredHeaders;
+    }
+
+    /**
+     * @param Exception|ClientErrorException|ServerErrorException|TokenConfigurationException|ConnectionException|InvalidResponseException $originalException
+     * @return Exception|ClientErrorHttpException|ConnectionToRemoteServerHttpException|InvalidRemoteServerResponseHttpException|RemoteServerErrorHttpException|TokenConfigurationHttpException
+     */
+    public function transformExceptions(Exception $originalException)
+    {
+        if ($originalException instanceof ClientErrorException) {
+            return new ClientErrorHttpException($originalException->getStatusCode(), $originalException->getMessage(), $originalException->getData(), $originalException->getCode(), $originalException, $originalException->getHeaders());
+        }
+        if ($originalException instanceof ServerErrorException) {
+            return new RemoteServerErrorHttpException($originalException);
+        }
+        if ($originalException instanceof TokenConfigurationException) {
+            return new TokenConfigurationHttpException($originalException);
+        }
+        if ($originalException instanceof ConnectionException) {
+            return new ConnectionToRemoteServerHttpException($originalException);
+        }
+        if ($originalException instanceof InvalidResponseException) {
+            return new InvalidRemoteServerResponseHttpException($originalException);
+        }
+        return $originalException;
     }
 
 }

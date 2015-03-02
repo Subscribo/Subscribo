@@ -6,7 +6,7 @@ use Subscribo\ApiClientAuth\Registrar;
 use Subscribo\ApiClientOAuth\OAuthManager;
 use Subscribo\ApiClientCommon\Traits\HandleServerRequestHttpExceptionTrait;
 use Subscribo\RestCommon\Exceptions\ServerRequestHttpException;
-use Subscribo\RestClient\Exceptions\ValidationErrorsHttpException;
+use Subscribo\RestClient\Exceptions\ValidationErrorsException;
 use Subscribo\Exception\Exceptions\NotFoundHttpException;
 
 /**
@@ -57,7 +57,7 @@ trait OAuthLoginTrait
             }
         } catch (ServerRequestHttpException $e) {
             return $this->handleServerRequestHttpException($e, $this->registrationPath);
-        } catch (ValidationErrorsHttpException $e) {
+        } catch (ValidationErrorsException $e) {
             return redirect($this->registrationPath)
                 ->withInput($nameAndEmail)
                 ->withErrors($e->getValidationErrors());

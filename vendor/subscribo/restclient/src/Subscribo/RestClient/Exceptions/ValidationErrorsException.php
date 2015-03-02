@@ -1,10 +1,10 @@
 <?php namespace Subscribo\RestClient\Exceptions;
 
-use Subscribo\RestClient\Exceptions\ClientErrorHttpException;
+use Subscribo\RestClient\Exceptions\ClientErrorException;
 use Subscribo\Exception\Interfaces\ValidationErrorsInterface;
 use Subscribo\Exception\Traits\ValidationErrorsTrait;
 
-class ValidationErrorsHttpException extends ClientErrorHttpException implements ValidationErrorsInterface
+class ValidationErrorsException extends ClientErrorException implements ValidationErrorsInterface
 {
     use ValidationErrorsTrait;
 }
