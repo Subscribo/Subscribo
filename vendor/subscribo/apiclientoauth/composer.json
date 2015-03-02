@@ -34,7 +34,8 @@
         "illuminate/support": "(already contained in laravel/framework) - If using ApiClientOAuthServiceProvider (recommended version ~5.0)",
         "subscribo/apiclientauth": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)",
         "subscribo/exception": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)",
-        "subscribo/restcommon": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)"
+        "subscribo/restcommon": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)",
+        "subscribo/restclient": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)"
     },
     "autoload": {
         "psr-4": {
