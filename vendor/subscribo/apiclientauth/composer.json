@@ -29,7 +29,8 @@
     "suggest": {
         "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
         "illuminate/foundation": "(already contained in laravel/framework) - If using AuthenticatesAndRegistersUsersTrait",
-        "illuminate/session": "(already contained in laravel/framework) - If using AuthenticatesAndRegistersUsersTrait (recommended version ~5.0)"
+        "illuminate/session": "(already contained in laravel/framework) - If using AuthenticatesAndRegistersUsersTrait (recommended version ~5.0)",
+        "subscribo/restclient": "If using AuthenticatesAndRegistersUsersTrait (recommended version @dev)"
     },
     "autoload": {
         "psr-4": {

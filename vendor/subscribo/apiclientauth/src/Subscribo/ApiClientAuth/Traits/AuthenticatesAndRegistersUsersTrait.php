@@ -2,17 +2,19 @@
 
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Session\Store;
 use Illuminate\Http\Request;
 use Exception;
-use LogicException;
 use Subscribo\ApiClientAuth\Registrar;
-use Subscribo\ApiClientAuth\Exceptions\ValidationException;
 use Subscribo\RestCommon\Exceptions\ServerRequestHttpException;
+use Subscribo\RestClient\Exceptions\ValidationErrorsHttpException;
 use Subscribo\ApiClientCommon\Traits\HandleServerRequestHttpExceptionTrait;
 
-
+/**
+ * Class AuthenticatesAndRegistersUsersTrait
+ *
+ * @package Subscribo\ApiClientAuth
+ */
 trait AuthenticatesAndRegistersUsersTrait
 {
     use ValidatesRequests;
@@ -44,7 +46,7 @@ trait AuthenticatesAndRegistersUsersTrait
         } catch (ServerRequestHttpException $e) {
             return $this->handleServerRequestHttpException($e, $request->path());
 
-        } catch (ValidationException $e) {
+        } catch (ValidationErrorsHttpException $e) {
             return redirect()
                 ->refresh()
                 ->withInput($request->only('email', 'name'))

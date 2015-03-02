@@ -1,7 +1,5 @@
 <?php namespace Subscribo\ApiClientAuth\Connectors;
 
-use Subscribo\ApiClientAuth\Exceptions\ValidationException;
-use Subscribo\RestClient\Exceptions\ClientErrorHttpException;
 use Subscribo\RestClient\Exceptions\InvalidRemoteServerResponseHttpException;
 use Subscribo\ApiClientCommon\AbstractConnector;
 
@@ -62,17 +60,11 @@ class AccountConnector extends AbstractConnector
      * @param array $data
      * @param array $signatureOptions
      * @return array|null
-     * @throws \Subscribo\ApiClientAuth\Exceptions\ValidationException
      */
     public function postRegistration(array $data, array $signatureOptions = null)
     {
-        try {
-            $responseData = $this->restClient->process('account/registration', 'POST', $data, null, null, $signatureOptions, false);
-        } catch (ClientErrorHttpException $e) {
-            $data = $e->getKeyData();
-            $validationErrors = empty($data['validationErrors']) ? ['Registration did not proceeded. Try different email or contact an administrator.'] : $data['validationErrors'];
-            throw new ValidationException($validationErrors);
-        }
+        $responseData = $this->restClient->process('account/registration', 'POST', $data, null, null, $signatureOptions, false);
+
         return $this->assembleResult($responseData, 'registered');
     }
 
