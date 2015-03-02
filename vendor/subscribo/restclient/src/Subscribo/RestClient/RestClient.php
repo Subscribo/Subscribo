@@ -3,6 +3,7 @@
 use Exception;
 use Subscribo\Exception\Exceptions\HttpException;
 use Subscribo\RestClient\Exceptions\ClientErrorHttpException;
+use Subscribo\RestClient\Exceptions\ValidationErrorsHttpException;
 use Subscribo\RestCommon\Exceptions\UnauthorizedHttpException;
 use Subscribo\RestCommon\RestCommon;
 use GuzzleHttp\Client;
@@ -388,8 +389,11 @@ class RestClient {
             $keyName => $data,
         ];
         $filteredHeaders = $this->extractResponseHeaders($response);
-
-        $e = new ClientErrorHttpException($statusCode, $message, $exceptionData, $exceptionCode, null, $filteredHeaders);
+        if (empty($data['validationErrors'])) {
+            $e = new ClientErrorHttpException($statusCode, $message, $exceptionData, $exceptionCode, null, $filteredHeaders);
+        } else {
+            $e = new ValidationErrorsHttpException($statusCode, $message, $exceptionData, $exceptionCode, null, $filteredHeaders);
+        }
         if ($statusMessage) {
             $e->setStatusMessage($statusMessage);
         }
