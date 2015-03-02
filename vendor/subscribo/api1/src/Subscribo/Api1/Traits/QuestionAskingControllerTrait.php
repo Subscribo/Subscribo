@@ -16,16 +16,44 @@ use Subscribo\Api1\Context;
 trait QuestionAskingControllerTrait
 {
     /**
+     * Throws an exception to request an answer from client
+     * Note: return phpDoc is set in order to allow constructions like return $this->askQuestion() clearly denoting end of function processing, but not being marked by IDE as incorrect
+     *
      * @param Questionary|array|string|int $source
      * @param array $extraData
      * @param string $continueMethod
+     * @return null Actually does not returns anything, always throws exception
      * @throws \Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException
      */
     protected function askQuestion($source, array $extraData = array(), $continueMethod = 'receiveAnswer')
     {
+        throw $this->makeQuestionaryServerRequestHttpException($source, $extraData, $continueMethod);
+    }
+
+    /**
+     * Wrapper for makeQuestionaryServerRequestHttpException with shorter name
+     *
+     * @param $source
+     * @param array $extraData
+     * @param string $continueMethod
+     * @return QuestionaryServerRequestHttpException
+     */
+    protected function makeQuestion($source, array $extraData = array(), $continueMethod = 'receiveAnswer')
+    {
+        return $this->makeQuestionaryServerRequestHttpException($source, $extraData, $continueMethod);
+    }
+
+    /**
+     * @param Questionary|array|string|int $source
+     * @param array $extraData
+     * @param string $continueMethod
+     * @return QuestionaryServerRequestHttpException
+     */
+    protected function makeQuestionaryServerRequestHttpException($source, array $extraData = array(), $continueMethod = 'receiveAnswer')
+    {
         $questionary = $this->prepareQuestionary($source, $extraData, $continueMethod);
         $exception = new QuestionaryServerRequestHttpException($questionary);
-        throw $exception;
+        return $exception;
     }
 
     /**

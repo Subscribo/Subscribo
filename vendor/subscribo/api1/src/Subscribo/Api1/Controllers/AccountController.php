@@ -1,6 +1,7 @@
 <?php namespace Subscribo\Api1\Controllers;
 
 use RuntimeException;
+use Subscribo\Exception\Exceptions\ValidationErrorsHttpException;
 use Subscribo\ModelCore\Models\AccountToken;
 use Subscribo\ModelCore\Models\ActionInterruption;
 use Subscribo\ModelCore\Models\Customer;
@@ -18,6 +19,7 @@ use Subscribo\Api1\Factories\AccountFactory;
 use Subscribo\Api1\Factories\CustomerRegistrationFactory;
 use Subscribo\Api1\Factories\QuestionaryFactory;
 use Subscribo\Api1\Context;
+use Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException;
 
 class AccountController extends AbstractController
 {
@@ -53,7 +55,7 @@ class AccountController extends AbstractController
     public function actionGetValidation()
     {
         $validated = $this->validateRequestQuery($this->commonValidationRules);
-        return $this->processValidation($validated, 'GET');
+        return $this->processValidation($validated, $this->context->getServiceId());
     }
 
     /**
@@ -62,28 +64,43 @@ class AccountController extends AbstractController
     public function actionPostValidation()
     {
         $validated = $this->validateRequestBody($this->commonValidationRules);
-        return $this->processValidation($validated, 'POST');
+        return $this->processValidation($validated, $this->context->getServiceId());
     }
 
 
     /**
-     * @param $validated
-     * @param string $method
+     * @param array $validated
+     * @param int|string $serviceId
      * @return array
      * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException|\Subscribo\Exception\Exceptions\InvalidQueryHttpException
      */
-    private function processValidation($validated, $method)
+    private function processValidation(array $validated, $serviceId)
     {
-        /** @var \Subscribo\Api1\Factories\AccountFactory $accountFactory */
-        $accountFactory = $this->applicationMake('Subscribo\\Api1\\Factories\\AccountFactory');
-        $found = $accountFactory->find($this->context->getServiceId(), $validated);
+        $found = $this->findAndValidateCustomerAccount($validated['email'], $validated['password'], $serviceId);
         if (empty($found)) {
             return ['validated' => false];
         }
-        if ($accountFactory->checkCustomerPassword($found['customer'], $validated['password'])) {
-            return ['validated' => true, 'result' => $found];
+        return ['validated' => true, 'result' => $found];
+    }
+
+    /**
+     * @param string $email
+     * @param string $password
+     * @param int|string $serviceId
+     * @return array|bool|null
+     */
+    private function findAndValidateCustomerAccount($email, $password, $serviceId)
+    {
+        /** @var \Subscribo\Api1\Factories\AccountFactory $accountFactory */
+        $accountFactory = $this->applicationMake('Subscribo\\Api1\\Factories\\AccountFactory');
+        $found = $accountFactory->findAccountByEmailAndServiceId($email, $serviceId);
+        if (empty($found)) {
+            null;
         }
-        return ['validated' => false];
+        if ($accountFactory->checkCustomerPassword($found['customer'], $password)) {
+            return $found;
+        }
+        return false;
     }
 
     public function actionGetRemembered($accountId = null)
@@ -122,15 +139,15 @@ class AccountController extends AbstractController
         return ['found' => true, 'result' => $this->assembleAccountResult($account)];
     }
 
-    public function resumeRegistration(ActionInterruption $actionInterruption, array $data, Context $context, Questionary $questionary)
+    public function resumeRegistration(ActionInterruption $actionInterruption, array $answer, Context $context, Questionary $questionary)
     {
-        if ($data['service'] === 'new') {
+        if ($answer['service'] === 'new') {
             $extraData = $actionInterruption->extraData;
             $customerRegistration = CustomerRegistration::find($extraData['customerRegistrationId']);
             if (empty($customerRegistration)) {
                 throw new RuntimeException(sprintf("CustomerRegistration with id '%s' not found", $extraData['customerRegistrationId']));
             }
-            $actionInterruption->answer = $data;
+            $actionInterruption->answer = $answer;
             return $this->performRegistration($customerRegistration, $context->getServiceId(), $actionInterruption);
         }
         throw new \RuntimeException('Not implemented');
@@ -138,28 +155,34 @@ class AccountController extends AbstractController
 
     }
 
-    public function resumeOAuthMissingEmail(ActionInterruption $actionInterruption, array $data, Context $context, Questionary $questionary)
+    public function resumeOAuthMissingEmail(ActionInterruption $actionInterruption, array $answer, Context $context, Questionary $questionary)
     {
-        $extraData = $actionInterruption->extraData;
-        $customerRegistration = CustomerRegistration::find($extraData['customerRegistrationId']);
-        if (empty($customerRegistration)) {
-            throw new RuntimeException(sprintf("CustomerRegistration with id '%s' not found", $extraData['customerRegistrationId']));
+        $validatedData = $actionInterruption->extraData['validatedData'];
+        $validatedData['email'] = $answer['email'];
+        if ( ! $this->isEmailAcceptable($validatedData['email'])) {
+            throw new ValidationErrorsHttpException(['email' => 'Please, provide another email.']);
         }
-        $emailUsed = $this->checkEmailUsed($data['email'], $context->getServiceId(), $customerRegistration);
-        $customerRegistration->email = $data['email'];
-        $customerRegistration->save();
+        $emailUsed = $this->checkEmailUsed($validatedData['email'], $context->getServiceId(), $validatedData);
         if ($emailUsed) {
-            $extraData = ['customerRegistrationId' => $customerRegistration->id];
-            return $this->askQuestion(Questionary::CODE_LOGIN_OR_NEW_ACCOUNT, $extraData, 'resumeOAuthExistingEmail');
+            throw $this->makeQuestion(Questionary::CODE_LOGIN_OR_NEW_ACCOUNT, ['validatedData' => $validatedData], 'resumeOAuthExistingEmail');
         }
-        $actionInterruption->answer = $data;
-        return $this->performRegistration($customerRegistration, $context->getServiceId(), $actionInterruption);
+        $actionInterruption->answer = $answer;
+        return $this->performRegistration($validatedData, $context->getServiceId(), $actionInterruption);
     }
 
-    public function resumeOAuthExistingEmail(ActionInterruption $actionInterruption, array $data, Context $context, Questionary $questionary)
+    public function resumeOAuthExistingEmail(ActionInterruption $actionInterruption, array $answer, Context $context, Questionary $questionary)
     {
-        throw new \RuntimeException('NOT IMPLEMENTED');
-        //todo implement
+        if (empty($answer['password'])) {
+            //User has actually provided a (new) email, so we would proceed as if the email was missing or was not acceptable
+            return $this->resumeOAuthMissingEmail($actionInterruption, $answer, $context, $questionary);
+        }
+        $validatedData = $actionInterruption->extraData['validatedData'];
+        $result = $this->findAndValidateCustomerAccount($validatedData['email'], $answer['password'], $context->getServiceId());
+        if (empty($result)) {
+            throw new ValidationErrorsHttpException(['password' => sprintf("Given password does not agree with email %s for this service.", $validatedData['email'])]);
+        }
+        $actionInterruption->markAsProcessed($answer);
+        return ['registered' => true, 'result' => $result ];
     }
     private function generateCustomerRegistration(array $data, $serviceId)
     {
@@ -209,30 +232,28 @@ class AccountController extends AbstractController
         $registered = $accountFactory->register($data, $serviceId);
 
         if ($actionInterruption) {
-            $actionInterruption->status = ActionInterruption::STATUS_PROCESSED;
-            $actionInterruption->save();
+            $actionInterruption->markAsProcessed();
         }
-        return  ['registered' => true, 'result' => $registered ];
+        return ['registered' => true, 'result' => $registered ];
     }
 
 
     private function oAuthRegistration(array $data, $serviceId)
     {
         $validatedOAuthData = $this->validateOAuthData($data);
+        $data['oauth'] = $validatedOAuthData;
         $alreadyRegistered = AccountToken::findByIdentifierAndServiceId($validatedOAuthData['identifier'], $serviceId);
         if ($alreadyRegistered) {
             return ['registered' => true, 'result' => $this->assembleAccountResult($alreadyRegistered->account)];
         }
         if (empty($data['email']) or ( ! $this->isEmailAcceptable($data['email']))) {
-            $customerRegistration = $this->generateCustomerRegistration($data, $serviceId);
-            $extraData = ['customerRegistrationId' => $customerRegistration->id];
-            return $this->askQuestion(Questionary::CODE_NEW_CUSTOMER_EMAIL, $extraData, 'resumeOAuthMissingEmail');
+            unset($data['password']);
+            throw $this->makeQuestion(Questionary::CODE_NEW_CUSTOMER_EMAIL, ['validatedData' => $data], 'resumeOAuthMissingEmail');
         }
         $emailUsed = $this->checkEmailUsed($data['email'], $serviceId, $data);
         if ($emailUsed) {
-            $customerRegistration = $this->generateCustomerRegistration($data, $serviceId);
-            $extraData = ['customerRegistrationId' => $customerRegistration->id];
-            return $this->askQuestion(Questionary::CODE_LOGIN_OR_NEW_ACCOUNT, $extraData, 'resumeOAuthExistingEmail');
+            unset($data['password']);
+            throw $this->makeQuestion(Questionary::CODE_LOGIN_OR_NEW_ACCOUNT, ['validatedData' => $data], 'resumeOAuthExistingEmail');
         }
         return $this->performRegistration($data, $serviceId);
     }
@@ -267,6 +288,7 @@ class AccountController extends AbstractController
      * @param int $serviceId
      * @param CustomerRegistration|array $data
      * @return bool
+     * @throws QuestionaryServerRequestHttpException
      */
     private function checkEmailUsed($email, $serviceId, $data)
     {
@@ -304,7 +326,7 @@ class AccountController extends AbstractController
 
         $customerRegistration = ($data instanceof CustomerRegistration) ? $data : $this->generateCustomerRegistration($data, $serviceId);
         $extraData = ['customerRegistrationId' => $customerRegistration->id];
-        $this->askQuestion($questionary, $extraData, 'resumeRegistration');
+        throw $this->makeQuestion($questionary, $extraData, 'resumeRegistration');
     }
 
     private function isEmailAcceptable($email)

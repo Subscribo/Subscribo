@@ -84,16 +84,13 @@ class AccountFactory
         return $result;
     }
 
-    public function find($serviceId, array $data)
+    public function findAccountByEmailAndServiceId($email, $serviceId)
     {
-        $serviceId = intval($serviceId);
-        if (empty($data['email'])) {
-            throw new InvalidArgumentException('AccountFactory::find() Data should contain email');
-        }
-        $customers = Customer::findAllByEmail($data['email']);
+        $serviceId = strval($serviceId);
+        $customers = Customer::findAllByEmail($email);
         foreach($customers as $customer) {
             foreach ($customer->accounts as $account) {
-                if ($account->serviceId === $serviceId) {
+                if (strval($account->serviceId) === $serviceId) {
                     return ['customer' => $customer, 'account' => $account, 'person' => $customer->person];
                 }
             }
