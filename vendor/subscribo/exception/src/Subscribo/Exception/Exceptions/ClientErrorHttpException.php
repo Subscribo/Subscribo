@@ -1,7 +1,7 @@
 <?php namespace  Subscribo\Exception\Exceptions;
 
 use Exception;
-use Subscribo\Exception\Interfaces\HttpClientErrorInterface;
+use Subscribo\Exception\Interfaces\DoNotReportInterface;
 
 /**
  * Class ClientErrorHttpException
@@ -10,7 +10,8 @@ use Subscribo\Exception\Interfaces\HttpClientErrorInterface;
  *
  * @package Subscribo\Exception
  */
-class ClientErrorHttpException extends HttpException implements HttpClientErrorInterface {
+class ClientErrorHttpException extends HttpException implements DoNotReportInterface
+{
 
     public function __construct($statusCode = 400, $message = null, array $data = array(), $code = 0, Exception $previous = null, array $headers = array())
     {

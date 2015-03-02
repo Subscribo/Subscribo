@@ -22,7 +22,7 @@ use Subscribo\Exception\Factories\MarkableExceptionFactory;
  */
 class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
 
-    protected $dontReport = ['Subscribo\\Exception\\Interfaces\\HttpClientErrorInterface'];
+    protected $dontReport = ['Subscribo\\Exception\\Interfaces\\DoNotReportInterface'];
 
     /**
      * @param Request|null $request
