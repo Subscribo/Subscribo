@@ -7,13 +7,12 @@ use Subscribo\Support\Arr;
  *
  * Trait helping classes to implement ContainDataInterface
  *
+ * Class using this trait need to have $_containedData property, which should be array
  * Note: you might need to adapt constructor and/or add a setter manually to be able to set $_containedData property
  *
  * @package Subscribo\Exception
  */
 trait ContainDataTrait {
-
-    protected $_containedData = array();
 
     /**
      * @return array
