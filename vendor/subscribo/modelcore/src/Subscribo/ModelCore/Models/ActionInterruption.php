@@ -60,9 +60,9 @@ class ActionInterruption extends \Subscribo\ModelCore\Bases\ActionInterruption
         return json_decode($value, true);
     }
 
-    public function setExtraDataAttribute($extraData)
+    public function setExtraDataAttribute($value)
     {
-        $this->attributes['extra_data'] = json_encode($extraData);
+        $this->attributes['extra_data'] = json_encode($value);
     }
 
     public function getQuestionaryAttribute($value)
@@ -70,9 +70,9 @@ class ActionInterruption extends \Subscribo\ModelCore\Bases\ActionInterruption
         return json_decode($value, true);
     }
 
-    public function setQuestionaryAttribute($questionary)
+    public function setQuestionaryAttribute($value)
     {
-        $this->attributes['questionary'] = json_encode($questionary);
+        $this->attributes['questionary'] = json_encode($value);
     }
 
     public function getAnswerAttribute($value)
@@ -80,9 +80,19 @@ class ActionInterruption extends \Subscribo\ModelCore\Bases\ActionInterruption
         return json_decode($value, true);
     }
 
-    public function setAnswerAttribute($questionary)
+    public function setAnswerAttribute($value)
     {
-        $this->attributes['answer'] = json_encode($questionary);
+        $this->attributes['answer'] = json_encode($value);
+    }
+
+    public function markAsProcessed($answer = null)
+    {
+        if ( ! is_null($answer)) {
+            $this->answer = $answer;
+        }
+        $this->status = static::STATUS_PROCESSED;
+        $this->save();
+        return $this;
     }
 
 }
