@@ -2,12 +2,12 @@
 
 
 use Exception;
-use Subscribo\Exception\Exceptions\HttpException;
+use Subscribo\Exception\Exceptions\RedirectionHttpException;
 use Subscribo\Exception\Interfaces\HttpExceptionInterface;
 use Subscribo\Exception\Traits\StatusMessageTrait;
 use Subscribo\RestCommon\Interfaces\ServerRequestInterface;
 
-class ServerRequestHttpException extends HttpException implements HttpExceptionInterface
+class ServerRequestHttpException extends RedirectionHttpException implements HttpExceptionInterface
 {
     use StatusMessageTrait;
     const STATUS_CODE = 300;
