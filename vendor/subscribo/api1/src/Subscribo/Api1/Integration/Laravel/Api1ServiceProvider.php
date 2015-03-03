@@ -32,6 +32,7 @@ class Api1ServiceProvider extends ServiceProvider
         $controllers = [
             'Subscribo\\Api1\\Controllers\\AccountController',
             'Subscribo\\Api1\\Controllers\\OAuthController',
+            'Subscribo\\Api1\\Controllers\\QuestionaryController',
         ];
         $controllerRegistrar->registerControllers($controllers);
         $controllerRegistrar->addInfoRoute(['version' => 1]);

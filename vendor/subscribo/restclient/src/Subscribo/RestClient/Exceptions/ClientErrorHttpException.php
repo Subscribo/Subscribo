@@ -3,6 +3,12 @@
 use Subscribo\Exception\Interfaces\HttpExceptionInterface;
 use Subscribo\Exception\Traits\StatusMessageTrait;
 
-class ClientErrorHttpException extends \Subscribo\Exception\Exceptions\ClientErrorHttpException implements HttpExceptionInterface {
+/**
+ * Class ClientErrorHttpException
+ *
+ * @package Subscribo\RestClient
+ */
+class ClientErrorHttpException extends \Subscribo\Exception\Exceptions\ClientErrorHttpException implements HttpExceptionInterface
+{
     use StatusMessageTrait;
 }

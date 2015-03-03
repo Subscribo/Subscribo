@@ -1,14 +1,13 @@
 <?php namespace Subscribo\ApiClientOAuth\Traits;
 
 use Exception;
-use LogicException;
-use Subscribo\ApiClientAuth\Exceptions\ValidationException;
-use Subscribo\ApiClientAuth\QuestionList;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Subscribo\ApiClientAuth\Registrar;
 use Subscribo\ApiClientOAuth\OAuthManager;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Subscribo\ApiClientCommon\Traits\HandleServerRequestExceptionTrait;
+use Subscribo\RestClient\Exceptions\ServerRequestException;
+use Subscribo\RestClient\Exceptions\ValidationErrorsException;
+use Subscribo\Exception\Exceptions\NotFoundHttpException;
 
 /**
  * Class OAuthLoginTrait
@@ -17,6 +16,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 trait OAuthLoginTrait
 {
+    use HandleServerRequestExceptionTrait;
+
     protected $redirectPath = '/home';
 
     protected $registrationPath = '/auth/register';
@@ -50,29 +51,23 @@ trait OAuthLoginTrait
             'secret'        => $secret,
         ];
         try {
-            $response  = $registrar->attempt($registrationData);
-            if (empty($response)) {
-                throw new Exception('Empty response.');
+            $account = $registrar->attempt($registrationData);
+            if (empty($account)) {
+                throw new Exception('Empty account.');
             }
-        } catch (ValidationException $e) {
+        } catch (ServerRequestException $e) {
+            return $this->handleServerRequestException($e, $this->registrationPath);
+        } catch (ValidationErrorsException $e) {
             return redirect($this->registrationPath)
                 ->withInput($nameAndEmail)
                 ->withErrors($e->getValidationErrors());
         } catch (Exception $e) {
+            $this->logException($e);
             return redirect($this->registrationPath)
                 ->withInput($nameAndEmail)
                 ->withErrors('Login attempt failed. Please try again later or contact an administrator.');
         }
-        if ($response instanceof QuestionList) {
-            return redirect($this->registrationPath)
-                ->withInput($nameAndEmail)
-                ->withErrors(['email' => 'This email has already been used for another service and account merging is not implemented yet. Please choose different email.']);
-        }
-        if ($response instanceof Authenticatable) {
-            $auth->login($response);
-            return redirect($this->redirectPath);
-        }
-        throw new LogicException('Response is neither instance of QuestionList nor Authenticatable');
+        $auth->login($account);
+        return redirect($this->redirectPath);
     }
-
 }

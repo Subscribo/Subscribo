@@ -1,8 +1,20 @@
 <?php namespace Subscribo\RestClient\Exceptions;
 
+use Subscribo\Exception\Exceptions\ServerErrorHttpException;
+use Subscribo\RestClient\Traits\HttpExceptionConstructorTrait;
+use Subscribo\RestClient\Exceptions\InvalidResponseException;
 
-class InvalidRemoteServerResponseHttpException extends RemoteServerErrorHttpException
+/**
+ * Class InvalidRemoteServerResponseHttpException
+ *
+ * @package Subscribo\RestClient
+ */
+class InvalidRemoteServerResponseHttpException extends ServerErrorHttpException
 {
-    const DEFAULT_EXCEPTION_CODE = 90;
-    const DEFAULT_MESSAGE = 'Invalid response from remote server';
+    use HttpExceptionConstructorTrait;
+
+    const DEFAULT_STATUS_CODE = 502;
+    const DEFAULT_EXCEPTION_CODE = InvalidResponseException::DEFAULT_EXCEPTION_CODE;
+    const DEFAULT_MESSAGE = InvalidResponseException::DEFAULT_MESSAGE;
+
 }

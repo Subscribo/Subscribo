@@ -1,22 +1,10 @@
 <?php namespace Subscribo\ApiClientAuth\Connectors;
 
-use Subscribo\ApiClientAuth\Exceptions\ValidationException;
-use Subscribo\RestClient\Exceptions\ClientErrorHttpException;
-use Subscribo\RestClient\RestClient;
-use Subscribo\RestClient\Exceptions\InvalidRemoteServerResponseHttpException;
-use Subscribo\ApiClientAuth\QuestionList;
+use Subscribo\RestClient\Exceptions\InvalidResponseException;
+use Subscribo\ApiClientCommon\AbstractConnector;
 
-class AccountConnector
+class AccountConnector extends AbstractConnector
 {
-    /**
-     * @var \Subscribo\RestClient\RestClient
-     */
-    protected $restClient;
-
-    public function __construct(RestClient $restClient)
-    {
-        $this->restClient = $restClient;
-    }
 
     /**
      * @param int $id
@@ -71,23 +59,18 @@ class AccountConnector
     /**
      * @param array $data
      * @param array $signatureOptions
-     * @return array|null|QuestionList
-     * @throws \Subscribo\ApiClientAuth\Exceptions\ValidationException
+     * @return array|null
      */
     public function postRegistration(array $data, array $signatureOptions = null)
     {
-        try {
-            $responseData = $this->restClient->process('account/registration', 'POST', $data, null, null, $signatureOptions, false);
-        } catch (ClientErrorHttpException $e) {
-            $data = $e->getErrorData();
-            $validationErrors = empty($data['validationErrors']) ? ['Registration did not proceeded. Try different email or contact an administrator.'] : $data['validationErrors'];
-            throw new ValidationException($validationErrors);
-        }
-        $account = $this->assembleResult($responseData, 'registered');
-        if ($account) {
-            return $account;
-        }
-        return $this->assembleQuestionList($responseData);
+        $responseData = $this->restClient->process('account/registration', 'POST', $data, null, null, $signatureOptions, false);
+
+        return $this->assembleResult($responseData, 'registered');
+    }
+
+    public function resumePostRegistration(array $responseData)
+    {
+        return $this->assembleResult($responseData, 'registered');
     }
 
 
@@ -95,7 +78,7 @@ class AccountConnector
      * @param null|array $source
      * @param string|array $keyToCheck
      * @return array|null
-     * @throws \Subscribo\RestClient\Exceptions\InvalidRemoteServerResponseHttpException
+     * @throws \Subscribo\RestClient\Exceptions\InvalidResponseException
      */
     protected function assembleResult($source, $keyToCheck = array())
     {
@@ -103,18 +86,18 @@ class AccountConnector
             return null;
         }
         if ( ! is_array($source)) {
-            throw new InvalidRemoteServerResponseHttpException();
+            throw new InvalidResponseException();
         }
         $keysToCheck = is_array($keyToCheck) ? $keyToCheck : array($keyToCheck);
         foreach ($keysToCheck as $key) {
             if (empty($source[$key])) {
-                return null;
+                throw new InvalidResponseException();
             }
         }
         if (empty($source['result']['account']['id'])
           or empty($source['result']['customer']['email'])
           or ( ! isset($source['result']['person']['name']))) {
-            throw new InvalidRemoteServerResponseHttpException();
+            throw new InvalidResponseException();
         }
         $result = [
             'id'    => $source['result']['account']['id'],
@@ -124,26 +107,4 @@ class AccountConnector
         return $result;
     }
 
-    /**
-     * @param $source
-     * @return null|QuestionList
-     * @throws \Subscribo\RestClient\Exceptions\InvalidRemoteServerResponseHttpException
-     */
-    protected function assembleQuestionList($source)
-    {
-        if (empty($source)) {
-            return null;
-        }
-        if ( ! is_array($source)) {
-            throw new InvalidRemoteServerResponseHttpException();
-        }
-        if (empty($source['asking'])) {
-            return null;
-        }
-        if (( ! array_key_exists('questions', $source) or ( ! is_array($source['questions'])))) {
-            throw new InvalidRemoteServerResponseHttpException();
-        }
-        return new QuestionList($source['questions']);
-
-    }
 }

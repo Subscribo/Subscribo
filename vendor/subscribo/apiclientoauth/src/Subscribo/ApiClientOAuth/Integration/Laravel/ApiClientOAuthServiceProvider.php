@@ -10,13 +10,14 @@ use Subscribo\ApiClientOAuth\OAuthManager;
  *
  * @package Subscribo\ApiClientOAuth
  */
-class ApiClientOAuthServiceProvider extends ServiceProvider {
+class ApiClientOAuthServiceProvider extends ServiceProvider
+{
 
     protected $defer = false;
 
     public function register()
     {
-        $this->app->register('Subscribo\\RestClient\\Integration\\Laravel\\RestClientServiceProvider');
+        $this->app->register('Subscribo\\ApiClientCommon\\Integration\\Laravel\\ApiClientCommonServiceProvider');
         $this->app->bindIf(
             'Subscribo\\ApiClientOAuth\\OAuthManager',
             function ($app) {
