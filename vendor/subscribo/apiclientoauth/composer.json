@@ -32,6 +32,7 @@
         "illuminate/routing": "(already contained in laravel/framework) - If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version ~5.0)",
         "illuminate/http": "(already contained in laravel/framework) - If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version ~5.0)",
         "illuminate/support": "(already contained in laravel/framework) - If using ApiClientOAuthServiceProvider (recommended version ~5.0)",
+        "illuminate/view": "(already contained in laravel/framework) - If using ApiClientOAuthServiceProvider, LoginWithButtonsComposer or loginwithbuttons template  (recommended version ~5.0)",
         "subscribo/apiclientauth": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)",
         "subscribo/exception": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)",
         "subscribo/restcommon": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)",

@@ -31,6 +31,14 @@ class ApiClientOAuthServiceProvider extends ServiceProvider
     {
         $router = $this->app->make('router');
         $this->registerRoutes($router);
+
+        $packageDir = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+        $this->loadViewsFrom($packageDir.'/resources/views', 'subscribo');
+        $this->publishes([
+            $packageDir.'/resources/views/apiclientoauth/loginwithbuttons.blade.php'
+                => base_path('resources/views/vendor/subscribo/apiclientoauth/loginwithbuttons.blade.php'),
+        ], 'view');
+        $this->app->make('view')->composer('subscribo::apiclientoauth.loginwithbuttons', 'Subscribo\\ApiClientOAuth\\ViewComposers\\LoginWithButtonsComposer');
     }
 
     protected function registerRoutes(Router $router)

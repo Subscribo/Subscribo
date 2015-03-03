@@ -49,3 +49,13 @@ or (for conditional registration) you can add following to bootstrap/app.php:
 ```
 
 Note: If other package is doing previous steps for you (which is usually the case), they are not necessary.
+
+## 2. Usage
+
+### 2.1 Adding "Login with..." buttons to a blade template
+
+Add following to blade template(s), where you want "Login with..." buttons to be displayed,
+(e.g. to resources/views/auth/login.blade.php)
+```php
+    @include('subscribo::apiclientoauth.loginwithbuttons')
+```
