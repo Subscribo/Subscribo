@@ -28,7 +28,7 @@ class FlatDependencyResolver implements DependencyResolverInterface {
         while ($stack) {
             $newStack = array();
             foreach ($stack as $resolvingKey => $resolvingDependencies) {
-                if (self::_isResolved($resolvingDependencies, $resolved)) {
+                if (static::_isResolved($resolvingDependencies, $resolved)) {
                     $resolved[$resolvingKey] = $resolvingDependencies;
                 } else {
                     $newStack[$resolvingKey] = $resolvingDependencies;

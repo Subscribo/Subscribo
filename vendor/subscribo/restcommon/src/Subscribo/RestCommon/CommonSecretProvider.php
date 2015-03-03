@@ -27,7 +27,7 @@ class CommonSecretProvider implements CommonSecretProviderInterface
         $this->commonSecret = $commonSecret;
         if (true === $encrypterClassName)
         {
-            $encrypterClassName = self::DEFAULT_ENCRYPTER;
+            $encrypterClassName = $this::DEFAULT_ENCRYPTER;
         }
         $this->encrypterClassName = $encrypterClassName;
     }

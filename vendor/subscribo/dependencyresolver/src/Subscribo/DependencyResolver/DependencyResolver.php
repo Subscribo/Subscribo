@@ -30,7 +30,7 @@ class DependencyResolver implements DependencyResolverInterface {
      */
     public static function resolve(array $dependencies, $mode = self::MODE_DEFAULT)
     {
-        $full = self::resolveFull($dependencies, $mode);
+        $full = static::resolveFull($dependencies, $mode);
         $result = array_keys($full);
         return $result;
     }
@@ -56,7 +56,7 @@ class DependencyResolver implements DependencyResolverInterface {
             case 'MODE_FLAT':
                 return FlatDependencyResolver::resolveFull($dependencies);
             case 'MODE_DUMMY':
-                return self::_resolveDummy($dependencies);
+                return static::_resolveDummy($dependencies);
             default:
                 throw new ModeNotImplementedException("Mode '".$mode."' not recognized.");
         }

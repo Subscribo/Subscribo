@@ -40,7 +40,7 @@ class BuildAdministratorConfigsCommand extends BuildCommandAbstract {
         $modelFields = $input['model_fields'];
         $modelOptions = $input['model_options'];
 
-        $this->_buildAdministratorConfigs($modelFields, $modelOptions, self::CONFIG_DIR.'administrator/');
+        $this->_buildAdministratorConfigs($modelFields, $modelOptions, $this::CONFIG_DIR.'administrator/');
 
         $this->info('Build Frozennode Administrator configuration files finished.');
     }
@@ -290,7 +290,7 @@ class BuildAdministratorConfigsCommand extends BuildCommandAbstract {
 	protected function getArguments()
 	{
 		return array(
-			array('file', InputArgument::OPTIONAL, 'File used for schema.', self::SCHEMA_DIR.'parsed_schema.yml'),
+			array('file', InputArgument::OPTIONAL, 'File used for schema.', $this::SCHEMA_DIR.'parsed_schema.yml'),
 		);
 	}
 

@@ -79,7 +79,7 @@ class BuildModelsCommand extends BuildCommandAbstract {
 	protected function getArguments()
 	{
 		return array(
-			array('file', InputArgument::OPTIONAL, 'File used for schema.', self::SCHEMA_DIR.'parsed_schema.yml'),
+			array('file', InputArgument::OPTIONAL, 'File used for schema.', $this::SCHEMA_DIR.'parsed_schema.yml'),
 		);
 	}
 

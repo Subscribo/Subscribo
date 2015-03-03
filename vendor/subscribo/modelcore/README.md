@@ -68,7 +68,7 @@ or (to force overwrite and for only this package)
 
 
 
-### 2.3 To make Subcribo SchemaBuilder rebuild models, run
+### 2.3 To make Subscribo SchemaBuilder rebuild models, run
 
 ```sh
    php artisan build

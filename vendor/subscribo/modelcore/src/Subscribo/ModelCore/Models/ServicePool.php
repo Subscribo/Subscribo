@@ -28,6 +28,10 @@ class ServicePool extends \Subscribo\ModelCore\Bases\ServicePool
         return false;
     }
 
+    /**
+     * @param int $serviceId
+     * @return bool
+     */
     public function containService($serviceId)
     {
         $serviceId = intval($serviceId);

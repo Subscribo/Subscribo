@@ -11,9 +11,14 @@ use Subscribo\Exception\Interfaces\ContainDataInterface;
  *
  * @package Subscribo\Exception
  */
-class HttpException extends \Symfony\Component\HttpKernel\Exception\HttpException implements ContainDataInterface {
-
+class HttpException extends \Symfony\Component\HttpKernel\Exception\HttpException implements ContainDataInterface
+{
     use ContainDataTrait;
+
+    /**
+     * @var array
+     */
+    protected $_containedData = array();
 
     /**
      * @param int|string $statusCode

@@ -18,11 +18,11 @@ class UnauthorizedHttpException extends ClientErrorHttpException
             $message = 'Unauthorized';
         }
         if (is_null($headers)) {
-            $headers = ['WWW-Authenticate' => self::DEFAULT_WWW_AUTHENTICATE_HEADER_CONTENT];
+            $headers = ['WWW-Authenticate' => $this::DEFAULT_WWW_AUTHENTICATE_HEADER_CONTENT];
         }
         if (true === $code) {
-            $code = self::SERVER_EXCEPTION_CODE;
+            $code = $this::SERVER_EXCEPTION_CODE;
         }
-        parent::__construct(self::SERVER_STATUS_CODE, $message, $data, $code, $previous, $headers);
+        parent::__construct($this::SERVER_STATUS_CODE, $message, $data, $code, $previous, $headers);
     }
 }

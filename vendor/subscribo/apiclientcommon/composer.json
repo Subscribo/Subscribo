@@ -1,0 +1,48 @@
+{
+    "name": "subscribo/apiclientcommon",
+    "description": "Package API Client Common contain functionality shared by API Client packages",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "api",
+        "client",
+        "common"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "subscribo/restcommon": "@dev",
+        "subscribo/restclient": "@dev",
+        "illuminate/contracts": "@dev",
+        "illuminate/support": "~5.0",
+        "illuminate/routing": "~5.0",
+        "illuminate/view": "~5.0"
+    },
+    "suggest": {
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+        "illuminate/foundation": "If QuestionaryController, QuestionaryControllerTrait or ApiClientCommonServiceProvider::registerRoutes() is used (recommended version ~5.0)",
+        "illuminate/http": "If QuestionaryController, QuestionaryControllerTrait or ApiClientCommonServiceProvider::registerRoutes() is used (recommended version ~5.0)",
+        "illuminate/session": "If QuestionaryController, QuestionaryControllerTrait or ApiClientCommonServiceProvider::registerRoutes() is used (recommended version ~5.0)"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\ApiClientCommon\\": "src/Subscribo/ApiClientCommon/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}

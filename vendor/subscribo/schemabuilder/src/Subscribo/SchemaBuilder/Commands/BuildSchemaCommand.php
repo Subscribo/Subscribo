@@ -2946,8 +2946,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
     protected function getArguments()
     {
         return array(
-            array('input_file', InputArgument::OPTIONAL, 'File used for input schema.', self::SCHEMA_DIR.'schema.yml'),
-            array('output_file', InputArgument::OPTIONAL, 'File used for output schema.', self::SCHEMA_DIR.'parsed_schema.yml'),
+            array('input_file', InputArgument::OPTIONAL, 'File used for input schema.', $this::SCHEMA_DIR.'schema.yml'),
+            array('output_file', InputArgument::OPTIONAL, 'File used for output schema.', $this::SCHEMA_DIR.'parsed_schema.yml'),
         );
     }
 

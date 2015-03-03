@@ -1584,12 +1584,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/flysystem.git",
-            "reference": "853a71ad0d6c87ebf2ada3ab28e799a9640f9f91"
+            "reference": "f2e041428fb4b565bf65de708a12882a5273350e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/853a71ad0d6c87ebf2ada3ab28e799a9640f9f91",
-            "reference": "853a71ad0d6c87ebf2ada3ab28e799a9640f9f91",
+            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/f2e041428fb4b565bf65de708a12882a5273350e",
+            "reference": "f2e041428fb4b565bf65de708a12882a5273350e",
             "shasum": ""
         },
         "require": {
@@ -1620,7 +1620,7 @@
             "league/flysystem-ziparchive": "Allows you to use ZipArchive adapter",
             "predis/predis": "Allows you to use Predis for caching"
         },
-        "time": "2015-02-15 18:02:18",
+        "time": "2015-02-20 11:50:32",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1788,12 +1788,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/bobthecow/psysh.git",
-            "reference": "7fd995d8b781efb7ff2d10a7ccb1c6cd8f9d6d5f"
+            "reference": "c977172d8e52eed18b64168690b2ff3a96c91dc4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/bobthecow/psysh/zipball/7fd995d8b781efb7ff2d10a7ccb1c6cd8f9d6d5f",
-            "reference": "7fd995d8b781efb7ff2d10a7ccb1c6cd8f9d6d5f",
+            "url": "https://api.github.com/repos/bobthecow/psysh/zipball/c977172d8e52eed18b64168690b2ff3a96c91dc4",
+            "reference": "c977172d8e52eed18b64168690b2ff3a96c91dc4",
             "shasum": ""
         },
         "require": {
@@ -1814,7 +1814,7 @@
             "ext-posix": "If you have PCNTL, you'll want the POSIX extension as well.",
             "ext-readline": "Enables support for arrow-key history navigation, and showing and manipulating command history."
         },
-        "time": "2015-02-15 18:50:21",
+        "time": "2015-02-19 17:15:51",
         "bin": [
             "bin/psysh"
         ],
@@ -2220,77 +2220,18 @@
         "homepage": "http://symfony.com"
     },
     {
-        "name": "symfony/var-dumper",
-        "version": "2.6.x-dev",
-        "version_normalized": "2.6.9999999.9999999-dev",
-        "target-dir": "Symfony/Component/VarDumper",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/var-dumper.git",
-            "reference": "c3d5a36c3e3298bd8b070488fba5537174647353"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/var-dumper/zipball/c3d5a36c3e3298bd8b070488fba5537174647353",
-            "reference": "c3d5a36c3e3298bd8b070488fba5537174647353",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "suggest": {
-            "ext-symfony_debug": ""
-        },
-        "time": "2015-02-02 16:32:08",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "Resources/functions/dump.php"
-            ],
-            "psr-0": {
-                "Symfony\\Component\\VarDumper\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Nicolas Grekas",
-                "email": "p@tchwork.com"
-            }
-        ],
-        "description": "Symfony mechanism for exploring and dumping PHP variables",
-        "homepage": "http://symfony.com",
-        "keywords": [
-            "debug",
-            "dump"
-        ]
-    },
-    {
         "name": "vlucas/phpdotenv",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/vlucas/phpdotenv.git",
-            "reference": "c5232d963bca31ab886fb40ab706d89f42769fcc"
+            "reference": "ae388efe53a2c352ddd270f4d316bad58952b8e3"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/c5232d963bca31ab886fb40ab706d89f42769fcc",
-            "reference": "c5232d963bca31ab886fb40ab706d89f42769fcc",
+            "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/ae388efe53a2c352ddd270f4d316bad58952b8e3",
+            "reference": "ae388efe53a2c352ddd270f4d316bad58952b8e3",
             "shasum": ""
         },
         "require": {
@@ -2299,7 +2240,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.0"
         },
-        "time": "2015-01-30 14:58:26",
+        "time": "2015-02-19 20:37:05",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2683,360 +2624,6 @@
         ]
     },
     {
-        "name": "subscribo/serviceprovider",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/serviceprovider",
-            "reference": "37d351f0683c1a2fcef77edb04aa2d17f86a67cc"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-serviceprovider-dev-master-01ca56.zip",
-            "reference": "37d351f0683c1a2fcef77edb04aa2d17f86a67cc",
-            "shasum": "e5f706812d28ceb3534382e7189a1d93204568b5"
-        },
-        "require": {
-            "php": "~5.4"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
-        },
-        "time": "2015-01-14 15:32:12",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\ServiceProvider\\": "src/Subscribo/ServiceProvider/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Contain Service Provider for Laravel to be extended by other packages as well as modified versions of Service Provider from Laravel 4.2.12",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "laravel",
-            "subscribo",
-            "transition"
-        ]
-    },
-    {
-        "name": "subscribo/dependencyresolver",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/users/slavo/projects/packages/workbench/subscribo/dependencyresolver",
-            "reference": "e29120208fb73cae434d79a21c98399859a2e876"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-dependencyresolver-dev-master-e70561.zip",
-            "reference": "e29120208fb73cae434d79a21c98399859a2e876",
-            "shasum": "1bb9980cacc8fe3000036f6754d37c9d8139dd5b"
-        },
-        "require": {
-            "php": "~5.4"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 4.2. Version 5.0 can also be used.",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2015-02-16 14:42:32",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\DependencyResolver\\": "src/Subscribo/DependencyResolver/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Dependency Resolver for resolving dependencies",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "laravel",
-            "resolving dependencies",
-            "subscribo"
-        ]
-    },
-    {
-        "name": "subscribo/schemabuilder",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/schemabuilder",
-            "reference": "1ecfff3a3edcd3dc2a9b776827e6e6d187f29b4b"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-schemabuilder-dev-master-102f17.zip",
-            "reference": "1ecfff3a3edcd3dc2a9b776827e6e6d187f29b4b",
-            "shasum": "bc8691da7fcb25b5bc6865100f46bb0ca1cedc98"
-        },
-        "require": {
-            "php": "~5.4",
-            "subscribo/dependencyresolver": "@dev",
-            "subscribo/serviceprovider": "@dev",
-            "symfony/yaml": "~2.6@stable"
-        },
-        "suggest": {
-            "frozennode/administrator": "This package generates config files for Frozennode Administrator",
-            "laravel/framework": "This package have been build to work with The Laravel Framework version 4.2. Version 5.0 can also be used."
-        },
-        "time": "2015-02-16 14:42:32",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\SchemaBuilder\\": "src/Subscribo/SchemaBuilder/",
-                "Fuel\\Core\\": "src/lib/fuel/core/src/Fuel/Core/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Schema builder for building models, migrations, etc from schema",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "laravel",
-            "schema",
-            "subscribo"
-        ]
-    },
-    {
-        "name": "subscribo/support",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/users/slavo/projects/packages/workbench/subscribo/support",
-            "reference": "c4ae8b0bd494ccce1f102612648a29eb3cb45f2c"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-support-dev-master-5125f5.zip",
-            "reference": "c4ae8b0bd494ccce1f102612648a29eb3cb45f2c",
-            "shasum": "f94b9711429e803601b9a81df1ae03fcc39849bf"
-        },
-        "require": {
-            "php": "~5.4"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2015-02-11 13:47:44",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\Support\\": "src/Subscribo/Support/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Support package with common shared functionality (Str, Arr) extending Laravel classes",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "laravel",
-            "subscribo",
-            "support"
-        ]
-    },
-    {
-        "name": "subscribo/exception",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/exception",
-            "reference": "0654c073e9ed37dc9123e631ed777cbc76f498bb"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-exception-dev-master-2812ad.zip",
-            "reference": "0654c073e9ed37dc9123e631ed777cbc76f498bb",
-            "shasum": "f7728a9ba8f8dc6004fdcb1c16c081ff964c5ac9"
-        },
-        "require": {
-            "php": "~5.4",
-            "symfony/http-kernel": "~2.6"
-        },
-        "suggest": {
-            "illuminate/exception": "If exception handler functionality is used. Suggested version ~5.0",
-            "illuminate/http": "If exception handler functionality is used. Suggested version ~5.0",
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/config": "If exception handler functionality (ApiExceptionHandler, ApiExceptionHandlerServiceProvider, ExceptionHandlerInterface) is being used",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel",
-            "symfony/http-foundation": "If exception handler functionality is used. Suggested version ~2.6"
-        },
-        "time": "2015-02-16 14:42:32",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\Exception\\": "src/Subscribo/Exception/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Package Exception contain shared functionality connected to exceptions and their handling",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "exception",
-            "laravel",
-            "subscribo"
-        ]
-    },
-    {
-        "name": "subscribo/restcommon",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/restcommon",
-            "reference": "119c0b99f2b60b7468c871a1f56d5bb18793efa1"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-restcommon-dev-master-e72ee8.zip",
-            "reference": "119c0b99f2b60b7468c871a1f56d5bb18793efa1",
-            "shasum": "d1eeab424bdb9b096026adeaa60e9a03704d7549"
-        },
-        "require": {
-            "illuminate/contracts": "~5.0",
-            "illuminate/encryption": "~5.0",
-            "php": "~5.4",
-            "subscribo/exception": "@dev",
-            "subscribo/support": "@dev",
-            "symfony/http-foundation": "~2.6"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/serviceprovider": "If any ServiceProviders from this package are to be used"
-        },
-        "time": "2015-02-16 14:42:32",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\RestCommon\\": "src/Subscribo/RestCommon/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Package containing common files for Subscribo REST client and server",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "access token",
-            "authentication",
-            "common",
-            "exception",
-            "header field name",
-            "laravel",
-            "rest",
-            "subscribo"
-        ]
-    },
-    {
         "name": "symfony/config",
         "version": "2.7.x-dev",
         "version_normalized": "2.7.9999999.9999999-dev",
@@ -3085,243 +2672,6 @@
         ],
         "description": "Symfony Config Component",
         "homepage": "http://symfony.com"
-    },
-    {
-        "name": "subscribo/config",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/config",
-            "reference": "0d60befc3f50cb5ac0437b0078706a51fcc5afe2"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-config-dev-master-36b210.zip",
-            "reference": "0d60befc3f50cb5ac0437b0078706a51fcc5afe2",
-            "shasum": "ec55eda80c2eafbd3ef222310af25fe7c071d151"
-        },
-        "require": {
-            "php": "~5.4",
-            "subscribo/support": "@dev",
-            "symfony/config": "~2.6@stable",
-            "symfony/yaml": "~2.6@stable"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/environment": "If Environment based configuration support is needed or if using ServiceProvider. Suggested version: @dev",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel. Suggested version: @dev"
-        },
-        "time": "2015-02-16 14:42:31",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\Config\\": "src/Subscribo/Config/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Config package for reading configuration",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "config",
-            "laravel",
-            "subscribo"
-        ]
-    },
-    {
-        "name": "subscribo/modelbase",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/modelbase",
-            "reference": "b4c2a813ae3b2eba06a583061263e7910bc40d4e"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-modelbase-dev-master-7aa67b.zip",
-            "reference": "b4c2a813ae3b2eba06a583061263e7910bc40d4e",
-            "shasum": "c348e42650dfe43afe244a58321129624eacdbd1"
-        },
-        "require": {
-            "php": "~5.4",
-            "subscribo/config": "@dev"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 4.2. Version 5.0 can also be used.",
-            "subscribo/schemabuilder": "Abstract class in this package is expected to extend models generated by Subscribo SchemaBuilder",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2015-02-16 14:42:32",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\ModelBase\\": "src/Subscribo/ModelBase/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Model Base provides Eloquent based abstract class to make models extending it as well as a factory for listing and generating models",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "laravel",
-            "model",
-            "subscribo"
-        ]
-    },
-    {
-        "name": "subscribo/environment",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/environment",
-            "reference": "b4340ef0d56f86c4eb4a653b9bf0f6dc6d3a1110"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-environment-dev-master-591557.zip",
-            "reference": "b4340ef0d56f86c4eb4a653b9bf0f6dc6d3a1110",
-            "shasum": "35f96fdc0228adb078e87ebdb5a17183119301e6"
-        },
-        "require": {
-            "php": "~5.4"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2015-02-16 14:42:31",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\Environment\\": "src/Subscribo/Environment/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Package Environment is for getting current environment",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "environment",
-            "laravel",
-            "subscribo"
-        ]
-    },
-    {
-        "name": "subscribo/apichecker",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/apichecker",
-            "reference": "59690b374f3dceaf90846c6e3dfadffacd939c55"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-apichecker-dev-master-31c3f6.zip",
-            "reference": "59690b374f3dceaf90846c6e3dfadffacd939c55",
-            "shasum": "fa80b781c95f1c5ad474f9463801321c4b6d42b0"
-        },
-        "require": {
-            "php": "~5.4",
-            "subscribo/config": "@dev",
-            "subscribo/environment": "@dev",
-            "subscribo/modelbase": "@dev",
-            "subscribo/restcommon": "@dev",
-            "subscribo/serviceprovider": "@dev"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been build to work with The Laravel Framework version 5.0",
-            "subscribo/api0": "This package has been developed to work with API version 0"
-        },
-        "time": "2015-02-16 14:42:32",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\ApiChecker\\": "src/Subscribo/ApiChecker/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "API Checker for testing API within a browser. Default url: /checker",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "api",
-            "checker",
-            "laravel",
-            "subscribo",
-            "testing"
-        ]
     },
     {
         "name": "react/promise",
@@ -3535,136 +2885,6 @@
         ]
     },
     {
-        "name": "subscribo/restclient",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/restclient",
-            "reference": "b991caabaf6867f0d7421c3c1b7b200e198071e3"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-restclient-dev-master-316a48.zip",
-            "reference": "b991caabaf6867f0d7421c3c1b7b200e198071e3",
-            "shasum": "df5d68e93030536d79b0a2be4cb7b41052c5dd25"
-        },
-        "require": {
-            "guzzlehttp/guzzle": "~5.0",
-            "php": "~5.4",
-            "subscribo/config": "@dev",
-            "subscribo/environment": "@dev",
-            "subscribo/exception": "@dev",
-            "subscribo/restcommon": "@dev",
-            "subscribo/support": "@dev",
-            "symfony/http-foundation": "~2.6"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2015-02-16 14:42:31",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\RestClient\\": "src/Subscribo/RestClient/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Package Subscribo REST Client for communicating with Subscribo API",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "REST",
-            "client",
-            "http",
-            "laravel",
-            "subscribo"
-        ]
-    },
-    {
-        "name": "subscribo/restproxy",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/restproxy",
-            "reference": "cadaa90a5ebc5701ee77b955b2a40cbdd034a639"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-restproxy-dev-master-234686.zip",
-            "reference": "cadaa90a5ebc5701ee77b955b2a40cbdd034a639",
-            "shasum": "e4f861786046f76a140e02109761fa6d61bba8eb"
-        },
-        "require": {
-            "php": "~5.4",
-            "subscribo/config": "@dev",
-            "subscribo/environment": "@dev",
-            "subscribo/restclient": "@dev",
-            "subscribo/restcommon": "@dev"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2015-02-16 14:42:33",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\RestProxy\\": "src/Subscribo/RestProxy/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Package Subscribo RestProxy is providing proxy functionality to Subscribo API",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "api",
-            "client",
-            "http",
-            "laravel",
-            "proxy",
-            "rest",
-            "server",
-            "subscribo"
-        ]
-    },
-    {
         "name": "subscribo/clientchecker",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
@@ -3785,12 +3005,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/barryvdh/laravel-ide-helper.git",
-            "reference": "1f5e436d0078ca6abbcb07e5e08bcef126a8a14f"
+            "reference": "4cd891eadca838e2bced4c71f4e3a769d5de3594"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/1f5e436d0078ca6abbcb07e5e08bcef126a8a14f",
-            "reference": "1f5e436d0078ca6abbcb07e5e08bcef126a8a14f",
+            "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/4cd891eadca838e2bced4c71f4e3a769d5de3594",
+            "reference": "4cd891eadca838e2bced4c71f4e3a769d5de3594",
             "shasum": ""
         },
         "require": {
@@ -3807,7 +3027,7 @@
         "suggest": {
             "doctrine/dbal": "Load information from the database about models for phpdocs (~2.3)"
         },
-        "time": "2015-02-12 09:50:01",
+        "time": "2015-02-17 12:55:39",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3841,361 +3061,6 @@
             "phpdoc",
             "phpstorm",
             "sublime"
-        ]
-    },
-    {
-        "name": "subscribo/auth",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/auth",
-            "reference": "3957e89dbc13e2276ab3e0849402af93abe98c9c"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-auth-dev-master-d8bff1.zip",
-            "reference": "3957e89dbc13e2276ab3e0849402af93abe98c9c",
-            "shasum": "b097ece7250459117cb0866e8dd558181649cfbb"
-        },
-        "require": {
-            "illuminate/contracts": "~5.0",
-            "php": "~5.4"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2015-02-16 14:42:31",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\Auth\\": "src/Subscribo/Auth/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Subscribo Authentication package",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "auth",
-            "authentication",
-            "laravel",
-            "subscribo"
-        ]
-    },
-    {
-        "name": "subscribo/api1",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/api1",
-            "reference": "8952494212a84649c9bd30489a23c1deee117083"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-api1-dev-master-b14204.zip",
-            "reference": "8952494212a84649c9bd30489a23c1deee117083",
-            "shasum": "975feedd40a00c2b84045eb7498128a33a4e133e"
-        },
-        "require": {
-            "php": "~5.4",
-            "subscribo/auth": "@dev",
-            "subscribo/restcommon": "@dev"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2015-02-16 14:42:32",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\Api1\\": "src/Subscribo/Api1/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "API version 1",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "api",
-            "laravel",
-            "subscribo",
-            "v1"
-        ]
-    },
-    {
-        "name": "subscribo/apiserver",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiserver",
-            "reference": "6d07b81929c457c7abd1fba9aed2bbec098c4d4f"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-apiserver-dev-master-9cc671.zip",
-            "reference": "6d07b81929c457c7abd1fba9aed2bbec098c4d4f",
-            "shasum": "73e2ba11f63b30e8b242fd81f3c1edf1371bb554"
-        },
-        "require": {
-            "php": "~5.4",
-            "subscribo/api1": "@dev",
-            "subscribo/exception": "@dev"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2015-02-16 14:42:31",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\ApiServer\\": "src/Subscribo/ApiServer/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Package API Server is an umbrella package for API Server functionality",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "api",
-            "laravel",
-            "server",
-            "subscribo"
-        ]
-    },
-    {
-        "name": "subscribo/apiclientauth",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiclientauth",
-            "reference": "f3ff2064160b4882a5ef238fcc12cb3a8607f72e"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-apiclientauth-dev-master-2ef502.zip",
-            "reference": "f3ff2064160b4882a5ef238fcc12cb3a8607f72e",
-            "shasum": "055874be21a504852256f53bce6eca71bca3b89a"
-        },
-        "require": {
-            "illuminate/auth": "~5.0",
-            "illuminate/contracts": "~5.0",
-            "php": "~5.4"
-        },
-        "suggest": {
-            "illuminate/foundation": "(already contained in laravel/framework) - If using AuthenticatesAndRegistersUsersTrait",
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2015-02-16 14:42:31",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\ApiClientAuth\\": "src/Subscribo/ApiClientAuth/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Subscribo Authentication package for API Client",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "api client",
-            "auth",
-            "authentication",
-            "laravel",
-            "subscribo"
-        ]
-    },
-    {
-        "name": "subscribo/apiclient",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiclient",
-            "reference": "84e2a0b163146791b657f72f2ea3e934d7798382"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-apiclient-dev-master-64128c.zip",
-            "reference": "84e2a0b163146791b657f72f2ea3e934d7798382",
-            "shasum": "ce9cc728c8fa6c37fc7b5018e2794f176c37f47d"
-        },
-        "require": {
-            "php": "~5.4",
-            "subscribo/apiclientauth": "@dev",
-            "subscribo/exception": "@dev",
-            "subscribo/restproxy": "@dev",
-            "subscribo/serviceprovider": "@dev"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
-        },
-        "time": "2015-02-16 14:42:49",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\ApiClient\\": "src/Subscribo/ApiClient/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Package API Client is an umbrella package for API Client functionality",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "api",
-            "client",
-            "laravel",
-            "subscribo"
-        ]
-    },
-    {
-        "name": "subscribo/modifier",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "/Users/slavo/Projects/packages/workbench/subscribo/modifier",
-            "reference": "2edc6b6f386413a51f85b3f33864b0a3e4122162"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "http://satis.localhost/downloads/subscribo-modifier-dev-master-9f1601.zip",
-            "reference": "2edc6b6f386413a51f85b3f33864b0a3e4122162",
-            "shasum": "b862cd68b0b60b78c791b779d0760245f3bbeb64"
-        },
-        "require": {
-            "php": "~5.4"
-        },
-        "suggest": {
-            "laravel/framework": "This package have been developed to work with The Laravel Framework 4.2. Version 5.0 can also be used.",
-            "subscribo/serviceprovider": "If using ServiceProvider for Laravel"
-        },
-        "time": "2015-02-16 14:42:31",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Subscribo\\Modifier\\": "src/Subscribo/Modifier/"
-            }
-        },
-        "license": [
-            "proprietary"
-        ],
-        "authors": [
-            {
-                "name": "Slavo",
-                "role": "developer"
-            },
-            {
-                "name": "Kochabo",
-                "role": "owner"
-            }
-        ],
-        "description": "Modifier allows modifying multiple values using set of predefined rules",
-        "homepage": "http://www.subscribo.io",
-        "keywords": [
-            "laravel",
-            "model",
-            "modifier",
-            "sanitize",
-            "subscribo"
         ]
     },
     {
@@ -4278,18 +3143,77 @@
         "homepage": "http://symfony.com"
     },
     {
+        "name": "symfony/var-dumper",
+        "version": "2.6.x-dev",
+        "version_normalized": "2.6.9999999.9999999-dev",
+        "target-dir": "Symfony/Component/VarDumper",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/var-dumper.git",
+            "reference": "9532aaaadf346b2ab79357661e3299b92092d914"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/var-dumper/zipball/9532aaaadf346b2ab79357661e3299b92092d914",
+            "reference": "9532aaaadf346b2ab79357661e3299b92092d914",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "suggest": {
+            "ext-symfony_debug": ""
+        },
+        "time": "2015-02-17 16:54:47",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.6-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "Resources/functions/dump.php"
+            ],
+            "psr-0": {
+                "Symfony\\Component\\VarDumper\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            }
+        ],
+        "description": "Symfony mechanism for exploring and dumping PHP variables",
+        "homepage": "http://symfony.com",
+        "keywords": [
+            "debug",
+            "dump"
+        ]
+    },
+    {
         "name": "laravel/framework",
         "version": "5.0.x-dev",
         "version_normalized": "5.0.9999999.9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/laravel/framework.git",
-            "reference": "5a4b2b37f41866c072eec28d3817f1a27063c401"
+            "reference": "99ed94ecc82c9424825f697513aaf4dd12288577"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/laravel/framework/zipball/5a4b2b37f41866c072eec28d3817f1a27063c401",
-            "reference": "5a4b2b37f41866c072eec28d3817f1a27063c401",
+            "url": "https://api.github.com/repos/laravel/framework/zipball/99ed94ecc82c9424825f697513aaf4dd12288577",
+            "reference": "99ed94ecc82c9424825f697513aaf4dd12288577",
             "shasum": ""
         },
         "require": {
@@ -4368,7 +3292,7 @@
             "pda/pheanstalk": "Required to use the beanstalk queue driver (~3.0).",
             "predis/predis": "Required to use the redis cache and queue drivers (~1.0)."
         },
-        "time": "2015-02-17 04:53:19",
+        "time": "2015-02-20 02:23:10",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -4402,6 +3326,1542 @@
         "keywords": [
             "framework",
             "laravel"
+        ]
+    },
+    {
+        "name": "guzzle/guzzle",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/guzzle/guzzle3.git",
+            "reference": "d898326a716f23fdd778942ea9404aeccbe16a46"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/guzzle/guzzle3/zipball/d898326a716f23fdd778942ea9404aeccbe16a46",
+            "reference": "d898326a716f23fdd778942ea9404aeccbe16a46",
+            "shasum": ""
+        },
+        "require": {
+            "ext-curl": "*",
+            "php": ">=5.3.3",
+            "symfony/event-dispatcher": "~2.1"
+        },
+        "replace": {
+            "guzzle/batch": "self.version",
+            "guzzle/cache": "self.version",
+            "guzzle/common": "self.version",
+            "guzzle/http": "self.version",
+            "guzzle/inflection": "self.version",
+            "guzzle/iterator": "self.version",
+            "guzzle/log": "self.version",
+            "guzzle/parser": "self.version",
+            "guzzle/plugin": "self.version",
+            "guzzle/plugin-async": "self.version",
+            "guzzle/plugin-backoff": "self.version",
+            "guzzle/plugin-cache": "self.version",
+            "guzzle/plugin-cookie": "self.version",
+            "guzzle/plugin-curlauth": "self.version",
+            "guzzle/plugin-error-response": "self.version",
+            "guzzle/plugin-history": "self.version",
+            "guzzle/plugin-log": "self.version",
+            "guzzle/plugin-md5": "self.version",
+            "guzzle/plugin-mock": "self.version",
+            "guzzle/plugin-oauth": "self.version",
+            "guzzle/service": "self.version",
+            "guzzle/stream": "self.version"
+        },
+        "require-dev": {
+            "doctrine/cache": "~1.3",
+            "monolog/monolog": "~1.0",
+            "phpunit/phpunit": "3.7.*",
+            "psr/log": "~1.0",
+            "symfony/class-loader": "~2.1",
+            "zendframework/zend-cache": "2.*,<2.3",
+            "zendframework/zend-log": "2.*,<2.3"
+        },
+        "suggest": {
+            "guzzlehttp/guzzle": "Guzzle 5 has moved to a new package name. The package you have installed, Guzzle 3, is deprecated."
+        },
+        "time": "2015-01-28 21:05:25",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.9-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Guzzle": "src/",
+                "Guzzle\\Tests": "tests/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Michael Dowling",
+                "email": "mtdowling@gmail.com",
+                "homepage": "https://github.com/mtdowling"
+            },
+            {
+                "name": "Guzzle Community",
+                "homepage": "https://github.com/guzzle/guzzle/contributors"
+            }
+        ],
+        "description": "PHP HTTP client. This library is deprecated in favor of https://packagist.org/packages/guzzlehttp/guzzle",
+        "homepage": "http://guzzlephp.org/",
+        "keywords": [
+            "client",
+            "curl",
+            "framework",
+            "http",
+            "http client",
+            "rest",
+            "web service"
+        ]
+    },
+    {
+        "name": "league/oauth1-client",
+        "version": "1.2.1",
+        "version_normalized": "1.2.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/thephpleague/oauth1-client.git",
+            "reference": "2bcdde3df4e59ebefd2be902102ac185ade844b7"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/thephpleague/oauth1-client/zipball/2bcdde3df4e59ebefd2be902102ac185ade844b7",
+            "reference": "2bcdde3df4e59ebefd2be902102ac185ade844b7",
+            "shasum": ""
+        },
+        "require": {
+            "guzzle/guzzle": "3.*",
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "mockery/mockery": "0.7.2",
+            "phpunit/phpunit": "*",
+            "satooshi/php-coveralls": "dev-master"
+        },
+        "time": "2015-02-01 23:22:54",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "League\\OAuth1\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Ben Corlett",
+                "email": "bencorlett@me.com",
+                "homepage": "http://www.webcomm.com.au",
+                "role": "Developer"
+            }
+        ],
+        "description": "OAuth 1.0 Client Library",
+        "keywords": [
+            "Authentication",
+            "SSO",
+            "authorization",
+            "bitbucket",
+            "identity",
+            "idp",
+            "oauth",
+            "oauth1",
+            "single sign on",
+            "trello",
+            "tumblr",
+            "twitter"
+        ]
+    },
+    {
+        "name": "laravel/socialite",
+        "version": "2.0.x-dev",
+        "version_normalized": "2.0.9999999.9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/laravel/socialite.git",
+            "reference": "7f96a35e8976faea4c282abcd5c196ef8ddfab7c"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/laravel/socialite/zipball/7f96a35e8976faea4c282abcd5c196ef8ddfab7c",
+            "reference": "7f96a35e8976faea4c282abcd5c196ef8ddfab7c",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/guzzle": "~4.0|~5.0",
+            "illuminate/contracts": "~5.0",
+            "illuminate/http": "~5.0",
+            "illuminate/support": "~5.0",
+            "league/oauth1-client": "~1.0",
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "mockery/mockery": "~0.9",
+            "phpunit/phpunit": "~4.0"
+        },
+        "time": "2015-02-14 01:56:05",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Laravel\\Socialite\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Taylor Otwell",
+                "email": "taylorotwell@gmail.com"
+            }
+        ],
+        "description": "Laravel wrapper around OAuth 1 & OAuth 2 libraries.",
+        "keywords": [
+            "laravel",
+            "oauth"
+        ]
+    },
+    {
+        "name": "subscribo/serviceprovider",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/serviceprovider",
+            "reference": "aeb8a6b5581069ed36cb11aef05cd0781fbf4dc5"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-serviceprovider-dev-master-b37778.zip",
+            "reference": "aeb8a6b5581069ed36cb11aef05cd0781fbf4dc5",
+            "shasum": "d492944b32ac98dbaf2482a78bab64167d59ff64"
+        },
+        "require": {
+            "illuminate/support": "~5.0",
+            "php": "~5.4"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-18 10:47:58",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\ServiceProvider\\": "src/Subscribo/ServiceProvider/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Contain Service Provider for Laravel to be extended by other packages as well as modified versions of Service Provider from Laravel 4.2.12",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "laravel",
+            "subscribo",
+            "transition"
+        ]
+    },
+    {
+        "name": "subscribo/dependencyresolver",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/users/slavo/projects/packages/workbench/subscribo/dependencyresolver",
+            "reference": "b967b074037b666d54fdc5cdbf9151e296fc9110"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-dependencyresolver-dev-master-7a8b8d.zip",
+            "reference": "b967b074037b666d54fdc5cdbf9151e296fc9110",
+            "shasum": "8e09d26149901744d4ef25aa38961309bc76202b"
+        },
+        "require": {
+            "php": "~5.4"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 4.2. Version 5.0 can also be used."
+        },
+        "time": "2015-02-18 10:47:58",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\DependencyResolver\\": "src/Subscribo/DependencyResolver/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Dependency Resolver for resolving dependencies",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "laravel",
+            "resolving dependencies",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/support",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/users/slavo/projects/packages/workbench/subscribo/support",
+            "reference": "c86062328b8f58bf1fcb8084a02760e1b3eb40b1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-support-dev-master-b5d0ce.zip",
+            "reference": "c86062328b8f58bf1fcb8084a02760e1b3eb40b1",
+            "shasum": "0195de9ec3ff5bcbd0950dbca035d9a6c3a6cf81"
+        },
+        "require": {
+            "illuminate/support": "~5.0",
+            "php": "~5.4"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-18 10:47:59",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\Support\\": "src/Subscribo/Support/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Support package with common shared functionality (Str, Arr) extending Laravel classes",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "laravel",
+            "subscribo",
+            "support"
+        ]
+    },
+    {
+        "name": "subscribo/exception",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/exception",
+            "reference": "b70b7297b4bd0d9152862a140464fdeded851c0c"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-exception-dev-master-0022e7.zip",
+            "reference": "b70b7297b4bd0d9152862a140464fdeded851c0c",
+            "shasum": "19e2dd539e36fd4dd50c259f81ba2e05c693f6ae"
+        },
+        "require": {
+            "php": "~5.4",
+            "symfony/http-kernel": "~2.6"
+        },
+        "suggest": {
+            "illuminate/exception": "If exception handler functionality is used. Suggested version ~5.0",
+            "illuminate/http": "If exception handler functionality is used. Suggested version ~5.0",
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+            "subscribo/config": "If exception handler functionality (ApiExceptionHandler, ApiExceptionHandlerServiceProvider, ExceptionHandlerInterface) is being used",
+            "symfony/http-foundation": "If exception handler functionality is used. Suggested version ~2.6"
+        },
+        "time": "2015-02-18 10:47:59",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\Exception\\": "src/Subscribo/Exception/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package Exception contain shared functionality connected to exceptions and their handling",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "exception",
+            "laravel",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/restcommon",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/restcommon",
+            "reference": "03af9b55e517e4add0a537ae908a8c5177a83ec8"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-restcommon-dev-master-afd005.zip",
+            "reference": "03af9b55e517e4add0a537ae908a8c5177a83ec8",
+            "shasum": "db20cb1f88c6c24035720d6181d8654d31cb8110"
+        },
+        "require": {
+            "illuminate/contracts": "~5.0",
+            "illuminate/encryption": "~5.0",
+            "php": "~5.4",
+            "subscribo/exception": "@dev",
+            "subscribo/support": "@dev",
+            "symfony/http-foundation": "~2.6"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-19 16:00:54",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\RestCommon\\": "src/Subscribo/RestCommon/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package containing common files for Subscribo REST client and server",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "access token",
+            "authentication",
+            "common",
+            "exception",
+            "header field name",
+            "laravel",
+            "rest",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/config",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/config",
+            "reference": "5d215ae151ee4b6fcabb085c7e3367ae2324d2fc"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-config-dev-master-459cef.zip",
+            "reference": "5d215ae151ee4b6fcabb085c7e3367ae2324d2fc",
+            "shasum": "aec2b966a55a60091da6627701608d5e18d8ffd1"
+        },
+        "require": {
+            "php": "~5.4",
+            "subscribo/support": "@dev",
+            "symfony/config": "~2.6@stable",
+            "symfony/yaml": "~2.6@stable"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+            "subscribo/environment": "If Environment based configuration support is needed or if using ServiceProvider. Suggested version: @dev"
+        },
+        "time": "2015-02-18 10:47:58",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\Config\\": "src/Subscribo/Config/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Config package for reading configuration",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "config",
+            "laravel",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/modelbase",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/modelbase",
+            "reference": "b750e32e3dd8324ce8775c5d09248c29a7aad0e2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-modelbase-dev-master-35e995.zip",
+            "reference": "b750e32e3dd8324ce8775c5d09248c29a7aad0e2",
+            "shasum": "532c8a30d65afbc8593c589e714ad8c3294b674f"
+        },
+        "require": {
+            "illuminate/database": "~5.0",
+            "php": "~5.4"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 4.2. Version 5.0 can also be used.",
+            "subscribo/schemabuilder": "Abstract class in this package is expected to extend models generated by Subscribo SchemaBuilder"
+        },
+        "time": "2015-02-19 16:12:54",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\ModelBase\\": "src/Subscribo/ModelBase/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Model Base provides Eloquent based abstract class to make models extending it",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "base",
+            "laravel",
+            "model",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/environment",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/environment",
+            "reference": "8f52f870fe90405c3d23bfe74b0388bef31ae5ac"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-environment-dev-master-891e7d.zip",
+            "reference": "8f52f870fe90405c3d23bfe74b0388bef31ae5ac",
+            "shasum": "af8a1bec8c50670fc4ed8f1488698f6dfe8c4314"
+        },
+        "require": {
+            "php": "~5.4"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-18 10:47:58",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\Environment\\": "src/Subscribo/Environment/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package Environment is for getting current environment",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "environment",
+            "laravel",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/apichecker",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/apichecker",
+            "reference": "2d99141ccec8a92d395ece0131121c231a1e2e0a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-apichecker-dev-master-6f0d51.zip",
+            "reference": "2d99141ccec8a92d395ece0131121c231a1e2e0a",
+            "shasum": "61f298927c6b4d7353ccdb4086d4e99843431b78"
+        },
+        "require": {
+            "php": "~5.4",
+            "subscribo/config": "@dev",
+            "subscribo/environment": "@dev",
+            "subscribo/restcommon": "@dev",
+            "subscribo/serviceprovider": "@dev"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been build to work with The Laravel Framework version 5.0",
+            "subscribo/api0": "This package has been developed to work with API version 0"
+        },
+        "time": "2015-02-19 16:00:53",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\ApiChecker\\": "src/Subscribo/ApiChecker/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "API Checker for testing API within a browser. Default url: /checker",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "api",
+            "checker",
+            "laravel",
+            "subscribo",
+            "testing"
+        ]
+    },
+    {
+        "name": "subscribo/restclient",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/restclient",
+            "reference": "a654fb8b9ce6cace56b193dd5822e111176f00b5"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-restclient-dev-master-42ab66.zip",
+            "reference": "a654fb8b9ce6cace56b193dd5822e111176f00b5",
+            "shasum": "8df8b1a55dc5a8069061183f7d4323f8e866e4d2"
+        },
+        "require": {
+            "guzzlehttp/guzzle": "~5.0",
+            "php": "~5.4",
+            "subscribo/config": "@dev",
+            "subscribo/environment": "@dev",
+            "subscribo/exception": "@dev",
+            "subscribo/restcommon": "@dev",
+            "subscribo/support": "@dev",
+            "symfony/http-foundation": "~2.6"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-18 10:47:58",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\RestClient\\": "src/Subscribo/RestClient/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package Subscribo REST Client for communicating with Subscribo API",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "REST",
+            "client",
+            "http",
+            "laravel",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/restproxy",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/restproxy",
+            "reference": "09efdf8bcd667f48a9f7ae8f9294f8b53081ecde"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-restproxy-dev-master-ad4379.zip",
+            "reference": "09efdf8bcd667f48a9f7ae8f9294f8b53081ecde",
+            "shasum": "0f4d587ed06e792dec1ef8b59ddb5e9e43c9963d"
+        },
+        "require": {
+            "php": "~5.4",
+            "subscribo/config": "@dev",
+            "subscribo/environment": "@dev",
+            "subscribo/restclient": "@dev",
+            "subscribo/restcommon": "@dev"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-18 10:47:59",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\RestProxy\\": "src/Subscribo/RestProxy/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package Subscribo RestProxy is providing proxy functionality to Subscribo API",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "api",
+            "client",
+            "http",
+            "laravel",
+            "proxy",
+            "rest",
+            "server",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/auth",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/auth",
+            "reference": "7f13b022001645da95f75893295f87333043f244"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-auth-dev-master-ce0617.zip",
+            "reference": "7f13b022001645da95f75893295f87333043f244",
+            "shasum": "028e9e66cf5e67f91750b99cbb2b1d53864d8f38"
+        },
+        "require": {
+            "illuminate/contracts": "~5.0",
+            "illuminate/http": "~5.0",
+            "illuminate/support": "~5.0",
+            "php": "~5.4",
+            "subscribo/exception": "@dev",
+            "subscribo/modelcore": "@dev",
+            "subscribo/restcommon": "@dev",
+            "symfony/http-foundation": "~2.6"
+        },
+        "suggest": {
+            "illuminate/hashing": "Hashing functionality needed by UserFactory (already contained in laravel/framework)",
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-19 16:00:54",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\Auth\\": "src/Subscribo/Auth/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Subscribo Authentication package",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "auth",
+            "authentication",
+            "laravel",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/apiclientauth",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiclientauth",
+            "reference": "f112e9449b1d74146183e56968bb84e415bb5054"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-apiclientauth-dev-master-448d89.zip",
+            "reference": "f112e9449b1d74146183e56968bb84e415bb5054",
+            "shasum": "efdcd43f9b8ef60db7f53fed1a0da9a7483d4f45"
+        },
+        "require": {
+            "illuminate/auth": "~5.0",
+            "illuminate/contracts": "~5.0",
+            "php": "~5.4"
+        },
+        "suggest": {
+            "illuminate/foundation": "(already contained in laravel/framework) - If using AuthenticatesAndRegistersUsersTrait",
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-18 14:28:27",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\ApiClientAuth\\": "src/Subscribo/ApiClientAuth/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Subscribo Authentication package for API Client",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "api client",
+            "auth",
+            "authentication",
+            "laravel",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/apiclient",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiclient",
+            "reference": "52cd6ce526cb00b7cb16d91c94242b3930eabd86"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-apiclient-dev-master-115651.zip",
+            "reference": "52cd6ce526cb00b7cb16d91c94242b3930eabd86",
+            "shasum": "9f821bf671f86ddcac3c433cf86a103f352cdaaf"
+        },
+        "require": {
+            "illuminate/exception": "~5.0",
+            "illuminate/http": "~5.0",
+            "php": "~5.4",
+            "subscribo/apiclientauth": "@dev",
+            "subscribo/apiclientoauth": "@dev",
+            "subscribo/config": "@dev",
+            "subscribo/exception": "@dev",
+            "subscribo/restproxy": "@dev",
+            "symfony/http-foundation": "~2.6"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-18 10:47:59",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\ApiClient\\": "src/Subscribo/ApiClient/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package API Client is an umbrella package for API Client functionality",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "api",
+            "client",
+            "laravel",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/modifier",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/modifier",
+            "reference": "610bafa9f2b75b108be38288ea1a2fbe4d491038"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-modifier-dev-master-38fb26.zip",
+            "reference": "610bafa9f2b75b108be38288ea1a2fbe4d491038",
+            "shasum": "e9ace4551887a00851ef59669b3e0eb7b5ad9db3"
+        },
+        "require": {
+            "php": "~5.4"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 4.2. Version 5.0 can also be used."
+        },
+        "time": "2015-02-18 10:47:58",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\Modifier\\": "src/Subscribo/Modifier/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Modifier allows modifying multiple values using set of predefined rules",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "laravel",
+            "model",
+            "modifier",
+            "sanitize",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/schemabuilder",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/schemabuilder",
+            "reference": "8c66714c8c153fede26650e6c00a22a89cd87c7d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-schemabuilder-dev-master-3768aa.zip",
+            "reference": "8c66714c8c153fede26650e6c00a22a89cd87c7d",
+            "shasum": "81f86cbe3d9a4fdaef8658f6bbbb306792b1bd55"
+        },
+        "require": {
+            "php": "~5.4",
+            "subscribo/dependencyresolver": "@dev",
+            "subscribo/serviceprovider": "@dev",
+            "symfony/yaml": "~2.6@stable"
+        },
+        "suggest": {
+            "frozennode/administrator": "This package generates config files for Frozennode Administrator",
+            "laravel/framework": "This package have been build to work with The Laravel Framework version 4.2. Version 5.0 can also be used."
+        },
+        "time": "2015-02-20 11:57:58",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\SchemaBuilder\\": "src/Subscribo/SchemaBuilder/",
+                "Fuel\\Core\\": "src/lib/fuel/core/src/Fuel/Core/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Schema builder for building models, migrations, etc from schema",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "laravel",
+            "schema",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/developmentseeder",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/users/slavo/projects/packages/workbench/subscribo/developmentseeder",
+            "reference": "5c126e842234adaaa5d9ffb14ae231dbcff8379d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-developmentseeder-dev-master-87f0bf.zip",
+            "reference": "5c126e842234adaaa5d9ffb14ae231dbcff8379d",
+            "shasum": "41d0a84298c29c3fb04bd72314302ba98b9f9b35"
+        },
+        "require": {
+            "illuminate/database": "~5.0",
+            "illuminate/support": "~5.0",
+            "php": "~5.4",
+            "subscribo/auth": "@dev",
+            "subscribo/modelcore": "@dev",
+            "subscribo/restcommon": "@dev"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-20 13:41:16",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\DevelopmentSeeder\\": "src/Subscribo/DevelopmentSeeder/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Contain Seeders for development environment",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "development",
+            "laravel",
+            "seeds",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/apiserver",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiserver",
+            "reference": "da952f3348dbe292acbd4ab39e66a0bab8299f34"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-apiserver-dev-master-50974b.zip",
+            "reference": "da952f3348dbe292acbd4ab39e66a0bab8299f34",
+            "shasum": "8d648b281975dc4091e45e290034af1a7b130e4b"
+        },
+        "require": {
+            "php": "~5.4",
+            "subscribo/api1": "@dev",
+            "subscribo/exception": "@dev",
+            "subscribo/modelcore": "@dev",
+            "subscribo/restcommon": "@dev"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-20 13:41:16",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\ApiServer\\": "src/Subscribo/ApiServer/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package API Server is an umbrella package for API Server functionality",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "api",
+            "laravel",
+            "server",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/modelcore",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/modelcore",
+            "reference": "b0da2d0363ce7137add4268a26400f2b597a9232"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-modelcore-dev-master-6b28fc.zip",
+            "reference": "b0da2d0363ce7137add4268a26400f2b597a9232",
+            "shasum": "93721a8bb55b619c1a7c6027f757353e22a4cf7e"
+        },
+        "require": {
+            "php": "~5.4",
+            "subscribo/modelbase": "@dev"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-20 14:33:54",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\ModelCore\\": "src/Subscribo/ModelCore/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package Model Core contain core subscribo models",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "core",
+            "laravel",
+            "model",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/apiclientoauth",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiclientoauth",
+            "reference": "a2a6521fdedd702b1408c1bae03824ff1460d99d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-apiclientoauth-dev-master-ce922c.zip",
+            "reference": "a2a6521fdedd702b1408c1bae03824ff1460d99d",
+            "shasum": "d72fccadf9e9b7e15a5add43b045fa9358ec15af"
+        },
+        "require": {
+            "illuminate/http": "~5.0",
+            "illuminate/routing": "~5.0",
+            "php": "~5.4",
+            "subscribo/apiclientauth": "@dev",
+            "subscribo/oauthcommon": "@dev",
+            "subscribo/restclient": "@dev",
+            "symfony/http-kernel": "~2.6"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-20 13:41:17",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\ApiClientOAuth\\": "src/Subscribo/ApiClientOAuth/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package to connect to 3rd party Oauth services for API Client",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "api",
+            "client",
+            "laravel",
+            "oauth",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/oauthcommon",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/oauthcommon",
+            "reference": "394f6007690d8b022d407958fd7b7f86ee14951d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-oauthcommon-dev-master-3aca9a.zip",
+            "reference": "394f6007690d8b022d407958fd7b7f86ee14951d",
+            "shasum": "241b2e923d01ecdacbb91f4a20597dd7331023d0"
+        },
+        "require": {
+            "laravel/socialite": "~2.0",
+            "php": "~5.4"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-20 12:09:46",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\OAuthCommon\\": "src/Subscribo/OAuthCommon/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "Package to connect to 3rd party Oauth services (shared functionality)",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "common",
+            "laravel",
+            "oauth",
+            "subscribo"
+        ]
+    },
+    {
+        "name": "subscribo/api1",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "/Users/slavo/Projects/packages/workbench/subscribo/api1",
+            "reference": "f1779757be5d5239625a4bfe6a8c54d015436863"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://satis.localhost/downloads/subscribo-api1-dev-master-984055.zip",
+            "reference": "f1779757be5d5239625a4bfe6a8c54d015436863",
+            "shasum": "ab29a77d67e2b5c50ab0980ed8dd1682b22dbec6"
+        },
+        "require": {
+            "illuminate/routing": "~5.0",
+            "php": "~5.4",
+            "subscribo/auth": "@dev",
+            "subscribo/modelcore": "@dev",
+            "subscribo/oauthcommon": "@dev",
+            "subscribo/restcommon": "@dev"
+        },
+        "suggest": {
+            "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        },
+        "time": "2015-02-20 14:33:54",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Subscribo\\Api1\\": "src/Subscribo/Api1/"
+            }
+        },
+        "license": [
+            "proprietary"
+        ],
+        "authors": [
+            {
+                "name": "Slavo",
+                "role": "developer"
+            },
+            {
+                "name": "Kochabo",
+                "role": "owner"
+            }
+        ],
+        "description": "API version 1",
+        "homepage": "http://www.subscribo.io",
+        "keywords": [
+            "api",
+            "laravel",
+            "subscribo",
+            "v1"
         ]
     }
 ]

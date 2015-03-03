@@ -31,10 +31,10 @@ class MarkableExceptionFactory {
             }
             $result = $e;
         } else {
-            $result = self::assembleException($e);
+            $result = static::assembleException($e);
         }
         if (true === $mark) {
-            $mark = self::generateMark();
+            $mark = static::generateMark();
         }
         $result->setMark($mark);
         return $result;

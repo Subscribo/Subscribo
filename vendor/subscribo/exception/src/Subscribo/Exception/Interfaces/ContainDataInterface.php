@@ -25,10 +25,15 @@ interface ContainDataInterface {
     public function getOutputData(array $default = null);
 
     /**
-     * Plain Error data
+     * Plain Key data (usually Error data)
      *
      * @return array
      */
-    public function getErrorData();
+    public function getKeyData();
+
+    /**
+     * @return string
+     */
+    public static function getKey();
 
 }

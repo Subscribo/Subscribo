@@ -126,6 +126,9 @@ model_options:
     o_auth_configurations:
         administrator_menu: Services and Apis
 
+    action_interruptions:
+        administrator_menu: Services and Apis
+
     users:
         administrator_menu: ACL
         relations:
@@ -142,6 +145,9 @@ model_options:
         relations:
             has_many:
                 - accounts
+
+    customer_registrations:
+        administrator_menu: ACL
 
     clients:
         administrator_menu: ACL
@@ -324,6 +330,17 @@ model_fields:
         - redirect null
         - scopes null
 
+    action_interruptions:
+        - service_id
+        - account_id null
+        - hash unique
+        - status (enum from waiting processed)
+        - continue_method
+        - questionary (text) null
+        - answer (text) null
+        - extra_data (text) null
+
+
     users: #Change: users with login access to backend
         - username
         - email null #guest superadmin does not have to have email address; moreover email addresses are not necessarily unique - to know which user is requested, we need service_id
@@ -354,8 +371,20 @@ model_fields:
         - default_delivery_address_id null → addresses
         - default_billing_details_id null → billing_details
 
+    customer_registrations:
+        - service_id
+        - merged_service_id null -> services
+        - status (enum from prepared processed cancelled)
+        - hash unique null
+        - account_id null
+        - customer_id null
+        - name null
+        - email null
+        - password (password) null hidden
+        - account_token_id null
+
     account_tokens:
-        - account_id
+        - account_id null
         - provider
         - identifier
         - token null

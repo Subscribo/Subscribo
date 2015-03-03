@@ -58,7 +58,8 @@ You can throw Exceptions, as necessary, paying attention to signature of their c
 Subscribo version of HttpException (serving as a base class of other Exception classes marking an Http Error)
 is implementing ContainDataInterface, allowing it and its child classes to carry extended information which could be provided to http client.
 
-If you want to implement ContainDataInterface in other classes, using ContainDataTrait might help you to do so, but you will probably need to set the data via constructor or setter (see phpDoc in ContainDataTrait or implementation in HttpException)
+If you want to implement ContainDataInterface in other classes, using ContainDataTrait might help you to do so, but you will probably need to set the data via constructor or setter and add a $_containedData = array() property
+(see phpDoc in ContainDataTrait or implementation in HttpException)
 
 #### 2.1.2 MarkableExceptionInterface
 

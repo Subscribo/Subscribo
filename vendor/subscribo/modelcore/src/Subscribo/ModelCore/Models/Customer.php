@@ -9,11 +9,11 @@ class Customer extends \Subscribo\ModelCore\Bases\Customer {
 
     /**
      * @param $email
-     * @return self[]
+     * @return Customer[]|static[]
      */
     public static function findAllByEmail($email)
     {
-        $query = self::query()->where('email', $email);
+        $query = static::query()->where('email', $email);
         $result = $query->get();
         return $result;
     }

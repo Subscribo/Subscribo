@@ -26,15 +26,34 @@ class Registrar
 
     /**
      * @param array $data
-     * @return null|QuestionList|mixed
+     * @return null|Account
      */
     public function attempt(array $data)
     {
         $response = $this->accountConnector->postRegistration($data);
-        if (is_array($response)) {
-            return new $this->model($response);
+        return $this->assembleModel($response);
+    }
+
+    /**
+     * @param array $data
+     * @return null|Account
+     */
+    public function resumeAttempt(array $data)
+    {
+        $response = $this->accountConnector->resumePostRegistration($data);
+        return $this->assembleModel($response);
+    }
+
+    /**
+     * @param array $data
+     * @return null|\Subscribo\ApiClientAuth\Account
+     */
+    protected function assembleModel(array $data = null)
+    {
+        if (empty($data)) {
+            return null;
         }
-        return $response;
+        return new $this->model($data);
     }
 
     public function isModel($entity)

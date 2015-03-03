@@ -16,7 +16,7 @@ class ApiServerServiceProvider extends ServiceProvider {
     {
         $this->app->register('\\Subscribo\\Api1\\Integration\\Laravel\\Api1ServiceProvider');
         $this->app->register('\\Subscribo\\Exception\\Integration\\Laravel\\ApiExceptionHandlerServiceProvider');
-
+        $this->app->register('\\Subscribo\\ModelCore\\Integration\\Laravel\\ModelCoreServiceProvider');
 
     }
 
