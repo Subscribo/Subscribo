@@ -43,7 +43,7 @@ class HipChatHandler extends SocketHandler
     private $token;
 
     /**
-     * @var array
+     * @var string
      */
     private $room;
 
@@ -53,7 +53,7 @@ class HipChatHandler extends SocketHandler
     private $name;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $notify;
 
@@ -73,8 +73,8 @@ class HipChatHandler extends SocketHandler
      * @param string  $name   Name used in the "from" field
      * @param bool    $notify Trigger a notification in clients or not
      * @param int     $level  The minimum logging level at which this handler will be triggered
-     * @param Boolean $bubble Whether the messages that are handled can bubble up the stack or not
-     * @param Boolean $useSSL Whether to connect via SSL.
+     * @param bool    $bubble Whether the messages that are handled can bubble up the stack or not
+     * @param bool    $useSSL Whether to connect via SSL.
      * @param string  $format The format of the messages (default to text, can be set to html if you have html in the messages)
      * @param string  $host   The HipChat server hostname.
      */
@@ -118,7 +118,6 @@ class HipChatHandler extends SocketHandler
     {
         $dataArray = array(
             'from' => $this->name,
-            'room_id' => $this->room,
             'notify' => $this->notify,
             'message' => $record['formatted'],
             'message_format' => $this->format,
@@ -136,7 +135,7 @@ class HipChatHandler extends SocketHandler
      */
     private function buildHeader($content)
     {
-        $header = "POST /v1/rooms/message?format=json&auth_token=".$this->token." HTTP/1.1\r\n";
+        $header = "POST /v2/room/".$this->room."/notification?auth_token=".$this->token." HTTP/1.1\r\n";
         $header .= "Host: {$this->host}\r\n";
         $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
         $header .= "Content-Length: " . strlen($content) . "\r\n";
