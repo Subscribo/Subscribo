@@ -14,8 +14,8 @@ use Subscribo\Exception\Traits\MarkableExceptionTrait;
  */
 class ConfigurationException extends RuntimeException implements ContainDataInterface, MarkableExceptionInterface
 {
-    use ContainDataTrait
-    use MarkableExceptionTrait
+    use ContainDataTrait;
+    use MarkableExceptionTrait;
 
     protected $_containedData = array();
 

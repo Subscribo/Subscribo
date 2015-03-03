@@ -4,6 +4,8 @@ use Exception;
 use Subscribo\RestClient\Exceptions\InvalidArgumentException;
 use Subscribo\RestClient\Exceptions\ClientErrorException;
 use Subscribo\RestClient\Exceptions\ClientErrorHttpException;
+use Subscribo\RestClient\Exceptions\RedirectionException;
+use Subscribo\RestClient\Exceptions\RedirectionHttpException;
 use Subscribo\RestClient\Exceptions\ResponseException;
 use Subscribo\RestClient\Exceptions\ValidationErrorsException;
 use Subscribo\RestClient\Exceptions\TokenConfigurationException;
@@ -14,10 +16,10 @@ use Subscribo\RestClient\Exceptions\ConnectionException;
 use Subscribo\RestClient\Exceptions\ConnectionToRemoteServerHttpException;
 use Subscribo\RestClient\Exceptions\InvalidResponseException;
 use Subscribo\RestClient\Exceptions\InvalidRemoteServerResponseHttpException;
+use Subscribo\RestClient\Factories\ServerRequestExceptionFactory;
 use Subscribo\RestCommon\Exceptions\UnauthorizedHttpException;
 use Subscribo\RestCommon\RestCommon;
 use Subscribo\RestCommon\Signer;
-use Subscribo\RestCommon\Factories\ServerRequestHttpExceptionFactory;
 use Subscribo\Support\Arr;
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\ResponseInterface;
@@ -103,6 +105,7 @@ class RestClient {
      * @throws Exceptions\InvalidRemoteServerResponseHttpException
      * @throws Exceptions\RemoteServerErrorHttpException
      * @throws Exceptions\TokenConfigurationHttpException
+     * @throws Exceptions\RedirectionHttpException
      */
     public function forward(Request $request, $uriStub, array $signatureOptions = null, $errorToException = true)
     {
@@ -148,7 +151,7 @@ class RestClient {
      * @throws Exceptions\ClientErrorException
      * @throws Exceptions\ValidationErrorsException
      * @throws Exceptions\TokenConfigurationException
-     * @throws \Subscribo\RestCommon\Exceptions\ServerRequestHttpException
+     * @throws Exceptions\ServerRequestException
      */
     public function process($uriStub, $method = 'GET', $content = null, array $query = null, array $headers = null, array $signatureOptions = null, $nullOnClientError = false)
     {
@@ -187,7 +190,7 @@ class RestClient {
      * @throws Exceptions\ClientErrorException
      * @throws Exceptions\ValidationErrorsException
      * @throws Exceptions\TokenConfigurationException
-     * @throws \Subscribo\RestCommon\Exceptions\ServerRequestHttpException
+     * @throws Exceptions\ServerRequestException
      */
     public function call($uriStub, $method = 'GET', $content = null, array $query = null, array $headers = null, array $signatureOptions = null, $errorResponseToException = true)
     {
@@ -301,14 +304,14 @@ class RestClient {
      * @param ResponseInterface $response
      * @param int|null $statusCode
      * @throws Exceptions\InvalidResponseException
-     * @throws \Subscribo\RestCommon\Exceptions\ServerRequestHttpException
+     * @throws Exceptions\ServerRequestException
      */
     public function filterServerRequests(ResponseInterface $response, $statusCode = null)
     {
         if ( ! is_int($statusCode)) {
             $statusCode = $this->extractResponseStatusCode($response);
         }
-        if ( ! ServerRequestHttpExceptionFactory::isServerRequestResponse($statusCode)) {
+        if ( ! ServerRequestExceptionFactory::isServerRequestResponse($statusCode)) {
             return;
         }
         $responseContent = $this->extractResponseContent($response);
@@ -322,7 +325,7 @@ class RestClient {
         ];
         try {
             $dataFull = json_decode($responseContent, true);
-            $serverRequestException = ServerRequestHttpExceptionFactory::make($statusCode, $dataFull);
+            $serverRequestException = ServerRequestExceptionFactory::make($statusCode, $dataFull);
         } catch (Exception $e) {
             throw new InvalidResponseException(['originalResponse' => $originalResponse], true, true, $e);
         }
@@ -483,7 +486,7 @@ class RestClient {
 
     /**
      * @param Exception|ClientErrorException|ServerErrorException|TokenConfigurationException|ConnectionException|InvalidResponseException $originalException
-     * @return Exception|ClientErrorHttpException|ConnectionToRemoteServerHttpException|InvalidRemoteServerResponseHttpException|RemoteServerErrorHttpException|TokenConfigurationHttpException
+     * @return Exception|ClientErrorHttpException|ConnectionToRemoteServerHttpException|InvalidRemoteServerResponseHttpException|RedirectionHttpException|RemoteServerErrorHttpException|TokenConfigurationHttpException
      */
     public function transformExceptions(Exception $originalException)
     {
@@ -501,6 +504,9 @@ class RestClient {
         }
         if ($originalException instanceof InvalidResponseException) {
             return new InvalidRemoteServerResponseHttpException($originalException);
+        }
+        if ($originalException instanceof RedirectionException) {
+            return new RedirectionHttpException($originalException);
         }
         return $originalException;
     }

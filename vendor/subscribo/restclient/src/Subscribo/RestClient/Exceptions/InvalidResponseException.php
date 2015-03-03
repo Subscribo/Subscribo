@@ -14,8 +14,8 @@ use Subscribo\Exception\Traits\MarkableExceptionTrait;
  */
 class InvalidResponseException extends RuntimeException implements ContainDataInterface, MarkableExceptionInterface
 {
-    use ContainDataTrait
-    use MarkableExceptionTrait
+    use ContainDataTrait;
+    use MarkableExceptionTrait;
 
     const DEFAULT_EXCEPTION_CODE = 90;
     const DEFAULT_MESSAGE = 'Invalid response from remote server';

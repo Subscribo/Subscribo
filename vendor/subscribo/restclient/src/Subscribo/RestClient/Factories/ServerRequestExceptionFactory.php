@@ -1,19 +1,22 @@
-<?php namespace Subscribo\RestCommon\Factories;
+<?php namespace Subscribo\RestClient\Factories;
 
-use Subscribo\RestCommon\Exceptions\InvalidArgumentException;
-use Subscribo\RestCommon\Exceptions\ServerRequestHttpException;
-use Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException;
+use Subscribo\RestClient\Exceptions\QuestionaryException;
+use Subscribo\RestClient\Exceptions\InvalidArgumentException;
+use Subscribo\RestClient\Exceptions\ServerRequestException;
 use Subscribo\RestCommon\ServerRequest;
-use Subscribo\RestCommon\Questionary;
 use Subscribo\RestCommon\Factories\ServerRequestFactory;
 
-class ServerRequestHttpExceptionFactory
+class ServerRequestExceptionFactory
 {
     protected static $statusCodeMap = [
-        QuestionaryServerRequestHttpException::STATUS_CODE => 'Subscribo\\RestCommon\\Exceptions\\QuestionaryServerRequestHttpException',
+        QuestionaryException::STATUS_CODE => 'Subscribo\\RestClient\\Exceptions\\QuestionaryException',
 
     ];
 
+    /**
+     * @param int|string $statusCode
+     * @return bool
+     */
     public static function isServerRequestResponse($statusCode)
     {
         if (empty($statusCode)) {
@@ -27,10 +30,10 @@ class ServerRequestHttpExceptionFactory
     }
 
     /**
-     * @param int $statusCode
+     * @param int|string $statusCode
      * @param array $data
-     * @return ServerRequestHttpException
-     * @throws \Subscribo\RestCommon\Exceptions\InvalidArgumentException
+     * @return ServerRequestException
+     * @throws \Subscribo\RestClient\Exceptions\InvalidArgumentException
      */
     public static function make($statusCode, array $data)
     {
@@ -38,7 +41,7 @@ class ServerRequestHttpExceptionFactory
             throw new InvalidArgumentException(sprintf("Unrecognized status code '%s'", $statusCode));
         }
         $statusCode = intval($statusCode);
-        /** @var ServerRequestHttpException $exceptionClassName */
+        /** @var ServerRequestException $exceptionClassName */
         $exceptionClassName = static::$statusCodeMap[$statusCode];
         $keyName = $exceptionClassName::getKey();
         if (empty($data[$keyName])) {
