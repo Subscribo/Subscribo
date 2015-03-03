@@ -21,6 +21,18 @@ abstract class AbstractOAuthManager extends SocialiteManager
         return ['facebook'];
     }
 
+    public static function getProviderName($provider = null)
+    {
+        $providerNames = [
+            'facebook' => 'Facebook',
+            'twitter'  => 'Twitter',
+        ];
+        if (is_null($provider)) {
+            return $providerNames;
+        }
+        return $providerNames[$provider];
+    }
+
     /**
      * @return string
      */
