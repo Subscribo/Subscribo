@@ -6,9 +6,9 @@ use Illuminate\Session\Store;
 use Illuminate\Http\Request;
 use Exception;
 use Subscribo\ApiClientAuth\Registrar;
-use Subscribo\RestCommon\Exceptions\ServerRequestHttpException;
+use Subscribo\RestClient\Exceptions\ServerRequestException;
 use Subscribo\RestClient\Exceptions\ValidationErrorsException;
-use Subscribo\ApiClientCommon\Traits\HandleServerRequestHttpExceptionTrait;
+use Subscribo\ApiClientCommon\Traits\HandleServerRequestExceptionTrait;
 
 /**
  * Class AuthenticatesAndRegistersUsersTrait
@@ -19,7 +19,7 @@ trait AuthenticatesAndRegistersUsersTrait
 {
     use ValidatesRequests;
     use AuthenticatesAndRegistersUsers;
-    use HandleServerRequestHttpExceptionTrait;
+    use HandleServerRequestExceptionTrait;
 
     public function getRegister(Registrar $registrar, Store $session)
     {
@@ -43,8 +43,8 @@ trait AuthenticatesAndRegistersUsersTrait
             if (empty($account)) {
                 throw new Exception('Empty account.');
             }
-        } catch (ServerRequestHttpException $e) {
-            return $this->handleServerRequestHttpException($e, $request->path());
+        } catch (ServerRequestException $e) {
+            return $this->handleServerRequestException($e, $request->path());
 
         } catch (ValidationErrorsException $e) {
             return redirect()
@@ -52,6 +52,7 @@ trait AuthenticatesAndRegistersUsersTrait
                 ->withInput($request->only('email', 'name'))
                 ->withErrors($e->getValidationErrors());
         } catch (Exception $e) {
+            $this->logException($e);
             return redirect()
                 ->refresh()
                 ->withInput($request->only('email', 'name'))

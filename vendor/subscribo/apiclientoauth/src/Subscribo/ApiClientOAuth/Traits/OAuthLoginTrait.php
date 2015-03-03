@@ -4,8 +4,8 @@ use Exception;
 use Illuminate\Contracts\Auth\Guard;
 use Subscribo\ApiClientAuth\Registrar;
 use Subscribo\ApiClientOAuth\OAuthManager;
-use Subscribo\ApiClientCommon\Traits\HandleServerRequestHttpExceptionTrait;
-use Subscribo\RestCommon\Exceptions\ServerRequestHttpException;
+use Subscribo\ApiClientCommon\Traits\HandleServerRequestExceptionTrait;
+use Subscribo\RestClient\Exceptions\ServerRequestException;
 use Subscribo\RestClient\Exceptions\ValidationErrorsException;
 use Subscribo\Exception\Exceptions\NotFoundHttpException;
 
@@ -16,7 +16,7 @@ use Subscribo\Exception\Exceptions\NotFoundHttpException;
  */
 trait OAuthLoginTrait
 {
-    use HandleServerRequestHttpExceptionTrait;
+    use HandleServerRequestExceptionTrait;
 
     protected $redirectPath = '/home';
 
@@ -55,13 +55,14 @@ trait OAuthLoginTrait
             if (empty($account)) {
                 throw new Exception('Empty account.');
             }
-        } catch (ServerRequestHttpException $e) {
-            return $this->handleServerRequestHttpException($e, $this->registrationPath);
+        } catch (ServerRequestException $e) {
+            return $this->handleServerRequestException($e, $this->registrationPath);
         } catch (ValidationErrorsException $e) {
             return redirect($this->registrationPath)
                 ->withInput($nameAndEmail)
                 ->withErrors($e->getValidationErrors());
         } catch (Exception $e) {
+            $this->logException($e);
             return redirect($this->registrationPath)
                 ->withInput($nameAndEmail)
                 ->withErrors('Login attempt failed. Please try again later or contact an administrator.');
