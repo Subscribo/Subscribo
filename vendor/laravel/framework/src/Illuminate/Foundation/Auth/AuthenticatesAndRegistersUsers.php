@@ -71,7 +71,7 @@ trait AuthenticatesAndRegistersUsers {
 	public function postLogin(Request $request)
 	{
 		$this->validate($request, [
-			'email' => 'required', 'password' => 'required',
+			'email' => 'required|email', 'password' => 'required',
 		]);
 
 		$credentials = $request->only('email', 'password');
@@ -84,8 +84,18 @@ trait AuthenticatesAndRegistersUsers {
 		return redirect($this->loginPath())
 					->withInput($request->only('email', 'remember'))
 					->withErrors([
-						'email' => 'These credentials do not match our records.',
+						'email' => $this->getFailedLoginMessage(),
 					]);
+	}
+
+	/**
+	 * Get the failed login message.
+	 *
+	 * @return string
+	 */
+	protected function getFailedLoginMessage()
+	{
+		return 'These credentials do not match our records.';
 	}
 
 	/**

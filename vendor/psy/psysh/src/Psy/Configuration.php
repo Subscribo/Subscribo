@@ -32,8 +32,8 @@ class Configuration
     private static $AVAILABLE_OPTIONS = array(
         'defaultIncludes', 'useReadline', 'usePcntl', 'codeCleaner', 'pager',
         'loop', 'configDir', 'dataDir', 'runtimeDir', 'manualDbFile',
-        'presenters', 'requireSemicolons', 'historySize', 'eraseDuplicates',
-        'tabCompletion',
+        'requireSemicolons', 'historySize', 'eraseDuplicates', 'tabCompletion',
+        'tabCompletionMatchers',
     );
 
     private $defaultIncludes;
@@ -83,6 +83,10 @@ class Configuration
 
         // legacy baseDir option
         if (isset($config['baseDir'])) {
+            $msg = "The 'baseDir' configuration option is deprecated. " .
+                "Please specify 'configDir' and 'dataDir' options instead.";
+            trigger_error($msg, E_USER_DEPRECATED);
+
             $this->setConfigDir($config['baseDir']);
             $this->setDataDir($config['baseDir']);
         }
@@ -150,9 +154,33 @@ class Configuration
      *
      * @return string
      */
-    private function getHomeDir()
+    private function getPsyHome()
     {
-        return getenv('HOME') ?: (getenv('HOMEDRIVE') . '/' . getenv('HOMEPATH'));
+        if ($home = getenv('HOME')) {
+            return $home . '/.psysh';
+        }
+
+        if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
+            // Check the old default
+            $oldHome = strtr(getenv('HOMEDRIVE') . '/' . getenv('HOMEPATH') . '/.psysh', '\\', '/');
+
+            if ($appData = getenv('APPDATA')) {
+                $home = strtr($appData, '\\', '/') . '/PsySH';
+
+                if (is_dir($oldHome) && !is_dir($home)) {
+                    $msg = sprintf(
+                        "Config directory found at '%s'. Please move it to '%s'.",
+                        strtr($oldHome, '/', '\\'),
+                        strtr($home, '/', '\\')
+                    );
+                    trigger_error($msg, E_USER_DEPRECATED);
+
+                    return $oldHome;
+                }
+
+                return $home;
+            }
+        }
     }
 
     /**
@@ -178,7 +206,9 @@ class Configuration
             return $dir . '/psysh';
         }, $xdg->getConfigDirs());
 
-        array_unshift($dirs, $this->getHomeDir() . '/.psysh');
+        if ($home = $this->getPsyHome()) {
+            array_unshift($dirs, $home);
+        }
 
         return $dirs;
     }
@@ -206,7 +236,9 @@ class Configuration
             return $dir . '/psysh';
         }, $xdg->getDataDirs());
 
-        array_unshift($dirs, $this->getHomeDir() . '/.psysh');
+        if ($home = $this->getPsyHome()) {
+            array_unshift($dirs, $home);
+        }
 
         return $dirs;
     }
@@ -225,7 +257,7 @@ class Configuration
             }
         }
 
-        foreach (array('commands', 'tabCompletionMatchers') as $option) {
+        foreach (array('commands', 'tabCompletionMatchers', 'presenters') as $option) {
             if (isset($options[$option])) {
                 $method = 'add' . ucfirst($option);
                 $this->$method($options[$option]);
@@ -240,7 +272,7 @@ class Configuration
      * The config file may directly manipulate the configuration, or may return
      * an array of options which will be merged with the current configuration.
      *
-     * @throws InvalidArgumentException if the config file returns a non-array result.
+     * @throws \InvalidArgumentException if the config file returns a non-array result.
      *
      * @param string $file
      */
@@ -363,6 +395,8 @@ class Configuration
      */
     public function setTempDir($dir)
     {
+        trigger_error("'setTempDir' is deprecated. Use 'setRuntimeDir' instead.", E_USER_DEPRECATED);
+
         return $this->setRuntimeDir($dir);
     }
 
@@ -373,6 +407,8 @@ class Configuration
      */
     public function getTempDir()
     {
+        trigger_error("'getTempDir' is deprecated. Use 'getRuntimeDir' instead.", E_USER_DEPRECATED);
+
         return $this->getRuntimeDir();
     }
 
@@ -940,16 +976,6 @@ class Configuration
      * @param array $presenters
      */
     public function addPresenters(array $presenters)
-    {
-        $this->setPresenters($presenters);
-    }
-
-    /**
-     * @see self::addPresenters()
-     *
-     * @param array $presenters (default: array())
-     */
-    protected function setPresenters(array $presenters = array())
     {
         $manager = $this->getPresenterManager();
         foreach ($presenters as $presenter) {

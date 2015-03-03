@@ -153,8 +153,6 @@ class Event {
 	 */
 	protected function callAfterCallbacks(Container $container)
 	{
-		if (empty($this->afterCallbacks)) return;
-
 		foreach ($this->afterCallbacks as $callback)
 		{
 			$container->call($callback);
@@ -181,7 +179,7 @@ class Event {
 	 */
 	public function isDue(Application $app)
 	{
-		if ($app->isDownForMaintenance() && ! $this->runsInMaintenanceMode())
+		if ( ! $this->runsInMaintenanceMode() && $app->isDownForMaintenance())
 		{
 			return false;
 		}
@@ -494,9 +492,9 @@ class Event {
 	 */
 	public function days($days)
 	{
-		$this->spliceIntoPosition(5, implode(',', is_array($days) ? $days : func_get_args()));
+		$days = is_array($days) ? $days : func_get_args();
 
-		return $this;
+		return $this->spliceIntoPosition(5, implode(',', $days));
 	}
 
 	/**
