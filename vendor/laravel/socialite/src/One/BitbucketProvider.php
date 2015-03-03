@@ -1,7 +1,6 @@
 <?php namespace Laravel\Socialite\One;
 
-class TwitterProvider extends AbstractProvider
+class BitbucketProvider extends AbstractProvider
 {
-
     //
 }

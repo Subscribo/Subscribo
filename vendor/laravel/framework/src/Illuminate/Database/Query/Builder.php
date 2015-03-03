@@ -172,9 +172,9 @@ class Builder {
 	 */
 	protected $operators = array(
 		'=', '<', '>', '<=', '>=', '<>', '!=',
-		'like', 'not like', 'between', 'ilike',
+		'like', 'like binary', 'not like', 'between', 'ilike',
 		'&', '|', '^', '<<', '>>',
-		'rlike', 'regexp', 'not regexp', 
+		'rlike', 'regexp', 'not regexp',
 		'~', '~*', '!~', '!~*', 'similar to',
                 'not similar to',
 	);
@@ -528,7 +528,7 @@ class Builder {
 	{
 		$isOperator = in_array($operator, $this->operators);
 
-		return ($isOperator && $operator != '=' && is_null($value));
+		return $isOperator && $operator != '=' && is_null($value);
 	}
 
 	/**
@@ -1059,7 +1059,10 @@ class Builder {
 
 		$this->havings[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
-		$this->addBinding($value, 'having');
+		if ( ! $value instanceof Expression)
+		{
+			$this->addBinding($value, 'having');
+		}
 
 		return $this;
 	}
@@ -1655,6 +1658,8 @@ class Builder {
 	 */
 	public function insert(array $values)
 	{
+		if (empty($values)) return true;
+
 		// Since every insert gets treated like a batch insert, we will make sure the
 		// bindings are structured in a way that is convenient for building these
 		// inserts statements by verifying the elements are actually an array.
