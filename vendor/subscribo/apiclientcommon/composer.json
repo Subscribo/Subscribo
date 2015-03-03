@@ -32,7 +32,8 @@
     "suggest": {
         "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
         "illuminate/foundation": "If QuestionaryController, QuestionaryControllerTrait or ApiClientCommonServiceProvider::registerRoutes() is used (recommended version ~5.0)",
-        "illuminate/http": "If QuestionaryController, QuestionaryControllerTrait or ApiClientCommonServiceProvider::registerRoutes() is used (recommended version ~5.0)"
+        "illuminate/http": "If QuestionaryController, QuestionaryControllerTrait or ApiClientCommonServiceProvider::registerRoutes() is used (recommended version ~5.0)",
+        "illuminate/session": "If QuestionaryController, QuestionaryControllerTrait or ApiClientCommonServiceProvider::registerRoutes() is used (recommended version ~5.0)"
     },
     "autoload": {
         "psr-4": {

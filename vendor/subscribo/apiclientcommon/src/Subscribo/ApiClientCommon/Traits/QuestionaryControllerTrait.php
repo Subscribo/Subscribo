@@ -8,15 +8,15 @@ use Illuminate\Contracts\Auth\Guard;
 use Subscribo\RestClient\Exceptions\ValidationErrorsException;
 use Subscribo\RestCommon\Questionary;
 use Subscribo\RestCommon\AccountIdTransport;
-use Subscribo\RestCommon\Exceptions\ServerRequestHttpException;
+use Subscribo\RestClient\Exceptions\ServerRequestException;
 use Subscribo\Exception\Exceptions\SessionVariableNotFoundHttpException;
-use Subscribo\ApiClientCommon\Traits\HandleServerRequestHttpExceptionTrait;
+use Subscribo\ApiClientCommon\Traits\HandleServerRequestExceptionTrait;
 use Subscribo\ApiClientCommon\Connectors\QuestionaryConnector;
 
 
 trait QuestionaryControllerTrait
 {
-    use HandleServerRequestHttpExceptionTrait;
+    use HandleServerRequestExceptionTrait;
     use ValidatesRequests;
 
     public function getQuestionary(Store $session)
@@ -25,7 +25,7 @@ trait QuestionaryControllerTrait
         if (empty($questionary)) {
             throw new SessionVariableNotFoundHttpException;
         }
-        $session->reflash();
+        $session->keep([$this->sessionKeyQuestionary, $this->sessionKeyRedirectFromQuestionary]);
         return view('subscribo::apiclientcommon.questionary')->with('questionary', $questionary);
     }
 
@@ -36,7 +36,7 @@ trait QuestionaryControllerTrait
         if (empty($questionary)) {
             throw new SessionVariableNotFoundHttpException;
         }
-        $session->reflash();
+        $session->keep([$this->sessionKeyQuestionary, $this->sessionKeyRedirectFromQuestionary]);
         $rules = $questionary->getQuestionsValidationRules();
         $this->validate($request, $rules);
         $data = $request->only(array_keys($rules));
@@ -45,16 +45,17 @@ trait QuestionaryControllerTrait
         $signatureOptions = $user ? AccountIdTransport::setAccountId($user->getAuthIdentifier()) : array();
         try {
             $response = $connector->postAnswer($questionary, $data, $signatureOptions);
-        } catch (ServerRequestHttpException $e) {
+        } catch (ServerRequestException $e) {
             $redirectUri = $session->pull($this->sessionKeyRedirectFromQuestionary);
             $questionary = $session->pull($this->sessionKeyQuestionary);
-            return $this->handleServerRequestHttpException($e, $redirectUri);
+            return $this->handleServerRequestException($e, $redirectUri);
         } catch (ValidationErrorsException $e) {
             return redirect()
                 ->refresh()
                 ->withInput($data)
                 ->withErrors($e->getValidationErrors());
         } catch (Exception $e) {
+            $this->logException($e);
             return redirect()
                 ->refresh()
                 ->withInput($data)
