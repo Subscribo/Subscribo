@@ -1,4 +1,4 @@
-{{-- This template is to be included by teplate containing form --}}
+{{-- This template is to be included by template containing form --}}
 @if( count($errors) )
     <div class="alert alert-danger">
         {{ $errorTitle or 'There were some problems with your input:' }}
