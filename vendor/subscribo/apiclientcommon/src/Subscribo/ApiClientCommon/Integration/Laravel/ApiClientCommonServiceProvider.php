@@ -41,9 +41,9 @@ class ApiClientCommonServiceProvider extends ServiceProvider
         if ($this->routesRegistered) {
             return;
         }
-        $csrf = class_exists('App\\Http\\Middleware\\VerifyCsrfToken') ? 'App\\Http\\Middleware\\VerifyCsrfToken' : 'Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken';
-        $router->get($uri, ['as' => 'subscribo.question', 'uses' => 'Subscribo\\ApiClientCommon\\Controllers\\QuestionaryController@getQuestionary']);
-        $router->post($uri, ['middleware' => [$csrf], 'uses' => 'Subscribo\\ApiClientCommon\\Controllers\\QuestionaryController@postQuestionary']);
+        $csrf = class_exists('\\App\\Http\\Middleware\\VerifyCsrfToken') ? '\\App\\Http\\Middleware\\VerifyCsrfToken' : '\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken';
+        $router->get($uri, ['as' => 'subscribo.question', 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\QuestionaryController@getQuestionary']);
+        $router->post($uri, ['middleware' => [$csrf], 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\QuestionaryController@postQuestionary']);
         $this->routesRegistered = true;
     }
 
