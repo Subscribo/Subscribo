@@ -2,6 +2,8 @@
 
 use Laravel\Socialite\SocialiteManager;
 use Subscribo\OAuthCommon\Providers\FacebookProvider;
+use Subscribo\OAuthCommon\Providers\TwitterProvider;
+use League\OAuth1\Client\Server\Twitter as TwitterServer;
 use Subscribo\OAuthCommon\Exceptions\ErrorResponseException;
 
 /**
@@ -18,7 +20,19 @@ abstract class AbstractOAuthManager extends SocialiteManager
      */
     public static function getAvailableDrivers()
     {
-        return ['facebook'];
+        return ['facebook', 'twitter'];
+    }
+
+    public static function getProviderName($provider = null)
+    {
+        $providerNames = [
+            'facebook' => 'Facebook',
+            'twitter'  => 'Twitter',
+        ];
+        if (is_null($provider)) {
+            return $providerNames;
+        }
+        return $providerNames[$provider];
     }
 
     /**
@@ -55,5 +69,11 @@ abstract class AbstractOAuthManager extends SocialiteManager
     {
         $config = $this->getDriverConfiguration('facebook');
         return $this->buildProvider('Subscribo\\OAuthCommon\\Providers\\FacebookProvider', $config);
+    }
+
+    protected function createTwitterDriver()
+    {
+        $config = $this->getDriverConfiguration('twitter');
+        return new TwitterProvider($this->app->make('request'), new TwitterServer($this->formatConfig($config)));
     }
 }

@@ -37,6 +37,10 @@ trait OAuthLoginTrait
             throw new NotFoundHttpException();
         }
         $user = $manager->getUser($provider);
+        if (empty($user)) {
+            return redirect($this->registrationPath)
+                ->withErrors('You have probably rejected authorization by '.$manager->getProviderName($provider).'. Please try again or use a different form of login or registration.');
+        }
         $token = isset($user->token) ? $user->token : null;
         $secret = isset($user->tokenSecret) ? $user->tokenSecret : null;
         $nameAndEmail = [

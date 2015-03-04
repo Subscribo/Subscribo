@@ -22,8 +22,7 @@ class OAuthController extends AbstractController
         }
         $redirect = $configuration->redirect ?: array_get($validated, 'redirect');
         $redirect = trim($redirect) ?: $this->assembleRedirect($provider);
-        $scopes = $configuration->scopes ? json_decode($configuration->scopes) : array();
-        $scopes = (array) $scopes;
+        $scopes = $configuration->scopes ? ((array) json_decode($configuration->scopes)) : null;
         $result = [
             'result' => [
                 $provider => [
