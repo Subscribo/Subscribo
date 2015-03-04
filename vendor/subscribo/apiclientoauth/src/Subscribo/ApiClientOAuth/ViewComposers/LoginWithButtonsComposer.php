@@ -7,8 +7,13 @@ class LoginWithButtonsComposer
 {
     public function compose(View $view)
     {
-        $providers = AbstractOAuthManager::getProviderName();
+        $providerNames = AbstractOAuthManager::getProviderName();
+        $providers = [];
+        foreach ($providerNames as $driver => $name)
+        {
+            $url = route('subscribo.oauth.login', ['driver' => $driver]);
+            $providers[$url] = $name;
+        }
         $view->with('providers', $providers);
-        $view->with('baseUri', '/oauth/login/');
     }
 }
