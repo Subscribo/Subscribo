@@ -41,7 +41,7 @@ use Symfony\Component\Console\Input\ArgvInput;
  */
 class Shell extends Application
 {
-    const VERSION = 'v0.3.5';
+    const VERSION = 'v0.4.1';
 
     const PROMPT      = '>>> ';
     const BUFF_PROMPT = '... ';
@@ -661,7 +661,7 @@ class Shell extends Application
      *
      * Stores $e as the last Exception in the Shell Context.
      *
-     * @param Exception       $e      An exception instance
+     * @param \Exception      $e      An exception instance
      * @param OutputInterface $output An OutputInterface instance
      */
     public function renderException($e, $output)
@@ -682,7 +682,7 @@ class Shell extends Application
     /**
      * Helper for getting an output style for the given ErrorException's level.
      *
-     * @param ErrorException $e
+     * @param \ErrorException $e
      *
      * @return string
      */
