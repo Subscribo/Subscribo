@@ -20,6 +20,7 @@ use Subscribo\RestClient\Factories\ServerRequestExceptionFactory;
 use Subscribo\RestCommon\Exceptions\UnauthorizedHttpException;
 use Subscribo\RestCommon\RestCommon;
 use Subscribo\RestCommon\Signer;
+use Subscribo\RestCommon\SignatureOptions;
 use Subscribo\Support\Arr;
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\ResponseInterface;
@@ -97,7 +98,7 @@ class RestClient {
      *
      * @param Request $request
      * @param string $uriStub
-     * @param array|null $signatureOptions
+     * @param SignatureOptions|array|null $signatureOptions
      * @param bool $errorToException
      * @return Response
      * @throws Exceptions\ClientErrorHttpException
@@ -107,7 +108,7 @@ class RestClient {
      * @throws Exceptions\TokenConfigurationHttpException
      * @throws Exceptions\RedirectionHttpException
      */
-    public function forward(Request $request, $uriStub, array $signatureOptions = null, $errorToException = true)
+    public function forward(Request $request, $uriStub, $signatureOptions = null, $errorToException = true)
     {
         try {
             $callResponse = $this->call(
@@ -142,7 +143,7 @@ class RestClient {
      * @param string|null|array|mixed $content
      * @param array|null $query
      * @param array|null $headers
-     * @param array|null $signatureOptions
+     * @param SignatureOptions|array|null $signatureOptions
      * @param bool $nullOnClientError
      * @return array|null
      * @throws Exceptions\ConnectionException
@@ -153,7 +154,7 @@ class RestClient {
      * @throws Exceptions\TokenConfigurationException
      * @throws Exceptions\ServerRequestException
      */
-    public function process($uriStub, $method = 'GET', $content = null, array $query = null, array $headers = null, array $signatureOptions = null, $nullOnClientError = false)
+    public function process($uriStub, $method = 'GET', $content = null, array $query = null, array $headers = null, $signatureOptions = null, $nullOnClientError = false)
     {
         try {
             $callResponse = $this->call($uriStub, $method, $content, $query, $headers, $signatureOptions, true);
@@ -182,7 +183,7 @@ class RestClient {
      * @param string|null|array|mixed $content
      * @param array|null $query
      * @param array|null $headers
-     * @param array|null $signatureOptions
+     * @param SignatureOptions|array|null $signatureOptions
      * @param bool $errorResponseToException
      * @return \GuzzleHttp\Message\FutureResponse|ResponseInterface|\GuzzleHttp\Ring\Future\FutureInterface|mixed|null
      * @throws Exceptions\ConnectionException
@@ -192,7 +193,7 @@ class RestClient {
      * @throws Exceptions\TokenConfigurationException
      * @throws Exceptions\ServerRequestException
      */
-    public function call($uriStub, $method = 'GET', $content = null, array $query = null, array $headers = null, array $signatureOptions = null, $errorResponseToException = true)
+    public function call($uriStub, $method = 'GET', $content = null, array $query = null, array $headers = null, $signatureOptions = null, $errorResponseToException = true)
     {
         $processedHeaders = $this->filterRequestHeaders($headers);
 
