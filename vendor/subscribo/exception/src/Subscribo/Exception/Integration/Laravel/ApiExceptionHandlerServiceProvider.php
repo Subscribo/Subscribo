@@ -2,7 +2,6 @@
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
-use Subscribo\Environment\EnvironmentRegistry;
 
 
 /**

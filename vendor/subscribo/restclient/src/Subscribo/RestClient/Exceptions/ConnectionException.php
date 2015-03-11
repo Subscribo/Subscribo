@@ -23,7 +23,7 @@ class ConnectionException extends RuntimeException implements ContainDataInterfa
 
     protected $_containedData = array();
 
-    public function __construct(Exception $previous, array $data = null, $message = true, $code = true)
+    public function __construct(Exception $previous = null, array $data = null, $message = true, $code = true)
     {
         if (is_null($data)) {
             $data = array();

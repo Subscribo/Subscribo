@@ -3,6 +3,14 @@
 use Exception;
 use Subscribo\Exception\Exceptions\ClientErrorHttpException;
 
+/**
+ * Class SessionVariableNotFoundHttpException
+ *
+ * Exception to be thrown, when expected variable is not in session
+ * (e.g. when link has been used outside of standard workflow)
+ *
+ * @package Subscribo\Exception
+ */
 class SessionVariableNotFoundHttpException extends ClientErrorHttpException
 {
     const STATUS_CODE = 400;

@@ -29,9 +29,9 @@ class Signer
         return $result;
     }
 
-    public function modifyHeaders(array $headers = array(), array $data = array(), array $options = null)
+    public function modifyHeaders(array $headers = array(), array $data = array(), $options = null)
     {
-        $options = is_array($options) ? $options : array();
+        $options = empty($options) ? array() : $options;
         $result = Signature::modifyHeaders($this->tokenRing, $headers, $data, $options, $this->encrypter);
         return $result;
     }

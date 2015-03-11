@@ -7,7 +7,7 @@ use App;
 
 use Subscribo\Api1\Traits\SelfRegisteringControllerTrait;
 use Subscribo\Api1\Traits\ContextRequestValidationTrait;
-use Subscribo\Api1\Traits\QuestionAskingControllerTrait;
+use Subscribo\Api1\Traits\ServerRequestEnabledControllerTrait;
 
 /**
  * Class AbstractController
@@ -20,7 +20,7 @@ abstract class AbstractController extends Controller implements SelfRegisteringC
 {
     use SelfRegisteringControllerTrait;
     use ContextRequestValidationTrait;
-    use QuestionAskingControllerTrait;
+    use ServerRequestEnabledControllerTrait;
 
     /**
      * @var Context

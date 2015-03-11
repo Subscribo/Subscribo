@@ -3,7 +3,7 @@
 use Subscribo\Support\Arr;
 
 /**
- * Class ContainDataTrait
+ * Trait ContainDataTrait
  *
  * Trait helping classes to implement ContainDataInterface
  *

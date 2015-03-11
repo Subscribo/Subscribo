@@ -3,6 +3,7 @@
 use Exception;
 use Illuminate\Http\Request;
 use Subscribo\RestClient\RestClient;
+use Subscribo\RestClient\Factories\SignatureOptionsFactory;
 use Subscribo\Exception\Interfaces\ExceptionHandlerInterface;
 use Illuminate\Contracts\Auth\Guard;
 use Subscribo\RestCommon\AccountIdTransport;
@@ -35,17 +36,17 @@ class RestProxy {
     protected $exceptionHandler;
 
     /**
-     * @var Guard
+     * @var \Subscribo\RestClient\Factories\SignatureOptionsFactory
      */
-    protected $auth;
+    protected $signatureOptionsFactory;
 
 
-    public function __construct(Request $request, RestClient $client, ExceptionHandlerInterface $exceptionHandler, Guard $auth, array $settings = null)
+    public function __construct(Request $request, RestClient $client, ExceptionHandlerInterface $exceptionHandler, SignatureOptionsFactory $signatureOptionsFactory, array $settings = null)
     {
         $this->restClient = $client;
         $this->request = $request;
         $this->exceptionHandler = $exceptionHandler;
-        $this->auth = $auth;
+        $this->signatureOptionsFactory = $signatureOptionsFactory;
         if ($settings)
         {
             $this->setup($settings);
@@ -101,8 +102,7 @@ class RestProxy {
     public function call($uri)
     {
         try {
-            $user = $this->auth->user();
-            $signatureOptions = $user ? AccountIdTransport::setAccountId($user->getAuthIdentifier()) : array();
+            $signatureOptions = $this->signatureOptionsFactory->generate(true);
             $result = $this->restClient->forward($this->request, $uri, $signatureOptions, true);
 
         } catch (Exception $e) {
