@@ -11,6 +11,7 @@ class BasicSeeder extends Seeder {
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\ServiceSeeder');
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\TagSeeder');
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\UserSeeder');
+        $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\CustomerAccountSeeder');
 
     }
 }
