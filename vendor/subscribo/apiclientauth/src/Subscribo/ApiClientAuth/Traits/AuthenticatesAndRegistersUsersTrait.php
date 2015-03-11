@@ -23,7 +23,7 @@ trait AuthenticatesAndRegistersUsersTrait
 
     public function getRegister(Registrar $registrar, Store $session)
     {
-        $resultInSession = $session->pull($this->sessionKeyQuestionaryAnswerResult);
+        $resultInSession = $session->pull($this->sessionKeyServerRequestHandledResult);
         $account = $resultInSession ? $registrar->resumeAttempt($resultInSession) : null;
         if ($account) {
             $this->auth->login($account);
@@ -44,7 +44,7 @@ trait AuthenticatesAndRegistersUsersTrait
                 throw new Exception('Empty account.');
             }
         } catch (ServerRequestException $e) {
-            return $this->handleServerRequestException($e, $request->path());
+            return $this->handleServerRequestException($e, $request->url());
 
         } catch (ValidationErrorsException $e) {
             return redirect()

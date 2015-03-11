@@ -1,18 +1,30 @@
 <?php namespace Subscribo\ApiClientAuth\Connectors;
 
 use Subscribo\RestClient\Exceptions\InvalidResponseException;
-use Subscribo\ApiClientCommon\AbstractConnector;
+use Subscribo\RestClient\RestClient;
+use Subscribo\RestCommon\SignatureOptions;
 
-class AccountConnector extends AbstractConnector
+class AccountConnector
 {
+    /**
+     * @var \Subscribo\RestClient\RestClient
+     */
+    protected $restClient;
+
+    public function __construct(RestClient $restClient)
+    {
+        $this->restClient = $restClient;
+    }
 
     /**
      * @param int $id
-     * @param array|null $signatureOptions
+     * @param SignatureOptions|array|bool $signatureOptions
      * @return array|null
      */
-    public function getDetail($id, array $signatureOptions = null)
+    public function getDetail($id, $signatureOptions = true)
     {
+        $signatureOptions = $this->processSignatureOptions($signatureOptions);
+
         $responseData = $this->restClient->process('account/detail/'.$id, 'GET', null, null, null, $signatureOptions, true);
 
         return $this->assembleResult($responseData, 'found');
@@ -20,11 +32,13 @@ class AccountConnector extends AbstractConnector
 
     /**
      * @param array $credentials
-     * @param array|null $signatureOptions
+     * @param SignatureOptions|array|bool $signatureOptions
      * @return array|null
      */
-    public function postValidation(array $credentials, array $signatureOptions = null)
+    public function postValidation(array $credentials, $signatureOptions = true)
     {
+        $signatureOptions = $this->processSignatureOptions($signatureOptions);
+
         $responseData = $this->restClient->process('account/validation', 'POST', $credentials, null, null, $signatureOptions, true);
 
         return $this->assembleResult($responseData, 'validated');
@@ -33,11 +47,13 @@ class AccountConnector extends AbstractConnector
     /**
      * @param int $id
      * @param string $token
-     * @param array|null $signatureOptions
+     * @param SignatureOptions|array|bool $signatureOptions
      * @return array|null
      */
-    public function getRemembered($id, $token, array $signatureOptions = null)
+    public function getRemembered($id, $token, $signatureOptions = true)
     {
+        $signatureOptions = $this->processSignatureOptions($signatureOptions);
+
         $responseData = $this->restClient->process('account/remembered/'.$id, 'GET', null, ['token' => $token], null, $signatureOptions, true);
 
         return $this->assembleResult($responseData, 'found');
@@ -46,11 +62,13 @@ class AccountConnector extends AbstractConnector
     /**
      * @param int $id
      * @param string $token
-     * @param array|null $signatureOptions
+     * @param SignatureOptions|array|bool $signatureOptions
      * @return array|null
      */
-    public function putRemembered($id, $token, array $signatureOptions = null)
+    public function putRemembered($id, $token, $signatureOptions = true)
     {
+        $signatureOptions = $this->processSignatureOptions($signatureOptions);
+
         $responseData = $this->restClient->process('account/remembered/'.$id, 'PUT', ['token' => $token], null, null, $signatureOptions, true);
 
         return $this->assembleResult($responseData, 'remembered');
@@ -58,11 +76,13 @@ class AccountConnector extends AbstractConnector
 
     /**
      * @param array $data
-     * @param array $signatureOptions
+     * @param SignatureOptions|array|bool $signatureOptions
      * @return array|null
      */
-    public function postRegistration(array $data, array $signatureOptions = null)
+    public function postRegistration(array $data, $signatureOptions = true)
     {
+        $signatureOptions = $this->processSignatureOptions($signatureOptions);
+
         $responseData = $this->restClient->process('account/registration', 'POST', $data, null, null, $signatureOptions, false);
 
         return $this->assembleResult($responseData, 'registered');
@@ -91,7 +111,7 @@ class AccountConnector extends AbstractConnector
         $keysToCheck = is_array($keyToCheck) ? $keyToCheck : array($keyToCheck);
         foreach ($keysToCheck as $key) {
             if (empty($source[$key])) {
-                throw new InvalidResponseException();
+                return null;
             }
         }
         if (empty($source['result']['account']['id'])
@@ -105,6 +125,18 @@ class AccountConnector extends AbstractConnector
             'name'  => $source['result']['person']['name'],
         ];
         return $result;
+    }
+
+    protected function processSignatureOptions($signatureOptions)
+    {
+        if ($signatureOptions instanceof SignatureOptions) {
+            return $signatureOptions;
+        }
+        if (is_array($signatureOptions)) {
+            return new SignatureOptions($signatureOptions);
+        }
+        $defaults = ['lang' => 'DE_AT'];
+        return new SignatureOptions($defaults);
     }
 
 }
