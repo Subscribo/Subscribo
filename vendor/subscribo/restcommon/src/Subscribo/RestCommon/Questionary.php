@@ -10,33 +10,19 @@ class Questionary extends ServerRequest
     const CODE_NEW_CUSTOMER_EMAIL = 10;
     const CODE_LOGIN_OR_NEW_ACCOUNT = 20;
     const CODE_MERGE_OR_NEW_ACCOUNT = 30;
+    const CODE_CONFIRM_ACCOUNT_MERGE_PASSWORD = 40;
+    const CODE_CONFIRM_ACCOUNT_MERGE_SIMPLE = 50;
 
     /** @var string  */
     public $title;
 
-    /** @var int  */
-    public $code = 0;
-
     /** @var Question[] */
     public $questions = array();
 
-    public $hash;
-
-    public $endpoint;
-
     public function import(array $data)
     {
-        if ( ! empty($data['hash'])) {
-            $this->hash = $data['hash'];
-        }
         if ( ! empty($data['title'])) {
             $this->title = $data['title'];
-        }
-        if ( ! empty($data['endpoint'])) {
-            $this->endpoint = $data['endpoint'];
-        }
-        if ( array_key_exists('code', $data)) {
-            $this->code = $data['code'];
         }
         if ( ! empty($data['questions'])) {
             $questions = is_array($data['questions']) ? $data['questions'] : ['value' => $data['questions']];
@@ -44,16 +30,13 @@ class Questionary extends ServerRequest
                 $this->questions[$key] = ($questionData instanceof Question) ? $questionData : new Question($questionData);
             }
         }
+        return parent::import($data);
     }
 
     public function export()
     {
-        $result = [
-            'title' => $this->title,
-            'code'  => $this->code,
-            'hash'  => $this->hash,
-            'endpoint' => $this->endpoint,
-        ];
+        $result = parent::export();
+        $result['title'] = $this->title;
         foreach ($this->questions as $key => $question) {
             $result['questions'][$key] = $question->export();
         }

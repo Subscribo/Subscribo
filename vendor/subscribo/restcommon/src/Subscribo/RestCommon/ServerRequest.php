@@ -8,9 +8,16 @@ use Subscribo\RestCommon\Exceptions\InvalidArgumentException;
 
 class ServerRequest implements ServerRequestInterface, JsonSerializable, Arrayable
 {
-    protected $data = array();
-
     const TYPE = 'request';
+
+    /** @var int  */
+    public $code = 0;
+
+    /** @var string */
+    public $hash;
+
+    /** @var string */
+    public $endpoint;
 
     public function __construct(array $data = array())
     {
@@ -23,13 +30,26 @@ class ServerRequest implements ServerRequestInterface, JsonSerializable, Arrayab
 
     public function import(array $data)
     {
-        $this->data = $data;
+        if ( ! empty($data['hash'])) {
+            $this->hash = $data['hash'];
+        }
+        if ( ! empty($data['endpoint'])) {
+            $this->endpoint = $data['endpoint'];
+        }
+        if ( array_key_exists('code', $data)) {
+            $this->code = $data['code'];
+        }
         return $this;
     }
 
     public function export()
     {
-        return $this->data;
+        $result = array();
+        $result['type'] = $this->getType();
+        $result['code'] = $this->code;
+        $result['hash'] = $this->hash;
+        $result['endpoint'] = $this->endpoint;
+        return $result;
     }
 
     public function getType()
