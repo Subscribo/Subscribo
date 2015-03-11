@@ -19,7 +19,7 @@ class ConfigurationException extends RuntimeException implements ContainDataInte
 
     protected $_containedData = array();
 
-    public function __construct(array $data = array(), $message = '', $code = 0, Exception $previous)
+    public function __construct(array $data = array(), $message = '', $code = 0, Exception $previous = null)
     {
         $this->_containedData = $data;
         parent::__construct($message, $code, $previous);

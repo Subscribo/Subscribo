@@ -22,7 +22,7 @@ class InvalidResponseException extends RuntimeException implements ContainDataIn
 
     protected $_containedData = array();
 
-    public function __construct(array $data = null, $message = true, $code = true, Exception $previous)
+    public function __construct(array $data = null, $message = true, $code = true, Exception $previous = null)
     {
         if (is_null($data)) {
             $data = array();
