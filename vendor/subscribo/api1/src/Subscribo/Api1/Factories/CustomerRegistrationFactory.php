@@ -3,6 +3,7 @@
 use Illuminate\Contracts\Hashing\Hasher;
 use Subscribo\ModelCore\Models\CustomerRegistration;
 use Subscribo\ModelCore\Models\AccountToken;
+use Subscribo\Support\Arr;
 
 class CustomerRegistrationFactory
 {
@@ -17,7 +18,9 @@ class CustomerRegistrationFactory
     {
         $customerRegistration = new CustomerRegistration();
         $customerRegistration->serviceId = $serviceId;
-        if (array_key_exists('password', $data)) {
+        $status = Arr::get($data, 'status', CustomerRegistration::STATUS_PREPARED);
+        $customerRegistration->status = $status;
+        if ( ! empty($data['password'])) {
             $customerRegistration->password = $this->hasher->make($data['password']);
         }
         if ( ! empty($data['name'])) {
