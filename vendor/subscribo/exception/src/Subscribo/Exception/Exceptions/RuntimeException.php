@@ -4,13 +4,13 @@ use Subscribo\Exception\Interfaces\MarkableExceptionInterface;
 use Subscribo\Exception\Traits\MarkableExceptionTrait;
 
 /**
- * Class InvalidArgumentException
+ * Class RuntimeException
  *
- * InvalidArgument Exception which implements MarkableExceptionInterface
+ * Runtime Exception which implements MarkableExceptionInterface
  *
  * @package Subscribo\Exception
  */
-class InvalidArgumentException extends \InvalidArgumentException implements MarkableExceptionInterface
+class RuntimeException extends \RuntimeException implements MarkableExceptionInterface
 {
     use MarkableExceptionTrait;
 }

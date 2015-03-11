@@ -1,5 +1,12 @@
 <?php namespace Subscribo\Exception\Traits;
 
+/**
+ * Trait StatusMessageTrait
+ *
+ * Trait helping to implement specific (non inherited) part of \Subscribo\Exception\Interfaces\HttpExceptionInterface
+ *
+ * @package Subscribo\Exception
+ */
 trait StatusMessageTrait {
 
     /**

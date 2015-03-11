@@ -3,7 +3,7 @@
 use Subscribo\Exception\Traits\ContainDataTrait;
 
 /**
- * Class ValidationErrorsTrait
+ * Trait ValidationErrorsTrait
  *
  * Helps implement ValidationErrorsInterface
  *

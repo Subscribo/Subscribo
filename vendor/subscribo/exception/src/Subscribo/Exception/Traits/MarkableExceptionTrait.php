@@ -1,7 +1,7 @@
 <?php namespace Subscribo\Exception\Traits;
 
 /**
- * Class MarkableExceptionTrait
+ * Trait MarkableExceptionTrait
  *
  * Trait helping Exception classes to implement MarkableExceptionInterface
  *

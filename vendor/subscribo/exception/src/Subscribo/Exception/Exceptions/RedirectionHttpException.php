@@ -3,6 +3,13 @@
 use Exception;
 use Subscribo\Exception\Interfaces\DoNotReportInterface;
 
+/**
+ * Class RedirectionHttpException
+ *
+ * Base Exception class for 3xx responses returned via throwing exception
+ *
+ * @package Subscribo\Exception
+ */
 class RedirectionHttpException extends HttpException implements DoNotReportInterface
 {
     const STATUS_CODE = 300;
