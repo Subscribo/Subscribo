@@ -24,6 +24,7 @@
         "subscribo/auth": "@dev",
         "subscribo/modelcore": "@dev",
         "subscribo/restcommon": "@dev",
+        "subscribo/api1": "@dev",
         "illuminate/support": "~5.0",
         "illuminate/database": "~5.0"
     },

@@ -3,12 +3,14 @@
 use Subscribo\RestCommon\Interfaces\ServerRequestInterface;
 use Subscribo\RestCommon\Exceptions\InvalidArgumentException;
 use Subscribo\RestCommon\Questionary;
+use Subscribo\RestCommon\ClientRedirection;
 
 
 class ServerRequestFactory
 {
     protected static $typeMap = [
-        Questionary::TYPE => 'Subscribo\\RestCommon\\Questionary'
+        Questionary::TYPE => 'Subscribo\\RestCommon\\Questionary',
+        ClientRedirection::TYPE => 'Subscribo\\RestCommon\\ClientRedirection',
     ];
 
     /**

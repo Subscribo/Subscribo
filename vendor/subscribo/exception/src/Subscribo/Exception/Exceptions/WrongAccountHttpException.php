@@ -3,7 +3,11 @@
 use Exception;
 use Subscribo\Exception\Exceptions\ForbiddenHttpException;
 
-
+/**
+ * Class WrongAccountHttpException
+ *
+ * @package Subscribo\Exception
+ */
 class WrongAccountHttpException extends ForbiddenHttpException
 {
     const DEFAULT_EXCEPTION_CODE = 55;

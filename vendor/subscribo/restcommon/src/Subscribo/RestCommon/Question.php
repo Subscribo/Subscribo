@@ -16,6 +16,10 @@ class Question
 
     const CODE_MERGE_OR_NEW_ACCOUNT_SELECT_SERVICE = 3010;
 
+    const CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO = 4010;
+
+    const CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD = 4020;
+
 
     /** @var string */
     public $type;

@@ -116,6 +116,10 @@ model_options:
         description: auxiliary model, allowing grouping of services, allowing user to use same user for different services
         administrator_menu: Services and Apis
 
+    service_modules:
+            description: Modules for services and their configurations
+            administrator_menu: Services and Apis
+
     apis:
         description: groups of api methods
         administrator_menu: Services and Apis
@@ -308,6 +312,12 @@ model_fields:
         - name // human readable name
         - comment null
 
+    service_modules:
+        - service_id
+        - module
+        - status (enum from enabled disabled)
+        - settings null
+
     apis: # groups of api methods
         - identifier (identifier) unique representative // unique string used in API
         - name // human readable name
@@ -331,12 +341,13 @@ model_fields:
         - scopes null
 
     action_interruptions:
+        - type
         - service_id
         - account_id null
         - hash unique
         - status (enum from waiting processed)
         - continue_method
-        - questionary (text) null
+        - server_request (text) null
         - answer (text) null
         - extra_data (text) null
 
@@ -372,9 +383,10 @@ model_fields:
         - default_billing_details_id null → billing_details
 
     customer_registrations:
+        - hash null
         - service_id
-        - merged_service_id null -> services
-        - status (enum from prepared processed cancelled)
+        - merged_to_service_id null -> services
+        - status null
         - hash unique null
         - account_id null
         - customer_id null

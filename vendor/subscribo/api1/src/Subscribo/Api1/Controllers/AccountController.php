@@ -1,11 +1,18 @@
 <?php namespace Subscribo\Api1\Controllers;
 
-use RuntimeException;
+use Subscribo\Api1\AbstractController;
+use Subscribo\Api1\Factories\AccountFactory;
+use Subscribo\Api1\Factories\CustomerRegistrationFactory;
+use Subscribo\Api1\Factories\ClientRedirectionFactory;
+use Subscribo\Api1\Exceptions\RuntimeException;
+use Subscribo\Api1\Exceptions\InvalidArgumentException;
 use Subscribo\Exception\Exceptions\ValidationErrorsHttpException;
+use Subscribo\Exception\Exceptions\WrongAccountHttpException;
 use Subscribo\ModelCore\Models\AccountToken;
 use Subscribo\ModelCore\Models\ActionInterruption;
 use Subscribo\ModelCore\Models\Customer;
 use Subscribo\ModelCore\Models\Service;
+use Subscribo\ModelCore\Models\ServiceModule;
 use Subscribo\ModelCore\Models\CustomerRegistration;
 use Subscribo\Exception\Exceptions\InvalidInputHttpException;
 use Subscribo\Exception\Exceptions\InvalidQueryHttpException;
@@ -13,13 +20,11 @@ use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
 use Subscribo\ModelCore\Models\ServicePool;
 use Subscribo\ModelCore\Models\Account;
 use Subscribo\OAuthCommon\AbstractOAuthManager;
+use Subscribo\RestCommon\Exceptions\ClientRedirectionServerRequestHttpException;
 use Subscribo\RestCommon\Questionary;
-use Subscribo\Api1\AbstractController;
-use Subscribo\Api1\Factories\AccountFactory;
-use Subscribo\Api1\Factories\CustomerRegistrationFactory;
-use Subscribo\Api1\Factories\QuestionaryFactory;
-use Subscribo\Api1\Context;
+use Subscribo\RestCommon\ClientRedirection;
 use Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException;
+use Subscribo\Support\Arr;
 
 class AccountController extends AbstractController
 {
@@ -139,51 +144,200 @@ class AccountController extends AbstractController
         return ['found' => true, 'result' => $this->assembleAccountResult($account)];
     }
 
-    public function resumeRegistration(ActionInterruption $actionInterruption, array $answer, Context $context, Questionary $questionary)
+    public function resumeRegistration(ActionInterruption $actionInterruption, array $answer)
     {
+        $extraData = $actionInterruption->extraData;
+        $customerRegistration = $this->retrieveCustomerRegistration($extraData);
         if ($answer['service'] === 'new') {
-            $extraData = $actionInterruption->extraData;
-            $customerRegistration = CustomerRegistration::find($extraData['customerRegistrationId']);
-            if (empty($customerRegistration)) {
-                throw new RuntimeException(sprintf("CustomerRegistration with id '%s' not found", $extraData['customerRegistrationId']));
-            }
             $actionInterruption->answer = $answer;
-            return $this->performRegistration($customerRegistration, $context->getServiceId(), $actionInterruption);
+            return $this->performRegistration($customerRegistration, $this->context->getServiceId(), $actionInterruption);
         }
-        throw new \RuntimeException('Not implemented');
-        //todo implement
-
+        $serviceToMergeId = strval($answer['service']);
+        if (false === array_search($serviceToMergeId, $extraData['compatibleServices'], true)) {
+            throw new ValidationErrorsHttpException(['service' => 'Selected service not valid.']);
+        }
+        $additionalData = ['serviceId' => $serviceToMergeId];
+        $extraData['allowedServiceIds'] = [$serviceToMergeId];
+        $clientRedirection = $this->prepareClientRedirection(ClientRedirection::CODE_CONFIRM_MERGE_REQUEST, $extraData, 'resumeMergeConfirmation', $additionalData);
+        $customerRegistration->markMergeProposed($serviceToMergeId, $clientRedirection->hash);
+        throw new ClientRedirectionServerRequestHttpException($clientRedirection);
     }
 
-    public function resumeOAuthMissingEmail(ActionInterruption $actionInterruption, array $answer, Context $context, Questionary $questionary)
+    public function resumeMergeConfirmation(ActionInterruption $actionInterruption, array $data, $action = null)
+    {
+        if ('getRedirectionByHash' === $action) {
+            throw $this->makeAccountMergingConfirmationQuestionaryException($actionInterruption, $data);
+        }
+        if ('postRedirection' === $action) {
+            return $this->processAccountMergeConfirmedOrRejected($actionInterruption, $data);
+        }
+        throw new InvalidArgumentException(sprintf('AccountController::resumeMergeConfirmation(): Wrong action: %s', $action));
+    }
+
+    public function resumeConfirmMergeAnswer(ActionInterruption $actionInterruption, array $answer)
+    {
+        $extraData = $actionInterruption->extraData;
+        $additionalData = ['url' => $extraData['redirectBack']];
+        $customerRegistration = $this->retrieveCustomerRegistration($extraData);
+        $serviceId = $this->context->getServiceId();
+        if ($answer['merge'] !== 'yes') {
+            $actionInterruption->markAsProcessed($answer);
+            $additionalData['query'] = ['error' => 'Account merge rejected.'];
+            $clientRedirection = ClientRedirectionFactory::make(ClientRedirection::CODE_CONFIRM_MERGE_RESPONSE, $additionalData);
+            $customerRegistration->markMergeRejected($serviceId);
+            return ['result' => $clientRedirection];
+        }
+        $currentAccount = $this->context->getAccount(true);
+        if ($currentAccount) {
+            if ($currentAccount->customer->email !== $customerRegistration->email) {
+                throw new WrongAccountHttpException('Emails does not agree');
+            }
+            $customerId = $currentAccount->customerId;
+        } else {
+            $email = $customerRegistration->email;
+            $validatedCustomer = $this->findAndValidateCustomerAccount($email, $answer['password'], $serviceId);
+            if (empty($validatedCustomer['customer']->id)) {
+                $serviceName = $this->context->getService()->name;
+                throw new ValidationErrorsHttpException(['password' => 'Provided password does not fit with account with email '.$email.' by '.$serviceName]);
+            }
+            $customerId = $validatedCustomer['customer']->id;
+        }
+        $customerRegistration->markMergeConfirmed($serviceId, $customerId);
+        $additionalData['query'] = ['result' => 'Account merge confirmed.'];
+        $clientRedirection = ClientRedirectionFactory::make(ClientRedirection::CODE_CONFIRM_MERGE_RESPONSE, $additionalData);
+        return ['result' => $clientRedirection];
+    }
+
+    public function resumeOAuthMissingEmail(ActionInterruption $actionInterruption, array $answer)
     {
         $validatedData = $actionInterruption->extraData['validatedData'];
         $validatedData['email'] = $answer['email'];
         if ( ! $this->isEmailAcceptable($validatedData['email'])) {
             throw new ValidationErrorsHttpException(['email' => 'Please, provide another email.']);
         }
-        $emailUsed = $this->checkEmailUsed($validatedData['email'], $context->getServiceId(), $validatedData);
+        $serviceId = $this->context->getServiceId();
+        $emailUsed = $this->checkEmailUsed($validatedData['email'], $serviceId, $validatedData);
         if ($emailUsed) {
             throw $this->makeQuestion(Questionary::CODE_LOGIN_OR_NEW_ACCOUNT, ['validatedData' => $validatedData], 'resumeOAuthExistingEmail');
         }
         $actionInterruption->answer = $answer;
-        return $this->performRegistration($validatedData, $context->getServiceId(), $actionInterruption);
+        return $this->performRegistration($validatedData, $serviceId, $actionInterruption);
     }
 
-    public function resumeOAuthExistingEmail(ActionInterruption $actionInterruption, array $answer, Context $context, Questionary $questionary)
+    public function resumeOAuthExistingEmail(ActionInterruption $actionInterruption, array $answer)
     {
         if (empty($answer['password'])) {
             //User has actually provided a (new) email, so we would proceed as if the email was missing or was not acceptable
-            return $this->resumeOAuthMissingEmail($actionInterruption, $answer, $context, $questionary);
+            return $this->resumeOAuthMissingEmail($actionInterruption, $answer);
         }
+        $serviceId = $this->context->getServiceId();
         $validatedData = $actionInterruption->extraData['validatedData'];
-        $result = $this->findAndValidateCustomerAccount($validatedData['email'], $answer['password'], $context->getServiceId());
+        $result = $this->findAndValidateCustomerAccount($validatedData['email'], $answer['password'], $serviceId);
         if (empty($result)) {
             throw new ValidationErrorsHttpException(['password' => sprintf("Given password does not agree with email %s for this service.", $validatedData['email'])]);
         }
-        $actionInterruption->markAsProcessed($answer);
-        return ['registered' => true, 'result' => $result ];
+        $actionInterruption->answer = $answer;
+        return $this->performRegistration($validatedData, $serviceId, $actionInterruption);
     }
+
+
+    private function makeAccountMergingConfirmationQuestionaryException(ActionInterruption $actionInterruption, array $queryData)
+    {
+        $extraData = $actionInterruption->extraData;
+        if (empty($queryData['redirect_back'])) {
+            throw new ValidationErrorsHttpException(['redirect_back' => 'redirect_back is required in query']);
+        }
+        $extraData['redirectBack'] = $queryData['redirect_back'];
+        $customerRegistration = $this->retrieveCustomerRegistration($extraData);
+        $requestingService = Service::find($actionInterruption->serviceId);
+        $additionalData = [
+            'confirmingServiceName' => $this->context->getService()->name,
+            'requestingServiceName' => $requestingService->name,
+            'mergedAccountEmail'    => $customerRegistration->email,
+        ];
+        $currentAccount = $this->context->getAccount(true);
+        if ($currentAccount) {
+            if ($currentAccount->customer->email !== $customerRegistration->email) {
+                throw new WrongAccountHttpException('Emails does not agree');
+            }
+            $extraData['omitPasswordCheck'] = strval($this->context->getServiceId());
+            return $this->makeQuestion(Questionary::CODE_CONFIRM_ACCOUNT_MERGE_SIMPLE, $extraData, 'resumeConfirmMergeAnswer', $additionalData);
+        }
+        return $this->makeQuestion(Questionary::CODE_CONFIRM_ACCOUNT_MERGE_PASSWORD, $extraData, 'resumeConfirmMergeAnswer', $additionalData);
+    }
+
+    private function processAccountMergeConfirmedOrRejected(ActionInterruption $actionInterruption, array $data)
+    {
+        $this->checkAccountMergeConfirmedInputData($data); //If merging was rejected, Exception is thrown
+        $extraData = $actionInterruption->extraData;
+        $customerRegistration = $this->retrieveCustomerRegistration($extraData);
+        $this->checkAccountMergeConfirmedCustomerRegistration($customerRegistration);
+        $actionInterruption->answer = $data;
+        return $this->performRegistration($customerRegistration, $this->context->getServiceId(), $actionInterruption);
+    }
+
+    /**
+     * Throws exception if account merge was rejected or result is missing
+     *
+     * @param array $data
+     * @throws \Subscribo\Exception\Exceptions\ValidationErrorsHttpException
+     */
+    private function checkAccountMergeConfirmedInputData(array $data)
+    {
+        $errors = Arr::get($data, 'errors', array());
+        if ( ! empty($data['error'])) {
+            $errors[] = $data['error'];
+        }
+        if (empty($errors) and empty($data['result'])) {
+            $errors = ['Result missing'];
+        }
+        if ($errors) {
+            throw new ValidationErrorsHttpException($errors);
+        }
+    }
+
+    /**
+     * Additional validation and consistency check
+     * Throws exception if account merge was not confirmed
+     *
+     * @param CustomerRegistration $customerRegistration
+     * @throws \RuntimeException
+     * @throws \Subscribo\Exception\Exceptions\ValidationErrorsHttpException
+     */
+    private function checkAccountMergeConfirmedCustomerRegistration(CustomerRegistration $customerRegistration)
+    {
+        if ($customerRegistration->status !== $customerRegistration::STATUS_MERGE_CONFIRMED) {
+            throw new ValidationErrorsHttpException(['Account merge not confirmed']);
+        }
+        if (empty($customerRegistration->mergedToServiceId)) {
+            throw new RuntimeException('checkAccountMergingPossiblyConfirmedCustomerRegistration() : mergedToServiceId empty');
+        }
+        if (empty($customerRegistration->customerId)) {
+            throw new RuntimeException('checkAccountMergingPossiblyConfirmedCustomerRegistration() : customerId empty');
+        }
+        if ( ! ServicePool::servicesAreInSamePool($customerRegistration->serviceId, $customerRegistration->mergedToServiceId)) {
+            throw new RuntimeException('checkAccountMergingPossiblyConfirmedCustomerRegistration() : services are not in the same pool');
+        }
+    }
+
+    /**
+     * @param array $extraData
+     * @return CustomerRegistration
+     * @throws \RuntimeException
+     */
+    private function retrieveCustomerRegistration(array $extraData)
+    {
+        if (empty($extraData['customerRegistrationId'])) {
+            throw new RuntimeException('retrieveCustomerRegistration(): customerRegistrationId empty');
+        }
+        $result = CustomerRegistration::find($extraData['customerRegistrationId']);
+        if (empty($result)) {
+            throw new RuntimeException('retrieveCustomerRegistration(): customerRegistration not found');
+        }
+        return $result;
+    }
+
+
     private function generateCustomerRegistration(array $data, $serviceId)
     {
         /** @var CustomerRegistrationFactory $customerRegistrationFactory */
@@ -207,6 +361,10 @@ class AccountController extends AbstractController
         return $account;
     }
 
+    /**
+     * @param Account $account
+     * @return array
+     */
     private function assembleAccountResult(Account $account)
     {
         $person = $account->customer ? $account->customer->person : null;
@@ -308,25 +466,42 @@ class AccountController extends AbstractController
                 if ($serviceId === $serviceIdToCheck) {
                     return true;
                 }
-                if (ServicePool::isInPool($servicePools, $serviceIdToCheck)) {
-                    $compatibleServices[] = $serviceIdToCheck;
+                if (ServicePool::isInPool($servicePools, $serviceIdToCheck)
+                    and ServiceModule::isModuleEnabled($serviceIdToCheck, ServiceModule::MODULE_ACCOUNT_MERGING)) {
+                        $compatibleServices[] = strval($serviceIdToCheck);
                 }
             }
         }
         if (empty($compatibleServices)) {
             return false;
         }
-        $serviceList = array();
+        if ( ! ServiceModule::isModuleEnabled($serviceId, ServiceModule::MODULE_ACCOUNT_MERGING)) {
+            return false;
+        }
+        throw $this->prepareResumeRegistrationQuestion($compatibleServices, $serviceId, $data);
+    }
+
+    /**
+     * @param array $compatibleServices
+     * @param int $serviceId
+     * @param CustomerRegistration|array $data
+     * @return QuestionaryServerRequestHttpException
+     */
+    private function prepareResumeRegistrationQuestion(array $compatibleServices, $serviceId, $data)
+    {
+        $serviceList = [];
         foreach ($compatibleServices as $serviceIdToAdd) {
             $service = Service::find($serviceIdToAdd);
             $serviceList[$serviceIdToAdd] = $service->name;
         }
         $additionalData = ['samePoolServices' => $serviceList];
-        $questionary = QuestionaryFactory::make(Questionary::CODE_MERGE_OR_NEW_ACCOUNT, $additionalData);
 
         $customerRegistration = ($data instanceof CustomerRegistration) ? $data : $this->generateCustomerRegistration($data, $serviceId);
-        $extraData = ['customerRegistrationId' => $customerRegistration->id];
-        throw $this->makeQuestion($questionary, $extraData, 'resumeRegistration');
+        $extraData = [
+            'customerRegistrationId' => $customerRegistration->id,
+            'compatibleServices' => array_values($compatibleServices),
+        ];
+        return $this->makeQuestion(Questionary::CODE_MERGE_OR_NEW_ACCOUNT, $extraData, 'resumeRegistration', $additionalData);
     }
 
     private function isEmailAcceptable($email)
@@ -337,5 +512,4 @@ class AccountController extends AbstractController
         }
         return true;
     }
-
 }

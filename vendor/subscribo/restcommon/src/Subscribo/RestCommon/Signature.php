@@ -9,6 +9,8 @@ use Subscribo\RestCommon\Exceptions\InvalidArgumentException;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Subscribo\RestCommon\TokenRing;
 use Subscribo\RestCommon\Interfaces\TokenRingProviderInterface;
+use Subscribo\RestCommon\SignatureOptions;
+use Subscribo\Support\Str;
 
 class Signature {
 
@@ -18,8 +20,15 @@ class Signature {
     const HASH_HMAC_ALGORITHM = 'sha512';
 
 
-
-    public static function signRequest(Request $request, TokenRing $tokenRing, array $options = array(), Encrypter $encrypter = null, array &$description = array())
+    /**
+     * @param Request $request
+     * @param TokenRing $tokenRing
+     * @param SignatureOptions|array $options
+     * @param Encrypter $encrypter
+     * @param array $description
+     * @return Request
+     */
+    public static function signRequest(Request $request, TokenRing $tokenRing, $options = array(), Encrypter $encrypter = null, array &$description = array())
     {
         $result = clone $request;
         $headers = $request->headers->all();
@@ -34,7 +43,16 @@ class Signature {
         return $result;
     }
 
-    public static function modifyHeaders(TokenRing $tokenRing, array $headers = array(), array $data = array(), array $options = array(), Encrypter $encrypter = null, array &$description = array())
+    /**
+     * @param TokenRing $tokenRing
+     * @param array $headers
+     * @param array $data
+     * @param SignatureOptions|array $options
+     * @param Encrypter $encrypter
+     * @param array $description
+     * @return array
+     */
+    public static function modifyHeaders(TokenRing $tokenRing, array $headers = array(), array $data = array(), $options = array(), Encrypter $encrypter = null, array &$description = array())
     {
         $headerName = RestCommon::ACCESS_TOKEN_HEADER_FIELD_NAME;
         $headers = Arr::withoutKeyCaseInsensitively($headerName, $headers);
@@ -189,19 +207,6 @@ class Signature {
         return static::throwExceptionOrReturnFalse($throwExceptions, sprintf("Subscription::verifyDescription() Unrecognized SignatureType '%s'", $signatureType));
     }
 
-    public static function generateRandomString($length = 32)
-    {
-        $bytes = openssl_random_pseudo_bytes($length);
-        $printable = base64_encode($bytes);
-        $result = substr($printable, 0, $length);
-        return $result;
-    }
-
-    public static function addToDescription(array $toAdd, array $options = array())
-    {
-        $toMerge = ['addToDescription' => $toAdd];
-        return Arr::mergeNatural($options, $toMerge);
-    }
 
     protected static function extractDescriptionFromHeaderContent($headerContent, Encrypter $encrypter = null, $throwExceptions)
     {
@@ -282,9 +287,19 @@ class Signature {
     }
 
 
-    protected static function assembleAuthorizationHeaderContent(TokenRing $tokenRing, array $data = array(), array $options = array(), Encrypter $encrypter = null, array &$description = array())
+    /**
+     * @param TokenRing $tokenRing
+     * @param array $data
+     * @param SignatureOptions|array $options
+     * @param Encrypter $encrypter
+     * @param array $description
+     * @return string
+     * @throws Exceptions\InvalidArgumentException
+     */
+    protected static function assembleAuthorizationHeaderContent(TokenRing $tokenRing, array $data = array(), $options = array(), Encrypter $encrypter = null, array &$description = array())
     {
-        $signatureType = Arr::get($options, 'signatureType') ?: $tokenRing->ascertainType();
+        $options = ($options instanceof SignatureOptions) ? $options : new SignatureOptions($options);
+        $signatureType = $options->signatureType ?: $tokenRing->ascertainType();
         if (empty($signatureType)) {
             throw new InvalidArgumentException('Signature type not provided');
         }
@@ -306,11 +321,10 @@ class Signature {
         }
     }
 
-    protected static function assembleDigestDescription(TokenRing $tokenRing, array $data = array(), array $options = array())
+    protected static function assembleDigestDescription(TokenRing $tokenRing, array $data, SignatureOptions $options)
     {
-        $options['signatureType'] = Arr::get($options, 'signatureType', self::TYPE_SUBSCRIBO_DIGEST);
-        $description = static::assembleDescriptionBase($tokenRing, $options);
-        $description['dataKeys'] = Arr::get($options, 'dataKeys') ?: array_keys($data);
+        $description = static::assembleDescriptionBase($tokenRing, $options, self::TYPE_SUBSCRIBO_DIGEST);
+        $description['dataKeys'] = $options->dataKeys ?: array_keys($data);
         $arrayToHash = ['description' => $description, 'data' => $data];
         $description['signature'] = static::computeSignature($arrayToHash, $tokenRing->digestSecret);
         return $description;
@@ -323,25 +337,18 @@ class Signature {
         return $signature;
     }
 
-    protected static function assembleDescriptionBase(TokenRing $tokenRing, array $options)
+    protected static function assembleDescriptionBase(TokenRing $tokenRing, SignatureOptions $options, $defaultType)
     {
-        $nonce = Arr::get($options, 'nonce') ?: static::generateSalt();
-        $timestamp = Arr::get($options, 'timestamp') ?: static::generateTimestamp();
         $description = [
-            'signatureType' => $options['signatureType'],
-            'signatureVersion' => Arr::get($options, 'signatureVersion','1.0'),
+            'signatureType' => $options->signatureType ?: $defaultType,
+            'signatureVersion' => $options->signatureVersion ?: '1.0',
             'subscriboDigestToken' => $tokenRing->digestToken,
             'salt' => static::generateSalt(),
-            'nonce' => $nonce,
-            'timestamp' => $timestamp,
+            'nonce' => $options->nonce ?: static::generateNonce(),
+            'timestamp' => $options->timestamp ?: static::generateTimestamp(),
         ];
-        if (( ! empty($options['addToDescription']))) {
-            $add = is_array($options['addToDescription'])
-                ? $options['addToDescription']
-                : [$options['addToDescription'] => $options['addToDescription']];
-            foreach ($add as $key => $value) {
-                $description[$key] = $value;
-            }
+        foreach ($options->getDescriptionAdds() as $key => $value) {
+            $description[$key] = $value;
         }
         return $description;
     }
@@ -419,7 +426,12 @@ class Signature {
 
     protected static function generateSalt($length = 32)
     {
-        return static::generateRandomString($length);
+        return Str::random($length);
+    }
+
+    protected static function generateNonce($length = 32)
+    {
+        return Str::random($length);
     }
 
     protected static function generateTimestamp()

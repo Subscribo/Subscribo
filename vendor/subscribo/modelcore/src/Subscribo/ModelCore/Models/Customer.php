@@ -8,8 +8,8 @@
 class Customer extends \Subscribo\ModelCore\Bases\Customer {
 
     /**
-     * @param $email
-     * @return Customer[]|static[]
+     * @param string|$email
+     * @return \Illuminate\Database\Eloquent\Collection|Customer[]
      */
     public static function findAllByEmail($email)
     {
@@ -17,7 +17,4 @@ class Customer extends \Subscribo\ModelCore\Bases\Customer {
         $result = $query->get();
         return $result;
     }
-
-
-
 }

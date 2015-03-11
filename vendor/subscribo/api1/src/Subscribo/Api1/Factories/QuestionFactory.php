@@ -2,6 +2,7 @@
 
 use Subscribo\Api1\Exceptions\InvalidArgumentException;
 use Subscribo\RestCommon\Question;
+use Subscribo\Support\Arr;
 
 /**
  * Class QuestionFactory
@@ -45,6 +46,24 @@ class QuestionFactory
         if (( ! empty($additionalData['existingEmail'])) and (Question::CODE_LOGIN_OR_NEW_ACCOUNT_PASSWORD === $question->code)) {
             $question->text = sprintf("Or provide a password to your existing account (email: %s):", $additionalData['existingEmail']);
         }
+        if (Question::CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO === $question->code) {
+            $confirmingServiceName = Arr::get($additionalData, 'confirmingServiceName');
+            $requestingServiceName = Arr::get($additionalData, 'requestingServiceName');
+            $mergedAccountEmail = Arr::get($additionalData, 'mergedAccountEmail');
+            $confirmingServiceText = $confirmingServiceName ? (' by '.$confirmingServiceName) : '';
+            $requestingServiceText = $requestingServiceName ? (' by '.$requestingServiceName) : '';
+            $mergedAccountDescription = $mergedAccountEmail ? (' (with email '.$mergedAccountEmail.')') : '';
+            $question->text = 'Would you like to merge your new account'.$requestingServiceText
+                .' with your existing account'.$mergedAccountDescription.$confirmingServiceText.'?';
+        }
+        if (Question::CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD === $question->code) {
+            $confirmingServiceName = Arr::get($additionalData, 'confirmingServiceName');
+            $mergedAccountEmail = Arr::get($additionalData, 'mergedAccountEmail');
+            $confirmingServiceText = $confirmingServiceName ? (' by '.$confirmingServiceName) : ' by current service';
+            $mergedAccountDescription = $mergedAccountEmail ? (' with email '.$mergedAccountEmail) : '';
+            $question->text = 'If you want to merge accounts, please provide a password to your account'
+                .$mergedAccountDescription.$confirmingServiceText.':';
+        }
         return $question;
     }
 
@@ -86,6 +105,25 @@ class QuestionFactory
                         '' => 'Please select',
                         'new' => 'Create a new account',
                     ],
+                ];
+                break;
+            case Question::CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO:
+                $result = [
+                    'type' => Question::TYPE_SELECT,
+                    'text' => 'Would you like to merge your new account with your existing account?',
+                    'validationRules' => 'required',
+                    'selectOptions' => [
+                        '' => 'Please select',
+                        'yes' => 'Yes',
+                        'no'  => 'No',
+                    ],
+                ];
+                break;
+            case Question::CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD:
+                $result = [
+                    'type' => Question::TYPE_PASSWORD,
+                    'text' => 'If you want to merge accounts, please provide a password to your current service:',
+                    'validationRules' => 'required_if:merge,yes'
                 ];
                 break;
             default:

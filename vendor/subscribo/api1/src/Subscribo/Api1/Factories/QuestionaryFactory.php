@@ -69,6 +69,21 @@ class QuestionaryFactory
                     'questions' => ['service' => Question::CODE_MERGE_OR_NEW_ACCOUNT_SELECT_SERVICE],
                 ];
                 break;
+            case Questionary::CODE_CONFIRM_ACCOUNT_MERGE_PASSWORD:
+                $result = [
+                    'title' => 'Would you like to merge your accounts?',
+                    'questions' => [
+                        'merge' => Question::CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO,
+                        'password' => Question::CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD,
+                    ],
+                ];
+                break;
+            case Questionary::CODE_CONFIRM_ACCOUNT_MERGE_SIMPLE:
+                $result = [
+                    'title' => 'Would you like to merge your accounts?',
+                    'questions' => ['merge' => Question::CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO],
+                ];
+                break;
             default:
                 throw new InvalidArgumentException(sprintf("QuestionaryFactory::assembleFromCode() unrecognized code '%s'", $code));
         }

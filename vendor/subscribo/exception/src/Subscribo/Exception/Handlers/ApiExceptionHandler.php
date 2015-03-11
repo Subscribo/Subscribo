@@ -12,6 +12,7 @@ use Subscribo\Exception\Interfaces\ContainDataInterface;
 use Subscribo\Exception\Interfaces\MarkableExceptionInterface;
 use Subscribo\Exception\Interfaces\ExceptionHandlerInterface;
 use Subscribo\Exception\Factories\MarkableExceptionFactory;
+use Psr\Log\LogLevel;
 
 /**
  * Class ApiExceptionHandler
@@ -124,9 +125,10 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
 
     public function report(Exception $e)
     {
+        $report = true;
         foreach ($this->dontReport as $type) {
             if ($e instanceof $type) {
-                return null;
+                $report = false;
             }
         }
         $context = [];
@@ -137,30 +139,36 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
         if ($e instanceof ContainDataInterface) {
             $context['exceptionData'] = $e->getData();
         }
-        $this->log->error($e, $context);
-
+        $level = $report ? LogLevel::ERROR : LogLevel::DEBUG;
+        $this->log->log($level, $e, $context);
     }
 
     public function remember(Exception $e, Request $request = null, $rememberMultiple = false)
     {
+        $result = $e;
+        $report = true;
         foreach ($this->dontReport as $type) {
             if ($e instanceof $type) {
-                return $e;
+                $report = false;
             }
         }
         if (($e instanceof MarkableExceptionInterface) and ($e->isMarkUsed()) and ( ! $rememberMultiple)) {
             // If we know, we have already marked and logged this exception and it is not requested explicitly to log it again, then we just return it
             return $e;
         }
-        $result = MarkableExceptionFactory::mark($e);
-        $context = ['exceptionHash' => $result->useMark()];
+        $context = [];
+        if ($report or ($e instanceof MarkableExceptionInterface)) {
+            $result = MarkableExceptionFactory::mark($e);
+            $context['exceptionHash'] = $result->useMark();
+        }
         if ($e instanceof ContainDataInterface) {
             $context['exceptionData'] = $e->getData();
         }
         if ($request instanceof Request) {
-            $context['request']['url'] = $request->getUri();
+            $context['request']['url'] = $request->getRequestUri();
         }
-        $this->log->error($e, $context);
+        $level = $report ? LogLevel::ERROR : LogLevel::DEBUG;
+        $this->log->log($level, $e, $context);
         return $result;
     }
 

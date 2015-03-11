@@ -6,6 +6,7 @@ use Subscribo\Exception\Exceptions\RedirectionHttpException;
 use Subscribo\Exception\Interfaces\HttpExceptionInterface;
 use Subscribo\Exception\Traits\StatusMessageTrait;
 use Subscribo\RestCommon\Interfaces\ServerRequestInterface;
+use Subscribo\RestCommon\ServerRequest;
 
 class ServerRequestHttpException extends RedirectionHttpException implements HttpExceptionInterface
 {
@@ -15,7 +16,7 @@ class ServerRequestHttpException extends RedirectionHttpException implements Htt
     const DEFAULT_EXCEPTION_CODE = 0;
 
     protected static $serverRequestClassName = 'Subscribo\\RestCommon\\ServerRequest';
-    protected static $keyName = 'serverRequest';
+    protected static $keyName = ServerRequest::TYPE;
 
     /**
      * @var \Subscribo\RestCommon\Interfaces\ServerRequestInterface|array

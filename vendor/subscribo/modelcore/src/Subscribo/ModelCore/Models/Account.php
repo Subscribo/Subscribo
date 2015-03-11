@@ -1,5 +1,6 @@
 <?php namespace Subscribo\ModelCore\Models;
 
+use Subscribo\ModelCore\Models\Customer;
 
 /**
  * Model Account
@@ -24,9 +25,9 @@ class Account extends \Subscribo\ModelCore\Bases\Account
 
     /**
      * @param string $rememberToken
-     * @param int $id
-     * @param int $serviceId
-     * @return Account|static|null
+     * @param int|string $id
+     * @param int|string $serviceId
+     * @return Account|null
      */
     public static function findRemembered($rememberToken, $id, $serviceId)
     {
@@ -35,6 +36,28 @@ class Account extends \Subscribo\ModelCore\Bases\Account
             ->where('remember_token', $rememberToken)
             ->where('service_id', $serviceId);
         return $query->first();
+    }
+
+    /**
+     * @param string $email
+     * @param int|string $serviceId
+     * @return Account|null
+     */
+    public static function findByEmailAndServiceId($email, $serviceId)
+    {
+        $serviceId = strval($serviceId);
+        $query = Customer::query()->where('email', $email)->with('accounts');
+        $customers = $query->get();
+        /** @var Customer $customer */
+        foreach ($customers as $customer) {
+            foreach($customer->accounts as $account) {
+                if (strval($account->serviceId) === $serviceId) {
+                    $account->setRelation('customer', $customer);
+                    return $account;
+                }
+            }
+        }
+        return null;
     }
 
 }

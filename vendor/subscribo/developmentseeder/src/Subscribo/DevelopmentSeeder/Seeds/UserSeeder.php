@@ -6,6 +6,7 @@ use Subscribo\ModelCore\Models\UserToken;
 use Subscribo\ModelCore\Models\Service;
 use Subscribo\Auth\Factories\UserFactory;
 use App;
+use Subscribo\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -19,10 +20,7 @@ class UserSeeder extends Seeder
         $guest->type = User::TYPE_GUEST;
         $guest->save();
 
-        $superAdmin = $userFactory->create(['password' => 'admin']);
-        $superAdmin->username = 'admin';
-        $superAdmin->type = User::TYPE_SUPER_ADMIN;
-        $superAdmin->save();
+        $superAdmin = $this->generateUser('admin', User::TYPE_SUPER_ADMIN);
 
         $service = Service::first();
         $server = new User();
@@ -32,32 +30,35 @@ class UserSeeder extends Seeder
         $server->save();
         $userFactory->addTokens($server, UserToken::TYPE_SUBSCRIBO_DIGEST);
 
-        $administrator = $userFactory->create(['password' => 'administrator']);
-        $administrator->username = 'administrator';
-        $administrator->type = User::TYPE_ADMINISTRATOR;
+        $administrator = $this->generateUser('administrator');
         $userFactory->addTokens($administrator);
         $administrator->service()->associate($service);
         $administrator->save();
 
-        $service2 = Service::firstByAttributes(['identifier' => 'TEST2']);
-        $developer = $userFactory->create(['password' => 'developer']);
-        $developer->username = 'developer';
-        $developer->type = User::TYPE_ADMINISTRATOR;
+        $service2 = Service::firstByAttributes(['identifier' => 'MAIN']);
+        $developer = $this->generateUser('developer');
         $developer->service()->associate($service2);
         $userFactory->addTokens($developer);
         $developer->save();
 
         $anotherService = Service::firstByAttributes(['identifier' => 'ANOTHER']);
-        $anotherDeveloper = $userFactory->create(['password' => 'developer']);
-        $anotherDeveloper->username = 'developer5';
-        $anotherDeveloper->type = User::TYPE_ADMINISTRATOR;
+        $anotherDeveloper = $this->generateUser('developer5');
         $anotherDeveloper->service()->associate($anotherService);
         $userFactory->addTokens($anotherDeveloper);
         $anotherDeveloper->save();
+    }
 
-
-
-
+    protected function generateUser($username, $type = USER::TYPE_ADMINISTRATOR)
+    {
+        /** @var \Subscribo\Auth\Factories\UserFactory $userFactory */
+        $userFactory = App::make('Subscribo\\Auth\\Factories\\UserFactory');
+        $password = Str::random();
+        $user = $userFactory->create(['username' => $username, 'password' => $password, 'type' => $type]);
+        $user->save();
+        if ($this->command) {
+            $this->command->getOutput()->writeln(sprintf('User %s : %s', $username, $password));
+        }
+        return $user;
     }
 
 }

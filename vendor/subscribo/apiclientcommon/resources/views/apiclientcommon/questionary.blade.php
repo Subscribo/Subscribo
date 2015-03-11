@@ -1,6 +1,6 @@
 @extends('app')
 
-@if($heading)
+@if( ! empty($heading))
     @section('pageTitle')
         @parent
         | {{ $heading }}

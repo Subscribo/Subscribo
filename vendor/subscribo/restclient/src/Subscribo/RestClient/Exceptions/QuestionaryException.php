@@ -3,6 +3,11 @@
 use Subscribo\RestClient\Exceptions\ServerRequestException;
 use Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException;
 
+/**
+ * Class QuestionaryException
+ *
+ * @package Subscribo\RestClient
+ */
 class QuestionaryException extends ServerRequestException
 {
     const STATUS_CODE = QuestionaryServerRequestHttpException::STATUS_CODE;

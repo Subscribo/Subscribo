@@ -5,6 +5,7 @@ use Subscribo\RestCommon\TokenRing;
 use Subscribo\RestCommon\Signature;
 use Subscribo\RestCommon\Interfaces\TokenRingProviderInterface;
 use Subscribo\ModelCore\Models\User;
+use Subscribo\Support\Str;
 
 /**
  * Model UserToken
@@ -122,6 +123,6 @@ class UserToken extends \Subscribo\ModelCore\Bases\UserToken implements TokenRin
 
     protected static function assembleToken($length = 32)
     {
-        return Signature::generateRandomString($length);
+        return Str::random($length);
     }
 }
