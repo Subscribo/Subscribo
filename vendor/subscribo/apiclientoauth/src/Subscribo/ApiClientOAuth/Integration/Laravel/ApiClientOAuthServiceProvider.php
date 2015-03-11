@@ -43,7 +43,7 @@ class ApiClientOAuthServiceProvider extends ServiceProvider
 
     protected function registerRoutes(Router $router)
     {
-        $router->get('oauth/login/{driver}', ['as' => 'subscribo.oauth.login', 'uses' => '\\Subscribo\\ApiClientOAuth\\Controllers\\OAuthController@getLogin']);
-        $router->get('oauth/handle/{driver}', ['as' => 'subscribo.oauth.handle', 'uses' =>  '\\Subscribo\\ApiClientOAuth\\Controllers\\OAuthController@getHandle']);
+        $router->get('oauth/login/{driver}', ['as' => 'subscribo.oauth.login', 'uses' => '\\Subscribo\\ApiClientOAuth\\Controllers\\OAuthController@getLogin'])->where(['driver' => '[A-Za-z0-9]+']);
+        $router->get('oauth/handle/{driver}', ['as' => 'subscribo.oauth.handle', 'uses' =>  '\\Subscribo\\ApiClientOAuth\\Controllers\\OAuthController@getHandle'])->where(['driver' => '[A-Za-z0-9]+']);
     }
 }

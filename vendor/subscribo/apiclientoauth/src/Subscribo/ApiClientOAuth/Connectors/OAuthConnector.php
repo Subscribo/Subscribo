@@ -9,8 +9,10 @@ use Subscribo\ApiClientCommon\AbstractConnector;
  */
 class OAuthConnector extends AbstractConnector
 {
-    public function getConfig($driver, array $query = null, array $signatureOptions = null)
+    public function getConfig($driver, array $query = null, $signatureOptions = true)
     {
+        $signatureOptions = $this->processSignatureOptions($signatureOptions);
+
         $responseData = $this->restClient->process('oauth/config/'.$driver, 'GET', null, $query, null, $signatureOptions, false);
 
         return $responseData['result'][$driver];
