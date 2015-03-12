@@ -13,9 +13,27 @@ use Subscribo\RestCommon\Factories\ServerRequestFactory;
 use Subscribo\ModelCore\Models\ActionInterruption;
 use Subscribo\Support\Arr;
 
-
+/**
+ * Class AnswerController
+ *
+ * API v1 Controller class handling requests for ServerRequest and answers to ServerRequests
+ *
+ * @package Subscribo\Api1
+ */
 class AnswerController extends AbstractController
 {
+    /**
+     * GET action for getting Questionary by type
+     * Currently only 'hash' is supported as type
+     *
+     * @param string $type
+     * @return mixed
+     * @throws InvalidIdentifierHttpException
+     * @throws WrongAccountHttpException
+     * @throws WrongServiceHttpException
+     * @throws InstanceNotFoundHttpException
+     * @throws RuntimeException
+     */
     public function actionGetQuestion($type)
     {
         if ('hash' === $type) {
@@ -24,6 +42,18 @@ class AnswerController extends AbstractController
         throw new InvalidIdentifierHttpException(['type' => 'Unrecognized type']);
     }
 
+    /**
+     * GET Action for getting ClientRedirection by type
+     * Currently only 'hash' is supported as type
+     *
+     * @param string $type
+     * @return mixed
+     * @throws InvalidIdentifierHttpException
+     * @throws WrongAccountHttpException
+     * @throws WrongServiceHttpException
+     * @throws InstanceNotFoundHttpException
+     * @throws RuntimeException
+     */
     public function actionGetRedirection($type)
     {
         if ('hash' === $type) {
@@ -32,6 +62,17 @@ class AnswerController extends AbstractController
         throw new InvalidIdentifierHttpException(['type' => 'Unrecognized type']);
     }
 
+    /**
+     * POST Action handling answer to Questionary ServerRequest
+     *
+     * @param string $hash
+     * @return mixed
+     * @throws InvalidInputHttpException
+     * @throws WrongAccountHttpException
+     * @throws WrongServiceHttpException
+     * @throws InstanceNotFoundHttpException
+     * @throws RuntimeException
+     */
     public function actionPostQuestion($hash)
     {
         $validatedData = $this->validateRequestBody(['answer' => 'required|array']);
@@ -49,6 +90,16 @@ class AnswerController extends AbstractController
         return call_user_func($callback, $actionInterruption, $validatedAnswer, 'postQuestion', $this->context, $questionary);
     }
 
+    /**
+     * POST Action handling answer to ClientRedirection ServerRequest
+     *
+     * @param string $hash
+     * @return mixed
+     * @throws WrongAccountHttpException
+     * @throws WrongServiceHttpException
+     * @throws InstanceNotFoundHttpException
+     * @throws RuntimeException
+     */
     public function actionPostRedirection($hash)
     {
         $validatedData = $this->validateRequestBody(['answer' => 'required|array']);
@@ -60,6 +111,14 @@ class AnswerController extends AbstractController
         return call_user_func($callback, $actionInterruption, $validatedData['answer'], 'postRedirection', $this->context, $clientRedirection);
     }
 
+    /**
+     * @param string $action
+     * @return mixed
+     * @throws WrongAccountHttpException
+     * @throws WrongServiceHttpException
+     * @throws InstanceNotFoundHttpException
+     * @throws RuntimeException
+     */
     protected function processGetServerRequestByHash($action)
     {
         $queryValidationRules = [
@@ -83,11 +142,11 @@ class AnswerController extends AbstractController
 
 
     /**
-     * @param $hash
+     * @param string $hash
      * @return ActionInterruption
-     * @throws \Subscribo\Exception\Exceptions\WrongAccountHttpException
-     * @throws \Subscribo\Exception\Exceptions\WrongServiceHttpException
-     * @throws \Subscribo\Exception\Exceptions\InstanceNotFoundHttpException
+     * @throws WrongAccountHttpException
+     * @throws WrongServiceHttpException
+     * @throws InstanceNotFoundHttpException
      */
     protected function retrieveActionInterruption($hash)
     {
@@ -113,7 +172,7 @@ class AnswerController extends AbstractController
     /**
      * @param ActionInterruption $actionInterruption
      * @return callable
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function retrieveCallback(ActionInterruption $actionInterruption)
     {

@@ -5,7 +5,11 @@ use Subscribo\RestCommon\Questionary;
 use Subscribo\RestCommon\Question;
 use Subscribo\Api1\Factories\QuestionFactory;
 
-
+/**
+ * Class QuestionaryFactory
+ *
+ * @package Subscribo\Api1
+ */
 class QuestionaryFactory
 {
 

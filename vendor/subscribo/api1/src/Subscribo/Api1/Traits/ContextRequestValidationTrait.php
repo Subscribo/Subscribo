@@ -30,6 +30,11 @@ trait ContextRequestValidationTrait
         return $validator;
     }
 
+    /**
+     * @param array $validationRules
+     * @return array
+     * @throws InvalidInputHttpException
+     */
     protected function validateRequestBody(array $validationRules)
     {
         $data = array_intersect_key($this->context->getRequest()->json()->all(), $validationRules);
@@ -40,6 +45,11 @@ trait ContextRequestValidationTrait
         return $validator->valid();
     }
 
+    /**
+     * @param array $validationRules
+     * @return array
+     * @throws \Subscribo\Exception\Exceptions\InvalidQueryHttpException
+     */
     protected function validateRequestQuery(array $validationRules)
     {
         $data = array_intersect_key($this->context->getRequest()->query(), $validationRules);
@@ -50,6 +60,11 @@ trait ContextRequestValidationTrait
         return $validator->valid();
     }
 
+    /**
+     * @param $id
+     * @return int
+     * @throws \Subscribo\Exception\Exceptions\InvalidIdentifierHttpException
+     */
     protected function validatePositiveIdentifier($id)
     {
         if ( ! (ctype_digit($id) or is_int($id))) {

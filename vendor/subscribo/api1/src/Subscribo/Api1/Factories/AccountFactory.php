@@ -9,6 +9,11 @@ use Subscribo\ModelCore\Models\Person;
 use Subscribo\ModelCore\Models\CustomerRegistration;
 use Subscribo\Support\Arr;
 
+/**
+ * Class AccountFactory
+ *
+ * @package Subscribo\Api1
+ */
 class AccountFactory
 {
     protected $hasher;
@@ -18,6 +23,10 @@ class AccountFactory
         $this->hasher = $hasher;
     }
 
+    /**
+     * @param array $data
+     * @return Customer
+     */
     public function create(array $data = array())
     {
         if (array_key_exists('password', $data)) {
@@ -32,7 +41,7 @@ class AccountFactory
      * @param CustomerRegistration|array $data
      * @param int $serviceId
      * @return array
-     * @throws \Subscribo\Api1\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function register($data, $serviceId)
     {
@@ -65,6 +74,11 @@ class AccountFactory
         return $result;
     }
 
+    /**
+     * @param CustomerRegistration $customerRegistration
+     * @param int|string $serviceId
+     * @return array
+     */
     public function registerFromCustomerRegistration(CustomerRegistration $customerRegistration, $serviceId)
     {
         $account = Account::findByEmailAndServiceId($customerRegistration->email, $serviceId);
@@ -106,6 +120,11 @@ class AccountFactory
         return $result;
     }
 
+    /**
+     * @param string $email
+     * @param string|int $serviceId
+     * @return array|null
+     */
     public function findAccountByEmailAndServiceId($email, $serviceId)
     {
         $serviceId = strval($serviceId);
@@ -120,11 +139,20 @@ class AccountFactory
         return null;
     }
 
+    /**
+     * @param Customer $customer
+     * @param string $newPassword
+     */
     public function setCustomerPassword(Customer $customer, $newPassword)
     {
         $customer->password = $this->hasher->make($newPassword);
     }
 
+    /**
+     * @param Customer $customer
+     * @param string $passwordToCheck
+     * @return bool
+     */
     public function checkCustomerPassword(Customer $customer, $passwordToCheck)
     {
         if (empty($passwordToCheck)) {

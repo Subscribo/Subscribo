@@ -28,6 +28,7 @@ class Api1ServiceProvider extends ServiceProvider
     {
         $middleware = [
             'Subscribo\\Auth\\Middleware\\ApiAuth',
+            'Subscribo\\Api1\\Middleware\\Logging',
         ];
         $options = ['middleware' => $middleware];
         $controllerRegistrar = new ControllerRegistrar($this->app->make('router'), '/api/v1', $options);

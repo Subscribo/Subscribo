@@ -5,6 +5,11 @@ use Subscribo\ModelCore\Models\CustomerRegistration;
 use Subscribo\ModelCore\Models\AccountToken;
 use Subscribo\Support\Arr;
 
+/**
+ * Class CustomerRegistrationFactory
+ *
+ * @package Subscribo\Api1
+ */
 class CustomerRegistrationFactory
 {
     protected $hasher;
@@ -14,6 +19,11 @@ class CustomerRegistrationFactory
         $this->hasher = $hasher;
     }
 
+    /**
+     * @param array $data
+     * @param int|string $serviceId
+     * @return CustomerRegistration
+     */
     public function generate(array $data = array(), $serviceId)
     {
         $customerRegistration = new CustomerRegistration();

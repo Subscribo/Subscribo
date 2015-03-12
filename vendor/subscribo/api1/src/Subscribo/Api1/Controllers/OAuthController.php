@@ -6,10 +6,25 @@ use Subscribo\Exception\Exceptions\NotFoundHttpException;
 use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
 use Subscribo\ModelCore\Models\OAuthConfiguration;
 
+/**
+ * Class OAuthController
+ *
+ * API v1 Controller class handling requests for OAuth Configurations
+ *
+ * @package Subscribo\Api1
+ */
 class OAuthController extends AbstractController
 {
     protected static $controllerUriStub = 'oauth';
 
+    /**
+     * GET Action for retrieving configuration for particular OAuth provider
+     *
+     * @param string $provider
+     * @return array
+     * @throws NotFoundHttpException
+     * @throws InstanceNotFoundHttpException
+     */
     public function actionGetConfig($provider)
     {
         $validated = $this->validateRequestQuery(['redirect' => 'url']);
