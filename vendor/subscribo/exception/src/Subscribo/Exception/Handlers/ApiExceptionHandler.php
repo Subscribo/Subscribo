@@ -12,7 +12,6 @@ use Subscribo\Exception\Interfaces\ContainDataInterface;
 use Subscribo\Exception\Interfaces\MarkableExceptionInterface;
 use Subscribo\Exception\Interfaces\ExceptionHandlerInterface;
 use Subscribo\Exception\Factories\MarkableExceptionFactory;
-use Psr\Log\LogLevel;
 
 /**
  * Class ApiExceptionHandler
@@ -135,12 +134,18 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
         if ($e instanceof MarkableExceptionInterface) {
             MarkableExceptionFactory::mark($e);
             $context['exceptionHash'] = $e->useMark();
+            $exceptionClassName = get_class($e->getMarkedOriginal());
+        } else {
+            $exceptionClassName = get_class($e);
         }
         if ($e instanceof ContainDataInterface) {
             $context['exceptionData'] = $e->getData();
         }
-        $level = $report ? LogLevel::ERROR : LogLevel::DEBUG;
-        $this->log->log($level, $e, $context);
+        if ($report) {
+            $this->log->error($e, $context);
+        } else {
+            $this->log->debug(sprintf("exception '%s' [%s:%s]", $e->getMessage(), $exceptionClassName, $e->getCode()), $context);
+        }
     }
 
     public function remember(Exception $e, Request $request = null, $rememberMultiple = false)
@@ -160,6 +165,9 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
         if ($report or ($e instanceof MarkableExceptionInterface)) {
             $result = MarkableExceptionFactory::mark($e);
             $context['exceptionHash'] = $result->useMark();
+            $exceptionClassName = get_class($result->getMarkedOriginal());
+        } else {
+            $exceptionClassName = get_class($e);
         }
         if ($e instanceof ContainDataInterface) {
             $context['exceptionData'] = $e->getData();
@@ -167,8 +175,11 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
         if ($request instanceof Request) {
             $context['request']['url'] = $request->getRequestUri();
         }
-        $level = $report ? LogLevel::ERROR : LogLevel::DEBUG;
-        $this->log->log($level, $e, $context);
+        if ($report) {
+            $this->log->error($e, $context);
+        } else {
+            $this->log->debug(sprintf("exception '%s' [%s:%s]", $e->getMessage(), $exceptionClassName, $e->getCode()), $context);
+        }
         return $result;
     }
 
