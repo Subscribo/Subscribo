@@ -1,6 +1,6 @@
 <?php namespace Subscribo\ModelCore\Models;
 
-use InvalidArgumentException;
+use RuntimeException;
 use Subscribo\ModelCore\Models\Service;
 use Subscribo\ModelCore\Models\Customer;
 use Subscribo\ModelCore\Models\Account;
@@ -25,13 +25,13 @@ class CustomerRegistration extends \Subscribo\ModelCore\Bases\CustomerRegistrati
      * @param Service|int|string $mergedToService
      * @param string $hash
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function markMergeProposed($mergedToService, $hash)
     {
         $mergedToServiceId = ($mergedToService instanceof Service) ? $mergedToService->id : $mergedToService;
         if ( ! ServicePool::servicesAreInSamePool($this->serviceId, $mergedToServiceId)) {
-            throw new InvalidArgumentException('Proposed service to merge is not in the same pool.');
+            throw new RuntimeException('Proposed service to merge is not in the same pool.');
         }
         $this->password = null;
         $this->mergedToServiceId = $mergedToServiceId;
@@ -45,13 +45,13 @@ class CustomerRegistration extends \Subscribo\ModelCore\Bases\CustomerRegistrati
      * @param Service|int|string $mergedToService
      * @param Customer|int|string $customer
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function markMergeConfirmed($mergedToService, $customer)
     {
         $mergedToServiceId = ($mergedToService instanceof Service) ? $mergedToService->id : $mergedToService;
         if (strval($mergedToServiceId) !== strval($this->mergedToServiceId)) {
-            throw new InvalidArgumentException('Provided service is different than proposed service.');
+            throw new RuntimeException('Provided service is different than proposed service.');
         }
         $customerId = ($customer instanceof Customer) ? $customer->id : $customer;
         $this->password = null;
@@ -64,13 +64,13 @@ class CustomerRegistration extends \Subscribo\ModelCore\Bases\CustomerRegistrati
     /**
      * @param Service|int|string $mergedToService
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function markMergeRejected($mergedToService)
     {
         $mergedToServiceId = ($mergedToService instanceof Service) ? $mergedToService->id : $mergedToService;
         if (strval($mergedToServiceId) !== strval($this->mergedToServiceId)) {
-            throw new InvalidArgumentException('Provided service is different than proposed service.');
+            throw new RuntimeException('Provided service is different than proposed service.');
         }
         $this->password = null;
         $this->status = static::STATUS_MERGE_REJECTED;

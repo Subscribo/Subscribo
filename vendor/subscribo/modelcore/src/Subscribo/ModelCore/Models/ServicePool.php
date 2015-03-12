@@ -13,7 +13,7 @@ class ServicePool extends \Subscribo\ModelCore\Bases\ServicePool
 
     /**
      * @param ServicePool[]|ServicePool $pools
-     * @param Service|int $service
+     * @param Service|int|string $service
      * @return bool
      */
     public static function isInPool($pools, $service)
@@ -29,14 +29,14 @@ class ServicePool extends \Subscribo\ModelCore\Bases\ServicePool
     }
 
     /**
-     * @param int $serviceId
+     * @param int|string $serviceId
      * @return bool
      */
     public function containService($serviceId)
     {
-        $serviceId = intval($serviceId);
+        $serviceId = strval($serviceId);
         foreach ($this->services as $service) {
-            if ($serviceId === $service->id) {
+            if (strval($service->id) === $serviceId) {
                 return true;
             }
         }
