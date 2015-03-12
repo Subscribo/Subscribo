@@ -1,7 +1,7 @@
 <?php namespace Subscribo\OAuthCommon\Providers;
 
 use Laravel\Socialite\Two\FacebookProvider as Base;
-use Subscribo\OAuthCommon\Traits\ResponseErrorsTrait;
+use Subscribo\OAuthCommon\Traits\TwoResponseErrorsTrait;
 
 /**
  * Class FacebookProvider
@@ -10,7 +10,7 @@ use Subscribo\OAuthCommon\Traits\ResponseErrorsTrait;
  */
 class FacebookProvider extends Base
 {
-    use ResponseErrorsTrait;
+    use TwoResponseErrorsTrait;
 
     protected function getAuthUrl($state)
     {

@@ -4,12 +4,12 @@ use Subscribo\OAuthCommon\Exceptions\EmptyCodeException;
 use Subscribo\OAuthCommon\Exceptions\ErrorResponseException;
 
 /**
- * Class ResponseErrorsTrait
+ * Class TwoResponseErrorsTrait
  * To be used for classes extending \Laravel\Socialite\Two\AbstractProvider
  *
  * @package Subscribo\OAuthCommon
  */
-trait ResponseErrorsTrait
+trait TwoResponseErrorsTrait
 {
     public function user()
     {
