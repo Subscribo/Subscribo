@@ -71,8 +71,12 @@ class IO implements IOInterface
      * @param OptionsConfig   $config
      * @param Prompter        $prompter
      */
-    public function __construct(InputInterface $input, OutputInterface $output, OptionsConfig $config, Prompter $prompter)
-    {
+    public function __construct(
+        InputInterface $input,
+        OutputInterface $output,
+        OptionsConfig $config,
+        Prompter $prompter
+    ) {
         $this->input   = $input;
         $this->output  = $output;
         $this->config  = $config;
@@ -245,7 +249,7 @@ class IO implements IOInterface
 
     private function getCommonPrefix($stringA, $stringB)
     {
-        for ($i = 0; $i<min(strlen($stringA), strlen($stringB)); $i++) {
+        for ($i = 0, $len = min(strlen($stringA), strlen($stringB)); $i<$len; $i++) {
             if ($stringA[$i] != $stringB[$i]) {
                 break;
             }

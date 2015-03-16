@@ -142,7 +142,8 @@ class Carbon extends DateTime
     protected static function safeCreateDateTimeZone($object)
     {
         if ($object === null) {
-            return null;
+            // Don't return null... avoid Bug #52063 in PHP <5.3.6
+            return new DateTimeZone(date_default_timezone_get());
         }
 
         if ($object instanceof DateTimeZone) {
@@ -1783,7 +1784,8 @@ class Carbon extends DateTime
      */
     public function diffInSeconds(Carbon $dt = null, $abs = true)
     {
-        $value = (($dt === null) ? time() : $dt->getTimestamp()) - $this->getTimestamp();
+        $dt = ($dt === null) ? static::now($this->tz) : $dt;
+        $value = $dt->getTimestamp() - $this->getTimestamp();
 
         return $abs ? abs($value) : $value;
     }
@@ -1840,8 +1842,6 @@ class Carbon extends DateTime
             $other = static::now($this->tz);
         }
 
-        $isFuture = $this->gt($other);
-
         $diffInterval = $this->diff($other);
 
         switch (true) {
@@ -1849,6 +1849,7 @@ class Carbon extends DateTime
                 $unit = 'year';
                 $delta = $diffInterval->y;
                 break;
+
             case ($diffInterval->m > 0):
                 $unit = 'month';
                 $delta = $diffInterval->m;
@@ -1889,6 +1890,8 @@ class Carbon extends DateTime
         if ($absolute) {
             return $txt;
         }
+
+        $isFuture = $diffInterval->invert === 1;
 
         if ($isNow) {
             if ($isFuture) {

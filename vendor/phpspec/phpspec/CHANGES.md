@@ -3,11 +3,13 @@
 
  * Support for TAP format output
  * Remove deprecated usage of Symfony DialogHelper
+ * New array `shouldHaveKeyWithValue` matcher
+ * Show an error when generating a class in a non-autoloadable location
  * Clearer error message when specs have incorrect namespace prefix
  * Fix suite rerunning for HHVM
 
-Backward Compatibility
-----------------------
+BC notes
+--------
 
  * The unused `ask` and `askAndValidate` methods on `Console\IO` have been removed
 
