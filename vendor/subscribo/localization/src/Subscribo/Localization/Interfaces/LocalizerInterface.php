@@ -10,29 +10,19 @@ use Symfony\Component\Translation\TranslatorInterface;
 interface LocalizerInterface extends TranslatorInterface
 {
     /**
-     * @param string $locale
-     * @param array $fallbackLocales
-     * @param array $localeOptions
-     * @return mixed
+     * @param string $subdomain
+     * @param string|null $namespace
+     * @param string|null $locale
+     * @return $this
      */
-    public function initLocale($locale, array $fallbackLocales = array(), array $localeOptions = array());
-
-
-    /**
-     * @param string $resource
-     * @param string|bool $namespace
-     * @param string|bool $simpleDomain
-     * @param string|bool $format
-     * @return mixed
-     */
-    public function registerResource($resource, $namespace = true, $simpleDomain = true, $format = true);
+    public function setup($subdomain, $namespace = null, $locale = null);
 
     /**
-     * @param string $namespace
-     * @param string|array $paths
-     * @param string|array $resources
-     * @return mixed
+     * @param string|null $subdomain
+     * @param string|null $namespace
+     * @param string|null $locale
+     * @return static
      */
-    public function registerNamespace($namespace, $paths, $resources = array());
+    public function duplicate($subdomain = null, $namespace = null, $locale = null);
 
 }

@@ -1,15 +1,10 @@
 <?php namespace Subscribo\Localization;
 
 use RuntimeException;
-use Symfony\Component\Translation\Translator as SymfonyTranslator;
-use Symfony\Component\Translation\LoggingTranslator;
+use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Translation\MessageSelector;
-use Symfony\Component\Translation\Loader\PhpFileLoader;
-use Illuminate\Contracts\Cache\Repository;
-use Psr\Log\LoggerInterface;
-use Subscribo\Support\Arr;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Subscribo\Localization\Interfaces\LocalizationManagerInterface;
 
 /**
  * Class Localizer
@@ -18,226 +13,110 @@ use Subscribo\Localization\Interfaces\LocalizerInterface;
  */
 class Localizer implements TranslatorInterface, LocalizerInterface
 {
+    /** @var LocalizationManagerInterface  */
+    protected $manager;
 
-    /** @var TranslatorInterface */
-    protected $translator;
+    /** @var  string */
+    protected $namespace;
 
-    /** @var \Illuminate\Contracts\Cache\Repository  */
-    protected $cache;
+    /** @var  string */
+    protected $subdomain;
 
-    /** @var \Psr\Log\LoggerInterface  */
-    protected $logger;
+    /** @var  string */
+    protected $domain;
 
     /** @var string */
-    protected $currentLocale;
+    protected $locale;
 
-    /** @var array  */
-    protected $fallbackLocales = array();
-
-    /** @var \Symfony\Component\Translation\MessageSelector  */
-    protected $messageSelector;
-
-    protected $defaultDomain = 'app::messages';
-
-    protected $defaultNamespace = 'app';
-
-    protected $domainsByFile = array();
-
-    protected $localesByFile = array();
-
-    protected $registeredResources = array();
-
-    protected $loadedResources = array();
-
-    protected $localeOptions = array();
-
-    protected $namespacePaths = array();
-
-
-
-    public function __construct(Repository $cache, LoggerInterface $logger, MessageSelector $messageSelector = null)
+    public function __construct(LocalizationManagerInterface $manager, $locale = null, $namespace = 'app', $subdomain = 'messages')
     {
-        $this->cache = $cache;
-        $this->logger = $logger;
-        $this->messageSelector = $messageSelector;
+        $this->manager = $manager;
+        $this->setup($subdomain, $namespace, $locale);
     }
 
-    public function initLocale($locale, array $fallbackLocales = array(), array $localeOptions = array())
+    /**
+     * @param string $subdomain
+     * @param null $namespace
+     * @param null $locale
+     * @return $this
+     */
+    public function setup($subdomain, $namespace = null, $locale = null)
     {
-        $this->setLocale($locale)
-            ->setFallbackLocales($locale, $fallbackLocales);
-        $this->loadedResources = array();
-        $this->setLocaleOptions($locale, $localeOptions);
+        $this->subdomain = $subdomain;
+        if ( ! is_null($namespace)) {
+            $this->namespace = $namespace;
+        }
+        $this->domain = ($this->namespace).'::'.$subdomain;
+
+        if ( ! is_null($locale)) {
+            $this->setLocale($locale);
+        }
         return $this;
     }
 
-    public function setLocale($locale)
+    /**
+     * @param string|null $subdomain
+     * @param string|null $namespace
+     * @param string|null $locale
+     * @return static
+     */
+    public function duplicate($subdomain = null, $namespace = null, $locale = null)
     {
-        $this->currentLocale = $locale;
-        return $this;
-    }
-
-    public function getLocale()
-    {
-        return $this->currentLocale;
-    }
-
-    public function setFallbackLocales($locale, array $fallbackLocales)
-    {
-        $this->fallbackLocales[$locale] = $fallbackLocales;
-        return $this;
+        $subdomain = is_null($subdomain) ? $this->subdomain : $subdomain;
+        $namespace = is_null($namespace) ? $this->namespace : $namespace;
+        $locale = is_null($locale) ? $this->getLocale() : $locale;
+        $result = new static($this->manager, $locale, $namespace, $subdomain);
+        return $result;
     }
 
     /**
      * @param string $locale
-     * @return array
+     * @return $this
      */
-    public function getFallbackLocales($locale)
+    public function setLocale($locale)
     {
-        return empty($this->fallbackLocales[$locale]) ? array() : $this->fallbackLocales[$locale];
+        $this->locale = $locale;
     }
 
-    public function setLocaleOptions($locale, array $options)
+    public function getLocale()
     {
-        $this->localeOptions[$locale] = $options;
-        return $this;
-    }
-
-    public function getDomainForFile($fileName)
-    {
-        return Arr::get($this->domainsByFile, $fileName, $this->defaultDomain);
-    }
-
-    public function setDomainForFile($domain, $fileName)
-    {
-        $this->domainsByFile[$fileName] = $domain;
-        return $this;
-    }
-
-    public function getLocaleForFile($fileName)
-    {
-        return Arr::get($this->localesByFile, $fileName, $this->currentLocale);
-    }
-
-    public function setLocaleForFile($locale, $fileName)
-    {
-        $this->localesByFile[$fileName] = $locale;
-        return $this;
-    }
-
-    public function transForFile($id, array $parameters = array(), $fileName)
-    {
-        return $this->trans($id, $parameters, $this->getDomainForFile($fileName), $this->getLocaleForFile($fileName));
-    }
-
-    public function registerResource($resource, $namespace = true, $simpleDomain = true, $format = true)
-    {
-        if (true === $namespace) {
-            $namespace = $this->defaultNamespace;
-        }
-        if (true === $simpleDomain) {
-            $parts = explode('.', $resource);
-            $simpleDomain = reset($parts);
-        }
-        $domain = $namespace.'::'.$simpleDomain;
-        if (true === $format) {
-            $extensions = ['php'];
-            foreach ($extensions as $extension) {
-                $this->registeredResources[$domain][] = [
-                    'filename'  => $resource.'.'.$extension,
-                    'format'    => null,
-                ];
-            }
-        } else {
-            $this->registeredResources[$domain][] = [
-                'filename'  => $resource,
-                'format'    => $format,
-            ];
-        }
-        return $this;
-    }
-
-    public function registerNamespace($namespace, $paths, $resources = array())
-    {
-        $paths = (array) $paths;
-        foreach ($paths as $somePath) {
-            $this->namespacePaths[$namespace][] = $somePath;
-        }
-        $resources = (array) $resources;
-        foreach ($resources as $resource) {
-            $this->registerResource($resource, $namespace, true, true);
-        }
-        return $this;
-    }
-
-
-    public function trans($id, array $parameters = array(), $domain = null, $locale = null)
-    {
-        $locale = is_null($locale) ? $this->getLocale() : $locale;
-        $this->loadResources($domain, $locale);
-        return $this->getTranslator()->trans($id, $parameters, $domain, $locale);
-    }
-
-    public function transChoice($id, $number, array $parameters = array(), $domain = null, $locale = null)
-    {
-        $locale = is_null($locale) ? $this->getLocale() : $locale;
-        $this->loadResources($domain, $locale);
-        return $this->getTranslator()->transChoice($id, $number, $parameters, $domain, $locale);
-    }
-
-    protected function loadResources($domain, $locale)
-    {
-        if ( ! empty($this->loadedResources[$domain])) {
-            return;
-        }
-        $filesToCheck = [];
-        $locales = $this->getFallbackLocales($locale);
-        array_unshift($locales, $locale);
-        $paths = $this->getPaths($domain);
-        $resources = Arr::get($this->registeredResources, $domain, []);
-        foreach ($locales as $loc) {
-            foreach ($paths as $path) {
-                foreach ($resources as $resource) {
-                    $filesToCheck[] = [
-                        'filename'  => rtrim($path, '/').'/'.$loc.'/'.$resource['filename'],
-                        'format'    => $resource['format'],
-                        'locale'    => $loc,
-                    ];
-                }
-            }
-        }
-        foreach ($filesToCheck as $file) {
-            if (file_exists($file['filename'])) {
-                $format = $file['format'] ?: pathinfo($file['filename'], PATHINFO_EXTENSION);
-                $this->getTranslator()->addResource($format, $file['filename'], $file['locale'], $domain);
-            }
-        }
-        $this->loadedResources[$domain] = true;
+        return $this->locale;
     }
 
     /**
-     * @return LoggingTranslator|SymfonyTranslator|TranslatorInterface
+     * @param string $id
+     * @param array $parameters
+     * @param string|null $domain
+     * @param string|null $locale
+     * @return string
      * @throws \RuntimeException
      */
-    protected function getTranslator()
+    public function trans($id, array $parameters = array(), $domain = null, $locale = null)
     {
-        if ($this->translator) {
-            return $this->translator;
+        $domain = is_null($domain) ? $this->domain : $domain;
+        $locale = is_null($locale) ? $this->getLocale() : $locale;
+        if (empty($locale)) {
+            throw new RuntimeException('Localizer::trans() locale has not been provided neither initialized');
         }
-        if (empty($this->currentLocale)) {
-            throw new RuntimeException('Locale has not been initialized');
-        }
-        $translator = new SymfonyTranslator($this->currentLocale, $this->messageSelector, null, false);
-        $translator->setFallbackLocales($this->getFallbackLocales($this->currentLocale));
-        $translator->addLoader('php', new PhpFileLoader());
-
-        $this->translator = ($this->logger) ? new LoggingTranslator($translator, $this->logger) : $translator;
-        return $this->translator;
+        return $this->manager->trans($id, $parameters, $domain, $locale);
     }
 
-    protected function getPaths($domain)
+    /**
+     * @param string $id
+     * @param int $number
+     * @param array $parameters
+     * @param string|null $domain
+     * @param string|null $locale
+     * @return string
+     * @throws \RuntimeException
+     */
+    public function transChoice($id, $number, array $parameters = array(), $domain = null, $locale = null)
     {
-        $namespace = strstr($domain, '::', true) ?: $this->defaultNamespace;
-        return Arr::get($this->namespacePaths, $namespace, array());
+        $domain = is_null($domain) ? $this->domain : $domain;
+        $locale = is_null($locale) ? $this->getLocale() : $locale;
+        if (empty($locale)) {
+            throw new RuntimeException('Localizer::transChoice() locale has not been provided neither initialized');
+        }
+        return $this->manager->transChoice($id, $number, $parameters, $domain, $locale);
     }
 }
