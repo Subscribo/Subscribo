@@ -223,10 +223,7 @@ class AccountController extends AbstractController
             return ['result' => $clientRedirection];
         }
         $currentAccount = $this->context->getAccount(true);
-        if ($currentAccount) {
-            if ($currentAccount->customer->email !== $customerRegistration->email) {
-                throw new WrongAccountHttpException('Emails does not agree');
-            }
+        if ($currentAccount and ($currentAccount->customer->email === $customerRegistration->email)) {
             $customerId = $currentAccount->customerId;
         } else {
             $email = $customerRegistration->email;
@@ -315,10 +312,7 @@ class AccountController extends AbstractController
             'mergedAccountEmail'    => $customerRegistration->email,
         ];
         $currentAccount = $this->context->getAccount(true);
-        if ($currentAccount) {
-            if ($currentAccount->customer->email !== $customerRegistration->email) {
-                throw new WrongAccountHttpException('Emails does not agree');
-            }
+        if ($currentAccount and ($currentAccount->customer->email === $customerRegistration->email)) {
             $extraData['omitPasswordCheck'] = strval($this->context->getServiceId());
             return $this->makeQuestion(Questionary::CODE_CONFIRM_ACCOUNT_MERGE_SIMPLE, $extraData, 'resumeConfirmMergeAnswer', $additionalData);
         }
