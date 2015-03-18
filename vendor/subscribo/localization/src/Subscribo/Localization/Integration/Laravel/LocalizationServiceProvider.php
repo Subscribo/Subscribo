@@ -15,7 +15,7 @@ class LocalizationServiceProvider extends ServiceProvider
         $this->app->singleton('subscribo.localization.manager', '\\Subscribo\\Localization\\LocalizationManager');
         $this->app->singleton('\\Subscribo\\Localization\\Interfaces\\LocalizationManagerInterface', 'subscribo.localization.manager');
         $this->app->singleton('subscribo.localizer', function ($app) {
-            return new Localizer($app->make('subscribo.localization.manager'), $app['config']['locale']);
+            return new Localizer($app->make('subscribo.localization.manager'), $app->make('config')->get('app.locale'));
         });
         $this->app->singleton('\\Subscribo\\Localization\\Localizer', 'subscribo.localizer');
         $this->app->singleton('\\Subscribo\\Localization\\Interfaces\\LocalizerInterface', 'subscribo.localizer');

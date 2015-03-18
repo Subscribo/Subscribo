@@ -25,10 +25,14 @@
         }
     ],
     "require": {
-        "php": "~5.4"
+        "php": "~5.4",
+        "psr/log": "~1.0",
+        "symfony/translation": "~2.6",
+        "illuminate/contracts": "~5.0"
     },
     "suggest": {
-        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+        "illuminate/http": "If using middleware"
     },
     "autoload": {
         "psr-4": {
