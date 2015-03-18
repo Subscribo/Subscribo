@@ -1,19 +1,22 @@
 <?php namespace Subscribo\ApiClientAuth\Connectors;
 
+use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Subscribo\RestClient\Exceptions\InvalidResponseException;
 use Subscribo\RestClient\RestClient;
 use Subscribo\RestCommon\SignatureOptions;
 
 class AccountConnector
 {
-    /**
-     * @var \Subscribo\RestClient\RestClient
-     */
+    /** @var \Subscribo\RestClient\RestClient  */
     protected $restClient;
 
-    public function __construct(RestClient $restClient)
+    /** @var  LocalizerInterface */
+    protected $localizer;
+
+    public function __construct(RestClient $restClient, LocalizerInterface $localizer)
     {
         $this->restClient = $restClient;
+        $this->localizer = $localizer;
     }
 
     /**
@@ -127,16 +130,25 @@ class AccountConnector
         return $result;
     }
 
+    /**
+     * @param SignatureOptions|array|bool $signatureOptions
+     * @return SignatureOptions
+     */
     protected function processSignatureOptions($signatureOptions)
     {
         if ($signatureOptions instanceof SignatureOptions) {
             return $signatureOptions;
         }
-        if (is_array($signatureOptions)) {
-            return new SignatureOptions($signatureOptions);
+        $defaults = [
+            'locale'    => true,
+        ];
+        $options = is_array($signatureOptions) ? array_replace($defaults, $signatureOptions) : $defaults;
+
+        if ((true === $options['locale']) and ($this->localizer)) {
+            $options['locale'] = $this->localizer->getLocale();
         }
-        $defaults = ['lang' => 'DE_AT'];
-        return new SignatureOptions($defaults);
+        $result = new SignatureOptions($options);
+        return $result;
     }
 
 }

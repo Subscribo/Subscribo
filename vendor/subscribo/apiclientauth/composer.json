@@ -22,6 +22,7 @@
     ],
     "require": {
         "php": "~5.4",
+        "subscribo/localization": "@dev",
         "illuminate/contracts": "~5.0",
         "illuminate/auth": "~5.0",
         "subscribo/apiclientcommon": "@dev"

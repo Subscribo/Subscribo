@@ -13,6 +13,7 @@ class ApiClientAuthServiceProvider extends ServiceProvider
 
     public function register()
     {
+        $this->app->register('\\Subscribo\\Localization\\Integration\\Laravel\\LocalizationServiceProvider');
         $this->forRouteRegistration[] = $this->app->register('Subscribo\\ApiClientCommon\\Integration\\Laravel\\ApiClientCommonServiceProvider');
     }
 
