@@ -43,7 +43,8 @@ trait ServerRequestEnabledControllerTrait
      */
     protected function makeQuestionaryServerRequestHttpException($source, array $dataToRemember = array(), $continueMethod = 'receiveAnswer', array $additionalDataForQuestionary = array())
     {
-        $questionary = QuestionaryFactory::make($source, $additionalDataForQuestionary);
+        $questionaryFactory = new QuestionaryFactory($this->context->getLocalizer());
+        $questionary = $questionaryFactory->make($source, $additionalDataForQuestionary);
         $this->rememberServerRequest($questionary, 'answer/question/', $dataToRemember, $continueMethod);
         $exception = new QuestionaryServerRequestHttpException($questionary);
         return $exception;

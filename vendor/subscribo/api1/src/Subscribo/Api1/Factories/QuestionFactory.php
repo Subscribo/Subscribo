@@ -3,6 +3,7 @@
 use Subscribo\Api1\Exceptions\InvalidArgumentException;
 use Subscribo\RestCommon\Question;
 use Subscribo\Support\Arr;
+use Subscribo\Localization\Interfaces\LocalizerInterface;
 
 /**
  * Class QuestionFactory
@@ -10,24 +11,32 @@ use Subscribo\Support\Arr;
  */
 class QuestionFactory
 {
+    /** @var \Subscribo\Localization\Interfaces\LocalizerInterface  */
+    protected $localizer;
+
+    public function __construct(LocalizerInterface $localizer)
+    {
+        $this->localizer = $localizer->duplicate('questionary', 'api1');
+    }
+
     /**
      * @param Question|array|string|int $source
      * @param array $additionalData
      * @return Question
      * @throws \Subscribo\Api1\Exceptions\InvalidArgumentException
      */
-    public static function make($source, array $additionalData = array())
+    public function make($source, array $additionalData = array())
     {
         if ($source instanceof Question) {
-            return static::addAdditionalData($source, $additionalData);
+            return $this->addAdditionalData($source, $additionalData);
         }
         $source = (is_string($source)) ? json_decode($source, true) : $source;
-        $source = (is_int($source)) ? static::assembleFromCode($source) : $source;
+        $source = (is_int($source)) ? $this->assembleFromCode($source) : $source;
         if ( ! is_array($source)) {
             throw new InvalidArgumentException('QuestionFactory::make() provided source have incorrect type');
         }
         $question = new Question($source);
-        return static::addAdditionalData($question, $additionalData);
+        return $this->addAdditionalData($question, $additionalData);
     }
 
     /**
@@ -35,8 +44,9 @@ class QuestionFactory
      * @param array $additionalData
      * @return Question
      */
-    protected static function addAdditionalData(Question $question, array $additionalData)
+    protected function addAdditionalData(Question $question, array $additionalData)
     {
+        $parameters = [];
         if (empty($additionalData)) {
             return $question;
         }
@@ -44,25 +54,22 @@ class QuestionFactory
             $question->prependSelectOptions($additionalData['samePoolServices']);
         }
         if (( ! empty($additionalData['existingEmail'])) and (Question::CODE_LOGIN_OR_NEW_ACCOUNT_PASSWORD === $question->code)) {
-            $question->text = sprintf("Or provide a password to your existing account (email: %s):", $additionalData['existingEmail']);
+            $parameters = ['%email%' => $additionalData['existingEmail']];
+            /// TRANSLATORS: English: Or provide a password to your existing account (email: %email%):
+            $question->text = $this->localizer->trans('questions.special.CODE_LOGIN_OR_NEW_ACCOUNT_PASSWORD', $parameters);
         }
         if (Question::CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO === $question->code) {
-            $confirmingServiceName = Arr::get($additionalData, 'confirmingServiceName');
-            $requestingServiceName = Arr::get($additionalData, 'requestingServiceName');
-            $mergedAccountEmail = Arr::get($additionalData, 'mergedAccountEmail');
-            $confirmingServiceText = $confirmingServiceName ? (' by '.$confirmingServiceName) : '';
-            $requestingServiceText = $requestingServiceName ? (' by '.$requestingServiceName) : '';
-            $mergedAccountDescription = $mergedAccountEmail ? (' (with email '.$mergedAccountEmail.')') : '';
-            $question->text = 'Would you like to merge your new account'.$requestingServiceText
-                .' with your existing account'.$mergedAccountDescription.$confirmingServiceText.'?';
+            $parameters['%confirmingService%'] = Arr::get($additionalData, 'confirmingServiceName');
+            $parameters['%requestingService%'] = Arr::get($additionalData, 'requestingServiceName');
+            $parameters['%email%'] = Arr::get($additionalData, 'mergedAccountEmail');
+            /// TRANSLATORS: English: Would you like to merge your new account by %requestingService% with your existing account by %confirmingService% (with email %email%)?
+            $question->text = $this->localizer->trans('questions.special.CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO', $parameters);
         }
         if (Question::CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD === $question->code) {
-            $confirmingServiceName = Arr::get($additionalData, 'confirmingServiceName');
-            $mergedAccountEmail = Arr::get($additionalData, 'mergedAccountEmail');
-            $confirmingServiceText = $confirmingServiceName ? (' by '.$confirmingServiceName) : ' by current service';
-            $mergedAccountDescription = $mergedAccountEmail ? (' with email '.$mergedAccountEmail) : '';
-            $question->text = 'If you want to merge accounts, please provide a password to your account'
-                .$mergedAccountDescription.$confirmingServiceText.':';
+            $parameters['%confirmingService%'] = Arr::get($additionalData, 'confirmingServiceName');
+            $parameters['%email%'] = Arr::get($additionalData, 'mergedAccountEmail');
+            /// TRANSLATORS: English: If you want to merge accounts, please provide a password to your account by %confirmingService% with email %email%
+            $question->text = $this->localizer->trans('questions.special.CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD', $parameters);
         }
         return $question;
     }
@@ -72,57 +79,67 @@ class QuestionFactory
      * @return array
      * @throws \Subscribo\Api1\Exceptions\InvalidArgumentException
      */
-    protected static function assembleFromCode($code)
+    protected function assembleFromCode($code)
     {
         switch ($code) {
             case Question::CODE_NEW_CUSTOMER_EMAIL_EMAIL:
                 $result = [
                     'type' => Question::TYPE_EMAIL,
-                    'text' => 'Your actual email:',
+                    /// TRANSLATORS: English: Your actual email:
+                    'text' => $this->localizer->trans('questions.text.CODE_NEW_CUSTOMER_EMAIL_EMAIL'),
                     'validationRules' => 'required'
                 ];
                 break;
             case Question::CODE_LOGIN_OR_NEW_ACCOUNT_EMAIL:
                 $result = [
                     'type' => Question::TYPE_EMAIL,
-                    'text' => 'You can either provide a new email:',
+                    /// TRANSLATORS: English: You can either provide a new email:
+                    'text' => $this->localizer->trans('questions.text.CODE_LOGIN_OR_NEW_ACCOUNT_EMAIL'),
                     'validationRules' => 'required_without:password'
                 ];
                 break;
             case Question::CODE_LOGIN_OR_NEW_ACCOUNT_PASSWORD:
                 $result = [
                     'type' => Question::TYPE_PASSWORD,
-                    'text' => 'Or provide a password to your existing account:',
+                    /// TRANSLATORS: English: Or provide a password to your existing account:
+                    'text' => $this->localizer->trans('questions.text.CODE_LOGIN_OR_NEW_ACCOUNT_PASSWORD'),
                     'validationRules' => 'required_without:email'
                 ];
                 break;
             case Question::CODE_MERGE_OR_NEW_ACCOUNT_SELECT_SERVICE:
                 $result = [
                     'type' => Question::TYPE_SELECT,
-                    'text' => 'Would you like to merge your account with one of the following services or create a new account?',
+                    /// TRANSLATORS: English: Would you like to merge your account with one of the following services or create a new account?
+                    'text' => $this->localizer->trans('questions.text.CODE_MERGE_OR_NEW_ACCOUNT_SELECT_SERVICE'),
                     'validationRules' => 'required',
                     'selectOptions' => [
-                        '' => 'Please select',
-                        'new' => 'Create a new account',
+                        /// TRANSLATORS: English: Please select
+                        '' => $this->localizer->trans('questions.select.CODE_MERGE_OR_NEW_ACCOUNT_SELECT_SERVICE.selection_bid'),
+                        /// TRANSLATORS: English: Create a new account
+                        'new' => $this->localizer->trans('questions.select.CODE_MERGE_OR_NEW_ACCOUNT_SELECT_SERVICE.new_account'),
+
                     ],
                 ];
                 break;
             case Question::CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO:
                 $result = [
                     'type' => Question::TYPE_SELECT,
-                    'text' => 'Would you like to merge your new account with your existing account?',
+                    /// TRANSLATORS: English: Would you like to merge your new account with your existing account?
+                    'text' => $this->localizer->trans('questions.text.CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO'),
                     'validationRules' => 'required',
                     'selectOptions' => [
-                        '' => 'Please select',
-                        'yes' => 'Yes',
-                        'no'  => 'No',
+                        /// TRANSLATORS: English: Please select
+                        '' => $this->localizer->trans('questions.select.CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO.selection_bid'),
+                        'yes' => $this->localizer->trans('questions.select.CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO.yes'),
+                        'no'  => $this->localizer->trans('questions.select.CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO.no'),
                     ],
                 ];
                 break;
             case Question::CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD:
                 $result = [
                     'type' => Question::TYPE_PASSWORD,
-                    'text' => 'If you want to merge accounts, please provide a password to your current service:',
+                    /// TRANSLATORS: English: If you want to merge accounts, please provide a password to your current service:
+                    'text' => $this->localizer->trans('questions.text.CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD'),
                     'validationRules' => 'required_if:merge,yes'
                 ];
                 break;

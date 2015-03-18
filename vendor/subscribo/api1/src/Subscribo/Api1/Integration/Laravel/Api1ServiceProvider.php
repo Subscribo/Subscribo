@@ -2,6 +2,7 @@
 
 use Illuminate\Support\ServiceProvider;
 use Subscribo\Api1\ControllerRegistrar;
+use Subscribo\Localization\Interfaces\LocalizationManagerInterface;
 
 /**
  * Class Api1ServiceProvider
@@ -16,17 +17,19 @@ class Api1ServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register('\\Subscribo\\Auth\\Integration\\Laravel\\AuthServiceProvider');
-
+        $this->app->register('\\Subscribo\\Localization\\Integration\\Laravel\\LocalizationServiceProvider');
     }
 
     public function boot()
     {
         $this->registerControllers();
+        $this->registerLocalizationResources();
     }
 
     protected function registerControllers()
     {
         $middleware = [
+            'Subscribo\\Localization\\Middleware\\LocaleFromHeader',
             'Subscribo\\Auth\\Middleware\\ApiAuth',
             'Subscribo\\Api1\\Middleware\\Logging',
         ];
@@ -39,5 +42,15 @@ class Api1ServiceProvider extends ServiceProvider
         ];
         $controllerRegistrar->registerControllers($controllers);
         $controllerRegistrar->addInfoRoute(['version' => 1]);
+    }
+
+    protected function registerLocalizationResources()
+    {
+        $packagePath = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+
+        /** @var LocalizationManagerInterface $manager */
+        $manager = $this->app->make('subscribo.localization.manager');
+        $manager->registerNamespace('api1', $packagePath.'/resources/lang', 'questionary');
+
     }
 }
