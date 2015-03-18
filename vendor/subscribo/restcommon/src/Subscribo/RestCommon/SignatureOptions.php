@@ -20,6 +20,8 @@ class SignatureOptions
     /** @var array */
     protected $descriptionAdds = array();
 
+    /** @var  string */
+    public $locale;
 
 
 
@@ -52,11 +54,11 @@ class SignatureOptions
         if ( ! empty($data['timestamp'])) {
             $this->timestamp = $data['timestamp'];
         }
+        if ( ! empty($data['locale'])) {
+            $this->locale = $data['locale'];
+        }
         if ( ! empty($data['accountId'])) {
             $this->descriptionAdds['accountId'] = $data['accountId'];
-        }
-        if ( ! empty($data['lang'])) {
-            $this->descriptionAdds['lang'] = $data['lang'];
         }
         return $this;
     }
