@@ -1,0 +1,31 @@
+localeSettings:
+    locales:
+        en_US:
+            fallbackLocales:
+                - en
+        de_AT:
+            fallbackLocales:
+                - en_US
+                - en
+        sk_SK:
+            fallbackLocales:
+                - en
+
+    uriStubs:
+        en: en_US
+        de: de_AT
+        sk: sk_SK
+
+    labels:
+        en_US:
+            en_US: English
+            de_AT: Englisch
+            sk_SK: Angličtina
+        de_AT:
+            en_US: German
+            de_AT: Deutsch
+            sk_SK: Nemčina
+        sk_SK:
+            en_US: Slovak
+            de_AT: Slowakisch
+            sk_SK: Slovenčina
