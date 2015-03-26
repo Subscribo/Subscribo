@@ -556,7 +556,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         ) {
             return array();
         }
-        $prototype = array_only($relation, array('polymorphic', 'process', 'method_name_for','pivot_table', 'ordering_field_name'));
+        $prototype = array_only($relation, array('polymorphic', 'process', 'method_name_for','pivot_table', 'ordering_field_name', 'with_timestamps'));
         $prototype['reverse'] = true;
         switch($relation['type']) {
             case 'no_relation':
@@ -731,8 +731,25 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 $relation['relation_set_key'] = $derivedRelationSetKey;
             }
         }
-        if ((in_array($relation['type'], array('many_to_many', 'polymorphic_many_belongs_to_many', 'many_morphed_by_many'), true)) and (empty($relation['pivot_table']))) {
+        if (in_array($relation['type'], array('many_to_many', 'polymorphic_many_belongs_to_many', 'many_morphed_by_many'), true)) {
+            $relation = $this->_processRelationForPivotTables($relation);
+        }
+        return $relation;
+    }
+
+    private function _processRelationForPivotTables($relation)
+    {
+        if (empty($relation['pivot_table'])) {
             $relation['pivot_table'] = $this->_assemblePivotTableName($relation);
+        }
+        if ( ! isset($relation['with_timestamps'])) {
+            $relation['with_timestamps'] = true;
+        }
+        if ( ! empty($relation['ordering_field_name'])) {
+            $relation['with_pivot'] = (empty($relation['with_pivot'])) ?  array() : $relation['with_pivot'];
+            $relation['with_pivot'][] = $relation['ordering_field_name'];
+            $relation['with_pivot'] = array_unique($relation['with_pivot']);
+            $relation['order_by'] = 'pivot_'.$relation['ordering_field_name'];
         }
         return $relation;
     }
@@ -1007,11 +1024,12 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         $keywords = array('table_from', 'table_to', 'key_from', 'key_to', 'from_table', 'to_table', 'from_key', 'to_key',
             'pivot_table', 'table_pivot', 'type', 'relation_type', 'none', 'no_relation',
             'ordering_on', 'ordering_off', 'ordering_field_name',
-            'method_name_for', 'method_name', 'foreign_object_name',
+            'method_name_for_key_from', 'method_name_for_key_to', 'method_name_for_table_from', 'method_name_for', 'method_name', 'foreign_object_name',
             'hidden_from', 'hidden_to', 'hide_from', 'hide_to', 'show_from', 'show_to',
             'morph', 'polymorphic',
             'no_reverse',
             'table_through', 'key_through', 'through_object_name',
+            'with_timestamps', 'without_timestamps',
         );
         $parts = explode(' ', $attributesString);
 
@@ -1091,13 +1109,30 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 case 'show_to':
                     $result['hidden_to'] = false;
                     continue 2;
+                case 'method_name_for_table_from':
                 case 'method_name_for':
                     $methodNameForTableName = strtolower(array_shift($parts));
                     $methodName = array_shift($parts);
                     if (empty($methodNameForTableName) or empty($methodName)) {
-                        throw new \Exception("Switch 'method_name_for' should have two arguments");
+                        throw new \Exception("Switch 'method_name_for' / 'method_name_for_table_from' should have two arguments");
                     }
                     $result['method_name_for'][$methodNameForTableName] = $methodName;
+                    continue 2;
+                case 'method_name_for_key_from':
+                    $keyName = strtolower(array_shift($parts));
+                    $methodName = array_shift($parts);
+                    if (empty($keyName) or empty($methodName)) {
+                        throw new \Exception("Switch 'method_name_for_key_from' should have two arguments");
+                    }
+                    $result['method_name_for_key_from'][$keyName] = $methodName;
+                    continue 2;
+                case 'method_name_for_key_to':
+                    $keyName = strtolower(array_shift($parts));
+                    $methodName = array_shift($parts);
+                    if (empty($keyName) or empty($methodName)) {
+                        throw new \Exception("Switch 'method_name_for_key_to' should have two arguments");
+                    }
+                    $result['method_name_for_key_to'][$keyName] = $methodName;
                     continue 2;
                 case 'foreign_object_name':
                     $result['foreign_object_name'] = array_shift($parts);
@@ -1110,6 +1145,12 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                     continue 2;
                 case 'through_object_name':
                     $result['through_object_name'] = array_shift($parts);
+                    continue 2;
+                case 'with_timestamps':
+                    $result['with_timestamps'] = true;
+                    continue 2;
+                case 'without_timestamps':
+                    $result['with_timestamps'] = false;
                     continue 2;
                 default:
                     throw new \Exception("Action for keyword '".$word."' not defined.");
@@ -1519,7 +1560,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 $this->_pushValueIfNotPresent('url', $rules);
             break;
             case 'identifier':
-                $pattern = '#^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$#';
+                $pattern = '#^[a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9]$#';
                 $rule = array('regex', $pattern);
                 $this->_pushValueIfNotPresent($rule, $rules);
             break;
@@ -2102,6 +2143,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             if (empty($collidingNames[$newObject['name']])
                 and empty($result[$newObject['name']])
                 and ( ! $this->_findCollision($newObject['name'], $baseModelExtends))) {
+                $newObject = $this->_setMethodNameToObject($newObject, $newObject['name']);
                 $result[$newObject['name']] = $newObject;
                 continue;
             }
@@ -2111,6 +2153,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             if ($collidingObject and (empty($result[$collidingObject['fallback_name']]))) {
                 unset($result[$collidingName]);
                 $collidingObject['name'] = $collidingObject['fallback_name'];
+                $collidingObject = $this->_setMethodNameToObject($collidingObject, $collidingObject['fallback_name']);
                 $result[$collidingObject['fallback_name']] = $collidingObject;
             }
             $fallbackName = $newObject['fallback_name'];
@@ -2118,12 +2161,41 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 $newObject['name'] = $fallbackName;
             }
             if (empty($result[$newObject['name']])) {
+                $newObject = $this->_setMethodNameToObject($newObject, $newObject['name']);
                 $result[$newObject['name']] = $newObject;
                 continue;
             }
             $this->error("Warning: Not adding new foreign object '".$newObject['name']."' as object with same key is already present. (Table name: '".$tableName."' Relation type: '".$relation['type']."'  Colliding name: '".$collidingName."')");
         }
         return $result;
+    }
+
+    private function _setMethodNameToObject(array $relationObject, $methodName)
+    {
+        switch ($relationObject['method']) {
+            case 'belongsTo':
+                $relationObject = $this->_setMethodNameInMethodParameters($relationObject, $methodName, 3);
+                break;
+            case 'belongsToMany':
+                $relationObject = $this->_setMethodNameInMethodParameters($relationObject, $methodName, 4);
+                break;
+            default:
+        }
+        return $relationObject;
+    }
+
+    /**
+     * @param array $relationObject
+     * @param string $methodName
+     * @param int $position
+     * @return array
+     */
+    private function _setMethodNameInMethodParameters(array $relationObject, $methodName, $position)
+    {
+        $parameters = array_pad($relationObject['method_parameters'], $position, null);
+        $parameters[$position] = $methodName;
+        $relationObject['method_parameters'] = $parameters;
+        return $relationObject;
     }
 
     private function _assembleForeignObjectsFromRelation(array $relation, array $modelOptions)
@@ -2240,8 +2312,11 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 $fallbackMethodName = Str::camel(Str::singular($fallbackMethodNameBase));
                 $method = 'belongsTo';
                 $returnsArray = false;
-                $keyTo = empty($relation['key_to']) ? null : $relation['key_to'];
-                $methodParameters = array(0 => $foreignObjectName, 1 => $this->_obtainKeyFrom($relation, null, null), 2 => $keyTo, 3 => $methodDefaultName);
+                if ( ! empty($relation['key_to'])) {
+                    $methodParameters = array(0 => $foreignObjectName, 1 => $this->_obtainKeyFrom($relation, null, null), 2 => $relation['key_to']);
+                } else {
+                    $methodParameters = array(0 => $foreignObjectName, 1 => $this->_obtainKeyFrom($relation, null, null));
+                }
             break;
             case 'many_to_many':
                 $methodDefaultName = Str::camel(Str::plural($methodNameBase));
@@ -2249,7 +2324,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 $method = 'belongsToMany';
                 $returnsArray = true;
                 $methodParameters = array(0 => $foreignObjectName, 1 => $relation['pivot_table'],
-                    2 => $this->_obtainKeyTo($relation, null, null), 3 => $this->_obtainKeyFrom($relation), 4 => $methodDefaultName);
+                    2 => $this->_obtainKeyTo($relation, null, null), 3 => $this->_obtainKeyFrom($relation));
             break;
             case 'polymorphic_belongs_to_one':
             case 'polymorphic_many_belongs_to_one':
@@ -2332,6 +2407,12 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         if ( ! empty($relation['method_name_for'][$relation['table_from']])) {
             $methodName = $relation['method_name_for'][$relation['table_from']];
         }
+        if (( ! empty($relation['key_from'])) and ( ! empty($relation['method_name_for_key_from'][$relation['key_from']]))) {
+            $methodName = $relation['method_name_for_key_from'][$relation['key_from']];
+        }
+        if (( ! empty($relation['key_to'])) and ( ! empty($relation['method_name_for_key_to'][$relation['key_to']]))) {
+            $methodName = $relation['method_name_for_key_to'][$relation['key_to']];
+        }
         $result = array(
             'name' => $methodName,
             'fallback_name' => $fallbackMethodName,
@@ -2341,6 +2422,9 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             'method_parameters' => $methodParameters,
             'relation'  => $relation,
             'hidden'    => empty($relation['hidden_from']) ? false : true,
+            'with_timestamps' => empty($relation['with_timestamps']) ? false : true,
+            'with_pivot' => empty($relation['with_pivot']) ?  false : $relation['with_pivot'],
+            'order_by' => empty($relation['order_by']) ?  false : $relation['order_by'],
         );
         return $result;
     }
@@ -2866,7 +2950,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
     {
         $result = array(
             'table_name' => $relation['pivot_table'],
-            'migration_timestamps' => true,
+            'migration_timestamps' => (empty($relation['with_timestamps']) ? false : true),
             'generate' => array('migration' => 'overwrite'),
             'is_pivot_table' => array(
                 'type' => empty($relation['polymorphic']) ? 'simple' : 'polymorphic',
