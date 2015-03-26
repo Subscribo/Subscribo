@@ -18,6 +18,8 @@ if($options['comments']) {
  *
  * Model class for being changed and used in the application
  */
-class <?php echo $modelName; ?> extends \<?php echo $options['model_base_namespace'].'\\'.$modelName; ?> {
+class <?php echo $modelName; ?> extends \<?php echo $options['model_base_namespace'].'\\'.$modelName; ?>
+
+{
 
 }

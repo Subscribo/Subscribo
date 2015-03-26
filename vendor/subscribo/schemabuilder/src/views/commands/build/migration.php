@@ -20,7 +20,8 @@ if ( ! empty($options['model_name'])):
 endif;
 ?>
  */
-class <?php echo $migrationName; ?> extends Migration {
+class <?php echo $migrationName; ?> extends Migration
+{
 
     /**
      * Run the migration.

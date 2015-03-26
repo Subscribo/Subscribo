@@ -47,7 +47,9 @@ abstract class <?php echo $modelName;
 if ( ! empty($options['base_model_extends'])) {
     echo ' extends '.$options['base_model_extends'];
 }
-?> {
+?>
+
+{
 
 <?php if ( ! empty($options['table_name'])): ?>
     /**
@@ -208,6 +210,21 @@ endforeach;
             echo View::make('schemabuilder::helpers.php_value', array('value' => $methodParameter));
         endforeach;
         echo ')';
+        if ( ! empty($foreignObject['with_pivot'])):
+            echo '
+                        ->withPivot';
+            echo View::make('schemabuilder::helpers.php_parameters', array('parameters' => $foreignObject['with_pivot']));
+        endif;
+        if ( ! empty($foreignObject['order_by'])):
+            echo '
+                        ->orderBy(';
+            echo View::make('schemabuilder::helpers.php_value', array('value' => $foreignObject['order_by']));
+            echo ')';
+        endif;
+        if ( ! empty($foreignObject['with_timestamps'])):
+            echo '
+                        ->withTimestamps()';
+        endif;
         ?>;
     }
 <?php endforeach;
