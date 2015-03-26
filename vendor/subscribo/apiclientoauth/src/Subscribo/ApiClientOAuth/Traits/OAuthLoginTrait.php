@@ -9,6 +9,9 @@ use Subscribo\ApiClientCommon\Traits\HandleServerRequestExceptionTrait;
 use Subscribo\RestClient\Exceptions\ServerRequestException;
 use Subscribo\RestClient\Exceptions\ValidationErrorsException;
 use Subscribo\Exception\Exceptions\NotFoundHttpException;
+use Subscribo\Localization\Deposits\SessionDeposit;
+use Subscribo\Localization\Deposits\CookieDeposit;
+use Subscribo\Localization\LocaleUtils;
 
 /**
  * Class OAuthLoginTrait
@@ -33,7 +36,7 @@ trait OAuthLoginTrait
     }
 
 
-    public function getHandle(OAuthManager $manager, Registrar $registrar, Guard $auth, Request $request, $provider)
+    public function getHandle(OAuthManager $manager, Registrar $registrar, Guard $auth, Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, $provider)
     {
         if (false === array_search($provider, $manager->getAvailableDrivers(), true)) {
             throw new NotFoundHttpException();
@@ -83,6 +86,7 @@ trait OAuthLoginTrait
                 ->withErrors('Login attempt failed. Please try again later or contact an administrator.');
         }
         $auth->login($account);
+        LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);
         return redirect($this->redirectPath);
     }
 }

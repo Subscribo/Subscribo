@@ -109,7 +109,7 @@ class AccountConnector
             return null;
         }
         if ( ! is_array($source)) {
-            throw new InvalidResponseException();
+            throw new InvalidResponseException(['response' => 'Not array']);
         }
         $keysToCheck = is_array($keyToCheck) ? $keyToCheck : array($keyToCheck);
         foreach ($keysToCheck as $key) {
@@ -119,13 +119,18 @@ class AccountConnector
         }
         if (empty($source['result']['account']['id'])
           or empty($source['result']['customer']['email'])
-          or ( ! isset($source['result']['person']['name']))) {
-            throw new InvalidResponseException();
+          or ( ! isset($source['result']['person']['name']))
+          or ( ! isset($source['result']['account']['locale']))
+          or ( ! isset($source['result']['account']['remember_locale']))
+        ) {
+            throw new InvalidResponseException(['response' => $source]);
         }
         $result = [
             'id'    => $source['result']['account']['id'],
             'email' => $source['result']['customer']['email'],
             'name'  => $source['result']['person']['name'],
+            'locale' => $source['result']['account']['locale'],
+            'rememberLocale' =>  $source['result']['account']['remember_locale'],
         ];
         return $result;
     }

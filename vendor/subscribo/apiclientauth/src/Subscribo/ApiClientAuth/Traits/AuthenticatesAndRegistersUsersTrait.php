@@ -9,6 +9,9 @@ use Subscribo\ApiClientAuth\Registrar;
 use Subscribo\RestClient\Exceptions\ServerRequestException;
 use Subscribo\RestClient\Exceptions\ValidationErrorsException;
 use Subscribo\ApiClientCommon\Traits\HandleServerRequestExceptionTrait;
+use Subscribo\Localization\Deposits\SessionDeposit;
+use Subscribo\Localization\Deposits\CookieDeposit;
+use Subscribo\Localization\LocaleUtils;
 
 /**
  * Class AuthenticatesAndRegistersUsersTrait
@@ -21,19 +24,20 @@ trait AuthenticatesAndRegistersUsersTrait
     use AuthenticatesAndRegistersUsers;
     use HandleServerRequestExceptionTrait;
 
-    public function getRegister(Registrar $registrar, Store $session)
+    public function getRegister(Registrar $registrar, Store $session, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit)
     {
         $resultInSession = $session->pull($this->sessionKeyServerRequestHandledResult);
         $account = $resultInSession ? $registrar->resumeAttempt($resultInSession) : null;
         if ($account) {
             $this->auth->login($account);
+            LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);
             return redirect($this->redirectPath());
         }
         return view('auth.register');
     }
 
 
-    public function postRegister(Registrar $registrar, Request $request)
+    public function postRegister(Registrar $registrar, Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit)
     {
         $rules = $registrar->getValidationRules();
         $this->validate($request, $rules);
@@ -59,10 +63,11 @@ trait AuthenticatesAndRegistersUsersTrait
                 ->withErrors('Registration attempt failed. Please try again later or contact an administrator.');
         }
         $this->auth->login($account);
+        LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);
         return redirect($this->redirectPath());
     }
 
-    public function postLogin(Request $request)
+    public function postLogin(Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit)
     {
         $this->validate($request, ['email' => 'required', 'password' => 'required']);
 
@@ -76,6 +81,7 @@ trait AuthenticatesAndRegistersUsersTrait
                 ->withErrors('Login attempt failed. Please try again later or contact an administrator.');
         }
         if ($authenticated) {
+            LocaleUtils::rememberLocaleForUser($this->auth->user(), $sessionDeposit, $cookieDeposit);
             return redirect()->intended($this->redirectPath());
         }
         return redirect($this->loginPath())
