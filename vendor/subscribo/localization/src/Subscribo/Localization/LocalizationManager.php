@@ -1,6 +1,6 @@
 <?php namespace Subscribo\Localization;
 
-use Symfony\Component\Translation\Translator;
+use Subscribo\Localization\Translators\Translator;
 use Symfony\Component\Translation\LoggingTranslator;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Translation\MessageSelector;

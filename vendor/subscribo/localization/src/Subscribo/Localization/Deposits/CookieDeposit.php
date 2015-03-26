@@ -53,10 +53,21 @@ class CookieDeposit implements LocaleDepositInterface
         return $result;
     }
 
-    public function setLocale($locale)
+    /**
+     * @param $locale
+     * @param null|int $expire Null for default, 0 or less for till end of browser session
+     */
+    public function setLocale($locale, $expire = null)
     {
+        if (is_null($expire)) {
+            $expire = $this->expire;
+        }
+        $expire = intval($expire);
+        if ($expire < 0) {
+            $expire = 0;
+        }
         $secure = $this->request->secure();
-        $cookie = $this->cookieJar->make($this->cookieName, $locale, $this->expire, null, null, $secure, true);
+        $cookie = $this->cookieJar->make($this->cookieName, $locale, $expire, null, null, $secure, true);
         $this->cookieJar->queue($cookie);
     }
 }
