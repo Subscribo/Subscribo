@@ -30,4 +30,9 @@ interface LocalizationResourcesManagerInterface
      */
     public function getTranslationResources($domain, array $locales);
 
+    /**
+     * @return array
+     */
+    public function getSupportedFormats();
+
 }

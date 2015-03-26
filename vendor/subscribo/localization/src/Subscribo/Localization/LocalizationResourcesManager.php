@@ -15,6 +15,15 @@ class LocalizationResourcesManager implements LocalizationResourcesManagerInterf
     /** @var array  */
     protected $namespacePaths = array();
 
+    /** @var array  */
+    protected $supportedExtensions = ['php', 'yml'];
+
+
+    public function getSupportedFormats()
+    {
+        return $this->supportedExtensions;
+    }
+
 
     public function registerResource($resource, $namespace, $subdomain = true, $format = true, $type = self::RESOURCE_TYPE_TRANSLATION)
     {
@@ -24,8 +33,7 @@ class LocalizationResourcesManager implements LocalizationResourcesManagerInterf
         }
         $domain = $namespace.'::'.$subdomain;
         if (true === $format) {
-            $extensions = ['php'];
-            foreach ($extensions as $extension) {
+            foreach ($this->supportedExtensions as $extension) {
                 $this->registeredResources[$type][$domain][] = [
                     'filename'  => $resource.'.'.$extension,
                     'format'    => null,

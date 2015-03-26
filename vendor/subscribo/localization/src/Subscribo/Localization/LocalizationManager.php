@@ -116,9 +116,30 @@ class LocalizationManager implements LocalizationManagerInterface
     {
         $translator = new Translator($locale, $this->messageSelector, null, false);
         $translator->setFallbackLocales($fallbackLocales);
-        $translator->addLoader('php', new PhpFileLoader());
-        $translator->addLoader('yml', new YamlFileLoader());
+        foreach ($this->resourcesManager->getSupportedFormats() as $format) {
+            $loader = $this->makeLoader($format);
+            if ($loader) {
+                $translator->addLoader($format, $loader);
+            }
+        }
         $result = ($this->logger) ? new LoggingTranslator($translator, $this->logger) : $translator;
         return $result;
+    }
+
+    /**
+     * @param string $format
+     * @return null|PhpFileLoader|YamlFileLoader
+     */
+    protected function makeLoader($format)
+    {
+        switch ($format) {
+            case 'php':
+                return new PhpFileLoader();
+            case 'yml':
+                return new YamlFileLoader();
+            default:
+                return null;
+
+        }
     }
 }
