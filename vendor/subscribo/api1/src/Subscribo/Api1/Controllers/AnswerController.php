@@ -124,7 +124,7 @@ class AnswerController extends AbstractController
         $queryValidationRules = [
             'hash' => 'required|alpha_num',
             'redirect_back' => 'url',
-            'language' => 'alpha_dash',
+            'locale' => 'alpha_dash',
         ];
         $validatedData = $this->validateRequestQuery($queryValidationRules);
         $actionInterruption = $this->retrieveActionInterruption($validatedData['hash']);

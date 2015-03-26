@@ -451,7 +451,7 @@ class AccountController extends AbstractController
         /** @var \Subscribo\Api1\Factories\AccountFactory $accountFactory */
         $accountFactory = $this->applicationMake('Subscribo\\Api1\\Factories\\AccountFactory');
 
-        $registered = $accountFactory->register($data, $serviceId);
+        $registered = $accountFactory->register($data, $serviceId, $this->context->getLocale());
 
         if ($actionInterruption) {
             $actionInterruption->markAsProcessed();

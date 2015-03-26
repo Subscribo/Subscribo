@@ -1,8 +1,11 @@
 <?php namespace Subscribo\Api1\Integration\Laravel;
 
-use Illuminate\Support\ServiceProvider;
+use Subscribo\Support\ServiceProvider;
 use Subscribo\Api1\ControllerRegistrar;
-use Subscribo\Localization\Interfaces\LocalizationManagerInterface;
+use Subscribo\Api1\Factories\LocaleSettingsFactory;
+use Subscribo\Localization\Interfaces\LocalizationResourcesManagerInterface;
+use Subscribo\Localization\Integration\Laravel\LocalizationServiceProvider;
+
 
 /**
  * Class Api1ServiceProvider
@@ -17,19 +20,26 @@ class Api1ServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register('\\Subscribo\\Auth\\Integration\\Laravel\\AuthServiceProvider');
-        $this->app->register('\\Subscribo\\Localization\\Integration\\Laravel\\LocalizationServiceProvider');
+        /** @var LocalizationServiceProvider $localizationServiceProvider */
+        $localizationServiceProvider = $this->app->register('\\Subscribo\\Localization\\Integration\\Laravel\\LocalizationServiceProvider');
+        if (true === $localizationServiceProvider) {
+            $localizationServiceProvider = $this->app->getProvider('\\Subscribo\\Localization\\Integration\\Laravel\\LocalizationServiceProvider');
+        }
+        $localizationServiceProvider->registerLocaleSettingsManager(array(), null, '\\Subscribo\\Api1\\Factories\\LocaleSettingsFactory', true);
     }
 
     public function boot()
     {
         $this->registerControllers();
-        $this->registerLocalizationResources();
+        $this->registerTranslationResources('questionary');
     }
 
     protected function registerControllers()
     {
         $middleware = [
+            'Subscribo\\Localization\\Middleware\\StandardLocaleToResponseHeader',
             'Subscribo\\Localization\\Middleware\\LocaleFromHeader',
+            'Subscribo\\Localization\\Middleware\\LocaleToApp',
             'Subscribo\\Auth\\Middleware\\ApiAuth',
             'Subscribo\\Api1\\Middleware\\Logging',
         ];
@@ -42,15 +52,5 @@ class Api1ServiceProvider extends ServiceProvider
         ];
         $controllerRegistrar->registerControllers($controllers);
         $controllerRegistrar->addInfoRoute(['version' => 1]);
-    }
-
-    protected function registerLocalizationResources()
-    {
-        $packagePath = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
-
-        /** @var LocalizationManagerInterface $manager */
-        $manager = $this->app->make('subscribo.localization.manager');
-        $manager->registerNamespace('api1', $packagePath.'/resources/lang', 'questionary');
-
     }
 }

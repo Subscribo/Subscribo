@@ -5,9 +5,7 @@ use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\Service;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
 use Subscribo\RestCommon\AccountIdTransport;
-use Subscribo\Localization\Localizer;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
-use Subscribo\Localization\Interfaces\LocalizationManagerInterface;
 
 /**
  * Class Context
