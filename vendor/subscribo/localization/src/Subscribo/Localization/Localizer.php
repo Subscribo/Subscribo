@@ -119,4 +119,39 @@ class Localizer implements TranslatorInterface, LocalizerInterface
         }
         return $this->manager->transChoice($id, $number, $parameters, $domain, $locale);
     }
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    public function simplify($value)
+    {
+        $first = substr($value, 0, 1);
+        if ('\\' === $first) {
+            return stripslashes($value);
+        }
+        return $value;
+    }
+
+    /**
+     * @param string $description
+     * @return array|bool
+     */
+    public static function parseLocaleDescription($description)
+    {
+        if (empty($description)) {
+            return false;
+        }
+        $matches = [];
+        if ( ! preg_match('/^[a-zA-Z0-9_-]+/', trim($description), $matches)) {
+            return false;
+        }
+        return $matches[0];
+    }
+
+    public function getStandardLocale()
+    {
+        $parts = explode('-', $this->getLocale());
+        return reset($parts);
+    }
 }

@@ -10,6 +10,12 @@ use Symfony\Component\Translation\TranslatorInterface;
 interface LocalizerInterface extends TranslatorInterface
 {
     /**
+     * @param string $description
+     * @return string
+     */
+    public static function parseLocaleDescription($description);
+
+    /**
      * @param string $subdomain
      * @param string|null $namespace
      * @param string|null $locale
@@ -25,4 +31,14 @@ interface LocalizerInterface extends TranslatorInterface
      */
     public function duplicate($subdomain = null, $namespace = null, $locale = null);
 
+    /**
+     * @param string $value
+     * @return string
+     */
+    public function simplify($value);
+
+    /**
+     * @return string
+     */
+    public function getStandardLocale();
 }

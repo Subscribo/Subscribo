@@ -28,6 +28,7 @@
         "php": "~5.4",
         "psr/log": "~1.0",
         "symfony/translation": "~2.6",
+        "symfony/yaml": "~2.6",
         "illuminate/contracts": "~5.0"
     },
     "suggest": {

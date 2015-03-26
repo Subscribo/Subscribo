@@ -3,20 +3,25 @@
 use Closure;
 use Illuminate\Http\Request;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Subscribo\Localization\Deposits\CookieDeposit;
 
 /**
- * Class LocaleFromHeader
+ * Class LocaleFromCookie
  *
  * @package Subscribo\Localization
  */
-class LocaleFromHeader
+class LocaleFromCookie
 {
     /** @var LocalizerInterface  */
     protected $localizer;
 
-    public function __construct(LocalizerInterface $localizer)
+    /** @var \Subscribo\Localization\Deposits\CookieDeposit  */
+    protected $deposit;
+
+    public function __construct(LocalizerInterface $localizer, CookieDeposit $deposit)
     {
         $this->localizer = $localizer;
+        $this->deposit = $deposit;
     }
 
     public function handle(Request $request, Closure $next)
@@ -27,14 +32,12 @@ class LocaleFromHeader
 
     protected function setupLocale(Request $request)
     {
-        $headerContent = $request->header('Accept-Language');
-        $locale = $this->localizer->parseLocaleDescription($headerContent);
+        $locale = $this->deposit->getLocale();
         if ( ! $locale) {
-            \Log::notice('Locale not found in header');
+            \Log::notice('Locale not found in cookie');
             return;
         }
-        \Log::notice('Locale from header:'. $locale);
+        \Log::notice('Locale from cookie:'. $locale);
         $this->localizer->setLocale($locale);
     }
-
 }
