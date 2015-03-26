@@ -4,22 +4,24 @@ use Illuminate\Database\Seeder;
 use Subscribo\ModelCore\Models\Service;
 use Subscribo\ModelCore\Models\ServiceModule;
 use Subscribo\ModelCore\Models\ServicePool;
-use Subscribo\ModelCore\Models\Language;
+use Subscribo\ModelCore\Models\Locale;
 use Subscribo\ModelCore\Models\OAuthConfiguration;
 
 class ServiceSeeder extends Seeder {
 
     public function run()
     {
-        $american = Language::firstOrNew(['identifier' => 'EN_US']);
-        $british = Language::firstOrNew(['identifier' => 'EN_UK']);
+        $frontendEnglish = Locale::firstOrCreate(['identifier' => 'en_US-FRONTEND']);
+        $frontendGerman = Locale::firstOrCreate(['identifier' => 'de_AT-FRONTEND']);
+        $frontendSlovak = Locale::firstOrCreate(['identifier' => 'sk_SK-FRONTEND']);
         $testService = Service::firstOrNew(['identifier' => 'FRONTEND']);
         $testService->url = 'http://frontend.sio.kochabo.at';
         $testService->name = 'Frontend';
-        $testService->defaultLanguage()->associate($american);
+        $testService->defaultLocale()->associate($frontendGerman);
         $testService->save();
-        $testService->availableLanguages()->attach($american);
-        $testService->availableLanguages()->attach($british);
+        $testService->availableLocales()->attach($frontendEnglish);
+        $testService->availableLocales()->attach($frontendGerman);
+        $testService->availableLocales()->attach($frontendSlovak);
         ServiceModule::enableModule($testService, ServiceModule::MODULE_ACCOUNT_MERGING);
 
         $oAuthConfiguration = new OAuthConfiguration();
@@ -41,31 +43,33 @@ class ServiceSeeder extends Seeder {
             $oAuthConfiguration2->save();
         }
 
+        $american = Locale::firstOrNew(['identifier' => 'EN_US']);
+        $british = Locale::firstOrNew(['identifier' => 'EN_UK']);
         $test2Service = Service::firstOrNew(['identifier' => 'MAIN']);
         $test2Service->url = 'http://subscribo.localhost';
         $test2Service->name = 'Main';
-        $test2Service->defaultLanguage()->associate($american);
+        $test2Service->defaultLocale()->associate($american);
         $test2Service->save();
-        $test2Service->availableLanguages()->attach($american);
-        $test2Service->availableLanguages()->attach($british);
+        $test2Service->availableLocales()->attach($american);
+        $test2Service->availableLocales()->attach($british);
         ServiceModule::enableModule($test2Service, ServiceModule::MODULE_ACCOUNT_MERGING);
 
 
         $test3Service = Service::firstOrNew(['identifier' => 'TEST3']);
         $test3Service->name = 'Test3 in Pool3';
-        $test3Service->defaultLanguage()->associate($american);
+        $test3Service->defaultLocale()->associate($american);
         $test3Service->save();
-        $test3Service->availableLanguages()->attach($american);
-        $test3Service->availableLanguages()->attach($british);
+        $test3Service->availableLocales()->attach($american);
+        $test3Service->availableLocales()->attach($british);
         ServiceModule::enableModule($test3Service, ServiceModule::MODULE_ACCOUNT_MERGING);
 
 
         $anotherService = Service::firstOrNew(['identifier' => 'ANOTHER']);
         $anotherService->name = 'Another Service';
-        $anotherService->defaultLanguage()->associate($american);
+        $anotherService->defaultLocale()->associate($american);
         $anotherService->save();
-        $anotherService->availableLanguages()->attach($american);
-        $anotherService->availableLanguages()->attach($british);
+        $anotherService->availableLocales()->attach($american);
+        $anotherService->availableLocales()->attach($british);
         ServiceModule::enableModule($anotherService, ServiceModule::MODULE_ACCOUNT_MERGING);
 
         $servicePool2 = ServicePool::firstOrCreate(['identifier' => 'POOL2']);
