@@ -105,7 +105,7 @@ model_options:
             many_to_many:
                 - service_pools
                 - apis
-                - languages (method_name_for services availableLanguages)
+                - locales (method_name_for services availableLocales)
             has_many:
                 - users
                 - accounts
@@ -201,8 +201,11 @@ model_options:
     table_fields: #    (note: contains only translatable and possibly virtual fields (EAV)
        administrator_menu: Tables
 
-    languages:
+    locales:
        administrator_menu: Localization
+       relations:
+            many_to_many:
+                - locales (ordering_on key_to parent_locale_id method_name_for_key_to parent_locale_id fallbackLocales)
 
     products:
        administrator_menu: Delivery
@@ -304,7 +307,8 @@ model_fields:
         - name  // human readable name
         - comment null // some technical comment to particular row, such as “do not use now, just for testing”
         - url null
-        - default_language_id → languages (hide to)
+        - default_locale_id → locales (hide to)
+        - remember_locale (int) default 10080
         - operator_id default 1 → operators (type none) //operators table does not exist in current version of the schema, so the relation type is no_relation
 
     service_pools: # auxiliary table, allowing grouping of services, allowing user to use same user for different services
@@ -381,6 +385,8 @@ model_fields:
         - person_id null → persons
         - default_delivery_address_id null → addresses
         - default_billing_details_id null → billing_details
+        - preferred_locale_id null -> locales
+        - remember_locale (int) default 43200
 
     customer_registrations:
         - hash null
@@ -482,13 +488,15 @@ model_fields:
     accounts: #    (former “accessors” - actually a pivot table - connection between a user account and a particular service – there is a possibility of one email to be linked to multiple users – to know with which actual user are we dealing with we need an information about service requested – this would give as an account)
     - id #id is particularly important in this pivot table
     - remember_token null hidden
+    - locale
+    - remember_locale (int) default 0
 
 
     translations:
     - table_id → tables
     - field_id → table_fields
     - row_id
-    - language_id → languages
+    - locale_id → locales
     - text
 
     tables:
@@ -499,12 +507,12 @@ model_fields:
     - identifier (identifier) unique representative // unique string used in API - actual field name
     - comment null # what is this field for
 
-    languages:
+    locales:
     - identifier (identifier) unique representative // unique string used in API - language code with country, e.g. DE_AT
+    - type null
     - english_name
     - german_name
     - native_name
-    - fallback_language_id null → languages
 
     products:
     - identifier (identifier) unique representative // unique string used in API
