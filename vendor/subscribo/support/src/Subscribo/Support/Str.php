@@ -4,7 +4,7 @@ use Subscribo\Support\Arr;
 
 /**
  * Class Str
- * Simply extending Laravel framework class
+ * Extending Laravel Framework class and providing some additional functionality
  *
  * @package Subscribo\Support
  */
