@@ -2,9 +2,13 @@
 
 use Closure;
 use RuntimeException;
-use Subscribo\Localization\Localizer;
-use Subscribo\Localization\StaticLocaleSettingsManager;
+use Subscribo\Localization\Localizers\Localizer;
+use Subscribo\Localization\Managers\StaticLocaleSettingsManager;
+use Subscribo\Localization\Managers\LocaleManager;
 use Subscribo\Localization\Interfaces\LocaleSettingsManagerInterface;
+use Subscribo\Localization\Interfaces\LocalizationManagerInterface;
+use Subscribo\Localization\Interfaces\LocalizationResourcesManagerInterface;
+use Subscribo\Localization\Interfaces\LocaleManagerInterface;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
 
@@ -17,21 +21,28 @@ class LocalizationServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton('subscribo.localization.resources.manager', '\\Subscribo\\Localization\\LocalizationResourcesManager');
-        $this->app->singleton('\\Subscribo\\Localization\\Interfaces\\LocalizationResourcesManagerInterface', 'subscribo.localization.resources.manager');
-        $this->app->singleton('subscribo.localization.manager', '\\Subscribo\\Localization\\LocalizationManager');
+        $this->app->singleton('\\Subscribo\\Localization\\Interfaces\\LocalizationResourcesManagerInterface', '\\Subscribo\\Localization\\Managers\\LocalizationResourcesManager');
+        $this->app->singleton('subscribo.localization.manager', '\\Subscribo\\Localization\\Managers\\LocalizationManager');
         $this->app->singleton('\\Subscribo\\Localization\\Interfaces\\LocalizationManagerInterface', 'subscribo.localization.manager');
-        $this->app->singleton('subscribo.localizer', function ($app) {
-            return new Localizer($app->make('subscribo.localization.manager'), $app->make('config')->get('app.locale'));
+
+        $this->app->singleton('\\Subscribo\\Localization\\Interfaces\\LocaleManagerInterface', function ($app) {
+            return new LocaleManager($app->make('config')->get('app.locale'));
         });
-        $this->app->singleton('\\Subscribo\\Localization\\Localizer', 'subscribo.localizer');
-        $this->app->singleton('\\Subscribo\\Localization\\Interfaces\\LocalizerInterface', 'subscribo.localizer');
+
+        $this->app->bind('subscribo.localizer', function ($app) {
+            /** @var LocalizationManagerInterface $manager */
+            $manager = $app->make('subscribo.localization.manager');
+            $localizer = $manager->localizer();
+            return $localizer;
+        });
+        $this->app->bind('\\Subscribo\\Localization\\Interfaces\\LocalizerInterface', 'subscribo.localizer');
     }
 
     public function boot()
     {
         $aliasLoader = AliasLoader::getInstance();
         $aliasLoader->alias('Subscribo\\Localizer', '\\Subscribo\\Localization\\Integration\\Laravel\\Facades\\Localizer');
+        $aliasLoader->alias('Subscribo\\Localization', '\\Subscribo\\Localization\\Integration\\Laravel\\Facades\\Localization');
     }
 
     /**
@@ -40,7 +51,7 @@ class LocalizationServiceProvider extends ServiceProvider
      * @param string $className
      * @param bool|null $asInterface
      */
-    public function registerLocaleSettingsManager($data, $defaultFallbackLocales = null, $className = '\\Subscribo\\Localization\\StaticLocaleSettingsManager', $asInterface = null)
+    public function registerLocaleSettingsManager($data, $defaultFallbackLocales = null, $className = '\\Subscribo\\Localization\\Managers\\StaticLocaleSettingsManager', $asInterface = null)
     {
         $this->app->singleton(
             $className,

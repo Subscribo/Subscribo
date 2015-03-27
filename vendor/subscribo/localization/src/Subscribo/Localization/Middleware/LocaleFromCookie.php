@@ -2,7 +2,7 @@
 
 use Closure;
 use Illuminate\Http\Request;
-use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Subscribo\Localization\Interfaces\LocaleManagerInterface;
 use Subscribo\Localization\Deposits\CookieDeposit;
 
 /**
@@ -12,15 +12,15 @@ use Subscribo\Localization\Deposits\CookieDeposit;
  */
 class LocaleFromCookie
 {
-    /** @var LocalizerInterface  */
-    protected $localizer;
+    /** @var LocaleManagerInterface  */
+    protected $localeManager;
 
-    /** @var \Subscribo\Localization\Deposits\CookieDeposit  */
+    /** @var CookieDeposit  */
     protected $deposit;
 
-    public function __construct(LocalizerInterface $localizer, CookieDeposit $deposit)
+    public function __construct(LocaleManagerInterface $localeManager, CookieDeposit $deposit)
     {
-        $this->localizer = $localizer;
+        $this->localeManager = $localeManager;
         $this->deposit = $deposit;
     }
 
@@ -38,6 +38,6 @@ class LocaleFromCookie
             return;
         }
         \Log::notice('Locale from cookie:'. $locale);
-        $this->localizer->setLocale($locale);
+        $this->localeManager->setLocale($locale);
     }
 }

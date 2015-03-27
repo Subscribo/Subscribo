@@ -3,11 +3,11 @@
 use Subscribo\Localization\Interfaces\HavingLocaleInterface;
 
 /**
- * Class LocaleDepositInterface
+ * Class LocaleManagerInterface
  *
  * @package Subscribo\Localization
  */
-interface LocaleDepositInterface extends HavingLocaleInterface
+interface LocaleManagerInterface extends HavingLocaleInterface
 {
 
 }

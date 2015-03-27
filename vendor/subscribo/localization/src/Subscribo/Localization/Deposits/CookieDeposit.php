@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Cookie\QueueingFactory;
 use Subscribo\Localization\Interfaces\LocaleDepositInterface;
-use Subscribo\Localization\Localizer;
+use Subscribo\Localization\LocaleTools;
 
 /**
  * Class CookieDeposit
@@ -49,13 +49,14 @@ class CookieDeposit implements LocaleDepositInterface
     public function getLocale()
     {
         $cookieContent = $this->request->cookie($this->cookieName);
-        $result = Localizer::parseLocaleDescription($cookieContent);
+        $result = LocaleTools::extractFirstLocaleTag($cookieContent);
         return $result;
     }
 
     /**
-     * @param $locale
+     * @param string $locale
      * @param null|int $expire Null for default, 0 or less for till end of browser session
+     * @return void
      */
     public function setLocale($locale, $expire = null)
     {

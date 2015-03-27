@@ -1,6 +1,5 @@
-<?php namespace Subscribo\Localization;
+<?php namespace Subscribo\Localization\Managers;
 
-use Subscribo\Localization\Translators\Translator;
 use Symfony\Component\Translation\LoggingTranslator;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Translation\MessageSelector;
@@ -8,9 +7,13 @@ use Symfony\Component\Translation\Loader\PhpFileLoader;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Illuminate\Contracts\Cache\Repository;
 use Psr\Log\LoggerInterface;
+use Subscribo\Localization\Translators\Translator;
+use Subscribo\Localization\Localizers\Localizer;
+use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Subscribo\Localization\Interfaces\LocalizationManagerInterface;
 use Subscribo\Localization\Interfaces\LocalizationResourcesManagerInterface;
 use Subscribo\Localization\Interfaces\LocaleSettingsManagerInterface;
+use Subscribo\Localization\Interfaces\LocaleManagerInterface;
 
 /**
  * Class LocalizationManager
@@ -19,11 +22,14 @@ use Subscribo\Localization\Interfaces\LocaleSettingsManagerInterface;
  */
 class LocalizationManager implements LocalizationManagerInterface
 {
-    /** @var \Subscribo\Localization\Interfaces\LocalizationResourcesManagerInterface  */
+    /** @var LocalizationResourcesManagerInterface  */
     protected $resourcesManager;
 
-    /** @var \Subscribo\Localization\Interfaces\LocaleSettingsManagerInterface  */
+    /** @var LocaleSettingsManagerInterface  */
     protected $localeSettingsManager;
+
+    /** @var LocaleManagerInterface  */
+    protected $localeManager;
 
     /** @var Repository  */
     protected $cache;
@@ -40,10 +46,11 @@ class LocalizationManager implements LocalizationManagerInterface
     /** @var TranslatorInterface[] */
     protected $translators = array();
 
-    public function __construct(LocalizationResourcesManagerInterface $resourcesManager, LocaleSettingsManagerInterface $localeSettingsManager, Repository $cache, LoggerInterface $logger, MessageSelector $messageSelector = null)
+    public function __construct(LocalizationResourcesManagerInterface $resourcesManager, LocaleSettingsManagerInterface $localeSettingsManager, LocaleManagerInterface $localeManager, Repository $cache, LoggerInterface $logger, MessageSelector $messageSelector = null)
     {
         $this->resourcesManager = $resourcesManager;
         $this->localeSettingsManager = $localeSettingsManager;
+        $this->localeManager = $localeManager;
         $this->cache = $cache;
         $this->logger = $logger;
         $this->messageSelector = $messageSelector;
@@ -53,11 +60,14 @@ class LocalizationManager implements LocalizationManagerInterface
      * @param string $id
      * @param array $parameters
      * @param string $domain
-     * @param string $locale
+     * @param string|null $locale
      * @return string
      */
-    public function trans($id, array $parameters, $domain, $locale)
+    public function trans($id, array $parameters, $domain, $locale = null)
     {
+        if (is_null($locale)) {
+            $locale = $this->localeManager->getLocale();
+        }
         $this->loadTranslationResources($domain, $locale);
         return $this->getTranslator($locale)->trans($id, $parameters, $domain, $locale);
     }
@@ -67,13 +77,22 @@ class LocalizationManager implements LocalizationManagerInterface
      * @param int $number
      * @param array $parameters
      * @param string $domain
-     * @param string $locale
+     * @param string|null $locale
      * @return string
      */
-    public function transChoice($id, $number, array $parameters, $domain, $locale)
+    public function transChoice($id, $number, array $parameters, $domain, $locale = null)
     {
+        if (is_null($locale)) {
+            $locale = $this->localeManager->getLocale();
+        }
         $this->loadTranslationResources($domain, $locale);
         return $this->getTranslator($locale)->transChoice($id, $number, $parameters, $domain, $locale);
+    }
+
+    public function localizer($namespace = null, $subdomain = null)
+    {
+        $locale = $this->localeManager->getLocale();
+        return new Localizer($this, $locale, $namespace, $subdomain);
     }
 
     /**

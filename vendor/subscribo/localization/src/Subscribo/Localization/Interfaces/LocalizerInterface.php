@@ -10,20 +10,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 interface LocalizerInterface extends TranslatorInterface
 {
     /**
-     * @param string $description
-     * @return string
-     */
-    public static function parseLocaleDescription($description);
-
-    /**
-     * @param string $subdomain
-     * @param string|null $namespace
-     * @param string|null $locale
-     * @return $this
-     */
-    public function setup($subdomain, $namespace = null, $locale = null);
-
-    /**
      * @param string|null $subdomain
      * @param string|null $namespace
      * @param string|null $locale
@@ -38,7 +24,15 @@ interface LocalizerInterface extends TranslatorInterface
     public function simplify($value);
 
     /**
+     * Returns Standard (POSIX) locale tag (part)
      * @return string
      */
     public function getStandardLocale();
+
+    /**
+     * Return Standard locale part converted to BCP 47 format
+     * @return string
+     */
+    public function getBCPLocale();
+
 }

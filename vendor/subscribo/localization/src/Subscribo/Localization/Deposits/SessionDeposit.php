@@ -35,6 +35,10 @@ class SessionDeposit implements LocaleDepositInterface
         return $locale;
     }
 
+    /**
+     * @param string $locale
+     * @return void
+     */
     public function setLocale($locale)
     {
         $this->session->set($this->sessionKeyName, $locale);

@@ -1,4 +1,4 @@
-<?php namespace Subscribo\Localization;
+<?php namespace Subscribo\Localization\Managers;
 
 use Subscribo\Localization\Interfaces\LocaleSettingsManagerInterface;
 

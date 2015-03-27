@@ -2,7 +2,8 @@
 
 use Closure;
 use Illuminate\Http\Request;
-use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Subscribo\Localization\Interfaces\LocaleManagerInterface;
+use Subscribo\Localization\LocaleTools;
 
 /**
  * Class LocaleFromHeader
@@ -11,12 +12,12 @@ use Subscribo\Localization\Interfaces\LocalizerInterface;
  */
 class LocaleFromHeader
 {
-    /** @var LocalizerInterface  */
-    protected $localizer;
+    /** @var LocaleManagerInterface  */
+    protected $localeManager;
 
-    public function __construct(LocalizerInterface $localizer)
+    public function __construct(LocaleManagerInterface $localeManager)
     {
-        $this->localizer = $localizer;
+        $this->localeManager = $localeManager;
     }
 
     public function handle(Request $request, Closure $next)
@@ -28,13 +29,13 @@ class LocaleFromHeader
     protected function setupLocale(Request $request)
     {
         $headerContent = $request->header('Accept-Language');
-        $locale = $this->localizer->parseLocaleDescription($headerContent);
+        $locale = LocaleTools::extractFirstLocaleTag($headerContent);
         if ( ! $locale) {
             \Log::notice('Locale not found in header');
             return;
         }
         \Log::notice('Locale from header:'. $locale);
-        $this->localizer->setLocale($locale);
+        $this->localeManager->setLocale($locale);
     }
 
 }
