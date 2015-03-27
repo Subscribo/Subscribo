@@ -21,6 +21,7 @@
     ],
     "require": {
         "php": "~5.4",
+        "subscribo/apiclientlocalization": "@dev",
         "subscribo/apiclientauth": "@dev",
         "subscribo/apiclientoauth": "@dev",
         "subscribo/restproxy": "@dev",

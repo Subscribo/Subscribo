@@ -9,7 +9,11 @@ use Illuminate\Support\ServiceProvider;
  */
 class ApiClientAuthServiceProvider extends ServiceProvider
 {
+    /** @var array  */
     protected $forRouteRegistration = array();
+
+    /** @var bool  */
+    protected $routesRegistered = false;
 
     public function register()
     {
@@ -22,10 +26,16 @@ class ApiClientAuthServiceProvider extends ServiceProvider
         $this->app->make('auth')->extend('remote', function ($app) {
             return $app->make('Subscribo\\ApiClientAuth\\RemoteAccountProvider');
         });
-        $router = $this->app->make('router');
-        foreach ($this->forRouteRegistration as $serviceProvider) {
-            $serviceProvider->registerRoutes($router);
-        }
+    }
 
+    public function registerRoutes($router, array $middleware, array $paths = array())
+    {
+        if ($this->routesRegistered) {
+            return;
+        }
+        foreach ($this->forRouteRegistration as $serviceProvider) {
+            $serviceProvider->registerRoutes($router, $middleware, $paths);
+        }
+        $this->routesRegistered = true;
     }
 }

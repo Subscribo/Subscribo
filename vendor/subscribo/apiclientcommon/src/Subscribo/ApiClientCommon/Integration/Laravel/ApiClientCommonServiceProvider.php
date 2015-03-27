@@ -37,7 +37,7 @@ class ApiClientCommonServiceProvider extends ServiceProvider
 
 
 
-    public function registerRoutes(Router $router, array $paths = array())
+    public function registerRoutes(Router $router, array $middleware, array $paths = array())
     {
         if ($this->routesRegistered) {
             return;
@@ -49,17 +49,16 @@ class ApiClientCommonServiceProvider extends ServiceProvider
             'subscribo.generic.redirection' => '/redirection/{type}',
         ];
         $paths = Arr::mergeNatural($defaultPaths, $paths);
-        $csrf = class_exists('\\App\\Http\\Middleware\\VerifyCsrfToken') ? '\\App\\Http\\Middleware\\VerifyCsrfToken' : '\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken';
 
-        $router->get($paths['subscribo.serverRequest.questionary'], ['as' => 'subscribo.serverRequest.questionary', 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\QuestionaryController@getQuestionaryFromSession']);
-        $router->post($paths['subscribo.serverRequest.questionary'], ['middleware' => [$csrf], 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\QuestionaryController@postQuestionary']);
+        $router->get($paths['subscribo.serverRequest.questionary'], ['as' => 'subscribo.serverRequest.questionary', 'middleware' => $middleware, 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\QuestionaryController@getQuestionaryFromSession']);
+        $router->post($paths['subscribo.serverRequest.questionary'], ['middleware' => $middleware, 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\QuestionaryController@postQuestionary']);
 
-        $router->get($paths['subscribo.serverRequest.clientRedirect'], ['as' => 'subscribo.serverRequest.clientRedirect', 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\ClientRedirectionController@getClientRedirectionRedirectingBack'])->where(['hash' => '[A-Za-z0-9]+']);
+        $router->get($paths['subscribo.serverRequest.clientRedirect'], ['as' => 'subscribo.serverRequest.clientRedirect', 'middleware' => $middleware, 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\ClientRedirectionController@getClientRedirectionRedirectingBack'])->where(['hash' => '[A-Za-z0-9]+']);
 
-        $router->get($paths['subscribo.generic.questionary'], ['as' => 'subscribo.generic.questionary', 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\QuestionaryController@getQuestionaryByType'])->where(['type' => '[A-Za-z0-9]+']);
-        $router->post($paths['subscribo.generic.questionary'], ['middleware' => [$csrf], 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\QuestionaryController@postQuestionary']);
+        $router->get($paths['subscribo.generic.questionary'], ['as' => 'subscribo.generic.questionary', 'middleware' => $middleware, 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\QuestionaryController@getQuestionaryByType'])->where(['type' => '[A-Za-z0-9]+']);
+        $router->post($paths['subscribo.generic.questionary'], ['middleware' => $middleware, 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\QuestionaryController@postQuestionary']);
 
-        $router->get($paths['subscribo.generic.redirection'], ['as' => 'subscribo.generic.redirection', 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\ClientRedirectionController@getRedirectionByType'])->where(['type' => '[A-Za-z0-9]+']);
+        $router->get($paths['subscribo.generic.redirection'], ['as' => 'subscribo.generic.redirection', 'middleware' => $middleware, 'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\ClientRedirectionController@getRedirectionByType'])->where(['type' => '[A-Za-z0-9]+']);
 
         $this->routesRegistered = true;
     }

@@ -37,7 +37,7 @@ abstract class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $applicationTranslationPath = $basePath.'/subscribo/resources/lang/'.$namespace.'/';
         $this->publishes([$packageTranslationsPath => $applicationTranslationPath], 'translation');
 
-        $manager = $this->app->make('subscribo.localization.resources.manager');
+        $manager = $this->app->make('\\Subscribo\\Localization\\Interfaces\\LocalizationResourcesManagerInterface');
         $manager->registerNamespace($namespace, [$packageTranslationsPath, $applicationTranslationPath], $resources);
     }
 }
