@@ -1,0 +1,57 @@
+# Slovak translation resource file for Auth templates (auth/login.blade.php)
+# Auth: Login form content template (auth/login.blade.php)
+login:
+    addToPageTitle: Prihlásenie
+    heading: Prihlásenie
+    errorsHeading: '<strong>Ups!</strong> Vyskytli sa nejaké problémy.'
+    form:
+        email:
+            label: E-mail
+        password:
+            label: Heslo
+        remember:
+            label: Zapamätaj si ma na tomto počítači
+        submit:
+            label: Prihlásiť sa
+            linkPasswordEmail: Zabudli ste heslo?
+# Auth: Password reset request form content template (auth/password.blade.php)
+password:
+    addToPageTitle: Nastavenie hesla
+    heading: Nastavenie hesla
+    errorsHeading: '<strong>Ups!</strong> Vyskytli sa nejaké problémy.'
+    form:
+        email:
+            label: E-mail
+        submit:
+            label: Odoslať odkaz pre nastavenie hesla
+# Auth: Registration form content template (auth/register.blade.php)
+register:
+    addToPageTitle: Registrácia
+    heading: Registrácia
+    errorsHeading: '<strong>Ups!</strong> Vyskytli sa nejaké problémy.'
+    form:
+        name:
+            label: Meno
+        email:
+            label: E-mail
+        password:
+            label: Heslo
+        confirmation:
+            label: Kontrola hesla
+        submit:
+            label: Registrovať sa
+# Auth: Password reset form content template (auth/reset.blade.php)
+reset:
+    addToPageTitle: Nastavenie hesla
+    heading: Nastavenie hesla
+    errorsHeading: '<strong>Ups!</strong> Vyskytli sa nejaké problémy.'
+    form:
+        email:
+            label: E-mail
+        password:
+            label: Heslo
+        confirmation:
+            label: Kontrola hesla
+        submit:
+            label: Zmeniť heslo
+

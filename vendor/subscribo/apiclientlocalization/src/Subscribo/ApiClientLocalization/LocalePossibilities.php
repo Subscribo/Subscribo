@@ -1,7 +1,7 @@
 <?php namespace Subscribo\ApiClientLocalization;
 
 use Subscribo\Localization\Interfaces\LocaleSettingsManagerInterface;
-use Subscribo\Localization\StaticLocaleSettingsManager;
+use Subscribo\Localization\Managers\StaticLocaleSettingsManager;
 
 /**
  * Class LocalePossibilities

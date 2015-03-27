@@ -85,3 +85,16 @@ or (to force overwrite existing files, and only from this package)
 ```sh
     php artisan vendor:publish --tag="translation" --provider="\\Subscribo\\ApiClientCommon\\Integration\\Laravel\\ApiClientLocalizationServiceProvider" --force
 ```
+
+### 1.6 Publishing Translated views
+
+for overwriting your application views with translated ones you can run publishing package translations / general translations for application your can run
+
+```sh
+    php artisan vendor:publish --tag translation
+```
+or (to force overwrite existing files, and only from this package)
+
+```sh
+    php artisan vendor:publish --tag="translated_views" --provider="\\Subscribo\\ApiClientCommon\\Integration\\Laravel\\ApiClientLocalizationServiceProvider" --force
+```

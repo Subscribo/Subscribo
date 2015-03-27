@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Session\Store;
-use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Subscribo\Localization\Interfaces\LocaleManagerInterface;
 use Subscribo\Localization\Deposits\SessionDeposit;
 use Subscribo\Localization\Deposits\CookieDeposit;
 use Subscribo\ApiClientLocalization\LocalePossibilities;
@@ -12,7 +12,7 @@ trait LocaleAjaxTrait
 {
     use ValidatesRequests;
 
-    public function postLocaleAjax(Request $request, LocalePossibilities $possibilities, LocalizerInterface $localizer, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, Store $session)
+    public function postLocaleAjax(Request $request, LocalePossibilities $possibilities, LocaleManagerInterface $localeManager, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, Store $session)
     {
         $session->reflash();
         $uriStubs = $possibilities->getAvailableUriStubs();
@@ -20,7 +20,7 @@ trait LocaleAjaxTrait
         $this->validate($request, $rules);
         $selectedLocale = $request->input('locale');
         $locale = $possibilities->getLocaleByUriStub($selectedLocale);
-        $localizer->setLocale($locale);
+        $localeManager->setLocale($locale);
         $sessionDeposit->setLocale($locale);
         $cookieDeposit->setLocale($locale);
         $result = [

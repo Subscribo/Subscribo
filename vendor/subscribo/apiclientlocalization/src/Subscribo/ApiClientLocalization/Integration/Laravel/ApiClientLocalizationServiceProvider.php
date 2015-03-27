@@ -47,8 +47,9 @@ class ApiClientLocalizationServiceProvider extends ServiceProvider {
         $this->app->make('view')->composer('subscribo::apiclientlocalization/localeselector', 'Subscribo\\ApiClientLocalization\\ViewComposers\\LocaleSelectorComposer');
         $this->publishes([$packageDir.'/install/laravel/subscribo/config/packages/apiclientlocalization/default.yml' => base_path('subscribo/config/packages/apiclientlocalization/default.yml')], 'config');
         $this->publishes([$packageDir.'/resources/views/apiclientlocalization/localeselector.blade.php' => base_path('resources/views/vendor/subscribo/apiclientlocalization/localeselector.blade.php')], 'view');
+        $this->publishes([$packageDir.'/resources/views/app/' => base_path('resources/views/')], 'translated_views');
 
-        $this->registerTranslationResources('mainTemplate', 'app');
+        $this->registerTranslationResources(['main', 'auth'], 'app');
     }
 
     public function registerRoutes(Router $router, array $middleware, array $paths = array())
