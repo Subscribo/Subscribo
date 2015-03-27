@@ -35,16 +35,25 @@ class MetaCommand extends Command {
      */
     protected $description = 'Generate metadata for PhpStorm';
 
-    /** @var \Illuminate\Filesystem\Filesystem */
+    /** @var \Illuminate\Contracts\Filesystem\Filesystem */
     protected $files;
 
-    /** @var \Illuminate\View\Factory */
+    /** @var \Illuminate\Contracts\View\Factory */
     protected $view;
+    
+    protected $methods = [
+      '\Illuminate\Foundation\Application::make',
+      '\Illuminate\Contracts\Foundation\Application::make',
+      '\Illuminate\Contracts\Container\Container::make',
+      '\Illuminate\Container\Container::make',
+      '\App::make',
+      'app',
+    ];
 
     /**
      *
-     * @param \Illuminate\Filesystem\Filesystem $files
-     * @param \Illuminate\View\Factory $view
+     * @param \Illuminate\Contracts\Filesystem\Filesystem $files
+     * @param \Illuminate\Contracts\View\Factory $view
      */
     public function __construct($files, $view) {
         $this->files = $files;
@@ -59,11 +68,8 @@ class MetaCommand extends Command {
      */
     public function fire()
     {
-        $filename = $this->option('filename');
-
         $bindings = array();
-
-        foreach ($this->laravel->getBindings() as $abstract => $options) {
+        foreach ($this->getAbstracts() as $abstract) {
             try {
                 $concrete = $this->laravel->make($abstract);
                 if (is_object($concrete)) {
@@ -73,7 +79,13 @@ class MetaCommand extends Command {
                 $this->error("Cannot make $abstract: ".$e->getMessage());
             }
         }
-        $content = $this->view->make('laravel-ide-helper::meta', ['bindings' => $bindings])->render();
+
+        $content = $this->view->make('ide-helper::meta', [
+          'bindings' => $bindings,
+          'methods' => $this->methods,
+        ])->render();
+
+        $filename = $this->option('filename');
         $written = $this->files->put($filename, $content);
 
         if ($written !== false) {
@@ -81,6 +93,29 @@ class MetaCommand extends Command {
         } else {
             $this->error("The meta file could not be created at $filename");
         }
+    }
+
+    /**
+     * Get a filtered list of abstracts from the Laravel Application.
+     * 
+     * @return array
+     */
+    protected function getAbstracts()
+    {
+        $abstracts = $this->laravel->getBindings();
+        
+        // Remove the S3 cloud driver when not available
+        if (config('filesystems.cloud') === 's3' && !class_exists('League\Flysystem\AwsS3v2\AwsS3Adapter')) {
+            unset($abstracts['filesystem.cloud']);
+        }
+        
+        // Remove Redis when not available
+        if (isset($abstracts['redis']) && !class_exists('Predis\Client')) {
+            unset($abstracts['redis']);
+        }
+
+        // Return the abstract names only
+        return array_keys($abstracts);
     }
 
     /**
