@@ -6,25 +6,28 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 /**
- * Provides a base test class for ensuring compliance with the LoggerInterface
+ * Provides a base test class for ensuring compliance with the LoggerInterface.
  *
- * Implementors can extend the class and implement abstract methods to run this as part of their test suite
+ * Implementors can extend the class and implement abstract methods to run this
+ * as part of their test suite.
  */
 abstract class LoggerInterfaceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @return LoggerInterface
      */
-    abstract function getLogger();
+    abstract public function getLogger();
 
     /**
-     * This must return the log messages in order with a simple formatting: "<LOG LEVEL> <MESSAGE>"
+     * This must return the log messages in order.
      *
-     * Example ->error('Foo') would yield "error Foo"
+     * The simple formatting of the messages is: "<LOG LEVEL> <MESSAGE>".
+     *
+     * Example ->error('Foo') would yield "error Foo".
      *
      * @return string[]
      */
-    abstract function getLogs();
+    abstract public function getLogs();
 
     public function testImplements()
     {
