@@ -83,7 +83,7 @@ class Standard extends PrettyPrinterAbstract
 
     // Scalars
 
-    public function pScalar_String(Scalar\String $node) {
+    public function pScalar_String(Scalar\String_ $node) {
         return '\'' . $this->pNoIndent(addcslashes($node->value, '\'\\')) . '\'';
     }
 
@@ -314,7 +314,7 @@ class Standard extends PrettyPrinterAbstract
 
     // Casts
 
-    public function pExpr_Cast_Int(Cast\Int $node) {
+    public function pExpr_Cast_Int(Cast\Int_ $node) {
         return $this->pPrefixOp('Expr_Cast_Int', '(int) ', $node->expr);
     }
 
@@ -322,7 +322,7 @@ class Standard extends PrettyPrinterAbstract
         return $this->pPrefixOp('Expr_Cast_Double', '(double) ', $node->expr);
     }
 
-    public function pExpr_Cast_String(Cast\String $node) {
+    public function pExpr_Cast_String(Cast\String_ $node) {
         return $this->pPrefixOp('Expr_Cast_String', '(string) ', $node->expr);
     }
 
@@ -330,11 +330,11 @@ class Standard extends PrettyPrinterAbstract
         return $this->pPrefixOp('Expr_Cast_Array', '(array) ', $node->expr);
     }
 
-    public function pExpr_Cast_Object(Cast\Object $node) {
+    public function pExpr_Cast_Object(Cast\Object_ $node) {
         return $this->pPrefixOp('Expr_Cast_Object', '(object) ', $node->expr);
     }
 
-    public function pExpr_Cast_Bool(Cast\Bool $node) {
+    public function pExpr_Cast_Bool(Cast\Bool_ $node) {
         return $this->pPrefixOp('Expr_Cast_Bool', '(bool) ', $node->expr);
     }
 

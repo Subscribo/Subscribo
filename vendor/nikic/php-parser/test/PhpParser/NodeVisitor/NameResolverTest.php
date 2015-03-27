@@ -10,6 +10,10 @@ use PhpParser\Node\Expr;
 
 class NameResolverTest extends \PHPUnit_Framework_TestCase
 {
+    private function canonicalize($string) {
+        return str_replace("\r\n", "\n", $string);
+    }
+
     /**
      * @covers PhpParser\NodeVisitor\NameResolver
      */
@@ -133,7 +137,10 @@ EOC;
         $stmts = $parser->parse($code);
         $stmts = $traverser->traverse($stmts);
 
-        $this->assertSame($expectedCode, $prettyPrinter->prettyPrint($stmts));
+        $this->assertSame(
+            $this->canonicalize($expectedCode),
+            $prettyPrinter->prettyPrint($stmts)
+        );
     }
 
     /**
@@ -220,7 +227,10 @@ EOC;
         $stmts = $parser->parse($code);
         $stmts = $traverser->traverse($stmts);
 
-        $this->assertSame($expectedCode, $prettyPrinter->prettyPrint($stmts));
+        $this->assertSame(
+            $this->canonicalize($expectedCode),
+            $prettyPrinter->prettyPrint($stmts)
+        );
     }
 
     public function testNoResolveSpecialName() {
@@ -245,7 +255,7 @@ EOC;
             new Stmt\Interface_('B'),
             new Stmt\Function_('C'),
             new Stmt\Const_(array(
-                new Node\Const_('D', new Node\Scalar\String('E'))
+                new Node\Const_('D', new Node\Scalar\String_('E'))
             )),
         ));
 
