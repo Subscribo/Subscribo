@@ -15,6 +15,10 @@ class Kernel extends HttpKernel {
 		'Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse',
 		'Illuminate\Session\Middleware\StartSession',
 		'Illuminate\View\Middleware\ShareErrorsFromSession',
+        '\\Subscribo\\Localization\\Middleware\\StandardLocaleToResponseHeader',
+        '\\Subscribo\\Localization\\Middleware\\LocaleFromCookie',
+        '\\Subscribo\\Localization\\Middleware\\LocaleFromSession',
+        '\\Subscribo\\Localization\\Middleware\\LocaleToApp',
 		//'App\Http\Middleware\VerifyCsrfToken',
 	];
 
