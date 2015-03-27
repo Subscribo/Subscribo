@@ -28,7 +28,7 @@
     <label for="verb">Verb:</label>
     <input type="text" value="GET" id="verb" style="width: 10em">
     <label for="url">URL:</label>
-    <input type="text" id="url" value="/api/v0/model/languages" style="width: 40em">
+    <input type="text" id="url" value="/api/v0/model/services" style="width: 40em">
     <input type="submit" value="RELOAD">
 
     <br>

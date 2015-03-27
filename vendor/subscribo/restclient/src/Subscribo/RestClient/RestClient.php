@@ -445,6 +445,7 @@ class RestClient {
     {
         $allowedResponseHeaders = [
             'Content-Type',
+            'Content-Language',
             'Date',
         ];
         $result = Arr::filterCaseInsensitively($allowedResponseHeaders, $headers);

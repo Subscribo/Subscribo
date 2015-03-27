@@ -49,15 +49,12 @@ class Service extends \Subscribo\ModelCore\Bases\Service
     public function calculateRememberLocale($customerPreference)
     {
         if (empty($this->rememberLocale)) {
-            \Log::notice('No for service');
             return 0;
         }
         if (empty($customerPreference)) {
-            \Log::notice('No for customer');
             return 0;
         }
         $result =  min($customerPreference, $this->rememberLocale);
-        \Log::notice('Result Min:'. $result);
         return $result;
     }
 
