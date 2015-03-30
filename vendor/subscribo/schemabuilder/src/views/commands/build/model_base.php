@@ -4,14 +4,14 @@
 /**
  * Model <?php echo $modelName; ?>
 
- * Automatically generated abstract model class
+ * Automatically generated <?php echo (empty($options['is_translation_model'])) ? 'abstract' : 'translation'; ?> model class
  *
+<?php if (empty($options['is_translation_model'])): ?>
  * @method \<?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($options['model_namespace'].'\\'.$modelName); ?>[] get() public static function get(array $columns = array()) returns an array of models <?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($modelName); ?>
 
  * @method null|\<?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($options['model_namespace'].'\\'.$modelName); ?> first() public static function first(array $columns = array()) returns model <?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($modelName); ?>
-
- *
-<?php
+<?php endif;
+echo " *\n";
 foreach($fields as $field) {
     echo " * @property ".\Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($field['type_hint'])
         ." $".\Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($field['attribute_name']);
@@ -20,7 +20,7 @@ foreach($fields as $field) {
     }
     echo "\n";
 }
-foreach ($options['foreign_objects'] as $foreignObject) {
+foreach ($options['foreign_objects'] as $foreignObject):
     echo " * @property-read ";
     if (is_array($foreignObject['foreign_model_name'])) {
         echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($options['base_model_extends']);
@@ -40,10 +40,13 @@ foreach ($options['foreign_objects'] as $foreignObject) {
     echo " related via ";
     echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment(strtr($foreignObject['relation']['type'], '_', ' '));
     echo " relation \n";
-};
-?>
- */
-abstract class <?php echo $modelName;
+endforeach;
+echo "\n";
+echo " */\n";
+if (empty($options['is_translation_model'])) {
+    echo 'abstract ';
+}
+echo 'class '.$modelName;
 if ( ! empty($options['base_model_extends'])) {
     echo ' extends '.$options['base_model_extends'];
 }
@@ -51,7 +54,11 @@ if ( ! empty($options['base_model_extends'])) {
 
 {
 
-<?php if ( ! empty($options['table_name'])): ?>
+<?php if ( ! empty($options['translatable'])):
+echo 'use \\Subscribo\\TranslatableModel\\Traits\\TranslatableModelTrait;'."\n\n";
+endif;
+
+if ( ! empty($options['table_name'])): ?>
     /**
      * The database table used by the model.
      *
@@ -84,7 +91,9 @@ endforeach;
     protected $attributeMap = array(
 <?php
 foreach($fields as $field):
-    echo '                                '."'".addslashes($field['attribute_name'])."' => '".addslashes($field['name'])."',\n";
+    if ( ! empty($field['migration_setup'])):
+        echo '                                '."'".addslashes($field['attribute_name'])."' => '".addslashes($field['name'])."',\n";
+    endif;
 endforeach;
 
 ?>
@@ -100,6 +109,22 @@ endforeach;
      */
     protected $hidden = array(<?php echo implode(', ', $options['hidden_wrapped']); ?>);
 
+<?php endif; ?>
+
+<?php if ( ! empty($options['translatable'])): ?>
+    /**
+     * Translatable attributes
+     *
+     * @property array
+     */
+    protected $translatableAttributes = <?php echo View::make('schemabuilder::helpers.php_value', array('value' => $options['translatable'], 'indent' => 11)); ?>;
+
+    /**
+     * Related translation model
+     *
+     * @property string
+     */
+    protected $translationModelName = '<?php echo addslashes($options['translation_model_full_name']); ?>';
 <?php endif; ?>
 
     /**

@@ -47,16 +47,23 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         }
         $modelFields = $this->_parseModelFields($input['model_fields']);
         $defaultModelOptions = $input['default_model_options'] ?: array();
+        $defaultTranslationModelOptions = $input['default_translation_model_options'] ?: array();
+        $translationModelDefaults = Arr::merge($defaultModelOptions, $defaultTranslationModelOptions);
+        $defaultFieldOptions = $input['default_field_options'] ?: array();
+
         $modelOptions = $this->_parseModelOptions($input['model_options'] ?: array(), $modelFields, $defaultModelOptions);
         $modelFields = $this->_addPrimaryKeys($modelFields, $modelOptions);
         $modelFields = $this->_addFieldsFromOptions($modelFields, $modelOptions);
-        $modelFields = $this->_processFields($modelFields, $modelOptions);
+        $modelOptions = $this->_addOptionsFromTranslatableFields($modelFields, $modelOptions);
+        $translationModels = $this->_assembleTranslationModels($modelFields, $modelOptions, $translationModelDefaults);
+        $modelOptions = Arr::merge($translationModels['model_options'], $modelOptions);
+        $modelFields = $this->_addProcessedFields($modelFields, $modelOptions);
+        $modelFields = $this->_addProcessedFields($translationModels['model_fields'], $modelOptions, $modelFields);
 
         $relations = $this->_collectRelations($modelFields, $modelOptions);
         $modelFields = $this->_addRelationsToModelFields($modelFields, $modelOptions, $relations);
         $modelFields = $this->_addRulesToModelFields($modelFields, $modelOptions);
 
-        $defaultFieldOptions = $input['default_field_options'] ?: array();
         $modelFields = $this->_addDefaultFieldOptions($modelFields, $defaultFieldOptions);
         $modelOptions = $this->_addForeignObjects($modelFields, $modelOptions, $relations);
         $modelOptions = $this->_addOptionsFromFields($modelFields, $modelOptions);
@@ -78,6 +85,52 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         $this->info('Schema build finished.');
     }
 
+    private function _assembleTranslationModels(array $modelFields, array $modelOptions, array $defaultModelOptions)
+    {
+        $result = ['model_options' => [], 'model_fields' => []];
+        foreach($modelOptions as $modelKey => $options) {
+            if ( ! empty($options['translation_model'])) {
+                $fields = Arr::get($modelFields, $modelKey, array());
+                $translationModelOptions = $this->_assembleTranslationModelOptions($fields, $options, $defaultModelOptions);
+                $resultKey = $translationModelOptions['table_name'];
+                $result['model_options'][$resultKey] = $translationModelOptions;
+                $result['model_fields'][$resultKey] = $translationModelOptions['fields'];
+            }
+        }
+        return $result;
+    }
+
+
+    private function _assembleTranslationModelOptions(array $fields, array $options, array $translationDefaults)
+    {
+        $result = [
+            'model_name' => $options['translation_model'],
+            'table_name' => $options['translation_table'],
+            'model_namespace' => $options['model_translation_namespace'],
+            'model_base_namespace' => $options['model_translation_namespace'],
+            'model_base_directory' => $options['model_translation_directory'],
+        ];
+        $result = $this->_parseModelOptionsForModel($options['translation_table'], $result, $translationDefaults);
+        $translationModelFields = Arr::get($result, 'fields', array());
+        $translationForeignKey = $options['translation_foreign_key'];
+        $translationModelFields[$translationForeignKey] = [
+            'name' => $translationForeignKey,
+            'related_to' => $options['table_name'],
+            'relation_attributes' => 'cascade_delete',
+        ];
+        foreach ($options['translatable'] as $fieldName) {
+            if (empty($fields[$fieldName])) {
+                $this->error("Translatable field name '".$fieldName."' is not defined.");
+            } else {
+                $field = $fields[$fieldName];
+                $field['translate'] = false;
+                $translationModelFields[$fieldName] = $field;
+            }
+        }
+        $translationModelFields = $this->_addPrimaryKey($translationModelFields, $result);
+        $result['fields'] = $translationModelFields;
+        return $result;
+    }
 
 
     private function _parseModelOptions(array $modelOptions, array $modelFields, array $defaults)
@@ -89,32 +142,37 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         }
         $result = array();
         foreach ($modelOptions as $key => $options) {
-            if ($options) {
-                $item = Arr::merge($defaults, $options);
-            } else {
-                $item = $defaults;
-            }
-            if (empty($item['table_name'])) {
-                $item['table_name'] = $key;
-            }
-            if (empty($item['model_name'])) {
-                $item['model_name'] = $this->_modelNameFromTable($item['table_name']);
-            }
-            if (empty($item['title'])) {
-                $item['title'] = ucfirst(str_replace('_', ' ', $item['table_name']));
-            }
-            if (empty($item['singular'])) {
-                $item['singular'] = str_replace('_', ' ', str_singular($item['table_name']));
-            }
-            if (empty($item['model_full_name'])) {
-                $item['model_full_name'] = '\\'.$item['model_namespace'].'\\'.$item['model_name'];
-            }
-            if (empty($item['api_stub'])) {
-                $item['api_stub'] = str_replace('_', '-', $item['table_name']);
-            }
-            $result[$key] = $item;
+            $result[$key] = $this->_parseModelOptionsForModel($key, $options, $defaults);
         }
         return $result;
+    }
+
+    private function _parseModelOptionsForModel($modelKey, array $options, array $defaults)
+    {
+        if ($options) {
+            $item = Arr::merge($defaults, $options);
+        } else {
+            $item = $defaults;
+        }
+        if (empty($item['table_name'])) {
+            $item['table_name'] = $modelKey;
+        }
+        if (empty($item['model_name'])) {
+            $item['model_name'] = $this->_modelNameFromTable($item['table_name']);
+        }
+        if (empty($item['title'])) {
+            $item['title'] = ucfirst(str_replace('_', ' ', $item['table_name']));
+        }
+        if (empty($item['singular'])) {
+            $item['singular'] = str_replace('_', ' ', str_singular($item['table_name']));
+        }
+        if (empty($item['model_full_name'])) {
+            $item['model_full_name'] = '\\'.$item['model_namespace'].'\\'.$item['model_name'];
+        }
+        if (empty($item['api_stub'])) {
+            $item['api_stub'] = str_replace('_', '-', $item['table_name']);
+        }
+        return $item;
     }
 
     private function _checkConsistency(array $modelFields, array $modelOptions)
@@ -1030,6 +1088,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             'no_reverse',
             'table_through', 'key_through', 'through_object_name',
             'with_timestamps', 'without_timestamps',
+            'cascade_delete',
         );
         $parts = explode(' ', $attributesString);
 
@@ -1152,6 +1211,9 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 case 'without_timestamps':
                     $result['with_timestamps'] = false;
                     continue 2;
+                case 'cascade_delete':
+                    $result['db_foreign_key_on_delete'] = 'cascade';
+                    continue 2;
                 default:
                     throw new \Exception("Action for keyword '".$word."' not defined.");
 
@@ -1235,9 +1297,9 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         return $result;
     }
 
-    private function _processFields(array $modelFields, array $modelOptions)
+    private function _addProcessedFields(array $modelFields, array $modelOptions, $addTo = array())
     {
-        $result = array();
+        $result = $addTo;
         foreach($modelFields as $modelKey => $fields) {
             $tableName = $modelOptions[$modelKey]['table_name'];
             foreach ($fields as $key => $field) {
@@ -1291,6 +1353,55 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             $field['administrator']['filter'] = false;
         }
         return $field;
+    }
+
+    private function _addOptionsFromTranslatableFields($ModelFields, $modelOptions)
+    {
+        $result = $modelOptions;
+        foreach ($ModelFields as $modelKey => $fields) {
+            $options = Arr::get($modelOptions, $modelKey, array());
+            $result[$modelKey] = $this->_addOptionsFromTranslatableFieldsToModel($fields, $options);
+        }
+        return $result;
+    }
+
+    private function _addOptionsFromTranslatableFieldsToModel($fields, $options)
+    {
+        $translatableFields = Arr::get($options, 'translatable', array());
+        foreach ($fields as $fieldName => $field) {
+            $isTranslatable = Arr::get($field, 'translate', false);
+            if ($isTranslatable) {
+                $translatableFields[] = $fieldName;
+            }
+        }
+        $translatableFields = array_unique($translatableFields);
+        if (empty($translatableFields)) {
+            return $options;
+        }
+        $result = $options;
+        $result['translatable'] = $translatableFields;
+        if (empty($result['translation_table'])) {
+            $result['translation_table'] = str_singular($options['table_name']).$options['model_translation_table_suffix'];
+        }
+        if (empty($result['translation_model'])) {
+            $result['translation_model'] = $this->_modelNameFromTable($result['translation_table']);
+        }
+        if (empty($result['translation_model_full_name'])) {
+            $result['translation_model_full_name'] = $result['model_translation_namespace'].'\\'.$result['translation_model'];
+        }
+        if (empty($result['translation_foreign_key'])) {
+            $result['translation_foreign_key'] = $this->_foreignKeyFromTable($options['table_name']);
+        }
+        $relation = [
+            'type' => 'has_many',
+            'table_from' => $options['table_name'],
+            'table_to' => $result['translation_table'],
+            'method_name' => 'translations',
+            'key_to' => $result['translation_foreign_key'],
+        //  'no_reverse' => true,
+        ];
+        $result['relations']['has_many'][] = $relation;
+        return $result;
     }
 
     private function _addOptionsFromFields($ModelFields, $modelOptions)
@@ -2660,6 +2771,9 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                     $result['fillable'] = false;
                     $result['guarded'] = true;
                 break;
+                case 'translate':
+                    $result['translate'] = true;
+                    break;
                 case 'default':
                     $result['default'] = $this->_parseDefaultLine($options);
                 break;
@@ -2827,7 +2941,11 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         if ('one_belongs_to_one' === $relation['type']) {
             $newField['unique'] = true;
         }
-        $newField['db_foreign_key'] = array('table_to' => $relation['table_to'], 'key_to' => $fieldTo['name']);
+        $dbForeignKey = array('table_to' => $relation['table_to'], 'key_to' => $fieldTo['name']);
+        if ( ! empty($relation['db_foreign_key_on_delete'])) {
+            $dbForeignKey['on_delete'] = $relation['db_foreign_key_on_delete'];
+        }
+        $newField['db_foreign_key'] = $dbForeignKey;
         return array($newFieldAddress => $newField);
     }
 
