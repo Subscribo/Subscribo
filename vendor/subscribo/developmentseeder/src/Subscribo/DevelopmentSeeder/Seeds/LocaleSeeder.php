@@ -10,102 +10,129 @@ class LocaleSeeder extends Seeder {
         $english = Locale::firstOrCreate([
             'identifier' => 'en',
             'type'          => Locale::TYPE_GENERIC,
-            'english_name'  => 'English',
-            'german_name'   => 'Englisch',
             'native_name'  => 'English',
         ]);
+        $english->translateOrNew('en')->name = 'English';
+        $english->translateOrNew('de')->name = 'Englisch';
+        $english->save();
+
         $americanEnglish = Locale::firstOrCreate([
             'identifier' => 'en_US',
             'type'          => Locale::TYPE_STANDARD,
-            'english_name'  => 'American English',
-            'german_name'   => 'Amerikanisches Englisch',
             'native_name'  => 'American English',
         ]);
+        $americanEnglish->translateOrNew('en')->name = 'American English';
+        $americanEnglish->translateOrNew('de')->name = 'Amerikanisches Englisch';
+        $americanEnglish->save();
+
         $britishEnglish = Locale::firstOrCreate([
             'identifier' => 'en_UK',
             'type'          => Locale::TYPE_STANDARD,
-            'english_name'  => 'British English',
-            'german_name'   => 'Britisch Englisch',
             'native_name'  => 'British English',
         ]);
+        $britishEnglish->translateOrNew('en')->name = 'British English';
+        $britishEnglish->translateOrNew('de')->name = 'Britisch Englisch';
+        $britishEnglish->save();
+
         $german = Locale::firstOrCreate([
             'identifier' => 'de',
             'type'          => Locale::TYPE_GENERIC,
-            'english_name'  => 'German',
-            'german_name'   => 'Deutsch',
             'native_name'  => 'Deutsch',
         ]);
+        $german->translateOrNew('en')->name = 'German';
+        $german->translateOrNew('de')->name = 'Deutsch';
+        $german->save();
+
         $austrianGerman = Locale::firstOrCreate([
             'identifier' => 'de_AT',
             'type'          => Locale::TYPE_STANDARD,
-            'english_name'  => 'Austrian German',
-            'german_name'   => 'Österreichisches Deutsch',
             'native_name'  => 'Österreichisches Deutsch',
         ]);
+        $austrianGerman->translateOrNew('en')->name = 'Austrian German';
+        $austrianGerman->translateOrNew('de')->name = 'Österreichisches Deutsch';
+        $austrianGerman->save();
+
         $germanyGerman = Locale::firstOrCreate([
             'identifier' => 'de_DE',
             'type'          => Locale::TYPE_STANDARD,
-            'english_name'  => 'Germany German',
-            'german_name'   => 'Deutschland Deutsch',
             'native_name'  => 'Deutschland Deutsch',
         ]);
+        $germanyGerman->translateOrNew('en')->name = 'Germany German';
+        $germanyGerman->translateOrNew('de')->name = 'Deutschland Deutsch';
+        $germanyGerman->save();
+
         $swissGerman = Locale::firstOrCreate([
             'identifier' => 'de_CH',
             'type'          => Locale::TYPE_STANDARD,
-            'english_name'  => 'Swiss German',
-            'german_name'   => 'SchweizerDeutsch',
             'native_name'  => 'SchwizerDütsch',
         ]);
+        $swissGerman->translateOrNew('en')->name = 'Swiss German';
+        $swissGerman->translateOrNew('de')->name = 'SchweizerDeutsch';
+        $swissGerman->save();
+
         $slovak = Locale::firstOrCreate([
             'identifier' => 'sk',
             'type'          => Locale::TYPE_STANDARD,
-            'english_name'  => 'Slovak',
-            'german_name'   => 'Slowakisch',
             'native_name'  => 'Slovenčina',
         ]);
+        $slovak->translateOrNew('en')->name = 'Slovak';
+        $slovak->translateOrNew('de')->name = 'Slowakisch';
+        $slovak->save();
+
         $slovakiaSlovak = Locale::firstOrCreate([
             'identifier' => 'sk_SK',
             'type'          => Locale::TYPE_STANDARD,
-            'english_name'  => 'Slovak',
-            'german_name'   => 'Slowakisch',
             'native_name'  => 'Slovenčina',
         ]);
+        $slovakiaSlovak->translateOrNew('en')->name = 'Slovak';
+        $slovakiaSlovak->translateOrNew('de')->name = 'Slowakisch';
+        $slovakiaSlovak->save();
+
         $czech = Locale::firstOrCreate([
             'identifier' => 'cs',
             'type'          => Locale::TYPE_STANDARD,
-            'english_name'  => 'Czech',
-            'german_name'   => 'Tschechisch',
             'native_name'  => 'Čeština',
         ]);
+        $czech->translateOrNew('en')->name = 'Czech';
+        $czech->translateOrNew('de')->name = 'Tschechisch';
+        $czech->save();
+
         $czechRepublicCzech = Locale::firstOrCreate([
             'identifier' => 'cs_CZ',
             'type'          => Locale::TYPE_STANDARD,
-            'english_name'  => 'Czech',
-            'german_name'   => 'Tschechisch',
             'native_name'  => 'Čeština',
         ]);
+        $czechRepublicCzech->translateOrNew('en')->name = 'Czech';
+        $czechRepublicCzech->translateOrNew('de')->name = 'Tschechisch';
+        $czechRepublicCzech->save();
 
         $frontendEnglish = Locale::firstOrCreate([
             'identifier' => 'en_US-FRONTEND',
             'type'          => Locale::TYPE_CUSTOMIZED,
-            'english_name'  => 'English for Frontend',
-            'german_name'   => 'Englisch für Frontend',
             'native_name'  => 'English for Frontend',
         ]);
+        $frontendEnglish->translateOrNew('en')->name = 'English for Frontend';
+        $frontendEnglish->translateOrNew('de')->name = 'Englisch für Frontend';
+        $frontendEnglish->save();
+
         $frontendGerman = Locale::firstOrCreate([
             'identifier' => 'de_AT-FRONTEND',
             'type'          => Locale::TYPE_CUSTOMIZED,
-            'english_name'  => 'German for Frontend',
-            'german_name'   => 'Deutsch für Frontend',
             'native_name'  => 'Deutsch für Frontend',
         ]);
+        $frontendGerman->translateOrNew('en')->name = 'German for Frontend';
+        $frontendGerman->translateOrNew('de')->name = 'Deutsch für Frontend';
+        $frontendGerman->save();
+
         $frontendSlovak = Locale::firstOrCreate([
             'identifier' => 'sk_SK-FRONTEND',
             'type'          => Locale::TYPE_CUSTOMIZED,
-            'english_name'  => 'Slovak for Frontend',
-            'german_name'   => 'Slowakisch für Frontend',
             'native_name'  => 'Slovenčina pre Frontend',
         ]);
+        $frontendSlovak->translateOrNew('en')->name = 'Slovak for Frontend';
+        $frontendSlovak->translateOrNew('de')->name = 'Slowakisch für Frontend';
+        $frontendSlovak->save();
+
         $britishEnglish->fallbackLocales()->attach($english, ['ordering' => 10]);
         $britishEnglish->fallbackLocales()->attach($americanEnglish, ['ordering' => 15]);
         $americanEnglish->fallbackLocales()->attach($english, ['ordering' => 10]);
