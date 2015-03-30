@@ -1,0 +1,44 @@
+{
+    "name": "subscribo/translatablemodel",
+    "description": "Translatable Model Package helps internationalizing and localizing of Laravel Eloquent models",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "model",
+        "eloquent",
+        "internationalization",
+        "localization",
+        "translation",
+        "translatable",
+        "trait"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "illuminate/database" : "~5.0"
+    },
+    "suggest": {
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 4.2. Version 5.0 can also be used."
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\TranslatableModel\\": "src/Subscribo/TranslatableModel/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
