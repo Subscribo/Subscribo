@@ -21,6 +21,8 @@
     ],
     "require": {
         "php": "~5.4",
+        "subscribo/localization": "@dev",
+        "subscribo/translatemodel": "@dev",
         "illuminate/database" : "~5.0"
     },
     "suggest": {
