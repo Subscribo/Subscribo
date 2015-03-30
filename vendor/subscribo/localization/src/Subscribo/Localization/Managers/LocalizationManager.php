@@ -95,6 +95,16 @@ class LocalizationManager implements LocalizationManagerInterface
         return new Localizer($this, $locale, $namespace, $subdomain);
     }
 
+    public function fallbackLocales($locale)
+    {
+        return $this->localeSettingsManager->getFallbackLocales($locale);
+    }
+
+    public function availableLocales()
+    {
+        return $this->localeSettingsManager->getAvailableLocales();
+    }
+
     /**
      * @param string $domain
      * @param string $locale

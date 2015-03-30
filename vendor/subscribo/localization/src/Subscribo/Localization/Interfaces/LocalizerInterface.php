@@ -35,4 +35,15 @@ interface LocalizerInterface extends TranslatorInterface
      */
     public function getBCPLocale();
 
+    /**
+     * @param string|null $locale
+     * @return array
+     */
+    public function getFallbackLocales($locale = null);
+
+    /**
+     * @return array
+     */
+    public function getAvailableLocales();
+
 }

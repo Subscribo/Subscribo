@@ -8,4 +8,8 @@ interface LocaleSettingsManagerInterface
      */
     public function getFallbackLocales($localeIdentifier);
 
+    /**
+     * @return array
+     */
+    public function getAvailableLocales();
 }

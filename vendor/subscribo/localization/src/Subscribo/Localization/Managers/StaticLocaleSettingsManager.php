@@ -30,4 +30,15 @@ class StaticLocaleSettingsManager implements LocaleSettingsManagerInterface
         }
         return (array) $this->data['locales'][$localeIdentifier]['fallbackLocales'];
     }
+
+    /**
+     * @return array
+     */
+    public function getAvailableLocales()
+    {
+        if (empty($this->data['locales']) or ! is_array($this->data['locales'])) {
+            return array();
+        }
+        return array_keys($this->data['locales']);
+    }
 }

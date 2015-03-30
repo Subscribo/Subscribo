@@ -140,6 +140,17 @@ class Localizer implements TranslatorInterface, LocalizerInterface
         return LocaleTools::localeTagToBCP($this->getLocale(), false);
     }
 
+    public function getFallbackLocales($locale = null)
+    {
+        $locale = is_null($locale) ? $this->getLocale() : $locale;
+        return $this->manager->fallbackLocales($locale);
+    }
+
+    public function getAvailableLocales()
+    {
+        return $this->manager->availableLocales();
+    }
+
     /**
      * @param string $subdomain
      * @param null $namespace

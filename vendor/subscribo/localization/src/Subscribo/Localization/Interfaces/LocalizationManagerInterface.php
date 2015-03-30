@@ -42,4 +42,15 @@ interface LocalizationManagerInterface
      */
     public function localizer($namespace = null, $subdomain = null);
 
+    /**
+     * @param string $locale
+     * @return array
+     */
+    public function fallbackLocales($locale);
+
+    /**
+     * @return array
+     */
+    public function availableLocales();
+
 }
