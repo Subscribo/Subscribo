@@ -14,6 +14,8 @@ class LocaleSettingsFactory implements LocaleSettingsManagerInterface
 
     protected $cachedFallbackLocales = array();
 
+    protected $cachedAvailableLocales = null;
+
     protected $defaultFallbackLocales = array();
 
     public function __construct($data = null, $defaultFallbackLocales = null)
@@ -39,6 +41,28 @@ class LocaleSettingsFactory implements LocaleSettingsManagerInterface
             }
         }
         return ($this->cachedFallbackLocales[$localeIdentifier] = $fallbackLocales);
+    }
+
+    public function getAvailableLocales()
+    {
+        if (is_null($this->cachedAvailableLocales)) {
+            $this->loadAvailableLocales();
+        }
+        return $this->cachedAvailableLocales;
+
+    }
+
+    protected function loadAvailableLocales()
+    {
+        $models = Locale::with('fallbackLocales')->get();
+        $availableLocales = array();
+        foreach ($models as $model)
+        {
+            $localeIdentifier = $model->identifier;
+            $this->cachedModels[$localeIdentifier] = $model;
+            $availableLocales[] = $localeIdentifier;
+        }
+        $this->cachedAvailableLocales = $availableLocales;
     }
 
     /**
