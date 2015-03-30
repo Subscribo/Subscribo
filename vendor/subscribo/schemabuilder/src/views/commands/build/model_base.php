@@ -10,6 +10,12 @@
  * @method \<?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($options['model_namespace'].'\\'.$modelName); ?>[] get() public static function get(array $columns = array()) returns an array of models <?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($modelName); ?>
 
  * @method null|\<?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($options['model_namespace'].'\\'.$modelName); ?> first() public static function first(array $columns = array()) returns model <?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($modelName); ?>
+
+<?php endif;
+if (! empty($options['translation_model_full_name'])): ?>
+ * @method \<?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($options['translation_model_full_name']); ?> translate() public function translate($locale = null, $withFallback = null) returns model with translated fields
+ * @method \<?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($options['translation_model_full_name']); ?> translateOrNew() public function translateOrNew($locale = null) returns model with translated fields
+ * @method \<?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($options['translation_model_full_name']); ?> getTranslation() public function getTranslation($locale = null, $withFallback = null) returns model with translated fields
 <?php endif;
 echo " *\n";
 foreach($fields as $field) {
@@ -55,7 +61,7 @@ if ( ! empty($options['base_model_extends'])) {
 {
 
 <?php if ( ! empty($options['translatable'])):
-echo 'use \\Subscribo\\TranslatableModel\\Traits\\TranslatableModelTrait;'."\n\n";
+echo 'use \\Subscribo\\ModelBase\\Traits\\CustomizedTranslatableModelTrait;'."\n\n";
 endif;
 
 if ( ! empty($options['table_name'])): ?>
@@ -113,18 +119,26 @@ endforeach;
 
 <?php if ( ! empty($options['translatable'])): ?>
     /**
-     * Translatable attributes
+     * Translated or Translatable attributes
      *
      * @property array
      */
-    protected $translatableAttributes = <?php echo View::make('schemabuilder::helpers.php_value', array('value' => $options['translatable'], 'indent' => 11)); ?>;
+    protected $translatedAttributes = <?php echo View::make('schemabuilder::helpers.php_value', array('value' => $options['translatable'], 'indent' => 11)); ?>;
 
     /**
      * Related translation model
      *
      * @property string
      */
-    protected $translationModelName = '<?php echo addslashes($options['translation_model_full_name']); ?>';
+    protected $translationModel = '<?php echo addslashes($options['translation_model_full_name']); ?>';
+
+    /**
+     * Translation foreign key
+     *
+     * @property string
+     *
+     */
+    protected $translationForeignKey = '<?php echo addslashes($options['translation_foreign_key']); ?>';
 <?php endif; ?>
 
     /**
