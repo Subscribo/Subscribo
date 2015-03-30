@@ -12,7 +12,12 @@ interface LocaleConfigurationInterface
     /**
      * @return string
      */
-    public function getLocale();
+    public function getCurrentLocale();
+
+    /**
+     * @return array
+     */
+    public function getAvailableLocales();
 
     /**
      * @param string $locale

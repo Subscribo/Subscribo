@@ -2,6 +2,8 @@
 
 Translatable Model Package helps internationalizing and localizing of Laravel Eloquent models
 
+This package extends functionality of package dimsav/laravel, allowing multiple fallback locales per locale
+
 ## 1. Installation
 
 Note: If another installed package is already dependent on this package (which is usually the case), installation is not necessary
@@ -45,7 +47,7 @@ and register it as implementing this interface in Service Container of Laravel (
 
 ## 2. Usage
 
-### 2.1 Properly configure your models and migrations
+### 2.1 Properly configure your models and migrations (you can see https://github.com/dimsav/laravel-translatable for more details)
 
 ### 2.2 Use Subscribo\TranslatableModel\Traits\TranslatableModelTrait in your models
 
