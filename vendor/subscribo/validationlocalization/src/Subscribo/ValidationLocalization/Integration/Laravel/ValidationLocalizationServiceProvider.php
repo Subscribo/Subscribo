@@ -4,6 +4,8 @@ use Illuminate\Validation\Factory;
 use Subscribo\Support\ServiceProvider;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Subscribo\Localization\Interfaces\LocalizationManagerInterface;
+use Subscribo\Localization\Interfaces\LocalizationResourcesManagerInterface;
+use Subscribo\Localization\LocaleTools;
 
 /**
  * Class ValidationLocalizationServiceProvider
@@ -41,6 +43,39 @@ class ValidationLocalizationServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerTranslationResources('validation');
+        $this->registerApplicationValidationLocalizedStrings();
     }
 
+    protected function registerApplicationValidationLocalizedStrings()
+    {
+        /** @var \Subscribo\Localization\Interfaces\LocalizationResourcesManagerInterface $manager */
+        $manager = $this->app->make('\\Subscribo\\Localization\\Interfaces\\LocalizationResourcesManagerInterface');
+        $files = glob(base_path('resources/lang').'/*/validation.php');
+        foreach ($files as $file) {
+            $locale = LocaleTools::extractFirstLocaleTag(basename(dirname($file)));
+            $fileContent = $this->getArrayFileContent($file);
+            if (empty($locale) or empty($fileContent)) {
+                continue;
+            }
+            $resource = [$locale => ['validation' => $fileContent]];
+            $manager->registerResource($resource, 'validationlocalization', 'validation');
+        }
+
+    }
+
+    /**
+     * @param string $file
+     * @return array
+     */
+    protected function getArrayFileContent($file)
+    {
+        if ( ! file_exists($file)) {
+            return array();
+        }
+        $result = include($file);
+        if ( ! is_array($result)) {
+            return array();
+        }
+        return $result;
+    }
 }

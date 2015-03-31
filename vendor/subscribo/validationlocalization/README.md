@@ -2,6 +2,16 @@
 
 Provides Localization of Laravel Validator using Subscribo Localization Localizer
 
+## Important note 1:
+
+If you are registering (directly or indirectly) ValidationLocalizationServiceProvider,
+this service provider registers Illuminate\Validation\ValidationServiceProvider for you and overwrite some of its bindings.
+
+## Important note 2:
+
+If using this plugin, custom localized validation strings from resources/lang/en/validation.php might get overriden
+ by strings from package or from subscribo/resources/lang/validationlocalization/en/validation.php  (or file with other supported extension, such as .yml)
+
 ## 1. Installation
 
 ### 1.1 Setup your project's composer.json
@@ -47,11 +57,4 @@ or (for conditional registration) you can add following to bootstrap/app.php:
         $app->register('\\Subscribo\\ValidationLocalization\\Integration\\Laravel\\ValidationLocalizationServiceProvider');
     }
 ```
-
-### 1.4 Important note 1: If you are registering (directly or indirectly) ValidationLocalizationServiceProvider,
-this service provider registers Illuminate\Validation\ValidationServiceProvider for you and overwrite some of its bindings.
-
-### 1.5 Important note 2: If using this plugin, custom localized validation strings from resources/lang/en/validation.php are ignored
- for application specific localized validation strings use file subscribo/resources/lang/validationlocalization/en/validation.php
- (or file with other supported extension, such as .yml)
 
