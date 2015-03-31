@@ -6,10 +6,10 @@ interface LocalizationResourcesManagerInterface
     const FORMAT_LOCALIZED_ARRAY = 'localized_array';
 
     /**
-     * @param string $resource usually file name with or without extension
+     * @param array|string $resource array or string: file name with or without extension
      * @param string $namespace
-     * @param string|bool $subdomain true for getting subdomain from file name
-     * @param string|bool $format true for adding all available extensions
+     * @param string|bool $subdomain true for getting subdomain from file name (only for string resources)
+     * @param string|bool $format when resource is a string: true for adding all available extensions; when resources is an array: true for FORMAT_LOCALIZED_ARRAY
      * @param string $type
      * @return $this
      */

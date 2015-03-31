@@ -1,5 +1,6 @@
 <?php namespace Subscribo\Localization\Managers;
 
+use InvalidArgumentException;
 use Subscribo\Localization\Interfaces\LocalizationResourcesManagerInterface;
 
 /**
@@ -30,10 +31,17 @@ class LocalizationResourcesManager implements LocalizationResourcesManagerInterf
 
     public function registerResource($resource, $namespace, $subdomain = true, $format = true, $type = self::RESOURCE_TYPE_TRANSLATION)
     {
-        if (true === $subdomain) {
-            $parts = explode('.', $resource);
-            $subdomain = reset($parts);
+        if (is_string($resource)) {
+            if (true === $subdomain) {
+                $parts = explode('.', $resource);
+                $subdomain = reset($parts);
+            }
+        } elseif(is_array($resource)) {
+            if (true === $format) {
+                $format = self::FORMAT_LOCALIZED_ARRAY;
+            }
         }
+        $this->checkRegisterResourceArguments($resource, $namespace, $subdomain, $format);
         $domain = $namespace.'::'.$subdomain;
         if ($format === self::FORMAT_LOCALIZED_ARRAY) {
             $this->registeredLocalizedArrayResources[$type][$domain][] = $resource;
@@ -108,6 +116,34 @@ class LocalizationResourcesManager implements LocalizationResourcesManagerInterf
             }
         }
         return $result;
+    }
+
+    /**
+     * @param string|array $resource
+     * @param string $namespace
+     * @param string|bool $subdomain
+     * @param string|bool $format
+     * @throws \InvalidArgumentException
+     */
+    protected function checkRegisterResourceArguments($resource, $namespace, $subdomain, $format)
+    {
+        if (is_string($resource)) {
+            if ($format === self::FORMAT_LOCALIZED_ARRAY) {
+                throw new InvalidArgumentException('LocalizationResourcesManager::registerResource() invalid format for resource as a string');
+            }
+        } elseif(is_array($resource)) {
+            if ( ! is_string($subdomain)) {
+                throw new InvalidArgumentException('LocalizationResourcesManager::registerResource() when resource parameter is an array, subdomain should be specified');
+            }
+            if ($format !== self::FORMAT_LOCALIZED_ARRAY) {
+                throw new InvalidArgumentException('LocalizationResourcesManager::registerResource() invalid format for resource as an array');
+            }
+        } else {
+            throw new InvalidArgumentException('LocalizationResourcesManager::registerResource() resource parameter should be a string or an array');
+        }
+        if ( ! is_string($subdomain)) {
+            throw new InvalidArgumentException('LocalizationResourcesManager::registerResource() subdomain not specified');
+        }
     }
 
     /**
