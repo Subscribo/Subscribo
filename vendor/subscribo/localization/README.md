@@ -1,6 +1,6 @@
 # Localization package
 
-Internationalisation and localisation support
+Internationalization and localization support
 
 ## 1. Installation
 

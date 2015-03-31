@@ -13,6 +13,9 @@ class LocalizationResourcesManager implements LocalizationResourcesManagerInterf
     protected $registeredResources = array();
 
     /** @var array  */
+    protected $registeredLocalizedArrayResources = array();
+
+    /** @var array  */
     protected $namespacePaths = array();
 
     /** @var array  */
@@ -32,7 +35,10 @@ class LocalizationResourcesManager implements LocalizationResourcesManagerInterf
             $subdomain = reset($parts);
         }
         $domain = $namespace.'::'.$subdomain;
-        if (true === $format) {
+        if ($format === self::FORMAT_LOCALIZED_ARRAY) {
+            $this->registeredLocalizedArrayResources[$type][$domain][] = $resource;
+
+        } elseif (true === $format) {
             foreach ($this->supportedExtensions as $extension) {
                 $this->registeredResources[$type][$domain][] = [
                     'filename'  => $resource.'.'.$extension,
@@ -79,7 +85,7 @@ class LocalizationResourcesManager implements LocalizationResourcesManagerInterf
      */
     public function getExistingResources($type, $domain, array $locales)
     {
-        $result = [];
+        $result = $this->getLocalizedArrayResources($type, $domain, $locales);
         $filesToCheck = [];
         $paths = $this->getPaths($domain);
         $resources = $this->getRegisteredResources($type, $domain);
@@ -87,7 +93,7 @@ class LocalizationResourcesManager implements LocalizationResourcesManagerInterf
             foreach ($paths as $path) {
                 foreach ($resources as $resource) {
                     $filesToCheck[] = [
-                        'filename'  => rtrim($path, '/').'/'.$loc.'/'.$resource['filename'],
+                        'resource'  => rtrim($path, '/').'/'.$loc.'/'.$resource['filename'],
                         'format'    => $resource['format'],
                         'locale'    => $loc,
                     ];
@@ -95,10 +101,39 @@ class LocalizationResourcesManager implements LocalizationResourcesManagerInterf
             }
         }
         foreach ($filesToCheck as $file) {
-            if (file_exists($file['filename'])) {
+            if (file_exists($file['resource'])) {
                 $item = $file;
-                $item['format'] = $file['format'] ?: pathinfo($file['filename'], PATHINFO_EXTENSION);
+                $item['format'] = $file['format'] ?: pathinfo($file['resource'], PATHINFO_EXTENSION);
                 $result[] = $item;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $type
+     * @param string $domain
+     * @param array $locales
+     * @return array
+     */
+    protected function getLocalizedArrayResources($type, $domain, array $locales)
+    {
+        $result = [];
+        if (empty($this->registeredLocalizedArrayResources[$type][$domain])) {
+            return array();
+        }
+        foreach ($this->registeredLocalizedArrayResources[$type][$domain] as $resourceSet)
+        {
+            foreach ($resourceSet as $locale => $content)
+            {
+                if (false === in_array($locale, $locales, true)) {
+                    continue;
+                }
+                $result[] = [
+                    'resource' => $content,
+                    'format' => 'array',
+                    'locale' => $locale,
+                ];
             }
         }
         return $result;

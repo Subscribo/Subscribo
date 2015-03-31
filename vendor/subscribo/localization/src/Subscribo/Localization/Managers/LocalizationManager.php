@@ -5,6 +5,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
+use Symfony\Component\Translation\Loader\ArrayLoader;
 use Illuminate\Contracts\Cache\Repository;
 use Psr\Log\LoggerInterface;
 use Subscribo\Localization\Translators\Translator;
@@ -118,7 +119,7 @@ class LocalizationManager implements LocalizationManagerInterface
         array_unshift($locales, $locale);
         $resources = $this->resourcesManager->getTranslationResources($domain, $locales);
         foreach ($resources as $resource) {
-            $this->getTranslator($locale)->addResource($resource['format'], $resource['filename'], $resource['locale'], $domain);
+            $this->getTranslator($locale)->addResource($resource['format'], $resource['resource'], $resource['locale'], $domain);
         }
         $this->loadedTranslationResources[$locale][$domain] = true;
     }
@@ -145,7 +146,10 @@ class LocalizationManager implements LocalizationManagerInterface
     {
         $translator = new Translator($locale, $this->messageSelector, null, false);
         $translator->setFallbackLocales($fallbackLocales);
-        foreach ($this->resourcesManager->getSupportedFormats() as $format) {
+        $formats = $this->resourcesManager->getSupportedFormats();
+        $formats[] = 'array';
+        $formats = array_unique($formats);
+        foreach ($formats as $format) {
             $loader = $this->makeLoader($format);
             if ($loader) {
                 $translator->addLoader($format, $loader);
@@ -166,6 +170,8 @@ class LocalizationManager implements LocalizationManagerInterface
                 return new PhpFileLoader();
             case 'yml':
                 return new YamlFileLoader();
+            case 'array':
+                return new ArrayLoader();
             default:
                 return null;
 

@@ -3,6 +3,7 @@
 interface LocalizationResourcesManagerInterface
 {
     const RESOURCE_TYPE_TRANSLATION = 'translation';
+    const FORMAT_LOCALIZED_ARRAY = 'localized_array';
 
     /**
      * @param string $resource usually file name with or without extension
