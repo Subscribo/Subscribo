@@ -48,8 +48,7 @@ class ValidationLocalizationServiceProvider extends ServiceProvider
 
     protected function registerApplicationValidationLocalizedStrings()
     {
-        /** @var \Subscribo\Localization\Interfaces\LocalizationResourcesManagerInterface $manager */
-        $manager = $this->app->make('\\Subscribo\\Localization\\Interfaces\\LocalizationResourcesManagerInterface');
+        $resource = array();
         $files = glob(base_path('resources/lang').'/*/validation.php');
         foreach ($files as $file) {
             $locale = LocaleTools::extractFirstLocaleTag(basename(dirname($file)));
@@ -57,10 +56,13 @@ class ValidationLocalizationServiceProvider extends ServiceProvider
             if (empty($locale) or empty($fileContent)) {
                 continue;
             }
-            $resource = [$locale => ['validation' => $fileContent]];
+            $resource[$locale] = ['validation' => $fileContent];
+        }
+        if ($resource) {
+            /** @var \Subscribo\Localization\Interfaces\LocalizationResourcesManagerInterface $manager */
+            $manager = $this->app->make('\\Subscribo\\Localization\\Interfaces\\LocalizationResourcesManagerInterface');
             $manager->registerResource($resource, 'validationlocalization', 'validation');
         }
-
     }
 
     /**

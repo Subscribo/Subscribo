@@ -1,4 +1,0 @@
-validation:
-    required: Pole :attribute je povinné
-    attributes:
-        password: heslo
