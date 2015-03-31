@@ -1,6 +1,8 @@
 <?php namespace Subscribo\TranslatableModel\Traits;
 
+use Subscribo\TranslatableModel\Exceptions\NotImplementedException;
 use Subscribo\TranslatableModel\Interfaces\LocaleConfigurationInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Dimsav\Translatable\Translatable;
 
 /**
@@ -44,6 +46,19 @@ trait TranslatableModelTrait
             }
         }
         return null;
+    }
+
+    /**
+     * @todo implement properly using array of fallback translations
+     *
+     * @param Builder $query
+     * @param string $translationField
+     * @throws NotImplementedException
+     */
+    public function scopeListsTranslations(Builder $query, $translationField)
+    {
+        //todo implement properly using array of fallback translations
+        throw new NotImplementedException('TranslatableModelTrait: method scopeListsTranslations() is not implemented yet');
     }
 
     public function getLocales()

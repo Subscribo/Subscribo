@@ -1,8 +1,12 @@
-# Translatable Model Base Package
+# Translatable Model Package
 
 Translatable Model Package helps internationalizing and localizing of Laravel Eloquent models
 
 This package extends functionality of package dimsav/laravel, allowing multiple fallback locales per locale
+
+## Note:
+
+Method scopeListsTranslations is not (re-)implemented yet, so it is not to be used with TranslatableModelTrait from this package
 
 ## 1. Installation
 
