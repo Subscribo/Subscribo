@@ -35,8 +35,7 @@ class ApiClientLocalizationServiceProvider extends ServiceProvider {
             '\\Subscribo\\ApiClientLocalization\\LocalePossibilities',
             null
         );
-
-
+        $this->app->register('\\Subscribo\\ValidationLocalization\\Integration\\Laravel\\ValidationLocalizationServiceProvider');
     }
 
     public function boot()

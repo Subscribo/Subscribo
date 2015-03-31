@@ -28,6 +28,7 @@
         "illuminate/support": "~5.0",
         "illuminate/session": "~5.0",
         "subscribo/localization": "@dev",
+        "subscribo/validationlocalization": "@dev",
         "subscribo/exception": "@dev"
 
     },
