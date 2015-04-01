@@ -3,19 +3,26 @@
 use RuntimeException;
 use Illuminate\View\View;
 use Subscribo\RestCommon\Questionary;
+use Subscribo\Localization\Interfaces\LocalizerInterface;
 
 class QuestionaryComposer
 {
+    /** @var LocalizerInterface  */
+    protected $localizer;
+
+    public function __construct(LocalizerInterface $localizer)
+    {
+        $this->localizer = $localizer;
+    }
 
     public function compose(View $view)
     {
+        $localizer = $this->localizer->template('messages', 'apiclientcommon')->setPrefix('template.questionary');
         $questionary = $this->extractQuestionary($view);
-        $heading = $questionary->title ?: 'We need some more information';
-
-        $submit = 'Submit';
+        $heading = $questionary->title ?: $localizer->trans('defaultTitle');
+        $errorTitle = $localizer->trans('errorTitle');
+        $submit = $localizer->trans('submitButton');
         $questions = $questionary->questions;
-        $errorTitle = 'Please, check your input:';
-
 
         $view->with('heading', $heading);
         $view->with('submit', $submit);

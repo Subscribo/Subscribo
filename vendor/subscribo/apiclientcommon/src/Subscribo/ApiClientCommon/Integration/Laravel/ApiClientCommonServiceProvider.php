@@ -1,8 +1,8 @@
 <?php namespace Subscribo\ApiClientCommon\Integration\Laravel;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
 use Subscribo\Support\Arr;
+use Subscribo\Support\ServiceProvider;
 
 /**
  * Class ApiClientCommonServiceProvider
@@ -26,13 +26,11 @@ class ApiClientCommonServiceProvider extends ServiceProvider
         $packageDir = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
         $this->loadViewsFrom($packageDir.'/resources/views', 'subscribo');
         $this->publishes([
-            $packageDir.'/resources/views/apiclientcommon/questionary.blade.php' => base_path('resources/views/vendor/subscribo/apiclientcommon/questionary.blade.php'),
-            $packageDir.'/resources/views/apiclientcommon/question.blade.php' => base_path('resources/views/vendor/subscribo/apiclientcommon/question.blade.php'),
-            $packageDir.'/resources/views/apiclientcommon/formerrors.blade.php' => base_path('resources/views/vendor/subscribo/apiclientcommon/formerrors.blade.php'),
-
+            $packageDir.'/resources/views/apiclientcommon/' => base_path('resources/views/vendor/subscribo/apiclientcommon/'),
         ], 'view');
 
         $this->app->make('view')->composer('subscribo::apiclientcommon.questionary', 'Subscribo\\ApiClientCommon\\ViewComposers\\QuestionaryComposer');
+        $this->registerTranslationResources('messages');
     }
 
 

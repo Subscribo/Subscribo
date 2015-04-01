@@ -11,6 +11,7 @@ use Subscribo\RestClient\Exceptions\ServerRequestException;
 use Subscribo\RestCommon\Questionary;
 use Subscribo\Exception\Exceptions\RuntimeException;
 use Subscribo\Exception\Exceptions\SessionVariableNotFoundHttpException;
+use Subscribo\Localization\Interfaces\LocalizerInterface;
 
 /**
  * Trait QuestionaryControllerTrait
@@ -45,10 +46,11 @@ trait QuestionaryControllerTrait
      * @param Request $request
      * @param Store $session
      * @param ServerRequestConnector $connector
+     * @param LocalizerInterface $localizer
      * @param string $type
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
-    public function getQuestionaryByType(Request $request, Store $session, ServerRequestConnector $connector, $type)
+    public function getQuestionaryByType(Request $request, Store $session, ServerRequestConnector $connector, LocalizerInterface $localizer, $type)
     {
         try {
             $questionaryData = $connector->getQuestionary($type, $request->query->all(), true);
@@ -59,7 +61,8 @@ trait QuestionaryControllerTrait
             return view('subscribo::apiclientcommon.errorsonly', ['errorList' => $e->getValidationErrors()]);
         } catch (Exception $e) {
             $this->logException($e);
-            return view('subscribo::apiclientcommon.errorsonly', ['errorList' => ['Some error has happened. Please try again later or contact an administrator.']]);
+            $errorMessage = $localizer->trans('traits.questionary.getQuestionary.errors.fallback', [], 'apiclientcommon::messages');
+            return view('subscribo::apiclientcommon.errorsonly', ['errorList' => [$errorMessage]]);
         }
         $session->flash($this->sessionKeyQuestionary, $questionary);
         return view('subscribo::apiclientcommon.questionary')->with('questionary', $questionary);
@@ -72,11 +75,12 @@ trait QuestionaryControllerTrait
      * @param Request $request
      * @param Store $session
      * @param ServerRequestConnector $connector
+     * @param LocalizerInterface $localizer
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Subscribo\Exception\Exceptions\SessionVariableNotFoundHttpException
      * @throws \Subscribo\Exception\Exceptions\RuntimeException
      */
-    public function postQuestionary(Request $request, Store $session, ServerRequestConnector $connector)
+    public function postQuestionary(Request $request, Store $session, ServerRequestConnector $connector, LocalizerInterface $localizer)
     {
         /** @var Questionary $questionary */
         $questionary = $session->get($this->sessionKeyQuestionary);
@@ -101,10 +105,11 @@ trait QuestionaryControllerTrait
                 ->withErrors($e->getValidationErrors());
         } catch (Exception $e) {
             $this->logException($e);
+            $errorMessage = $localizer->trans('traits.questionary.postQuestionary.errors.fallback', [], 'apiclientcommon::messages');
             return redirect()
                 ->refresh()
                 ->withInput($data)
-                ->withErrors(['Some error has happened. Please try again later or contact an administrator.']);
+                ->withErrors([$errorMessage]);
         }
         $redirectUrl = $session->pull($this->sessionKeyRedirectFromQuestionary);
         $questionary = $session->pull($this->sessionKeyQuestionary);

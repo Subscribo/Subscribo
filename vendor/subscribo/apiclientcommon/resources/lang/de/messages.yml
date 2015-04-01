@@ -1,0 +1,17 @@
+# German translation resource files for package Subscribo ApiClientCommon - for ViewComposers
+# Translation work in progress ( 0% )
+# QuestionaryComposer
+template.questionary:
+    defaultTitle: We need some more information
+    errorTitle: Please, check your input:
+    submitButton: Submit
+traits:
+# QuestionaryControllerTrait
+    questionary:
+        getQuestionary.errors.fallback: Some error has happened. Please try again later or contact an administrator.
+        postQuestionary.errors.fallback: Some error has happened. Please try again later or contact an administrator.
+# ClientRedirectionControllerTrait
+    clientRedirection:
+        redirectingBack.errors.fallback: Some error has happened. Please try again later or contact an administrator.
+        getRedirection.errors.fallback: Some error has happened. Please try again later or contact an administrator.
+        validateHash.errors.invalidHash: Your URL is invalid
