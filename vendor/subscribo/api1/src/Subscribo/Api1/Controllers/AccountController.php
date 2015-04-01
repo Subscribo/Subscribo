@@ -620,8 +620,8 @@ class AccountController extends AbstractController
         /** @var \Subscribo\Api1\Factories\AccountFactory $accountFactory */
         $accountFactory = $this->applicationMake('Subscribo\\Api1\\Factories\\AccountFactory');
         $found = $accountFactory->findAccountByEmailAndServiceId($email, $serviceId);
-        if (empty($found)) {
-            null;
+        if (empty($found['customer'])) {
+            return null;
         }
         if ($accountFactory->checkCustomerPassword($found['customer'], $password)) {
             return $found;
