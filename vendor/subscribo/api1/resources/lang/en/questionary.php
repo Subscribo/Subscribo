@@ -32,8 +32,8 @@ return array(
             ],
         'special' => [
             'CODE_LOGIN_OR_NEW_ACCOUNT_PASSWORD' => 'Or provide a password to your existing account (email: %email%):',
-            'CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO' => 'Would you like to merge your new account by %requestingService% with your existing account by %confirmingService% (with email %email%)?',
-            'CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD' => 'If you want to merge accounts, please provide a password to your account by %confirmingService% with email %email%',
+            'CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO' => 'Would you like to merge your new account by {requestingService} with your existing account by {confirmingService} (with email %email%)?',
+            'CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD' => 'If you want to merge accounts, please provide a password to your account by {confirmingService} with email %email%',
         ],
     ],
 

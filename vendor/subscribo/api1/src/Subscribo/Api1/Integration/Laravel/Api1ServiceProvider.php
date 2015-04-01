@@ -26,12 +26,13 @@ class Api1ServiceProvider extends ServiceProvider
             $localizationServiceProvider = $this->app->getProvider('\\Subscribo\\Localization\\Integration\\Laravel\\LocalizationServiceProvider');
         }
         $localizationServiceProvider->registerLocaleSettingsManager(array(), null, '\\Subscribo\\Api1\\Factories\\LocaleSettingsFactory', true);
+        $this->app->register('\\Subscribo\\ValidationLocalization\\Integration\\Laravel\\ValidationLocalizationServiceProvider');
     }
 
     public function boot()
     {
         $this->registerControllers();
-        $this->registerTranslationResources('questionary');
+        $this->registerTranslationResources(['questionary', 'controllers']);
     }
 
     protected function registerControllers()

@@ -39,7 +39,7 @@ class AnswerController extends AbstractController
         if ('hash' === $type) {
             return $this->processGetServerRequestByHash('getQuestionByHash');
         }
-        throw new InvalidIdentifierHttpException(['type' => 'Unrecognized type']);
+        throw new InvalidIdentifierHttpException(['type' => $this->localizeError('getQuestion.wrongType')]);
     }
 
     /**
@@ -59,7 +59,7 @@ class AnswerController extends AbstractController
         if ('hash' === $type) {
             return $this->processGetServerRequestByHash('getRedirectionByHash');
         }
-        throw new InvalidIdentifierHttpException(['type' => 'Unrecognized type']);
+        throw new InvalidIdentifierHttpException(['type' => $this->localizeError('getRedirection.wrongType')]);
     }
 
     /**
@@ -183,6 +183,12 @@ class AnswerController extends AbstractController
             throw new RuntimeException(sprintf("Wrong callback '%s' in database", $actionInterruption->continueMethod));
         }
         return $callback;
+    }
+
+    private function localizeError($key, $parameters = array())
+    {
+        $localizer = $this->context->getLocalizer();
+        return $localizer->trans('answer.errors.'.$key, $parameters, 'api1::controllers');
     }
 
 }

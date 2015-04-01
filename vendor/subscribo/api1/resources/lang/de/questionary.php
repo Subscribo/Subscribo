@@ -32,8 +32,8 @@ return array(
         ],
         'special' => [
             'CODE_LOGIN_OR_NEW_ACCOUNT_PASSWORD' => 'Oder gib dein Passwort zu deinem bestehenden Konto an(E-Mail: %email%):',
-            'CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO' => 'Möchtest du dein neues Konto bei %requestingService% mit deinem bestehenden Konto bei %confirmingService% verknüpfen (mit der E-Mail %email%)?',
-            'CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD' => 'Wenn du deine Konten zusammenführen möchtest, musst du das Passwort deines Kontos bei %confirmingService% mit der E-Mail Adresse %email% angeben.',
+            'CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO' => 'Möchtest du dein neues Konto bei {requestingService} mit deinem bestehenden Konto bei {confirmingService} verknüpfen (mit der E-Mail %email%)?',
+            'CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD' => 'Wenn du deine Konten zusammenführen möchtest, musst du das Passwort deines Kontos bei {confirmingService} mit der E-Mail Adresse %email% angeben.',
         ],
     ],
 );

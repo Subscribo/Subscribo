@@ -53,22 +53,19 @@ class QuestionFactory
         if (( ! empty($additionalData['samePoolServices'])) and (Question::CODE_MERGE_OR_NEW_ACCOUNT_SELECT_SERVICE === $question->code)) {
             $question->prependSelectOptions($additionalData['samePoolServices']);
         }
-        if (( ! empty($additionalData['existingEmail'])) and (Question::CODE_LOGIN_OR_NEW_ACCOUNT_PASSWORD === $question->code)) {
-            $parameters = ['%email%' => $additionalData['existingEmail']];
+        if ((Question::CODE_LOGIN_OR_NEW_ACCOUNT_PASSWORD === $question->code) and ( ! empty($additionalData['%email%']))) {
+            $parameters = $this->extractParameters(['%email%'], $additionalData);
             /// TRANSLATORS: English: Or provide a password to your existing account (email: %email%):
             $question->text = $this->localizer->trans('questions.special.CODE_LOGIN_OR_NEW_ACCOUNT_PASSWORD', $parameters);
         }
         if (Question::CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO === $question->code) {
-            $parameters['%confirmingService%'] = Arr::get($additionalData, 'confirmingServiceName');
-            $parameters['%requestingService%'] = Arr::get($additionalData, 'requestingServiceName');
-            $parameters['%email%'] = Arr::get($additionalData, 'mergedAccountEmail');
-            /// TRANSLATORS: English: Would you like to merge your new account by %requestingService% with your existing account by %confirmingService% (with email %email%)?
+            $parameters = $this->extractParameters(['{confirmingService}', '{requestingService}', '%email%'], $additionalData);
+            /// TRANSLATORS: English: Would you like to merge your new account by {requestingService} with your existing account by {confirmingService} (with email %email%)?
             $question->text = $this->localizer->trans('questions.special.CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO', $parameters);
         }
         if (Question::CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD === $question->code) {
-            $parameters['%confirmingService%'] = Arr::get($additionalData, 'confirmingServiceName');
-            $parameters['%email%'] = Arr::get($additionalData, 'mergedAccountEmail');
-            /// TRANSLATORS: English: If you want to merge accounts, please provide a password to your account by %confirmingService% with email %email%
+            $parameters = $this->extractParameters(['{confirmingService}', '%email%'], $additionalData);
+            /// TRANSLATORS: English: If you want to merge accounts, please provide a password to your account by {confirmingService} with email %email%
             $question->text = $this->localizer->trans('questions.special.CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD', $parameters);
         }
         return $question;
@@ -147,6 +144,16 @@ class QuestionFactory
                 throw new InvalidArgumentException(sprintf("QuestionFactory::assembleFromCode() unrecognized code '%s'", $code));
         }
         $result['code'] = $code;
+        return $result;
+    }
+
+    protected function extractParameters(array $parameterNames, array $source)
+    {
+        $result = [];
+        foreach ($parameterNames as $key)
+        {
+            $result[$key] = array_key_exists($key, $source) ? $source[$key] : null;
+        }
         return $result;
     }
 }

@@ -1,0 +1,24 @@
+# Slovak translation resource file for Api1 Controllers and Traits
+# AccountController
+account.errors:
+        postRegistration:
+            emailUsed: E-mail je už pre túto službu použitý
+            oAuthInvalid: OAuth data sú prázdne alebo neplatné
+        getRemembered.accountNotFound: Účet s požadovaným ID a token-om nebol pre túto službu nájdený
+        resumeRegistration.serviceInvalid: Vybraná služba je neplatná
+        resumeConfirmMergeAnswer:
+            wrongPassword: Zadané heslo nesúhlasí s účtom s emailom %email% u služby {service}
+            rejected: Spojenie účtov bolo odmietnuté
+            confirmed: Spojenie účtov bolo potvrdené // Comment: Not actually an error, but it was simpler to have resumeConfirmMergeAnswer responses together (comments does not need to be translated)
+        resumeOAuthMissingEmail.unacceptableEmail: Prosím, zadajte iný e-mail
+        resumeOAuthExistingEmail.invalidPassword: Zadané heslo nesúhlasí s e-mailom %email% pre túto službu
+        resumeMergeConfirmation.redirectBackMissing: redirect_back je povinný parameter v URL
+        accountMergeConfirmed:
+            resultMissing: Result chýba
+            notConfirmed: Spojenie účtov nebolo potvrdené
+# AnswerController
+answer.errors:
+        getQuestion.wrongType: Zadaná hodnota type nebola rozoznaná
+        getRedirection.wrongType: Zadaná hodnota type nebola rozoznaná
+# ContextRequestValidationTrait
+contextRequestValidationTrait.errors.wrongIdentifier: Identifier musí byť prirodzené číslo

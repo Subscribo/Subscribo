@@ -22,7 +22,7 @@
     "require": {
         "php": "~5.4",
         "subscribo/localization": "@dev",
-        "subscribo/translatemodel": "@dev",
+        "subscribo/translatablemodel": "@dev",
         "illuminate/database" : "~5.0"
     },
     "suggest": {

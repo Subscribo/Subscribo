@@ -68,7 +68,12 @@ trait ContextRequestValidationTrait
     protected function validatePositiveIdentifier($id)
     {
         if ( ! (ctype_digit($id) or is_int($id))) {
-            throw new InvalidIdentifierHttpException(['id' => 'Identifier have to be a positive integer']);
+            /** @var Context $context */
+            $context = $this->context;
+            $localizer = $context->getLocalizer()->duplicate('controllers', 'api1');
+            throw new InvalidIdentifierHttpException([
+                'id' => $localizer->trans('contextRequestValidationTrait.errors.wrongIdentifier'),
+            ]);
         }
         return intval($id);
     }
