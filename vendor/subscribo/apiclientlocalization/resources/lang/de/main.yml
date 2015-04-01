@@ -4,7 +4,7 @@
 page:
     title: Subscribo
 navigation:
-    toggle: Naviagation EIN/AUS
+    toggle: Navigation EIN/AUS
     brand: Subscribo
     home: Startseite
     login: Anmelden
