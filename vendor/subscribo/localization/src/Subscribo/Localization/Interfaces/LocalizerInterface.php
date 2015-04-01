@@ -9,6 +9,14 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 interface LocalizerInterface extends TranslatorInterface
 {
+
+    /**
+     * Whether particular localizer have transparent locale - pointing to current (global) locale
+     *
+     * @return bool
+     */
+    public function haveTransparentLocale();
+
     /**
      * @param string|null $subdomain
      * @param string|null $namespace

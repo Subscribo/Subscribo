@@ -25,16 +25,16 @@ class Localizer implements TranslatorInterface, LocalizerInterface
     /** @var  string */
     protected $domain;
 
-    /** @var string */
-    protected $locale;
+    /** @var string|bool */
+    protected $locale = true;
 
     /**
      * @param LocalizationManagerInterface $manager
-     * @param string|null $locale
+     * @param string|null|bool $locale
      * @param string|null $namespace
      * @param string|null $subdomain
      */
-    public function __construct(LocalizationManagerInterface $manager, $locale = null, $namespace = 'app', $subdomain = 'messages')
+    public function __construct(LocalizationManagerInterface $manager, $locale = true, $namespace = 'app', $subdomain = 'messages')
     {
         if (is_null($namespace)) {
             $namespace = 'app';
@@ -67,17 +67,30 @@ class Localizer implements TranslatorInterface, LocalizerInterface
      * It is advised to be careful when using this method on objects not created within current scope
      * If you want to change application main locale, you might want to use object implementing LocaleManagerInterface
      *
-     * @param string $locale
+     * @param string|bool $locale True for transparent locale - pointing to current (global) locale
      * @return $this
      */
-    public function setLocale($locale)
+    public function setLocale($locale = true)
     {
         $this->locale = $locale;
     }
 
     public function getLocale()
     {
+        if ($this->haveTransparentLocale()) {
+            return $this->manager->getCurrentLocale();
+        }
         return $this->locale;
+    }
+
+    /**
+     * Whether this localizer have transparent locale - pointing to current (global) locale
+     *
+     * @return bool
+     */
+    public function haveTransparentLocale()
+    {
+        return (true === $this->locale);
     }
 
     /**

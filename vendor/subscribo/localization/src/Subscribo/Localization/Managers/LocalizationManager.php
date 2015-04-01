@@ -90,10 +90,14 @@ class LocalizationManager implements LocalizationManagerInterface
         return $this->getTranslator($locale)->transChoice($id, $number, $parameters, $domain, $locale);
     }
 
+    public function getCurrentLocale()
+    {
+        return $this->localeManager->getLocale();
+    }
+
     public function localizer($namespace = null, $subdomain = null)
     {
-        $locale = $this->localeManager->getLocale();
-        return new Localizer($this, $locale, $namespace, $subdomain);
+        return new Localizer($this, true, $namespace, $subdomain);
     }
 
     public function fallbackLocales($locale)

@@ -33,6 +33,14 @@ interface LocalizationManagerInterface
      */
     public function transChoice($id, $number, array $parameters, $domain, $locale);
 
+
+    /**
+     * Return current locale (usually application wide locale)
+     *
+     * @return string
+     */
+    public function getCurrentLocale();
+
     /**
      * Generates new Localizer
      *
