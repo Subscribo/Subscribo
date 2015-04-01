@@ -54,4 +54,4 @@ reset:
         confirmation:
             label: Passwort bestätigen
         submit:
-            label: Password zurücksetzen
+            label: Passwort zurücksetzen
