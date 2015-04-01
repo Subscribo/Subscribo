@@ -3,23 +3,23 @@
 # AccountController
 account.errors:
         postRegistration:
-            emailUsed: Email already used for this service
-            oAuthInvalid: OAuth data empty or invalid
-        getRemembered.accountNotFound: Account with given ID and token not found for this service
-        resumeRegistration.serviceInvalid: Selected service not valid
+            emailUsed: Diese E-Mail Adresse ist bereits für dieses Service registriert
+            oAuthInvalid: OAuth Daten fehlen oder sind ungültig
+        getRemembered.accountNotFound: Es wurde kein Konto mit der angegebenen ID/Token-Kombination gefunden.
+        resumeRegistration.serviceInvalid: Das ausgewählte Service ist ungültig
         resumeConfirmMergeAnswer:
-            wrongPassword: Provided password does not fit with account with email %email% by {service}
-            rejected: Account merge rejected
-            confirmed: Account merge confirmed // Comment: Not actually an error, but it was simpler to have resumeConfirmMergeAnswer responses together (comments does not need to be translated)
-        resumeOAuthMissingEmail.unacceptableEmail: Please, provide another email
-        resumeOAuthExistingEmail.invalidPassword: Given password does not agree with email %email% for this service
-        resumeMergeConfirmation.redirectBackMissing: redirect_back is required in query
+            wrongPassword: Das angegebene Passwort stimmt nicht mit dem Konto %email% von {service} überein.
+            rejected: Konto-Verschmelzung abgelehnt
+            confirmed: Konto-Verschmelzung bestätigt // Comment: Not actually an error, but it was simpler to have resumeConfirmMergeAnswer responses together (comments does not need to be translated)
+        resumeOAuthMissingEmail.unacceptableEmail: Bitte gib eine andere E-Mail Adresse an.
+        resumeOAuthExistingEmail.invalidPassword: Das angegebene Passwort stimmt nicht mit Konto dem %email% für diesen Service überein.
+        resumeMergeConfirmation.redirectBackMissing: redirect_back muss in query angegeben sein
         accountMergeConfirmed:
-            resultMissing: Result is missing
-            notConfirmed: Account merge not confirmed
+            resultMissing: Resultat fehlt.
+            notConfirmed: Konto-Verschmelzung nicht bestätigt.
 # AnswerController
 answer.errors:
-        getQuestion.wrongType: Unrecognized type
-        getRedirection.wrongType: Unrecognized type
+        getQuestion.wrongType: Unbekannter Typ
+        getRedirection.wrongType: Unbekannter Typ
 # ContextRequestValidationTrait
-contextRequestValidationTrait.errors.wrongIdentifier: Identifier have to be a positive integer
+contextRequestValidationTrait.errors.wrongIdentifier: Identifier muss ein positiver Integer sein.
