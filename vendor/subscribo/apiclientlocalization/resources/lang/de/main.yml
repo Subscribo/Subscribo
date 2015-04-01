@@ -4,16 +4,16 @@
 page:
     title: Subscribo
 navigation:
-    toggle: Toggle Navigation
+    toggle: Naviagation EIN/AUS
     brand: Subscribo
     home: Startseite
-    login: Login
-    register: Register
-    logout: Logout
+    login: Anmelden
+    register: Registrieren
+    logout: Abmelden
 # welcome template (welcome.blade.php)
 welcome:
-    title: Subscribo: Welcome
+    title: Subscribo: Willkommen
 # Home content template (home.blade.php)
 home:
     heading: Home
-    content: You are logged in!
+    content: Du bist jetzt angemeldet!
