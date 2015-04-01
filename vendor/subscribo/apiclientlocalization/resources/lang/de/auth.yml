@@ -2,56 +2,56 @@
 # Translation work in progress ( 0% )
 # Auth: Login form content template (auth/login.blade.php)
 login:
-    addToPageTitle: Login
-    heading: Login
-    errorsHeading: '<strong>Whoops!</strong> There were some problems with your input.'
+    addToPageTitle: Anmelden
+    heading: Anmelden
+    errorsHeading: '<strong>Whoops!</strong> Die angegeben Daten sind ungültig.'
     form:
         email:
-            label: E-mail Address
+            label: E-Mail Adresse
         password:
-            label: Password
+            label: Passwort
         remember:
-            label: Remember Me
+            label: Angemeldet bleiben
         submit:
-            label: Login
-            linkPasswordEmail: Forgot your password?
+            label: Anmelden
+            linkPasswordEmail: Passwort vergessen?
 # Auth: Password reset request form content template (auth/password.blade.php)
 password:
-    addToPageTitle: Reset Password
-    heading: Password Reset
-    errorsHeading: '<strong>Whoops!</strong> There were some problems with your input.'
+    addToPageTitle: Passwort zurücksetzen
+    heading: Passwort zurücksetzen
+    errorsHeading: '<strong>Whoops!</strong> Die angegeben Daten sind ungültig.'
     form:
         email:
-            label: E-mail Address
+            label: E-Mail Adresse
         submit:
-            label: Send Password Reset Link
+            label: Passwort zurücksetzen
 # Auth: Registration form content template (auth/register.blade.php)
 register:
-    addToPageTitle: Registration
-    heading: Register
-    errorsHeading: '<strong>Whoops!</strong> There were some problems with your input.'
+    addToPageTitle: Registrieren
+    heading: Registrieren
+    errorsHeading: '<strong>Whoops!</strong> Die angegeben Daten sind ungültig.'
     form:
         name:
             label: Name
         email:
-            label: E-mail Address
+            label: E-Mail Adresse
         password:
-            label: Password
+            label: Passwort
         confirmation:
-            label: Confirm Password
+            label: Passwort bestätigen
         submit:
-            label: Register
+            label: Registrieren
 # Auth: Password reset form content template (auth/reset.blade.php)
 reset:
-    addToPageTitle: Password Reset
-    heading: Reset Password
-    errorsHeading: '<strong>Whoops!</strong> There were some problems with your input.'
+    addToPageTitle: Passwort zurücksetzen
+    heading: Passwort zurücksetzen
+    errorsHeading: '<strong>Whoops!</strong> Die angegeben Daten sind ungültig.'
     form:
         email:
-            label: E-mail Address
+            label: E-Mail Adresse
         password:
-            label: Password
+            label: Passwort
         confirmation:
-            label: Confirm Password
+            label: Passwort bestätigen
         submit:
-            label: Reset Password
+            label: Password zurücksetzen
