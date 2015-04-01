@@ -1,6 +1,7 @@
 <?php namespace Subscribo\Localization\Interfaces;
 
 use Symfony\Component\Translation\TranslatorInterface;
+use Subscribo\Localization\Interfaces\TemplateLocalizerInterface;
 
 /**
  * Class LocalizerInterface
@@ -20,10 +21,20 @@ interface LocalizerInterface extends TranslatorInterface
     /**
      * @param string|null $subdomain
      * @param string|null $namespace
-     * @param string|null $locale
+     * @param string|bool|null $locale
      * @return static
      */
     public function duplicate($subdomain = null, $namespace = null, $locale = null);
+
+    /**
+     * Creates a new instance of TemplateLocalizerInterface
+     *
+     * @param string|null $subdomain
+     * @param string|null $namespace
+     * @param string|bool|null $locale
+     * @return TemplateLocalizerInterface
+     */
+    public function template($subdomain = null, $namespace = null, $locale = null);
 
     /**
      * @param string $value

@@ -5,6 +5,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Subscribo\Localization\Interfaces\LocalizationManagerInterface;
 use Subscribo\Localization\LocaleTools;
+use Subscribo\Localization\Localizers\TemplateLocalizer;
 
 /**
  * Class Localizer
@@ -49,7 +50,7 @@ class Localizer implements TranslatorInterface, LocalizerInterface
     /**
      * @param string|null $subdomain
      * @param string|null $namespace
-     * @param string|null $locale
+     * @param string|bool|null $locale
      * @return static
      */
     public function duplicate($subdomain = null, $namespace = null, $locale = null)
@@ -58,6 +59,22 @@ class Localizer implements TranslatorInterface, LocalizerInterface
         $namespace = is_null($namespace) ? $this->namespace : $namespace;
         $locale = is_null($locale) ? $this->getLocale() : $locale;
         $result = new static($this->manager, $locale, $namespace, $subdomain);
+        return $result;
+    }
+
+    /**
+     * Creates new TemplateLocalizer
+     * @param string|null $subdomain
+     * @param string|null $namespace
+     * @param string|bool|null $locale
+     * @return TemplateLocalizer
+     */
+    public function template($subdomain = null, $namespace = null, $locale = null)
+    {
+        $subdomain = is_null($subdomain) ? $this->subdomain : $subdomain;
+        $namespace = is_null($namespace) ? $this->namespace : $namespace;
+        $locale = is_null($locale) ? $this->getLocale() : $locale;
+        $result = new TemplateLocalizer($this->manager, $locale, $namespace, $subdomain);
         return $result;
     }
 
@@ -166,8 +183,8 @@ class Localizer implements TranslatorInterface, LocalizerInterface
 
     /**
      * @param string $subdomain
-     * @param null $namespace
-     * @param null $locale
+     * @param string|null $namespace
+     * @param string|bool|null $locale
      * @return $this
      */
     protected function setup($subdomain, $namespace = null, $locale = null)
