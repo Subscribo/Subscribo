@@ -2,17 +2,23 @@
 
 use RuntimeException;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 use Subscribo\RestCommon\Questionary;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Subscribo\Support\Arr;
 
 class QuestionaryComposer
 {
     /** @var LocalizerInterface  */
     protected $localizer;
 
-    public function __construct(LocalizerInterface $localizer)
+    /** @var Request  */
+    protected $request;
+
+    public function __construct(LocalizerInterface $localizer, Request $request)
     {
         $this->localizer = $localizer;
+        $this->request = $request;
     }
 
     public function compose(View $view)
@@ -23,11 +29,13 @@ class QuestionaryComposer
         $errorTitle = $localizer->trans('errorTitle');
         $submit = $localizer->trans('submitButton');
         $questions = $questionary->questions;
+        $oldValues = Arr::only($this->request->old(), $questionary->getFieldsToRememberOnError());
 
         $view->with('heading', $heading);
         $view->with('submit', $submit);
         $view->with('questions', $questions);
         $view->with('errorTitle', $errorTitle);
+        $view->with('oldValues', $oldValues);
     }
 
     /**
