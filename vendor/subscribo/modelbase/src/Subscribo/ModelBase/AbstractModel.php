@@ -63,6 +63,26 @@ abstract class AbstractModel extends Eloquent {
     }
 
     /**
+     * @param string $fieldName
+     * @return bool
+     */
+    public function isFieldTranslatable($fieldName)
+    {
+        return false;
+    }
+
+    /**
+     * @param string $fieldName
+     * @param string|null $locale
+     * @param bool|null $withFallback
+     * @return mixed
+     */
+    public function translateIfTranslatable($fieldName, $locale = null, $withFallback = null)
+    {
+        return $this->__get($fieldName);
+    }
+
+    /**
      * Relations available to be used with method with()
      * key - relation method name, value - related model name
      *
