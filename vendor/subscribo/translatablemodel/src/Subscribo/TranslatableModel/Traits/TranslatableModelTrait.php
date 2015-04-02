@@ -49,6 +49,30 @@ trait TranslatableModelTrait
     }
 
     /**
+     * @param string $fieldName
+     * @return bool
+     */
+    public function isFieldTranslatable($fieldName)
+    {
+        return in_array($fieldName, $this->translatedAttributes, true);
+    }
+
+    /**
+     * @param string $fieldName
+     * @param string|null $locale
+     * @param bool|null $withFallback
+     * @return mixed|null
+     */
+    public function translateIfTranslatable($fieldName, $locale = null, $withFallback = null)
+    {
+        if ( ! $this->isFieldTranslatable($fieldName)) {
+            return $this->$fieldName;
+        }
+        $translation = $this->getTranslation($locale, $withFallback);
+        return $translation ? $translation->$fieldName : null;
+    }
+
+    /**
      * @todo implement properly using array of fallback translations
      *
      * @param Builder $query
