@@ -1,6 +1,10 @@
 <?php
-
+/**
+ * English translation resources file for creating Questionaries and Questions, used by QuestionFactory and QuestionaryFactory
+ *
+ */
 return array(
+    // QuestionaryFactory
     'questionary' => [
         'title' => [
             'CODE_NEW_CUSTOMER_EMAIL' => 'Please provide your actual email to finish your registration:',
@@ -10,6 +14,7 @@ return array(
             'CODE_CONFIRM_ACCOUNT_MERGE_SIMPLE' => 'Would you like to merge your accounts?',
         ],
     ],
+    // QuestionFactory
     'questions' => [
         'text'  => [
             'CODE_NEW_CUSTOMER_EMAIL_EMAIL' => 'Your actual email:',
@@ -35,6 +40,27 @@ return array(
             'CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO' => 'Would you like to merge your new account by {requestingService} with your existing account by {confirmingService} (with email %email%)?',
             'CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD' => 'If you want to merge accounts, please provide a password to your account by {confirmingService} with email %email%',
         ],
+        'attributeNames' => [
+            'CODE_NEW_CUSTOMER_EMAIL_EMAIL' => 'e-mail',
+            'CODE_LOGIN_OR_NEW_ACCOUNT_EMAIL' => 'e-mail',
+            'CODE_LOGIN_OR_NEW_ACCOUNT_PASSWORD' => 'password',
+            'CODE_MERGE_OR_NEW_ACCOUNT_SELECT_SERVICE' => 'select service',
+            'CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO' => 'your choice',
+            'CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD' => 'password',
+        ],
+        'validationMessages' => [
+            'CODE_NEW_CUSTOMER_EMAIL_EMAIL' => [
+                'required' => 'E-mail field is required',
+                'email' => 'Provided e-mail is not valid',
+            ],
+            'CODE_LOGIN_OR_NEW_ACCOUNT_EMAIL' => [
+                'required_without' => 'Your e-mail is necessary, when your password is not provided',
+                'email' => 'Provided e-mail is not valid',
+            ],
+            'CODE_LOGIN_OR_NEW_ACCOUNT_PASSWORD' => 'Please, provide your password to your current account or provide a new email',
+            'CODE_MERGE_OR_NEW_ACCOUNT_SELECT_SERVICE' => 'Please, select a service or option "Create a new account"',
+            'CODE_CONFIRM_MERGE_ACCOUNT_YES_OR_NO' => 'Please, choose whether you want to merge your accounts or not',
+            'CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD' => 'If you want to merge your accounts, password is a required field'
+        ],
     ],
-
 );

@@ -80,8 +80,13 @@ class AnswerController extends AbstractController
         $callback = $this->retrieveCallback($actionInterruption);
 
         $questionary = new Questionary($actionInterruption->serverRequest);
-        $rules = $questionary->getQuestionsValidationRules();
-        $validator = $this->assembleValidator($validatedData['answer'], $rules);
+        $validator = $this->assembleValidator(
+            $validatedData['answer'],
+            $questionary->getValidationRules(),
+            $questionary->getValidationMessages(),
+            $questionary->getValidationAttributes(),
+            $questionary->getValidationCustomValues()
+        );
         if ($validator->fails()) {
             throw new InvalidInputHttpException($validator->errors()->all());
         }

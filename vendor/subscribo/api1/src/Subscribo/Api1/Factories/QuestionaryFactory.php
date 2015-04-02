@@ -49,6 +49,9 @@ class QuestionaryFactory
             $questions[$key] = $questionFactory->make($questionSource, $additionalData);
         }
         $source['questions'] = $questions;
+        if ( ! empty($additionalData['locale'])) {
+            $source['locale'] = $additionalData['locale'];
+        }
         $questionary = new Questionary($source);
         return $questionary;
     }

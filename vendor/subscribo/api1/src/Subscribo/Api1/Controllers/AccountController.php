@@ -170,6 +170,7 @@ class AccountController extends AbstractController
         }
         $additionalData = ['serviceId' => $serviceToMergeId];
         $extraData['allowedServiceIds'] = [$serviceToMergeId];
+        $extraData['preferredLocaleForGuest'] = $this->context->getLocalizer()->getStandardLocale();
         $clientRedirection = $this->prepareClientRedirection(ClientRedirection::CODE_CONFIRM_MERGE_REQUEST, $extraData, 'resumeMergeConfirmation', $additionalData);
         $customerRegistration->markMergeProposed($serviceToMergeId, $clientRedirection->hash);
         throw new ClientRedirectionServerRequestHttpException($clientRedirection);
@@ -311,13 +312,20 @@ class AccountController extends AbstractController
         if (empty($queryData['redirect_back'])) {
             throw new InvalidQueryHttpException(['redirect_back' => $this->localizeError('resumeMergeConfirmation.redirectBackMissing')]);
         }
+        $locale = $this->context->getLocale();
+        if (( ! $this->context->getAccountId()) and ( ! empty($extraData['preferredLocaleForGuest']))) {
+            $localeObject = $this->context->getService()->chooseLocale($extraData['preferredLocaleForGuest']);
+            $locale = $localeObject ? $localeObject->identifier : $locale;
+        }
+        $this->context->getLocalizer()->setLocale($locale);
         $extraData['redirectBack'] = $queryData['redirect_back'];
         $customerRegistration = $this->retrieveCustomerRegistration($extraData);
         $requestingService = Service::find($actionInterruption->serviceId);
         $additionalData = [
-            '{confirmingService}' => $this->context->getService()->name,
-            '{requestingService}' => $requestingService->name,
+            '{confirmingService}' => $this->context->getService()->translateIfTranslatable('name', $locale),
+            '{requestingService}' => $requestingService->translateIfTranslatable('name', $locale),
             '%email%'    => $customerRegistration->email,
+            'locale'     => $locale,
         ];
         $currentAccount = $this->context->getAccount(true);
         if ($currentAccount and ($currentAccount->customer->email === $customerRegistration->email)) {

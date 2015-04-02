@@ -22,11 +22,15 @@ trait ContextRequestValidationTrait
      * @param array $rules
      * @param array $messages
      * @param array $customAttributes
-     * @return \Illuminate\Validation\Validator
+     * @param array $customValues
+     * @return Validator
      */
-    protected function assembleValidator(array $data, array $rules, array $messages = array(), array $customAttributes = array())
+    protected function assembleValidator(array $data, array $rules, array $messages = [], array $customAttributes = [], array $customValues = [])
     {
         $validator = Validator::make($data, $rules, $messages, $customAttributes);
+        if ($customValues) {
+            $validator->addCustomValues($customValues);
+        }
         return $validator;
     }
 
