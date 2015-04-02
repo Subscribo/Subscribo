@@ -30,10 +30,25 @@ class Question
     /** @var string */
     public $text;
 
+    /** @var  string|null */
+    public $validationAttributeName;
+
+    /** @var array  */
+    protected $validationCustomValues = array();
+
+    /** @var bool  */
+    public $addValidationCustomValuesFromSelect = true;
+
     /** @var array */
     protected $validationRules = array();
 
+    /** @var array|string  */
+    protected $validationMessages = array();
+
     protected $selectOptions = array();
+
+    /** @var  bool|null */
+    protected $rememberValueOnError;
 
     public function __construct(array $data = array())
     {
@@ -59,6 +74,21 @@ class Question
         if ( ! empty($data['selectOptions'])) {
             $this->setSelectOptions($data['selectOptions']);
         }
+        if (isset($data['validationMessages'])) {
+            $this->setValidationMessages($data['validationMessages']);
+        }
+        if ( ! empty($data['validationAttributeName'])) {
+            $this->validationAttributeName = $data['validationAttributeName'];
+        }
+        if ( ! empty($data['validationCustomValues'])) {
+            $this->setValidationCustomValues($data['validationCustomValues']);
+        }
+        if ( array_key_exists('addValidationCustomValuesFromSelect', $data)) {
+            $this->addValidationCustomValuesFromSelect = $data['addValidationCustomValuesFromSelect'];
+        }
+        if ( array_key_exists('rememberValueOnError', $data)) {
+            $this->setRememberValueOnError($data['rememberValueOnError']);
+        }
     }
 
     public function export()
@@ -68,6 +98,11 @@ class Question
             'code' => $this->code,
             'text' => $this->text,
             'validationRules' => $this->validationRules,
+            'validationMessages' => $this->validationMessages,
+            'validationAttributeName' => $this->validationAttributeName,
+            'validationCustomValues' => $this->validationCustomValues,
+            'addValidationCustomValuesFromSelect' => $this->addValidationCustomValuesFromSelect,
+            'rememberValueOnError' => $this->rememberValueOnError,
         ];
         if ($this->selectOptions) {
             $result['selectOptions'] = $this->selectOptions;
@@ -75,6 +110,9 @@ class Question
         return $result;
     }
 
+    /**
+     * @return array
+     */
     public function getValidationRules()
     {
         $rules = is_string($this->validationRules) ? explode('|', $this->validationRules) : $this->validationRules;
@@ -82,6 +120,43 @@ class Question
         return $rules;
     }
 
+    /**
+     * @return array
+     */
+    public function getValidationMessages()
+    {
+        if (empty($this->validationMessages)) {
+            return array();
+        }
+        if (is_array($this->validationMessages)) {
+            return $this->validationMessages;
+        }
+        $message = (string) $this->validationMessages;
+        $result = [];
+        $rules = $this->getValidationRules();
+        foreach ($rules as $ruleSource) {
+            $rule = is_array($ruleSource) ? $ruleSource : explode(':', $ruleSource);
+            $ruleName = reset($rule);
+            $result[$ruleName] = $message;
+        }
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function getValidationCustomValues()
+    {
+        $result = $this->validationCustomValues;
+        if ($this->addValidationCustomValuesFromSelect) {
+            $result = array_replace($this->selectOptions, $result);
+        }
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
     public function getSelectOptions()
     {
         return $this->selectOptions;
@@ -111,15 +186,67 @@ class Question
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function getRememberValueOnError()
+    {
+        if (is_bool($this->rememberValueOnError)) {
+            return $this->rememberValueOnError;
+        }
+        switch ($this->type) {
+            case static::TYPE_PASSWORD:
+                return false;
+            case static::TYPE_EMAIL:
+            case static::TYPE_SELECT:
+                return true;
+        }
+        return false;
+    }
+
     protected function setValidationRules($validationRules)
     {
         $this->validationRules = $validationRules;
         return $this;
     }
 
-    protected function setSelectOptions($selectOptions)
+    /**
+     * @param array $selectOptions
+     * @return $this
+     */
+    protected function setSelectOptions(array $selectOptions)
     {
         $this->selectOptions = $selectOptions;
+        return $this;
+    }
+
+    /**
+     * @param array|string $validationMessages
+     * @return $this
+     */
+    protected function setValidationMessages($validationMessages)
+    {
+        $this->validationMessages = $validationMessages;
+        return $this;
+    }
+
+    /**
+     * @param array $validationCustomValues
+     * @return $this
+     */
+    protected function setValidationCustomValues(array $validationCustomValues)
+    {
+        $this->validationCustomValues = $validationCustomValues;
+        return $this;
+    }
+
+    /**
+     * @param bool|null $rememberValueOnError
+     * @return $this
+     */
+    protected function setRememberValueOnError($rememberValueOnError)
+    {
+        $this->rememberValueOnError = $rememberValueOnError;
         return $this;
     }
 

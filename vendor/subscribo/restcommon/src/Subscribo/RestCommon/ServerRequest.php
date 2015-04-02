@@ -19,6 +19,9 @@ class ServerRequest implements ServerRequestInterface, JsonSerializable, Arrayab
     /** @var string */
     public $endpoint;
 
+    /** @var string|null  */
+    public $locale;
+
     public function __construct(array $data = array())
     {
         if (is_array($data)) {
@@ -39,6 +42,9 @@ class ServerRequest implements ServerRequestInterface, JsonSerializable, Arrayab
         if ( array_key_exists('code', $data)) {
             $this->code = $data['code'];
         }
+        if (isset($data['locale'])) {
+            $this->locale = $data['locale'];
+        }
         return $this;
     }
 
@@ -49,6 +55,7 @@ class ServerRequest implements ServerRequestInterface, JsonSerializable, Arrayab
         $result['code'] = $this->code;
         $result['hash'] = $this->hash;
         $result['endpoint'] = $this->endpoint;
+        $result['locale']   = $this->locale;
         return $result;
     }
 
