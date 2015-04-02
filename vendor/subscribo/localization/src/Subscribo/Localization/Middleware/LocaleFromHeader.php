@@ -2,7 +2,7 @@
 
 use Closure;
 use Illuminate\Http\Request;
-use Subscribo\Localization\Interfaces\LocaleManagerInterface;
+use Subscribo\Localization\Interfaces\ApplicationLocaleManagerInterface;
 use Subscribo\Localization\LocaleTools;
 
 /**
@@ -12,10 +12,10 @@ use Subscribo\Localization\LocaleTools;
  */
 class LocaleFromHeader
 {
-    /** @var LocaleManagerInterface  */
+    /** @var ApplicationLocaleManagerInterface  */
     protected $localeManager;
 
-    public function __construct(LocaleManagerInterface $localeManager)
+    public function __construct(ApplicationLocaleManagerInterface $localeManager)
     {
         $this->localeManager = $localeManager;
     }

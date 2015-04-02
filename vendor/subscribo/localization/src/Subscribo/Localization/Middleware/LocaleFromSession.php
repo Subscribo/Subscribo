@@ -2,7 +2,7 @@
 
 use Closure;
 use Illuminate\Http\Request;
-use Subscribo\Localization\Interfaces\LocaleManagerInterface;
+use Subscribo\Localization\Interfaces\ApplicationLocaleManagerInterface;
 use Subscribo\Localization\Deposits\SessionDeposit;
 
 /**
@@ -12,13 +12,13 @@ use Subscribo\Localization\Deposits\SessionDeposit;
  */
 class LocaleFromSession
 {
-    /** @var LocaleManagerInterface  */
+    /** @var ApplicationLocaleManagerInterface  */
     protected $localeManager;
 
     /** @var SessionDeposit  */
     protected $deposit;
 
-    public function __construct(LocaleManagerInterface $localeManager, SessionDeposit $deposit)
+    public function __construct(ApplicationLocaleManagerInterface $localeManager, SessionDeposit $deposit)
     {
         $this->localeManager = $localeManager;
         $this->deposit = $deposit;

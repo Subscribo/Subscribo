@@ -82,7 +82,7 @@ class Localizer implements TranslatorInterface, LocalizerInterface
      * Setting locale for localizer
      *
      * It is advised to be careful when using this method on objects not created within current scope
-     * If you want to change application main locale, you might want to use object implementing LocaleManagerInterface
+     * If you want to change application main locale, you might want to use object implementing ApplicationLocaleManagerInterface
      *
      * @param string|bool $locale True for transparent locale - pointing to current (global) locale
      * @return $this

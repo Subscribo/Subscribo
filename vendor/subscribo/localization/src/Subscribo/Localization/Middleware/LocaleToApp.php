@@ -2,8 +2,7 @@
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Application;
-use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Subscribo\Localization\Interfaces\ApplicationLocaleManagerInterface;
 
 /**
  * Class LocaleToApp
@@ -12,21 +11,17 @@ use Subscribo\Localization\Interfaces\LocalizerInterface;
  */
 class LocaleToApp
 {
-    /** @var LocalizerInterface  */
-    protected $localizer;
+    /** @var ApplicationLocaleManagerInterface  */
+    protected $manager;
 
-    /** @var \Illuminate\Contracts\Foundation\Application  */
-    protected $app;
-
-    public function __construct(LocalizerInterface $localizer, Application $app)
+    public function __construct(ApplicationLocaleManagerInterface $manager)
     {
-        $this->localizer = $localizer;
-        $this->app = $app;
+        $this->manager = $manager;
     }
 
     public function handle(Request $request, Closure $next)
     {
-        $this->app->setLocale($this->localizer->getLocale());
+        $this->manager->setLocale();
         return $next($request);
     }
 }

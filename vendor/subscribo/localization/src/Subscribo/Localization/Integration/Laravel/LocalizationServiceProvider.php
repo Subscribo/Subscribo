@@ -36,6 +36,7 @@ class LocalizationServiceProvider extends ServiceProvider
             return $localizer;
         });
         $this->app->bind('\\Subscribo\\Localization\\Interfaces\\LocalizerInterface', 'subscribo.localizer');
+        $this->app->singleton('\\Subscribo\\Localization\\Interfaces\\ApplicationLocaleManagerInterface', '\\Subscribo\\Localization\\Managers\\ApplicationLocaleManagerInterface');
     }
 
     public function boot()
