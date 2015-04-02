@@ -47,6 +47,18 @@ Note: If used with package adding this dependency and/or registering this servic
 
 ### 1.5 Important: You need to properly [configure](../restclient/README.md) Subscribo RestClient package
 
+### 1.6 Localization note
+
+This package is localized for English, German and Slovak.
+
+When running
+
+```sh
+    php artisan vendor:publish --tag translation
+```
+
+you are publishing also translation resources from this package (into subscribo/resources/lang/apiclientauth/ where you may customize them)
+
 ## 2. Usage
 
 ### 2.1 Traits

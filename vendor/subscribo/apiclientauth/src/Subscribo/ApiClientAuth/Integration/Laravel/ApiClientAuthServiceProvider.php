@@ -1,6 +1,6 @@
 <?php namespace Subscribo\ApiClientAuth\Integration\Laravel;
 
-use Illuminate\Support\ServiceProvider;
+use Subscribo\Support\ServiceProvider;
 
 /**
  * Class ApiClientAuthServiceProvider
@@ -26,6 +26,7 @@ class ApiClientAuthServiceProvider extends ServiceProvider
         $this->app->make('auth')->extend('remote', function ($app) {
             return $app->make('Subscribo\\ApiClientAuth\\RemoteAccountProvider');
         });
+        $this->registerTranslationResources('messages');
     }
 
     public function registerRoutes($router, array $middleware, array $paths = array())

@@ -42,7 +42,7 @@ class AccountConnector
     {
         $signatureOptions = $this->processSignatureOptions($signatureOptions);
 
-        $responseData = $this->restClient->process('account/validation', 'POST', $credentials, null, null, $signatureOptions, true);
+        $responseData = $this->restClient->process('account/validation', 'POST', $credentials, null, null, $signatureOptions, false);
 
         return $this->assembleResult($responseData, 'validated');
     }
