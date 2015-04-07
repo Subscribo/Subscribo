@@ -12,6 +12,7 @@ use Subscribo\Exception\Exceptions\NotFoundHttpException;
 use Subscribo\Localization\Deposits\SessionDeposit;
 use Subscribo\Localization\Deposits\CookieDeposit;
 use Subscribo\Localization\LocaleUtils;
+use Subscribo\Localization\Interfaces\LocalizerInterface;
 
 /**
  * Class OAuthLoginTrait
@@ -36,22 +37,24 @@ trait OAuthLoginTrait
     }
 
 
-    public function getHandle(OAuthManager $manager, Registrar $registrar, Guard $auth, Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, $provider)
+    public function getHandle(OAuthManager $manager, Registrar $registrar, Guard $auth, Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LocalizerInterface $localizerSource, $provider)
     {
         if (false === array_search($provider, $manager->getAvailableDrivers(), true)) {
             throw new NotFoundHttpException();
         }
+        $errorLocalizer = $localizerSource->template('messages', 'apiclientoauth')
+            ->setPrefix('trait.handle.error')
+            ->setDefaultParameters(['{providerName}' => $manager->getProviderName($provider)]);
         $error = null;
         try {
             $user = $manager->getUser($provider);
         } catch (Exception $e) {
-            $error = 'There was an error during authorization by '.$manager->getProviderName($provider).'.';
+            $error = $errorLocalizer->trans('exception');
+            return redirect($this->registrationPath)
+                ->withErrors($error);
         }
         if (empty($user)) {
-            $error = 'You have probably rejected authorization by '.$manager->getProviderName($provider).'.';
-        }
-        if ($error) {
-            $error .= ' Please try again or use a different form of login or registration.';
+            $error = $errorLocalizer->trans('rejected');
             return redirect($this->registrationPath)
                 ->withErrors($error);
         }
@@ -81,9 +84,10 @@ trait OAuthLoginTrait
                 ->withErrors($e->getValidationErrors());
         } catch (Exception $e) {
             $this->logException($e);
+            $error = $errorLocalizer->trans('loginFailed');
             return redirect($this->registrationPath)
                 ->withInput($nameAndEmail)
-                ->withErrors('Login attempt failed. Please try again later or contact an administrator.');
+                ->withErrors($error);
         }
         $auth->login($account);
         LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);

@@ -1,6 +1,6 @@
 <?php namespace Subscribo\ApiClientOAuth\Integration\Laravel;
 
-use Illuminate\Support\ServiceProvider;
+use Subscribo\Support\ServiceProvider;
 use Illuminate\Routing\Router;
 use Subscribo\ApiClientOAuth\OAuthManager;
 
@@ -15,9 +15,52 @@ class ApiClientOAuthServiceProvider extends ServiceProvider
 
     protected $defer = false;
 
+
     public function register()
     {
+        $this->registerDependencies();
+
+        $this->registerOAuthManager();
+    }
+
+
+    public function boot()
+    {
+        $this->registerResources();
+    }
+
+
+    public function registerRoutes(array $middleware, array $paths = array(), Router $router = null)
+    {
+        $defaultPaths = [
+            'subscribo.oauth.login' => 'oauth/login/{driver}',
+            'subscribo.oauth.handle' => 'oauth/handle/{driver}',
+        ];
+        $paths = array_replace($defaultPaths, $paths);
+        $driverConstraint = ['driver' => '[A-Za-z0-9]+'];
+        $router = $this->getRouter($router);
+
+        $router->get($paths['subscribo.oauth.login'], [
+            'as' => 'subscribo.oauth.login',
+            'middleware' => $middleware,
+            'uses' => '\\Subscribo\\ApiClientOAuth\\Controllers\\OAuthController@getLogin',
+        ])->where($driverConstraint);
+
+        $router->get($paths['subscribo.oauth.handle'], [
+            'as' => 'subscribo.oauth.handle',
+            'middleware' => $middleware,
+            'uses' =>  '\\Subscribo\\ApiClientOAuth\\Controllers\\OAuthController@getHandle',
+        ])->where($driverConstraint);
+    }
+
+    protected function registerDependencies()
+    {
         $this->app->register('Subscribo\\ApiClientCommon\\Integration\\Laravel\\ApiClientCommonServiceProvider');
+    }
+
+
+    protected function registerOAuthManager()
+    {
         $this->app->bindIf(
             'Subscribo\\ApiClientOAuth\\OAuthManager',
             function ($app) {
@@ -27,23 +70,11 @@ class ApiClientOAuthServiceProvider extends ServiceProvider
         );
     }
 
-    public function boot()
+    protected function registerResources()
     {
-        $router = $this->app->make('router');
-        $this->registerRoutes($router);
+        $this->registerTranslationResources('messages');
 
-        $packageDir = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
-        $this->loadViewsFrom($packageDir.'/resources/views', 'subscribo');
-        $this->publishes([
-            $packageDir.'/resources/views/apiclientoauth/loginwithbuttons.blade.php'
-                => base_path('resources/views/vendor/subscribo/apiclientoauth/loginwithbuttons.blade.php'),
-        ], 'view');
-        $this->app->make('view')->composer('subscribo::apiclientoauth.loginwithbuttons', 'Subscribo\\ApiClientOAuth\\ViewComposers\\LoginWithButtonsComposer');
+        $this->registerViews('LoginWithButtons');
     }
 
-    protected function registerRoutes(Router $router)
-    {
-        $router->get('oauth/login/{driver}', ['as' => 'subscribo.oauth.login', 'uses' => '\\Subscribo\\ApiClientOAuth\\Controllers\\OAuthController@getLogin'])->where(['driver' => '[A-Za-z0-9]+']);
-        $router->get('oauth/handle/{driver}', ['as' => 'subscribo.oauth.handle', 'uses' =>  '\\Subscribo\\ApiClientOAuth\\Controllers\\OAuthController@getHandle'])->where(['driver' => '[A-Za-z0-9]+']);
-    }
 }
