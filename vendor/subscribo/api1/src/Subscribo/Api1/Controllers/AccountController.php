@@ -170,7 +170,7 @@ class AccountController extends AbstractController
         }
         $additionalData = ['serviceId' => $serviceToMergeId];
         $extraData['allowedServiceIds'] = [$serviceToMergeId];
-        $extraData['preferredLocaleForGuest'] = $this->context->getLocalizer()->getStandardLocale();
+        $extraData['originalRequestLocale'] = $this->context->getLocalizer()->getLocale();
         $clientRedirection = $this->prepareClientRedirection(ClientRedirection::CODE_CONFIRM_MERGE_REQUEST, $extraData, 'resumeMergeConfirmation', $additionalData);
         $customerRegistration->markMergeProposed($serviceToMergeId, $clientRedirection->hash);
         throw new ClientRedirectionServerRequestHttpException($clientRedirection);
@@ -217,6 +217,7 @@ class AccountController extends AbstractController
         $customerRegistration = $this->retrieveCustomerRegistration($extraData);
         $serviceId = $this->context->getServiceId();
         if ($answer['merge'] !== 'yes') {
+            $this->switchToOriginalRequestLocale($extraData);
             $additionalData['query'] = ['error' => $this->localizeError('resumeConfirmMergeAnswer.rejected')];
             $clientRedirection = ClientRedirectionFactory::make(ClientRedirection::CODE_CONFIRM_MERGE_RESPONSE, $additionalData);
             $customerRegistration->markMergeRejected($serviceId);
@@ -239,9 +240,10 @@ class AccountController extends AbstractController
             }
             $customerId = $validatedCustomer['customer']->id;
         }
-        $customerRegistration->markMergeConfirmed($serviceId, $customerId);
+        $this->switchToOriginalRequestLocale($extraData);
         $additionalData['query'] = ['result' => $this->localizeError('resumeConfirmMergeAnswer.confirmed')]; //Note: Not actually an error, but it was simpler to have resumeConfirmMergeAnswer responses together
         $clientRedirection = ClientRedirectionFactory::make(ClientRedirection::CODE_CONFIRM_MERGE_RESPONSE, $additionalData);
+        $customerRegistration->markMergeConfirmed($serviceId, $customerId);
         $actionInterruption->markAsProcessed($answer);
         return ['result' => $clientRedirection];
     }
@@ -300,6 +302,17 @@ class AccountController extends AbstractController
     }
 
     /**
+     * @param array $extraData
+     */
+    private function switchToOriginalRequestLocale(array $extraData)
+    {
+        if (empty($extraData['originalRequestLocale'])) {
+            return;
+        }
+        $this->context->getLocalizer()->setLocale($extraData['originalRequestLocale']);
+    }
+
+    /**
      * @param ActionInterruption $actionInterruption
      * @param array $queryData
      * @return QuestionaryServerRequestHttpException
@@ -308,18 +321,20 @@ class AccountController extends AbstractController
      */
     private function makeAccountMergingConfirmationQuestionaryException(ActionInterruption $actionInterruption, array $queryData)
     {
-        $extraData = $actionInterruption->extraData;
         if (empty($queryData['redirect_back'])) {
             throw new InvalidQueryHttpException(['redirect_back' => $this->localizeError('resumeMergeConfirmation.redirectBackMissing')]);
         }
+        $extraData = $actionInterruption->extraData;
+        $customerRegistration = $this->retrieveCustomerRegistration($extraData);
+        $currentAccount = $this->context->getAccount(true);
+        $omitPassword = ($currentAccount and ($currentAccount->customer->email === $customerRegistration->email));
         $locale = $this->context->getLocale();
-        if (( ! $this->context->getAccountId()) and ( ! empty($extraData['preferredLocaleForGuest']))) {
-            $localeObject = $this->context->getService()->chooseLocale($extraData['preferredLocaleForGuest']);
+        if (( ! $omitPassword) and ( ! empty($extraData['originalRequestLocale']))) {
+            $localeObject = $this->context->getService()->chooseLocale($extraData['originalRequestLocale']);
             $locale = $localeObject ? $localeObject->identifier : $locale;
         }
         $this->context->getLocalizer()->setLocale($locale);
         $extraData['redirectBack'] = $queryData['redirect_back'];
-        $customerRegistration = $this->retrieveCustomerRegistration($extraData);
         $requestingService = Service::find($actionInterruption->serviceId);
         $additionalData = [
             '{confirmingService}' => $this->context->getService()->translateIfTranslatable('name', $locale),
@@ -327,8 +342,7 @@ class AccountController extends AbstractController
             '%email%'    => $customerRegistration->email,
             'locale'     => $locale,
         ];
-        $currentAccount = $this->context->getAccount(true);
-        if ($currentAccount and ($currentAccount->customer->email === $customerRegistration->email)) {
+        if ($omitPassword) {
             $extraData['omitPasswordCheck'] = strval($this->context->getServiceId());
             return $this->makeQuestion(Questionary::CODE_CONFIRM_ACCOUNT_MERGE_SIMPLE, $extraData, 'resumeConfirmMergeAnswer', $additionalData);
         }
