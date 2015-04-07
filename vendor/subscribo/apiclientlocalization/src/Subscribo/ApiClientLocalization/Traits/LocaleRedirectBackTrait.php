@@ -2,7 +2,7 @@
 
 use Illuminate\Session\Store;
 use Subscribo\Exception\Exceptions\NotFoundHttpException;
-use Subscribo\Localization\Interfaces\LocaleManagerInterface;
+use Subscribo\Localization\Interfaces\ApplicationLocaleManagerInterface;
 use Subscribo\Localization\Deposits\SessionDeposit;
 use Subscribo\Localization\Deposits\CookieDeposit;
 use Subscribo\ApiClientLocalization\LocalePossibilities;
@@ -10,7 +10,7 @@ use Subscribo\ApiClientLocalization\LocalePossibilities;
 
 trait LocaleRedirectBackTrait
 {
-    public function getLocaleRedirectBack(LocalePossibilities $possibilities, LocaleManagerInterface $localeManager, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, Store $session, $selectedLocale)
+    public function getLocaleRedirectBack(LocalePossibilities $possibilities, ApplicationLocaleManagerInterface $localeManager, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, Store $session, $selectedLocale)
     {
         $session->reflash();
         $uriStubs = $possibilities->getAvailableUriStubs();
