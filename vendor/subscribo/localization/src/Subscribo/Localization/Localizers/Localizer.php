@@ -147,6 +147,17 @@ class Localizer implements TranslatorInterface, LocalizerInterface
         return $this->manager->transChoice($id, $number, $parameters, $domain, $locale);
     }
 
+    public function canTranslate($id, $domain = null, $locale = null, $mode = self::CAN_TRANSLATE_MODE_SAME_LANGUAGE)
+    {
+        $mode = $mode ?: self::CAN_TRANSLATE_MODE_SAME_LANGUAGE;
+        $domain = is_null($domain) ? $this->domain : $domain;
+        $locale = is_null($locale) ? $this->getLocale() : $locale;
+        if (empty($locale)) {
+            throw new RuntimeException('Localizer::transChoice() locale has not been provided neither initialized');
+        }
+        return $this->manager->canTranslate($id, $domain, $locale, $mode);
+    }
+
     /**
      * @param string $value
      * @return string

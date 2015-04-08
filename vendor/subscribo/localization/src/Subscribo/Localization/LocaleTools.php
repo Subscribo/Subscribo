@@ -52,7 +52,9 @@ class LocaleTools
     {
         $standard = static::localeTagToStandard($localeTag);
         $parts = explode('_', $standard);
-        return reset($parts);
+        $languagePart = reset($parts);
+        $language = strtolower($languagePart);
+        return $language;
     }
 
     /**

@@ -2,13 +2,14 @@
 
 use Symfony\Component\Translation\TranslatorInterface;
 use Subscribo\Localization\Interfaces\TemplateLocalizerInterface;
+use Subscribo\Localization\Interfaces\TranslationAbilityCheckingInterface;
 
 /**
  * Class LocalizerInterface
  *
  * @package Subscribo\Localization
  */
-interface LocalizerInterface extends TranslatorInterface
+interface LocalizerInterface extends TranslatorInterface, TranslationAbilityCheckingInterface
 {
 
     /**

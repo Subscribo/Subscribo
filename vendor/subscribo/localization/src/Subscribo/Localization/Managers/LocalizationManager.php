@@ -90,6 +90,17 @@ class LocalizationManager implements LocalizationManagerInterface
         return $this->getTranslator($locale)->transChoice($id, $number, $parameters, $domain, $locale);
     }
 
+    public function canTranslate($id, $domain = null, $locale = null, $mode = self::CAN_TRANSLATE_MODE_SAME_LANGUAGE)
+    {
+        $mode = $mode ?: self::CAN_TRANSLATE_MODE_SAME_LANGUAGE;
+        if (is_null($locale)) {
+            $locale = $this->localeManager->getLocale();
+        }
+        $this->loadTranslationResources($domain, $locale);
+
+        return $this->getTranslator($locale)->canTranslate($id, $domain, $locale, $mode);
+    }
+
     public function getCurrentLocale()
     {
         return $this->localeManager->getLocale();

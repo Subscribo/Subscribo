@@ -1,13 +1,14 @@
 <?php namespace Subscribo\Localization\Interfaces;
 
 use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Subscribo\Localization\Interfaces\TranslationAbilityCheckingInterface;
 
 /**
  * Class LocalizationManagerInterface
  *
  * @package Subscribo\Localization
  */
-interface LocalizationManagerInterface
+interface LocalizationManagerInterface extends TranslationAbilityCheckingInterface
 {
 
     /**
