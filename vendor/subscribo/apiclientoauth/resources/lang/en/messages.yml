@@ -1,9 +1,16 @@
 # English Translation Resource file for package Subscribo ApiClientOAuth
 # template loginwithbuttons / ViewComposer LoginWithButtons
 buttons:
-    label: Login with {name}
+    label:
+        fallback: Login with {providerName}
+        specific:
+            facebook: Login with Facebook
+            twitter: Login with Twitter
 # trait OAuthLoginTrait
 trait.handle.error:
     exception: There was an error during authorization by {providerName}. Please try again later or use different form of login or registration.
     rejected: You have probably rejected authorization by {providerName}. Please try again or use different form of login or registration.
     loginFailed: Login attempt failed. Please try again later or contact an administrator.
+providers.name:
+    facebook: Facebook
+    twitter: Twitter

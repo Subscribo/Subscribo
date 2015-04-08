@@ -15,12 +15,21 @@ class LoginWithButtonsComposer
     }
     public function compose(View $view)
     {
-        $providerNames = AbstractOAuthManager::getProviderName();
+        $drivers = AbstractOAuthManager::getAvailableDrivers();
         $links = [];
-        foreach ($providerNames as $driver => $name)
+        foreach ($drivers as $driver)
         {
             $url = route('subscribo.oauth.login', ['driver' => $driver]);
-            $links[$url] = $this->localizer->trans('buttons.label', ['{name}' => $name]);
+            $id = 'buttons.label.specific.'.$driver;
+            if ($this->localizer->canTranslate($id)) {
+                $links[$url] = $this->localizer->trans($id);
+            } else {
+                $providerNameTranslateId = 'providers.name.'.$driver;
+                $providerName = $this->localizer->canTranslate($providerNameTranslateId)
+                    ? $this->localizer->trans($providerNameTranslateId)
+                    : AbstractOAuthManager::getProviderName($driver);
+                $links[$url] = $this->localizer->trans('buttons.label.fallback', ['{providerName}' => $providerName]);
+            }
         }
         $view->with('oAuthLinks', $links);
     }

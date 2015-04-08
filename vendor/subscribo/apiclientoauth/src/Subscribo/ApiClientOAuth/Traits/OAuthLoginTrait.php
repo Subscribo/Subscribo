@@ -13,6 +13,7 @@ use Subscribo\Localization\Deposits\SessionDeposit;
 use Subscribo\Localization\Deposits\CookieDeposit;
 use Subscribo\Localization\LocaleUtils;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Subscribo\Localization\Interfaces\TemplateLocalizerInterface;
 
 /**
  * Class OAuthLoginTrait
@@ -37,24 +38,21 @@ trait OAuthLoginTrait
     }
 
 
-    public function getHandle(OAuthManager $manager, Registrar $registrar, Guard $auth, Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LocalizerInterface $localizerSource, $provider)
+    public function getHandle(OAuthManager $manager, Registrar $registrar, Guard $auth, Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LocalizerInterface $localizer, $provider)
     {
         if (false === array_search($provider, $manager->getAvailableDrivers(), true)) {
             throw new NotFoundHttpException();
         }
-        $errorLocalizer = $localizerSource->template('messages', 'apiclientoauth')
-            ->setPrefix('trait.handle.error')
-            ->setDefaultParameters(['{providerName}' => $manager->getProviderName($provider)]);
         $error = null;
         try {
             $user = $manager->getUser($provider);
         } catch (Exception $e) {
-            $error = $errorLocalizer->trans('exception');
+            $error = $this->makeErrorLocalizerForGetHandle($manager, $localizer, $provider)->trans('exception');
             return redirect($this->registrationPath)
                 ->withErrors($error);
         }
         if (empty($user)) {
-            $error = $errorLocalizer->trans('rejected');
+            $error = $this->makeErrorLocalizerForGetHandle($manager, $localizer, $provider)->trans('rejected');
             return redirect($this->registrationPath)
                 ->withErrors($error);
         }
@@ -84,7 +82,7 @@ trait OAuthLoginTrait
                 ->withErrors($e->getValidationErrors());
         } catch (Exception $e) {
             $this->logException($e);
-            $error = $errorLocalizer->trans('loginFailed');
+            $error = $this->makeErrorLocalizerForGetHandle($manager, $localizer, $provider)->trans('loginFailed');
             return redirect($this->registrationPath)
                 ->withInput($nameAndEmail)
                 ->withErrors($error);
@@ -92,5 +90,23 @@ trait OAuthLoginTrait
         $auth->login($account);
         LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);
         return redirect($this->redirectPath);
+    }
+
+    /**
+     * @param OAuthManager $manager
+     * @param LocalizerInterface $localizer
+     * @param string $provider
+     * @return TemplateLocalizerInterface
+     */
+    private function makeErrorLocalizerForGetHandle(OAuthManager $manager, LocalizerInterface $localizer, $provider)
+    {
+        $providerNameTranslateId = 'providers.name.'.$provider;
+        $providerName = $localizer->canTranslate($providerNameTranslateId)
+            ? $localizer->trans($providerNameTranslateId)
+            : $manager->getProviderName($provider);
+        $errorLocalizer = $localizer->template('messages', 'apiclientoauth')
+            ->setPrefix('trait.handle.error')
+            ->setDefaultParameters(['{providerName}' => $providerName]);
+        return $errorLocalizer;
     }
 }
