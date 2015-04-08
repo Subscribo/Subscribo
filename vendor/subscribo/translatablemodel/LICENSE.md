@@ -1,9 +1,10 @@
 Might contain third party code or part(s) of third party code
 (e.g. (parts of) Laravel framework - www.laravel.com)
 
+Contain ideas and code from dimsav/laravel-translatable (MIT) - https://github.com/dimsav/laravel-translatable
+
 Some ideas / code might have come from other packages, such as:
 vinkla/translator (MIT) - https://github.com/vinkla/translator
-dimsav/laravel-translatable (MIT) - https://github.com/dimsav/laravel-translatable
 
 Ideas:
 http://laravel.io/forum/06-28-2014-eloquent-localization

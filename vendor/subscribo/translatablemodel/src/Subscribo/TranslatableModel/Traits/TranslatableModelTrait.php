@@ -48,6 +48,30 @@ trait TranslatableModelTrait
         return null;
     }
 
+
+    public function hasTranslation($locale = null)
+    {
+        $locale = $locale ?: $this->getLocaleConfiguration()->getCurrentLocale();
+
+        foreach ($this->translations as $translation) {
+            if ($translation->getAttribute($this->getLocaleKey()) == $locale) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public function setAttribute($key, $value)
+    {
+        if ($this->isFieldTranslatable($key)) {
+            $locale = $this->getLocaleConfiguration()->getCurrentLocale();
+            $this->translateOrNew($locale)->$key = $value;
+        } else {
+            parent::setAttribute($key, $value);
+        }
+    }
+
     /**
      * @param string $fieldName
      * @return bool
