@@ -25,8 +25,14 @@ class Service extends \Subscribo\ModelCore\Bases\Service
                 return $locale;
             }
         }
-        //Then we try to find available locale with the same language part
+        //Then we try to find available locale with the same standard part
         $preferredStandard = strstr($preferred, '-', true) ?: $preferred;
+        foreach ($this->availableLocales as $locale) {
+            if ($preferredStandard === $locale->extractStandardPart()) {
+                return $locale;
+            }
+        }
+        //Then we try to find available locale with the same language part
         $preferredLang = strstr($preferredStandard, '_', true) ?: $preferredStandard;
         $preferredLang = strtolower($preferredLang);
         foreach ($this->availableLocales as $locale) {

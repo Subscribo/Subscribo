@@ -207,14 +207,6 @@ model_options:
     account_tokens: #OAuth authentication details for customers
            administrator_menu: ACL
 
-    translations:
-       administrator_menu: Localization
-
-    tables:
-       administrator_menu: Tables
-
-    table_fields: #    (note: contains only translatable and possibly virtual fields (EAV)
-       administrator_menu: Tables
 
     locales:
        administrator_menu: Localization
@@ -328,7 +320,7 @@ model_fields:
 
     service_pools: # auxiliary table, allowing grouping of services, allowing user to use same user for different services
         - identifier (identifier) unique representative // unique string used in API
-        - name // human readable name
+        - name translate // human readable name
         - comment null
 
     service_modules:
@@ -476,7 +468,9 @@ model_fields:
 
 
     banks:
-    - name
+    - identifier (identifier) unique
+    - official_name representative
+    - name translate
     - bic
     - bank_code null // //bank_number for some countries
     - country_id → countries
@@ -484,21 +478,21 @@ model_fields:
 
 
     countries: #    (basic common political division – i. e. Austria, Germany, Switzerland, USA...)
-    - identifier (identifier) unique representative // unique string used in API (e.g. AT, DE ...)
-    - official_name //Name of country in the official language of the country
+    - identifier (identifier) unique  // unique string used in API (e.g. AT, DE ...)
+    - official_name representative //Name of country in the official language of the country
     - name translate
     - country_union (enum from EU) null
 
     states: #    (USA states, also possibly Germany and Austria Laender or Swiss Cantons)
-    - identifier (identifier) unique representative // unique string used in API
-    - official_name //Name of state in the official language ot the country
+    - identifier (identifier) unique  // unique string used in API
+    - official_name representative //Name of state in the official language ot the country
     - name translate
     - country_id → countries
 
     country_unions: #    (not necessary a table – (ID:1 = EU))
-    - identifier (identifier) unique representative // unique string used in API
+    - identifier (identifier) unique  // unique string used in API
+    - official_name representative
     - name translate
-    - official_name
 
 
     accounts: #    (former “accessors” - actually a pivot table - connection between a user account and a particular service – there is a possibility of one email to be linked to multiple users – to know with which actual user are we dealing with we need an information about service requested – this would give as an account)
@@ -508,33 +502,17 @@ model_fields:
     - remember_locale (int) default 0
 
 
-    translations:
-    - table_id → tables
-    - field_id → table_fields
-    - row_id
-    - locale_id → locales
-    - text
-
-    tables:
-    - identifier (identifier) unique representative // unique string used in API - actual table name
-    - comment null # what is this table for
-
-    table_fields: #    (note: contains only translatable and possibly virtual fields (EAV)
-    - identifier (identifier) unique representative // unique string used in API - actual field name
-    - comment null # what is this field for
-
     locales:
-    - identifier (identifier) unique representative // unique string used in API - language code with country, e.g. DE_AT
+    - identifier (identifier) unique  // unique string used in API - language code with country, e.g. DE_AT
     - type null
-    - native_name
+    - native_name representative
     - name translate
-    - native_name
 
     products:
     - identifier (identifier) unique representative // unique string used in API
     - service_id → services
     - standalone (bool) default false
-    - {name: name, type:string, translate:true}
+    - name translate
 
 
     deliveries:
@@ -560,9 +538,8 @@ model_fields:
     - comment null
     - product_id → products
     - delivery_id → deliveries
-    - {name: name, type:string, translate:true}
-    - {name: description, type:string, translate:true}
-
+    - name translate
+    - description translate
 
 
     subscriptions:
@@ -610,7 +587,8 @@ model_fields:
     - billing_detail_id null → billing_details
 
     currencies: #    (possibly a “virtual” table)
-    - name
+    - identifier (identifier) unique representative
+    - name translate
     - code
     - symbol
 
@@ -629,30 +607,30 @@ model_fields:
 
     tags:
     - identifier (identifier) unique representative // unique string used in API
-    - name
+    - name translate
     - tag_group_id
 
     tag_groups:
     - identifier (identifier) unique representative // unique string used in API
-    - name
+    - name translate
     - service_id null
 
 
     kochabo_recipes:
+    - identifier (identifier) unique representative // unique string used in API
     - country_id → countries
     - source null
-    - identifier (identifier) unique representative // unique string used in API
     - comment null
-    - {name: name, type:string, translate:true}
-    - {name: original_name, type:string, translate:true}
+    - name translate
+    - original_name translate
 
 
 
     kochabo_recipe_steps:
+    - identifier (identifier) unique representative // unique string used in API
     - sequence (int)
     - recipe_id → kochabo_recipes
-    - identifier (identifier) unique representative // unique string used in API
-    - {name: text, type:string, translate:true}
+    - text translate
 
     kochabo_measured_recipes:
     - product_id null → products
@@ -662,12 +640,12 @@ model_fields:
     kochabo_ingredients:
     - identifier (identifier) unique representative // unique string used in API
     - comment null
-    - {name: name, type:string, translate:true}
+    - name translate
 
     kochabo_measures:
     - identifier (identifier) unique representative // unique string used in API
     - comment null
-    - {name: name, type:string, translate:true}
+    - name translate
 
     kochabo_ingredients_in_measured_recipes:
     - amount (rational number)
@@ -682,17 +660,20 @@ model_fields:
 
     acl_groups:
     - identifier (identifier) unique representative // unique string used in API
-    - name // human readable name
+    - name translate // human readable name
+    - description translate null
     - comment null
 
     acl_roles:
     - identifier (identifier) unique representative // unique string used in API
-    - name // human readable name
+    - name translate // human readable name
+    - description translate null
     - comment null
 
     acl_rights:
     - identifier (identifier) unique representative // unique string used in API
-    - name // human readable name
+    - name translate // human readable name
+    - description translate null
     - comment null
     - api_method_id → api_methods
 
