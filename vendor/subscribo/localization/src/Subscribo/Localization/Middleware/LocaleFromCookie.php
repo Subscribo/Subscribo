@@ -34,10 +34,8 @@ class LocaleFromCookie
     {
         $locale = $this->deposit->getLocale();
         if ( ! $locale) {
-            \Log::notice('Locale not found in cookie');
             return;
         }
-        \Log::notice('Locale from cookie:'. $locale);
         $this->localeManager->setLocale($locale);
     }
 }

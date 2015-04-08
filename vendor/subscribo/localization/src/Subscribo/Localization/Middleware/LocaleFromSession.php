@@ -34,10 +34,8 @@ class LocaleFromSession
     {
         $locale = $this->deposit->getLocale();
         if ( ! $locale) {
-            \Log::notice('Locale not found in session');
             return;
         }
-        \Log::notice('Locale from session:'. $locale);
         $this->localeManager->setLocale($locale);
     }
 }

@@ -14,10 +14,13 @@ class TemplateLocalizer extends Localizer implements TemplateLocalizerInterface
 {
     protected $prefix;
 
+    protected $defaultParameters = array();
+
     public function trans($id, array $parameters = array(), $domain = null, $locale = null)
     {
         if (is_null($domain) and $this->prefix) {
             $id = $this->prefix.$id;
+            $parameters = array_replace($this->defaultParameters, $parameters);
         }
         return parent::trans($id, $parameters, $domain, $locale);
     }
@@ -26,6 +29,7 @@ class TemplateLocalizer extends Localizer implements TemplateLocalizerInterface
     {
         if (is_null($domain) and $this->prefix) {
             $id = $this->prefix.$id;
+            $parameters = array_replace($this->defaultParameters, $parameters);
         }
         return parent::transChoice($id, $number, $parameters, $domain, $locale);
     }
@@ -35,7 +39,7 @@ class TemplateLocalizer extends Localizer implements TemplateLocalizerInterface
      *
      * @param string|null $prefix
      * @param bool $addDot Whether to automatically add trailing dot to non-empty prefix
-     * @return mixed
+     * @return $this
      */
     public function setPrefix($prefix = null, $addDot = true)
     {
@@ -43,6 +47,18 @@ class TemplateLocalizer extends Localizer implements TemplateLocalizerInterface
             $prefix = rtrim($prefix, '.').'.';
         }
         $this->prefix = $prefix;
+        return $this;
+    }
+
+    /**
+     * Sets default parameters to be added to provided parameters to trans() and transChoice() when domain is null
+     *
+     * @param array $defaultParameters
+     * @return $this
+     */
+    public function setDefaultParameters(array $defaultParameters = array())
+    {
+        $this->defaultParameters = $defaultParameters;
         return $this;
     }
 

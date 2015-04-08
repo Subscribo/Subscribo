@@ -9,9 +9,18 @@ interface TemplateLocalizerInterface extends LocalizerInterface
      *
      * @param string|null $prefix
      * @param bool $addDot Whether to automatically add trailing dot to non-empty prefix
-     * @return mixed
+     * @return $this
      */
     public function setPrefix($prefix = null, $addDot = true);
+
+
+    /**
+     * Sets default parameters to be added to provided parameters to trans() and transChoice() when domain is null
+     *
+     * @param array $defaultParameters
+     * @return $this
+     */
+    public function setDefaultParameters(array $defaultParameters = array());
 
     /**
      * Configures localizer instance

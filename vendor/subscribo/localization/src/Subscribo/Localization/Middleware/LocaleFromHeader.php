@@ -31,10 +31,8 @@ class LocaleFromHeader
         $headerContent = $request->header('Accept-Language');
         $locale = LocaleTools::extractFirstLocaleTag($headerContent);
         if ( ! $locale) {
-            \Log::notice('Locale not found in header');
             return;
         }
-        \Log::notice('Locale from header:'. $locale);
         $this->localeManager->setLocale($locale);
     }
 
