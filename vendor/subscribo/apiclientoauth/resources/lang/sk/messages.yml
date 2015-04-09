@@ -1,0 +1,16 @@
+# Slovak Translation Resource file for package Subscribo ApiClientOAuth
+# template loginwithbuttons / ViewComposer LoginWithButtons
+buttons:
+    label:
+        fallback: Prihlásiť sa cez službu {providerName}
+        specific:
+            facebook: Prihlásiť sa cez Facebook
+            twitter: Prihlásiť sa cez Twitter
+# trait OAuthLoginTrait
+trait.handle.error:
+    exception: Počas prihlasovania cez {providerName} došlo k chybe. Prosím skúste neskôr alebo použite inú formu prihlásenia sa alebo registrácie.
+    rejected: Pravdepodobne ste odmietli prihlásenie cez {providerName}. Prosím skúste opäť alebo použite inú formu prihlásenia sa alebo registrácie.
+    loginFailed: Pokus o prihlásenie zlyhal. Prosím skúste neskôr alebo sa obráťte na správcu stránok.
+providers.name:
+    facebook: Facebook
+    twitter: Twitter

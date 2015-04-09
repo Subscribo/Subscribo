@@ -2,18 +2,35 @@
 
 use Illuminate\View\View;
 use Subscribo\OAuthCommon\AbstractOAuthManager;
+use Subscribo\Localization\Interfaces\LocalizerInterface;
 
 class LoginWithButtonsComposer
 {
+    /** @var LocalizerInterface  */
+    protected $localizer;
+
+    public function __construct(LocalizerInterface $localizer)
+    {
+        $this->localizer = $localizer->template('messages', 'apiclientoauth');
+    }
     public function compose(View $view)
     {
-        $providerNames = AbstractOAuthManager::getProviderName();
-        $providers = [];
-        foreach ($providerNames as $driver => $name)
+        $drivers = AbstractOAuthManager::getAvailableDrivers();
+        $links = [];
+        foreach ($drivers as $driver)
         {
             $url = route('subscribo.oauth.login', ['driver' => $driver]);
-            $providers[$url] = $name;
+            $id = 'buttons.label.specific.'.$driver;
+            if ($this->localizer->canTranslate($id)) {
+                $links[$url] = $this->localizer->trans($id);
+            } else {
+                $providerNameTranslateId = 'providers.name.'.$driver;
+                $providerName = $this->localizer->canTranslate($providerNameTranslateId)
+                    ? $this->localizer->trans($providerNameTranslateId)
+                    : AbstractOAuthManager::getProviderName($driver);
+                $links[$url] = $this->localizer->trans('buttons.label.fallback', ['{providerName}' => $providerName]);
+            }
         }
-        $view->with('providers', $providers);
+        $view->with('oAuthLinks', $links);
     }
 }

@@ -48,6 +48,8 @@ or (for conditional registration) you can add following to bootstrap/app.php:
     }
 ```
 
+### 1.4 To register package routes call method registerRoutes() of ApiClientOAuthServiceProvider
+
 Note: If other package is doing previous steps for you (which is usually the case), they are not necessary.
 
 ## 2. Usage
@@ -59,3 +61,6 @@ Add following to blade template(s), where you want "Login with..." buttons to be
 ```php
     @include('subscribo::apiclientoauth.loginwithbuttons')
 ```
+
+Note: "Login with..." template requires that package routes are registered with proper route name (point 1.4)
+

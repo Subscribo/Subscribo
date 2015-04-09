@@ -1,0 +1,17 @@
+# German translation resource files for package Subscribo ApiClientCommon - for ViewComposers
+# Translation work in progress ( 0% )
+# QuestionaryComposer
+template.questionary:
+    defaultTitle: Wir benötigen mehr Informationen
+    errorTitle: Bitte überprüfe deine Angaben:
+    submitButton: Abschicken
+traits:
+# QuestionaryControllerTrait
+    questionary:
+        getQuestionary.errors.fallback: Es ist ein Fehler aufgetreten. Bitte versuch es später nochmal oder kontaktiere einen Administrator.
+        postQuestionary.errors.fallback: Es ist ein Fehler aufgetreten. Bitte versuch es später nochmal oder kontaktiere einen Administrator.
+# ClientRedirectionControllerTrait
+    clientRedirection:
+        redirectingBack.errors.fallback: Es ist ein Fehler aufgetreten. Bitte versuch es später nochmal oder kontaktiere einen Administrator.
+        getRedirection.errors.fallback: Es ist ein Fehler aufgetreten. Bitte versuch es später nochmal oder kontaktiere einen Administrator.
+        validateHash.errors.invalidHash: Die URL ist ungültig.

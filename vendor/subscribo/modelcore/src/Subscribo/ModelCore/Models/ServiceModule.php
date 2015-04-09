@@ -27,7 +27,7 @@ class ServiceModule extends \Subscribo\ModelCore\Bases\ServiceModule
                                 'redirect_back' => '{redirect_back}',
                             ],
                             'optional' => [
-                                'language' => '{language}',
+                                'locale' => '{locale}',
                             ],
                         ],
                     ],

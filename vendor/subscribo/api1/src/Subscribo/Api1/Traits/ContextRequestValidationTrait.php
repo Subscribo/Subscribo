@@ -22,11 +22,15 @@ trait ContextRequestValidationTrait
      * @param array $rules
      * @param array $messages
      * @param array $customAttributes
-     * @return \Illuminate\Validation\Validator
+     * @param array $customValues
+     * @return Validator
      */
-    protected function assembleValidator(array $data, array $rules, array $messages = array(), array $customAttributes = array())
+    protected function assembleValidator(array $data, array $rules, array $messages = [], array $customAttributes = [], array $customValues = [])
     {
         $validator = Validator::make($data, $rules, $messages, $customAttributes);
+        if ($customValues) {
+            $validator->addCustomValues($customValues);
+        }
         return $validator;
     }
 
@@ -68,7 +72,12 @@ trait ContextRequestValidationTrait
     protected function validatePositiveIdentifier($id)
     {
         if ( ! (ctype_digit($id) or is_int($id))) {
-            throw new InvalidIdentifierHttpException(['id' => 'Identifier have to be a positive integer']);
+            /** @var Context $context */
+            $context = $this->context;
+            $localizer = $context->getLocalizer()->duplicate('controllers', 'api1');
+            throw new InvalidIdentifierHttpException([
+                'id' => $localizer->trans('contextRequestValidationTrait.errors.wrongIdentifier'),
+            ]);
         }
         return intval($id);
     }

@@ -14,7 +14,7 @@ use Subscribo\Exception\Exceptions\ClientErrorHttpException;
 class SessionVariableNotFoundHttpException extends ClientErrorHttpException
 {
     const STATUS_CODE = 400;
-    const DEFAULT_EXCEPTION_CODE = 0;
+    const DEFAULT_EXCEPTION_CODE = 110;
     const DEFAULT_MESSAGE = 'Session lost';
 
     public function __construct($message = true, array $data = null, $code = true, Exception $previous = null, array $headers = array())

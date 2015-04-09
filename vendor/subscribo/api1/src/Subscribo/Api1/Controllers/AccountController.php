@@ -58,7 +58,7 @@ class AccountController extends AbstractController
         }
         $emailUsed = $this->checkEmailUsed($validated['email'], $serviceId, $validated);
         if ($emailUsed) {
-            throw new InvalidInputHttpException(['email' => 'Email already used for this service']);
+            throw new InvalidInputHttpException(['email' => $this->localizeError('postRegistration.emailUsed')]);
         }
         return $this->performRegistration($validated, $serviceId);
     }
@@ -105,7 +105,7 @@ class AccountController extends AbstractController
         /** @var Account $account */
         $account = Account::findRemembered($validated['token'], $accountId, $this->context->getServiceId());
         if (empty($account)) {
-            throw new InvalidQueryHttpException(['token' => 'Account with given ID and token not found for this service']);
+            throw new InvalidQueryHttpException(['token' => $this->localizeError('getRemembered.accountNotFound')]);
         }
 
         return ['found' => true, 'result' => $this->assembleAccountResult($account)];
@@ -166,10 +166,11 @@ class AccountController extends AbstractController
         }
         $serviceToMergeId = strval($answer['service']);
         if (false === array_search($serviceToMergeId, $extraData['compatibleServices'], true)) {
-            throw new ValidationErrorsHttpException(['service' => 'Selected service not valid.']);
+            throw new ValidationErrorsHttpException(['service' => $this->localizeError('resumeRegistration.serviceInvalid')]);
         }
         $additionalData = ['serviceId' => $serviceToMergeId];
         $extraData['allowedServiceIds'] = [$serviceToMergeId];
+        $extraData['originalRequestLocale'] = $this->context->getLocalizer()->getLocale();
         $clientRedirection = $this->prepareClientRedirection(ClientRedirection::CODE_CONFIRM_MERGE_REQUEST, $extraData, 'resumeMergeConfirmation', $additionalData);
         $customerRegistration->markMergeProposed($serviceToMergeId, $clientRedirection->hash);
         throw new ClientRedirectionServerRequestHttpException($clientRedirection);
@@ -216,7 +217,8 @@ class AccountController extends AbstractController
         $customerRegistration = $this->retrieveCustomerRegistration($extraData);
         $serviceId = $this->context->getServiceId();
         if ($answer['merge'] !== 'yes') {
-            $additionalData['query'] = ['error' => 'Account merge rejected.'];
+            $this->switchToOriginalRequestLocale($extraData);
+            $additionalData['query'] = ['error' => $this->localizeError('resumeConfirmMergeAnswer.rejected')];
             $clientRedirection = ClientRedirectionFactory::make(ClientRedirection::CODE_CONFIRM_MERGE_RESPONSE, $additionalData);
             $customerRegistration->markMergeRejected($serviceId);
             $actionInterruption->markAsProcessed($answer);
@@ -230,13 +232,18 @@ class AccountController extends AbstractController
             $validatedCustomer = $this->findAndValidateCustomerAccount($email, $answer['password'], $serviceId);
             if (empty($validatedCustomer['customer']->id)) {
                 $serviceName = $this->context->getService()->name;
-                throw new InvalidInputHttpException(['password' => 'Provided password does not fit with account with email '.$email.' by '.$serviceName]);
+                throw new InvalidInputHttpException([
+                    'password' => $this->localizeError(
+                        'resumeConfirmMergeAnswer.wrongPassword',
+                        ['%email%' => $email, '{service}' => $serviceName]
+                    )]);
             }
             $customerId = $validatedCustomer['customer']->id;
         }
-        $customerRegistration->markMergeConfirmed($serviceId, $customerId);
-        $additionalData['query'] = ['result' => 'Account merge confirmed.'];
+        $this->switchToOriginalRequestLocale($extraData);
+        $additionalData['query'] = ['result' => $this->localizeError('resumeConfirmMergeAnswer.confirmed')]; //Note: Not actually an error, but it was simpler to have resumeConfirmMergeAnswer responses together
         $clientRedirection = ClientRedirectionFactory::make(ClientRedirection::CODE_CONFIRM_MERGE_RESPONSE, $additionalData);
+        $customerRegistration->markMergeConfirmed($serviceId, $customerId);
         $actionInterruption->markAsProcessed($answer);
         return ['result' => $clientRedirection];
     }
@@ -256,12 +263,12 @@ class AccountController extends AbstractController
         $validatedData = $actionInterruption->extraData['validatedData'];
         $validatedData['email'] = $answer['email'];
         if ( ! $this->isEmailAcceptable($validatedData['email'])) {
-            throw new InvalidInputHttpException(['email' => 'Please, provide another email.']);
+            throw new InvalidInputHttpException(['email' => $this->localizeError('resumeOAuthMissingEmail.unacceptableEmail')]);
         }
         $serviceId = $this->context->getServiceId();
         $emailUsed = $this->checkEmailUsed($validatedData['email'], $serviceId, $validatedData);
         if ($emailUsed) {
-            throw $this->makeQuestion(Questionary::CODE_LOGIN_OR_NEW_ACCOUNT, ['validatedData' => $validatedData], 'resumeOAuthExistingEmail');
+            throw $this->makeQuestion(Questionary::CODE_LOGIN_OR_NEW_ACCOUNT, ['validatedData' => $validatedData], 'resumeOAuthExistingEmail', ['%email%' => $validatedData['email']]);
         }
         $actionInterruption->answer = $answer;
         return $this->performRegistration($validatedData, $serviceId, $actionInterruption);
@@ -284,10 +291,25 @@ class AccountController extends AbstractController
         $validatedData = $actionInterruption->extraData['validatedData'];
         $result = $this->findAndValidateCustomerAccount($validatedData['email'], $answer['password'], $serviceId);
         if (empty($result)) {
-            throw new InvalidInputHttpException(['password' => sprintf("Given password does not agree with email %s for this service.", $validatedData['email'])]);
+            throw new InvalidInputHttpException(
+                ['password' => $this->localizeError(
+                    'resumeOAuthExistingEmail.invalidPassword',
+                    ['%email%' => $validatedData['email']]
+                )]);
         }
         $actionInterruption->answer = $answer;
         return $this->performRegistration($validatedData, $serviceId, $actionInterruption);
+    }
+
+    /**
+     * @param array $extraData
+     */
+    private function switchToOriginalRequestLocale(array $extraData)
+    {
+        if (empty($extraData['originalRequestLocale'])) {
+            return;
+        }
+        $this->context->getLocalizer()->setLocale($extraData['originalRequestLocale']);
     }
 
     /**
@@ -299,20 +321,28 @@ class AccountController extends AbstractController
      */
     private function makeAccountMergingConfirmationQuestionaryException(ActionInterruption $actionInterruption, array $queryData)
     {
-        $extraData = $actionInterruption->extraData;
         if (empty($queryData['redirect_back'])) {
-            throw new InvalidQueryHttpException(['redirect_back' => 'redirect_back is required in query']);
+            throw new InvalidQueryHttpException(['redirect_back' => $this->localizeError('resumeMergeConfirmation.redirectBackMissing')]);
         }
-        $extraData['redirectBack'] = $queryData['redirect_back'];
+        $extraData = $actionInterruption->extraData;
         $customerRegistration = $this->retrieveCustomerRegistration($extraData);
+        $currentAccount = $this->context->getAccount(true);
+        $omitPassword = ($currentAccount and ($currentAccount->customer->email === $customerRegistration->email));
+        $locale = $this->context->getLocale();
+        if (( ! $omitPassword) and ( ! empty($extraData['originalRequestLocale']))) {
+            $localeObject = $this->context->getService()->chooseLocale($extraData['originalRequestLocale']);
+            $locale = $localeObject ? $localeObject->identifier : $locale;
+        }
+        $this->context->getLocalizer()->setLocale($locale);
+        $extraData['redirectBack'] = $queryData['redirect_back'];
         $requestingService = Service::find($actionInterruption->serviceId);
         $additionalData = [
-            'confirmingServiceName' => $this->context->getService()->name,
-            'requestingServiceName' => $requestingService->name,
-            'mergedAccountEmail'    => $customerRegistration->email,
+            '{confirmingService}' => $this->context->getService()->translateIfTranslatable('name', $locale),
+            '{requestingService}' => $requestingService->translateIfTranslatable('name', $locale),
+            '%email%'    => $customerRegistration->email,
+            'locale'     => $locale,
         ];
-        $currentAccount = $this->context->getAccount(true);
-        if ($currentAccount and ($currentAccount->customer->email === $customerRegistration->email)) {
+        if ($omitPassword) {
             $extraData['omitPasswordCheck'] = strval($this->context->getServiceId());
             return $this->makeQuestion(Questionary::CODE_CONFIRM_ACCOUNT_MERGE_SIMPLE, $extraData, 'resumeConfirmMergeAnswer', $additionalData);
         }
@@ -349,7 +379,7 @@ class AccountController extends AbstractController
             $errors[] = $data['error'];
         }
         if (empty($errors) and empty($data['result'])) {
-            $errors = ['Result missing'];
+            $errors = [$this->localizeError('accountMergeConfirmed.resultMissing')];
         }
         if ($errors) {
             throw new ValidationErrorsHttpException($errors);
@@ -367,7 +397,7 @@ class AccountController extends AbstractController
     private function checkAccountMergeConfirmedCustomerRegistration(CustomerRegistration $customerRegistration)
     {
         if ($customerRegistration->status !== $customerRegistration::STATUS_MERGE_CONFIRMED) {
-            throw new ValidationErrorsHttpException(['Account merge not confirmed']);
+            throw new ValidationErrorsHttpException([$this->localizeError('accountMergeConfirmed.notConfirmed')]);
         }
         if (empty($customerRegistration->mergedToServiceId)) {
             throw new RuntimeException('checkAccountMergingPossiblyConfirmedCustomerRegistration() : mergedToServiceId empty');
@@ -451,7 +481,7 @@ class AccountController extends AbstractController
         /** @var \Subscribo\Api1\Factories\AccountFactory $accountFactory */
         $accountFactory = $this->applicationMake('Subscribo\\Api1\\Factories\\AccountFactory');
 
-        $registered = $accountFactory->register($data, $serviceId);
+        $registered = $accountFactory->register($data, $serviceId, $this->context->getLocale());
 
         if ($actionInterruption) {
             $actionInterruption->markAsProcessed();
@@ -481,7 +511,7 @@ class AccountController extends AbstractController
         $emailUsed = $this->checkEmailUsed($data['email'], $serviceId, $data);
         if ($emailUsed) {
             unset($data['password']);
-            throw $this->makeQuestion(Questionary::CODE_LOGIN_OR_NEW_ACCOUNT, ['validatedData' => $data], 'resumeOAuthExistingEmail');
+            throw $this->makeQuestion(Questionary::CODE_LOGIN_OR_NEW_ACCOUNT, ['validatedData' => $data], 'resumeOAuthExistingEmail', ['%email%' => $data['email']]);
         }
         return $this->performRegistration($data, $serviceId);
     }
@@ -494,7 +524,7 @@ class AccountController extends AbstractController
     private function validateOAuthData(array $data)
     {
         if (empty($data['oauth']) or ( ! is_array($data['oauth']))) {
-            throw new InvalidInputHttpException(['oauth' => 'OAuth data empty']);
+            throw new InvalidInputHttpException(['oauth' => $this->localizeError('postRegistration.oAuthInvalid')]);
         }
         $availableProvidersRule = AbstractOAuthManager::getAvailableDrivers();
         array_unshift($availableProvidersRule, 'in');
@@ -558,10 +588,11 @@ class AccountController extends AbstractController
      */
     private function prepareResumeRegistrationQuestion(array $compatibleServices, $serviceId, $data)
     {
+        $localizer = $this->context->getLocalizer();
         $serviceList = [];
         foreach ($compatibleServices as $serviceIdToAdd) {
             $service = Service::find($serviceIdToAdd);
-            $serviceList[$serviceIdToAdd] = $service->name;
+            $serviceList[$serviceIdToAdd] = $localizer->simplify($service->name);
         }
         $additionalData = ['samePoolServices' => $serviceList];
 
@@ -611,8 +642,8 @@ class AccountController extends AbstractController
         /** @var \Subscribo\Api1\Factories\AccountFactory $accountFactory */
         $accountFactory = $this->applicationMake('Subscribo\\Api1\\Factories\\AccountFactory');
         $found = $accountFactory->findAccountByEmailAndServiceId($email, $serviceId);
-        if (empty($found)) {
-            null;
+        if (empty($found['customer'])) {
+            return null;
         }
         if ($accountFactory->checkCustomerPassword($found['customer'], $password)) {
             return $found;
@@ -620,4 +651,9 @@ class AccountController extends AbstractController
         return false;
     }
 
+    private function localizeError($key, $parameters = array())
+    {
+        $localizer = $this->context->getLocalizer();
+        return $localizer->trans('account.errors.'.$key, $parameters, 'api1::controllers');
+    }
 }

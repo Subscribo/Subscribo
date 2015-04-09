@@ -19,6 +19,10 @@ class Questionary extends ServerRequest
     /** @var Question[] */
     public $questions = array();
 
+    protected $validationMessages = array();
+
+    protected $validationAttributes = array();
+
     public function import(array $data)
     {
         if ( ! empty($data['title'])) {
@@ -29,6 +33,12 @@ class Questionary extends ServerRequest
             foreach ($questions as $key => $questionData) {
                 $this->questions[$key] = ($questionData instanceof Question) ? $questionData : new Question($questionData);
             }
+        }
+        if ( ! empty($data['validationMessages'])) {
+            $this->setValidationMessages($data['validationMessages']);
+        }
+        if ( ! empty($data['validationAttributes'])) {
+            $this->setValidationAttributes($data['validationAttributes']);
         }
         return parent::import($data);
     }
@@ -43,7 +53,10 @@ class Questionary extends ServerRequest
         return $result;
     }
 
-    public function getQuestionsValidationRules()
+    /**
+     * @return array
+     */
+    public function getValidationRules()
     {
         $rules = [];
         foreach ($this->questions as $key => $question)
@@ -51,5 +64,82 @@ class Questionary extends ServerRequest
             $rules[$key] = $question->getValidationRules();
         }
         return $rules;
+    }
+
+    /**
+     * @return array
+     */
+    public function getValidationMessages()
+    {
+        $result = $this->validationMessages;
+        foreach ($this->questions as $attribute => $question) {
+            foreach ($question->getValidationMessages() as $rule => $message) {
+                $key = $attribute.'.'.$rule;
+                $result[$key] = $message;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function getValidationAttributes()
+    {
+        $result = $this->validationAttributes;
+        foreach ($this->questions as $attribute => $question) {
+            if ( ! empty($question->validationAttributeName)) {
+                $result[$attribute] = $question->validationAttributeName;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function getValidationCustomValues()
+    {
+        $result = [];
+        foreach ($this->questions as $attribute => $question) {
+            foreach ($question->getValidationCustomValues() as $valueName => $value) {
+                $result[$attribute][$valueName] = $value;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFieldsToRememberOnError()
+    {
+        $result = [];
+        foreach ($this->questions as $attribute => $question) {
+            if ($question->getRememberValueOnError()) {
+                $result[$attribute] = $attribute;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $validationMessages
+     * @return $this
+     */
+    protected function setValidationMessages(array $validationMessages)
+    {
+        $this->validationMessages = $validationMessages;
+        return $this;
+    }
+
+    /**
+     * @param array $validationAttributes
+     * @return $this
+     */
+    protected function setValidationAttributes(array $validationAttributes)
+    {
+        $this->validationAttributes = $validationAttributes;
+        return $this;
     }
 }

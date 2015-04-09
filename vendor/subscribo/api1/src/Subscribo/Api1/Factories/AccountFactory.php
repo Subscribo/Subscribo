@@ -7,6 +7,7 @@ use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\AccountToken;
 use Subscribo\ModelCore\Models\Person;
 use Subscribo\ModelCore\Models\CustomerRegistration;
+use Subscribo\ModelCore\Models\Service;
 use Subscribo\Support\Arr;
 
 /**
@@ -40,13 +41,14 @@ class AccountFactory
     /**
      * @param CustomerRegistration|array $data
      * @param int $serviceId
+     * @param string $registrationLocaleIdentifier
      * @return array
      * @throws InvalidArgumentException
      */
-    public function register($data, $serviceId)
+    public function register($data, $serviceId, $registrationLocaleIdentifier)
     {
         if ($data instanceof CustomerRegistration) {
-            return $this->registerFromCustomerRegistration($data, $serviceId);
+            return $this->registerFromCustomerRegistration($data, $serviceId, $registrationLocaleIdentifier);
         }
         if ( ! is_array($data)) {
             throw new InvalidArgumentException('AccountFactory::register() data have to be either array or instance of CustomerRegistration');
@@ -56,12 +58,16 @@ class AccountFactory
             $customer = $account->customer;
             $person = $customer->person;
         } else {
+            /** @var Service $service */
+            $service = Service::with('availableLocales', 'defaultLocale')->find($serviceId);
+            $locale = $service->chooseLocale($registrationLocaleIdentifier);
             $name = trim(Arr::get($data, 'name')) ?: $data['email'];
             $person = Person::generate($name, Arr::get($data, 'gender'));
             $customer = $this->create($data);
             $customer->person()->associate($person);
+            $customer->preferredLocale()->associate($locale->uncustomize());
             $customer->save();
-            $account = Account::generate($customer->id, $serviceId);
+            $account = Account::generate($customer, $service, $locale);
         }
         if ( ! empty($data['oauth'])) {
             AccountToken::generate($data['oauth'], $account->id);
@@ -76,10 +82,11 @@ class AccountFactory
 
     /**
      * @param CustomerRegistration $customerRegistration
-     * @param int|string $serviceId
+     * @param int $serviceId
+     * @param string $registrationLocaleIdentifier
      * @return array
      */
-    public function registerFromCustomerRegistration(CustomerRegistration $customerRegistration, $serviceId)
+    public function registerFromCustomerRegistration(CustomerRegistration $customerRegistration, $serviceId, $registrationLocaleIdentifier)
     {
         $account = Account::findByEmailAndServiceId($customerRegistration->email, $serviceId);
         if ($account) {
@@ -88,21 +95,27 @@ class AccountFactory
             $person = $customer->person;
         } else {
             $existingCustomerId = $customerRegistration->customerId;
+            /** @var Service $service */
+            $service = Service::with('availableLocales', 'defaultLocale')->find($serviceId);
             if ($existingCustomerId) {
                 $status = $customerRegistration::STATUS_MERGED;
+                /** @var Customer $customer */
                 $customer = Customer::find($existingCustomerId);
+                $locale = $service->chooseLocale($customer->preferredLocale->identifier);
                 $person = $customer->person;
             } else {
+                $locale = $service->chooseLocale($registrationLocaleIdentifier);
                 $status = $customerRegistration::STATUS_NEW_ACCOUNT_GENERATED;
                 $name = trim($customerRegistration->name) ?: $customerRegistration->email;
                 $person = Person::generate($name);//todo add gender if implemented
                 $customer = new Customer();
                 $customer->email = $customerRegistration->email;
                 $customer->password = $customerRegistration->password;
+                $customer->preferredLocale()->associate($locale->uncustomize());
                 $customer->person()->associate($person);
                 $customer->save();
             }
-            $account = Account::generate($customer->id, $serviceId);
+            $account = Account::generate($customer, $service, $locale);
         }
         if ($customerRegistration->accountTokenId) {
             $accountToken = AccountToken::find($customerRegistration->accountTokenId);

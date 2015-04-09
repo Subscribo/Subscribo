@@ -1,0 +1,18 @@
+# Slovak translation resource file for main template, welcome template and home content template
+# Main template  (app.blade.php)
+page:
+    title: Subscribo
+navigation:
+    toggle: Otvoriť navigáciu
+    brand: Subscribo
+    home: Domov
+    login: Prihlásenie
+    register: Registrácia
+    logout: Odhlásenie
+# welcome template (welcome.blade.php)
+welcome:
+    title: Susbcribo: Vitajte
+# Home content template (home.blade.php)
+home:
+    heading: Doma
+    content: Ste prihlásený

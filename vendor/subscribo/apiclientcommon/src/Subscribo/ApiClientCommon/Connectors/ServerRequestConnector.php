@@ -2,7 +2,6 @@
 
 use Subscribo\ApiClientCommon\AbstractConnector;
 use Subscribo\RestCommon\ServerRequest;
-use Subscribo\RestCommon\SignatureOptions;
 use Subscribo\RestClient\Exceptions\InvalidResponseException;
 
 

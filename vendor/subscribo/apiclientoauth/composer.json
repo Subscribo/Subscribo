@@ -22,21 +22,23 @@
     ],
     "require": {
         "php": "~5.4",
+        "illuminate/foundation": "~5.0",
+        "illuminate/session": "~5.0",
+        "illuminate/routing": "~5.0",
+        "illuminate/http": "~5.0",
+        "illuminate/support": "~5.0",
+        "illuminate/view": "~5.0",
+        "subscribo/apiclientcommon": "@dev",
+        "subscribo/apiclientauth": "@dev",
+        "subscribo/exception": "@dev",
+        "subscribo/localization" : "@dev",
+        "subscribo/restcommon": "@dev",
+        "subscribo/restclient": "@dev",
         "subscribo/oauthcommon": "@dev",
-        "subscribo/apiclientcommon": "@dev"
+        "subscribo/support": "@dev"
     },
     "suggest": {
-        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-        "illuminate/foundation": "(already contained in laravel/framework) - If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version ~5.0)",
-        "illuminate/session": "(already contained in laravel/framework) - If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version ~5.0)",
-        "illuminate/routing": "(already contained in laravel/framework) - If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version ~5.0)",
-        "illuminate/http": "(already contained in laravel/framework) - If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version ~5.0)",
-        "illuminate/support": "(already contained in laravel/framework) - If using ApiClientOAuthServiceProvider (recommended version ~5.0)",
-        "illuminate/view": "(already contained in laravel/framework) - If using ApiClientOAuthServiceProvider, LoginWithButtonsComposer or loginwithbuttons template  (recommended version ~5.0)",
-        "subscribo/apiclientauth": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)",
-        "subscribo/exception": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)",
-        "subscribo/restcommon": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)",
-        "subscribo/restclient": "If using OAuthLoginTrait, OAuthController or ApiClientOAuthServiceProvider (recommended version: @dev)"
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
     },
     "autoload": {
         "psr-4": {

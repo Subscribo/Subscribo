@@ -1,0 +1,6 @@
+# Slovak translation resources file for packages Subscribo ApiClientAuth
+# Translations for AuthenticatesAndRegistersUsersTrait
+errors:
+    registrationFailed: Pokus o registráciu zlyhal. Prosím skúste neskôr alebo sa obráťte na správcu stránok.
+    loginFailed: Pokus o prihlásenie zlyhal. Prosím skúste neskôr alebo sa obráťte na správcu stránok.
+    wrongCredentials: Tieto prihlasovacie údaje nesúhlasia s našimi záznamami

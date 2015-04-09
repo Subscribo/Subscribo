@@ -9,6 +9,10 @@ use Subscribo\ApiClientAuth\Registrar;
 use Subscribo\RestClient\Exceptions\ServerRequestException;
 use Subscribo\RestClient\Exceptions\ValidationErrorsException;
 use Subscribo\ApiClientCommon\Traits\HandleServerRequestExceptionTrait;
+use Subscribo\Localization\Deposits\SessionDeposit;
+use Subscribo\Localization\Deposits\CookieDeposit;
+use Subscribo\Localization\LocaleUtils;
+use Subscribo\Localization\Interfaces\LocalizerInterface;
 
 /**
  * Class AuthenticatesAndRegistersUsersTrait
@@ -21,19 +25,20 @@ trait AuthenticatesAndRegistersUsersTrait
     use AuthenticatesAndRegistersUsers;
     use HandleServerRequestExceptionTrait;
 
-    public function getRegister(Registrar $registrar, Store $session)
+    public function getRegister(Registrar $registrar, Store $session, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit)
     {
         $resultInSession = $session->pull($this->sessionKeyServerRequestHandledResult);
         $account = $resultInSession ? $registrar->resumeAttempt($resultInSession) : null;
         if ($account) {
             $this->auth->login($account);
+            LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);
             return redirect($this->redirectPath());
         }
         return view('auth.register');
     }
 
 
-    public function postRegister(Registrar $registrar, Request $request)
+    public function postRegister(Registrar $registrar, Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LocalizerInterface $localizer)
     {
         $rules = $registrar->getValidationRules();
         $this->validate($request, $rules);
@@ -53,16 +58,18 @@ trait AuthenticatesAndRegistersUsersTrait
                 ->withErrors($e->getValidationErrors());
         } catch (Exception $e) {
             $this->logException($e);
+            $errorMessage = $localizer->trans('errors.registrationFailed', [], 'apiclientauth::messages');
             return redirect()
                 ->refresh()
                 ->withInput($request->only('email', 'name'))
-                ->withErrors('Registration attempt failed. Please try again later or contact an administrator.');
+                ->withErrors($errorMessage);
         }
         $this->auth->login($account);
+        LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);
         return redirect($this->redirectPath());
     }
 
-    public function postLogin(Request $request)
+    public function postLogin(Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LocalizerInterface $localizer)
     {
         $this->validate($request, ['email' => 'required', 'password' => 'required']);
 
@@ -70,16 +77,24 @@ trait AuthenticatesAndRegistersUsersTrait
 
         try {
             $authenticated = $this->auth->attempt($credentials, $request->has('remember'), true);
+        } catch (ValidationErrorsException $e) {
+            return redirect()
+                ->refresh()
+                ->withInput($request->only('email', 'name'))
+                ->withErrors($e->getValidationErrors());
         } catch (Exception $e) {
+            $errorMessage = $localizer->trans('errors.loginFailed', [], 'apiclientauth::messages');
             return redirect($this->loginPath())
                 ->withInput($request->only('email'))
-                ->withErrors('Login attempt failed. Please try again later or contact an administrator.');
+                ->withErrors($errorMessage);
         }
         if ($authenticated) {
+            LocaleUtils::rememberLocaleForUser($this->auth->user(), $sessionDeposit, $cookieDeposit);
             return redirect()->intended($this->redirectPath());
         }
+        $errorMessage = $localizer->trans('errors.wrongCredentials', [], 'apiclientauth::messages');
         return redirect($this->loginPath())
             ->withInput($request->only('email'))
-            ->withErrors(['email' => 'These credentials do not match our records.']);
+            ->withErrors(['email' => $errorMessage]);
     }
 }

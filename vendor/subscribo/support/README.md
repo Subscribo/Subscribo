@@ -1,8 +1,6 @@
 # Environment Package
 
 Support package with common shared functionality, extending Laravel classes and providing buffer between application and subscribo packages code and framework.
-Might plainly extend Laravel framework classes
-
 
 ## 1. Installation
 

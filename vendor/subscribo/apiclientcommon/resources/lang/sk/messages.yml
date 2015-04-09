@@ -1,0 +1,16 @@
+# Slovak translation resource files for package Subscribo ApiClientCommon - for ViewComposers
+# QuestionaryComposer
+template.questionary:
+    defaultTitle: Potrebujeme viac informácií
+    errorTitle: Prosím, skontrolujte svoj vstup:
+    submitButton: Odoslať
+traits:
+# QuestionaryControllerTrait
+    questionary:
+        getQuestionary.errors.fallback: Stala sa nejaká chyba. Prosím skúste neskôr alebo sa obráťte na správcu stránok.
+        postQuestionary.errors.fallback: Stala sa nejaká chyba. Prosím skúste neskôr alebo sa obráťte na správcu stránok.
+# ClientRedirectionControllerTrait
+    clientRedirection:
+        redirectingBack.errors.fallback: Stala sa nejaká chyba. Prosím skúste neskôr alebo sa obráťte na správcu stránok.
+        getRedirection.errors.fallback: Stala sa nejaká chyba. Prosím skúste neskôr alebo sa obráťte na správcu stránok.
+        validateHash.errors.invalidHash: Zadaná URL adresa je nesprávna

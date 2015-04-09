@@ -33,3 +33,19 @@ and update composer
 ```sh
     composer update
 ```
+
+### 1.3 To register ModelBaseServiceProvider with Laravel (5.0)
+
+add following under 'providers' key in config/app.php file:
+
+```php
+    '\\Subscribo\\ModelBase\\Integration\\Laravel\\ModelBaseServiceProvider',
+```
+
+or (for conditional registration) you can add following to bootstrap/app.php:
+
+```php
+    if (class_exists('\\Subscribo\\ModelBase\\Integration\\Laravel\\ModelBaseServiceProvider')) {
+        $app->register('\\Subscribo\\ModelBase\\Integration\\Laravel\\ModelBaseServiceProvider');
+    }
+```

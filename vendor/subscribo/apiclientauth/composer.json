@@ -24,13 +24,19 @@
         "php": "~5.4",
         "illuminate/contracts": "~5.0",
         "illuminate/auth": "~5.0",
-        "subscribo/apiclientcommon": "@dev"
+        "illuminate/session": "~5.0",
+        "subscribo/restcommon": "@dev",
+        "subscribo/restclient": "@dev",
+        "subscribo/localization": "@dev",
+        "subscribo/exception": "@dev",
+        "subscribo/support": "@dev",
+        "psr/log": "~1.0"
     },
     "suggest": {
         "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-        "illuminate/foundation": "(already contained in laravel/framework) - If using AuthenticatesAndRegistersUsersTrait",
-        "illuminate/session": "(already contained in laravel/framework) - If using AuthenticatesAndRegistersUsersTrait (recommended version ~5.0)",
-        "subscribo/restclient": "If using AuthenticatesAndRegistersUsersTrait (recommended version @dev)"
+        "illuminate/foundation": "(already contained in laravel/framework) - If using AuthenticatesAndRegistersUsersTrait (recommended version ~5.0)",
+        "illuminate/http": "(already contained in laravel/framework) - If using AuthenticatesAndRegistersUsersTrait (recommended version ~5.0)",
+        "subscribo/apiclientcommon": "If using AuthenticatesAndRegistersUsersTrait or ApiClientAuthServiceProvider (recommended version @dev)"
     },
     "autoload": {
         "psr-4": {

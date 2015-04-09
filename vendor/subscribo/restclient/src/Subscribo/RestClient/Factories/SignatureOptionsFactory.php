@@ -1,17 +1,21 @@
 <?php namespace Subscribo\RestClient\Factories;
 
+use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Subscribo\RestCommon\SignatureOptions;
-use Subscribo\Support\Arr;
 use Illuminate\Contracts\Auth\Guard;
 
 class SignatureOptionsFactory
 {
-    /** @var \Illuminate\Contracts\Auth\Guard  */
+    /** @var Guard  */
     protected $auth;
 
-    public function __construct(Guard $auth)
+    /** @var  LocalizerInterface */
+    protected $localizer;
+
+    public function __construct(Guard $auth, LocalizerInterface $localizer)
     {
         $this->auth = $auth;
+        $this->localizer = $localizer;
     }
 
     /**
@@ -23,15 +27,15 @@ class SignatureOptionsFactory
         $options = is_array($options) ? $options : array();
         $defaults = [
             'accountId' => true,
-            'lang'      => true,
+            'locale'    => true,
         ];
-        $options = Arr::mergeNatural($defaults, $options);
+        $options = array_replace($defaults, $options);
         if (true === $options['accountId']) {
             $user = ($this->auth) ? $this->auth->user() : null;
             $options['accountId'] = $user ? $user->getAuthIdentifier() : false;
         }
-        if (true === $options['lang']) {
-            $options['lang'] = 'DE_AT';
+        if ((true === $options['locale']) and ($this->localizer)) {
+            $options['locale'] = $this->localizer->getLocale();
         }
         $result = new SignatureOptions($options);
         return $result;

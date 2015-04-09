@@ -1,7 +1,5 @@
 <?php namespace Subscribo\Exception\Traits;
 
-use Subscribo\Support\Arr;
-
 /**
  * Trait ContainDataTrait
  *
@@ -37,7 +35,7 @@ trait ContainDataTrait {
         if (empty($default)) {
             return $content;
         }
-        $result = Arr::mergeNatural($default, $content);
+        $result = array_merge_recursive($default, $content);
         return $result;
     }
 

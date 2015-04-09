@@ -6,7 +6,7 @@ class BasicSeeder extends Seeder {
 
     public function run()
     {
-        $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\LanguageSeeder');
+        $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\LocaleSeeder');
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\CountrySeeder');
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\ServiceSeeder');
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\TagSeeder');

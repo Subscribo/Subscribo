@@ -1,7 +1,7 @@
 <?php namespace Subscribo\Exception\Integration\Laravel;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
+use Subscribo\Support\ServiceProvider;
 
 
 /**
@@ -21,5 +21,10 @@ class ApiExceptionHandlerServiceProvider extends ServiceProvider {
 
         $aliasLoader = AliasLoader::getInstance();
         $aliasLoader->alias('Subscribo\\ApiExceptionHandler', 'Subscribo\\Exception\\Integration\\Laravel\\Facades\\ApiExceptionHandler');
+    }
+
+    public function boot()
+    {
+        $this->registerTranslationResources('messages');
     }
 }

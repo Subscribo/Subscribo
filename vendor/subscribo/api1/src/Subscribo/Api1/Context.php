@@ -5,6 +5,7 @@ use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\Service;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
 use Subscribo\RestCommon\AccountIdTransport;
+use Subscribo\Localization\Interfaces\LocalizerInterface;
 
 /**
  * Class Context
@@ -44,13 +45,19 @@ class Context
      */
     protected $accountId = false;
 
+    /**
+     * @var LocalizerInterface
+     */
+    protected $localizer;
 
     /**
      * @param ApiGuardInterface $auth
+     * @param LocalizerInterface $localizer
      */
-    public function __construct(ApiGuardInterface $auth)
+    public function __construct(ApiGuardInterface $auth, LocalizerInterface $localizer)
     {
         $this->auth = $auth;
+        $this->localizer = $localizer;
     }
 
     /**
@@ -218,5 +225,15 @@ class Context
         if ($account->serviceId !== $this->getServiceId()) {
             throw new WrongServiceHttpException();
         }
+    }
+
+    public function getLocalizer()
+    {
+        return $this->localizer;
+    }
+
+    public function getLocale()
+    {
+        return $this->localizer->getLocale();
     }
 }

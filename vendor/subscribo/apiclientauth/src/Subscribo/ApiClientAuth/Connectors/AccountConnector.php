@@ -1,19 +1,22 @@
 <?php namespace Subscribo\ApiClientAuth\Connectors;
 
+use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Subscribo\RestClient\Exceptions\InvalidResponseException;
 use Subscribo\RestClient\RestClient;
 use Subscribo\RestCommon\SignatureOptions;
 
 class AccountConnector
 {
-    /**
-     * @var \Subscribo\RestClient\RestClient
-     */
+    /** @var \Subscribo\RestClient\RestClient  */
     protected $restClient;
 
-    public function __construct(RestClient $restClient)
+    /** @var  LocalizerInterface */
+    protected $localizer;
+
+    public function __construct(RestClient $restClient, LocalizerInterface $localizer)
     {
         $this->restClient = $restClient;
+        $this->localizer = $localizer;
     }
 
     /**
@@ -39,7 +42,7 @@ class AccountConnector
     {
         $signatureOptions = $this->processSignatureOptions($signatureOptions);
 
-        $responseData = $this->restClient->process('account/validation', 'POST', $credentials, null, null, $signatureOptions, true);
+        $responseData = $this->restClient->process('account/validation', 'POST', $credentials, null, null, $signatureOptions, false);
 
         return $this->assembleResult($responseData, 'validated');
     }
@@ -106,7 +109,7 @@ class AccountConnector
             return null;
         }
         if ( ! is_array($source)) {
-            throw new InvalidResponseException();
+            throw new InvalidResponseException(['response' => 'Not array']);
         }
         $keysToCheck = is_array($keyToCheck) ? $keyToCheck : array($keyToCheck);
         foreach ($keysToCheck as $key) {
@@ -116,27 +119,41 @@ class AccountConnector
         }
         if (empty($source['result']['account']['id'])
           or empty($source['result']['customer']['email'])
-          or ( ! isset($source['result']['person']['name']))) {
-            throw new InvalidResponseException();
+          or ( ! isset($source['result']['person']['name']))
+          or ( ! isset($source['result']['account']['locale']))
+          or ( ! isset($source['result']['account']['remember_locale']))
+        ) {
+            throw new InvalidResponseException(['response' => $source]);
         }
         $result = [
             'id'    => $source['result']['account']['id'],
             'email' => $source['result']['customer']['email'],
             'name'  => $source['result']['person']['name'],
+            'locale' => $source['result']['account']['locale'],
+            'rememberLocale' =>  $source['result']['account']['remember_locale'],
         ];
         return $result;
     }
 
+    /**
+     * @param SignatureOptions|array|bool $signatureOptions
+     * @return SignatureOptions
+     */
     protected function processSignatureOptions($signatureOptions)
     {
         if ($signatureOptions instanceof SignatureOptions) {
             return $signatureOptions;
         }
-        if (is_array($signatureOptions)) {
-            return new SignatureOptions($signatureOptions);
+        $defaults = [
+            'locale'    => true,
+        ];
+        $options = is_array($signatureOptions) ? array_replace($defaults, $signatureOptions) : $defaults;
+
+        if ((true === $options['locale']) and ($this->localizer)) {
+            $options['locale'] = $this->localizer->getLocale();
         }
-        $defaults = ['lang' => 'DE_AT'];
-        return new SignatureOptions($defaults);
+        $result = new SignatureOptions($options);
+        return $result;
     }
 
 }

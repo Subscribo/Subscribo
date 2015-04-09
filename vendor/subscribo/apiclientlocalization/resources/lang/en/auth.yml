@@ -1,0 +1,56 @@
+# English translation resource file for Auth templates (auth/login.blade.php)
+# Auth: Login form content template (auth/login.blade.php)
+login:
+    addToPageTitle: Login
+    heading: Login
+    errorsHeading: '<strong>Whoops!</strong> There were some problems with your input.'
+    form:
+        email:
+            label: E-mail Address
+        password:
+            label: Password
+        remember:
+            label: Remember Me
+        submit:
+            label: Login
+            linkPasswordEmail: Forgot your password?
+# Auth: Password reset request form content template (auth/password.blade.php)
+password:
+    addToPageTitle: Reset Password
+    heading: Password Reset
+    errorsHeading: '<strong>Whoops!</strong> There were some problems with your input.'
+    form:
+        email:
+            label: E-mail Address
+        submit:
+            label: Send Password Reset Link
+# Auth: Registration form content template (auth/register.blade.php)
+register:
+    addToPageTitle: Registration
+    heading: Register
+    errorsHeading: '<strong>Whoops!</strong> There were some problems with your input.'
+    form:
+        name:
+            label: Name
+        email:
+            label: E-mail Address
+        password:
+            label: Password
+        confirmation:
+            label: Confirm Password
+        submit:
+            label: Register
+# Auth: Password reset form content template (auth/reset.blade.php)
+reset:
+    addToPageTitle: Password Reset
+    heading: Reset Password
+    errorsHeading: '<strong>Whoops!</strong> There were some problems with your input.'
+    form:
+        email:
+            label: E-mail Address
+        password:
+            label: Password
+        confirmation:
+            label: Confirm Password
+        submit:
+            label: Reset Password

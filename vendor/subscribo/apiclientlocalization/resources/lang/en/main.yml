@@ -1,0 +1,18 @@
+# English translation resource file for main template, welcome template and home content template
+# Main template  (app.blade.php)
+page:
+    title: Subscribo
+navigation:
+    toggle: Toggle Navigation
+    brand: Subscribo
+    home: Home
+    login: Login
+    register: Register
+    logout: Logout
+# welcome template (welcome.blade.php)
+welcome:
+    title: Subscribo: Welcome
+# Home content template (home.blade.php)
+home:
+    heading: Home
+    content: You are logged in!

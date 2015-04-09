@@ -54,6 +54,8 @@ class Signature {
      */
     public static function modifyHeaders(TokenRing $tokenRing, array $headers = array(), array $data = array(), $options = array(), Encrypter $encrypter = null, array &$description = array())
     {
+        $options = ($options instanceof SignatureOptions) ? $options : new SignatureOptions($options);
+        $headers = static::addAcceptLanguageHeader($options->locale, $headers);
         $headerName = RestCommon::ACCESS_TOKEN_HEADER_FIELD_NAME;
         $headers = Arr::withoutKeyCaseInsensitively($headerName, $headers);
         $headers[$headerName] = static::assembleAuthorizationHeaderContent($tokenRing, $data, $options, $encrypter, $description);
@@ -290,15 +292,14 @@ class Signature {
     /**
      * @param TokenRing $tokenRing
      * @param array $data
-     * @param SignatureOptions|array $options
+     * @param SignatureOptions $options
      * @param Encrypter $encrypter
      * @param array $description
      * @return string
      * @throws Exceptions\InvalidArgumentException
      */
-    protected static function assembleAuthorizationHeaderContent(TokenRing $tokenRing, array $data = array(), $options = array(), Encrypter $encrypter = null, array &$description = array())
+    protected static function assembleAuthorizationHeaderContent(TokenRing $tokenRing, array $data, SignatureOptions $options, Encrypter $encrypter = null, array &$description = array())
     {
-        $options = ($options instanceof SignatureOptions) ? $options : new SignatureOptions($options);
         $signatureType = $options->signatureType ?: $tokenRing->ascertainType();
         if (empty($signatureType)) {
             throw new InvalidArgumentException('Signature type not provided');
@@ -442,6 +443,17 @@ class Signature {
         $current = date('Y-m-d H:i:s');
         $result = $microseconds ? ($current.'.'.$microseconds) : $current;
         return $result;
+    }
+
+    protected static function addAcceptLanguageHeader($locale, array $headers = array())
+    {
+        if (empty($locale)) {
+            return $headers;
+        }
+        $headerName = 'Accept-Language';
+        $headers = Arr::withoutKeyCaseInsensitively($headerName, $headers);
+        $headers[$headerName] = $locale;
+        return $headers;
     }
 
 }

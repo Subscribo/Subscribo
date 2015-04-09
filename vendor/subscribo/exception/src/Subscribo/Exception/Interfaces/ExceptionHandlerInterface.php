@@ -2,8 +2,8 @@
 
 use Exception;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * Class ExceptionHandlerInterface

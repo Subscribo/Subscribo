@@ -1,12 +1,12 @@
 <?php namespace Subscribo\Exception\Handlers;
 
 use Exception;
-use Illuminate\Foundation\Exceptions\Handler;
-use Illuminate\Http\Response as LaravelResponse;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-use Subscribo\Config\Config;
+use Psr\Log\LoggerInterface;
+use Illuminate\Foundation\Exceptions\Handler;
+use Illuminate\Http\Response;
+use Illuminate\Http\Request;
+use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Subscribo\Exception\Interfaces\HttpExceptionInterface as ExtendedHttpExceptionInterface;
 use Subscribo\Exception\Interfaces\ContainDataInterface;
 use Subscribo\Exception\Interfaces\MarkableExceptionInterface;
@@ -24,14 +24,25 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
 
     protected $dontReport = ['Subscribo\\Exception\\Interfaces\\DoNotReportInterface'];
 
+    /** @var LocalizerInterface  */
+    protected $localizer;
+
+    protected $originalLocale = 'en';
+
+    public function __construct(LoggerInterface $log, LocalizerInterface $localizer)
+    {
+        $this->localizer = $localizer->duplicate('messages', 'exception');
+        parent::__construct($log);
+    }
+
+
     /**
      * @param Request|null $request
      * @param Exception $e
-     * @return LaravelResponse|Response
+     * @return Response
      */
     public function render($request = null, Exception $e)
     {
-        //   return  \App::make('App\Exceptions\Handler')->render($request, $e);
         $mark = null;
         if ($e instanceof MarkableExceptionInterface)
         {
@@ -43,7 +54,6 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
         if ($e instanceof HttpExceptionInterface) {
             $statusCode = intval($e->getStatusCode());
             $headers = $e->getHeaders();
-            $suggestion = $this->getSuggestion($statusCode, $exceptionCode);
             if (is_null($message) or ($message === ''))
             {
                 $message = $this->getMessageFromStatusCode($statusCode);
@@ -55,9 +65,6 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
                     'exceptionCode' => $exceptionCode,
                 ],
             ];
-            if ($suggestion) {
-                $defaultContentData['metaData']['suggestion'] = $suggestion;
-            }
         } else {
             $statusCode = 500;
             $headers = array();
@@ -79,12 +86,13 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
         if ($request instanceof Request) {
             $defaultContentData['metaData']['accessedUrl'] = $request->getUri();
         }
+        $defaultContentData = $this->addSuggestions($defaultContentData);
         if ($e instanceof ContainDataInterface) {
             $content = $e->getOutputData([$e->getKey() => $defaultContentData]);
         } else {
             $content = ['error' => $defaultContentData];
         }
-        $response = new LaravelResponse($content, $statusCode, $headers);
+        $response = new Response($content, $statusCode, $headers);
         if ($e instanceof ExtendedHttpExceptionInterface) {
             $response->setStatusCode($statusCode, $e->getStatusMessage());
         }
@@ -114,13 +122,55 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
 
     }
 
-    protected function getSuggestion($statusCode, $exceptionCode)
+
+    protected function addSuggestions(array $data)
     {
-        $config = new Config(null, dirname(dirname(dirname(dirname(__FILE__)))), true);
-        $config->loadFile('suggestions');
-        $suggestion = $config->get('suggestions.'.$statusCode.'.'.$exceptionCode);
-        return $suggestion;
+        $localizer = $this->localizer;
+        $mode = $localizer::CAN_TRANSLATE_MODE_ANY_LOCALE;
+        $originalLocale = $this->originalLocale;
+        $statusCode = isset($data['metaData']['statusCode']) ? $data['metaData']['statusCode'] : null;
+        $exceptionCode = isset($data['metaData']['exceptionCode']) ? $data['metaData']['exceptionCode'] : null;
+        $exceptionHash = isset($data['metaData']['exceptionHash']) ? $data['metaData']['exceptionHash'] : null;
+        $suggestion = '';
+        $originalSuggestion = '';
+        if (isset($statusCode) and isset($exceptionCode)) {
+            $id = 'suggestions.specific.'.$statusCode.'.'.$exceptionCode;
+            $suggestion = $localizer->transOrDefault($id, [], null, null, '', $mode);
+            $originalSuggestion = $localizer->transOrDefault($id, [], null, $originalLocale, '', $mode);
+        }
+        if (isset($statusCode)) {
+            $id = 'suggestions.fallback.'.$statusCode;
+            if (empty($suggestion)) {
+                $suggestion = $localizer->transOrDefault($id, [], null, null, '', $mode);
+            }
+            if (empty($originalSuggestion)) {
+                $originalSuggestion = $localizer->transOrDefault($id, [], null, $originalLocale, '', $mode);
+            }
+        }
+        if ($exceptionHash) {
+            $id = 'suggestions.marked';
+            $parameters = ['%mark%' => $exceptionHash];
+            $suggestion .= ' '.$localizer->transOrDefault($id, $parameters, null, null, '', $mode);
+            $originalSuggestion .= ' '.$localizer->transOrDefault($id, $parameters, null, $originalLocale, '', $mode);
+        }
+        $suggestion = trim($suggestion);
+        $originalSuggestion = trim($originalSuggestion);
+        if ($suggestion === $originalSuggestion) {
+            $originalSuggestion = null;
+        }
+        if ($suggestion) {
+            $data['metaData']['suggestion'] = isset($data['metaData']['suggestion'])
+                ? ($data['metaData']['suggestion'].' '.$suggestion)
+                : $suggestion;
+        }
+        if ($originalSuggestion) {
+            $data['metaData']['originalSuggestion'] = isset($data['metaData']['originalSuggestion'])
+                ? ($data['metaData']['originalSuggestion'].' '.$originalSuggestion)
+                : $originalSuggestion;
+        }
+        return $data;
     }
+
 
     public function report(Exception $e)
     {
@@ -187,7 +237,7 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
     /**
      * @param Exception $e
      * @param Request $request
-     * @return LaravelResponse|mixed|Response
+     * @return Response
      */
     public function handle(Exception $e, Request $request = null)
     {

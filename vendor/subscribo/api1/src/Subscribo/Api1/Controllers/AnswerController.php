@@ -39,7 +39,7 @@ class AnswerController extends AbstractController
         if ('hash' === $type) {
             return $this->processGetServerRequestByHash('getQuestionByHash');
         }
-        throw new InvalidIdentifierHttpException(['type' => 'Unrecognized type']);
+        throw new InvalidIdentifierHttpException(['type' => $this->localizeError('getQuestion.wrongType')]);
     }
 
     /**
@@ -59,7 +59,7 @@ class AnswerController extends AbstractController
         if ('hash' === $type) {
             return $this->processGetServerRequestByHash('getRedirectionByHash');
         }
-        throw new InvalidIdentifierHttpException(['type' => 'Unrecognized type']);
+        throw new InvalidIdentifierHttpException(['type' => $this->localizeError('getRedirection.wrongType')]);
     }
 
     /**
@@ -80,8 +80,13 @@ class AnswerController extends AbstractController
         $callback = $this->retrieveCallback($actionInterruption);
 
         $questionary = new Questionary($actionInterruption->serverRequest);
-        $rules = $questionary->getQuestionsValidationRules();
-        $validator = $this->assembleValidator($validatedData['answer'], $rules);
+        $validator = $this->assembleValidator(
+            $validatedData['answer'],
+            $questionary->getValidationRules(),
+            $questionary->getValidationMessages(),
+            $questionary->getValidationAttributes(),
+            $questionary->getValidationCustomValues()
+        );
         if ($validator->fails()) {
             throw new InvalidInputHttpException($validator->errors()->all());
         }
@@ -124,7 +129,7 @@ class AnswerController extends AbstractController
         $queryValidationRules = [
             'hash' => 'required|alpha_num',
             'redirect_back' => 'url',
-            'language' => 'alpha_dash',
+            'locale' => 'alpha_dash',
         ];
         $validatedData = $this->validateRequestQuery($queryValidationRules);
         $actionInterruption = $this->retrieveActionInterruption($validatedData['hash']);
@@ -183,6 +188,12 @@ class AnswerController extends AbstractController
             throw new RuntimeException(sprintf("Wrong callback '%s' in database", $actionInterruption->continueMethod));
         }
         return $callback;
+    }
+
+    private function localizeError($key, $parameters = array())
+    {
+        $localizer = $this->context->getLocalizer();
+        return $localizer->trans('answer.errors.'.$key, $parameters, 'api1::controllers');
     }
 
 }

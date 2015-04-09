@@ -3,13 +3,15 @@
 use Laravel\Socialite\SocialiteManager;
 use Subscribo\OAuthCommon\Providers\FacebookProvider;
 use Subscribo\OAuthCommon\Providers\TwitterProvider;
-use League\OAuth1\Client\Server\Twitter as TwitterServer;
+use Subscribo\OAuthCommon\Servers\TwitterServer;
 use Subscribo\OAuthCommon\Exceptions\ErrorResponseException;
 
 /**
  * Abstract Class AbstractOAuthManager
  *
  * Children need to implement getDriverConfiguration() method
+ *
+ * @license MIT
  *
  * @package Subscribo\OAuthCommon
  */
@@ -31,6 +33,9 @@ abstract class AbstractOAuthManager extends SocialiteManager
         ];
         if (is_null($provider)) {
             return $providerNames;
+        }
+        if (empty($providerNames[$provider])) {
+            return ucfirst($provider);
         }
         return $providerNames[$provider];
     }
@@ -74,6 +79,18 @@ abstract class AbstractOAuthManager extends SocialiteManager
     protected function createTwitterDriver()
     {
         $config = $this->getDriverConfiguration('twitter');
-        return new TwitterProvider($this->app->make('request'), new TwitterServer($this->formatConfig($config)));
+        return new TwitterProvider(
+            $this->app->make('request'),
+            new TwitterServer($this->formatConfig($config), null, $this->getCurrentLocale())
+        );
+    }
+
+    protected function getCurrentLocale()
+    {
+        if ( ! $this->app->bound('subscribo.localizer')) {
+            return null;
+        }
+        $localizer = $this->app->make('subscribo.localizer');
+        return $localizer->getLocale();
     }
 }

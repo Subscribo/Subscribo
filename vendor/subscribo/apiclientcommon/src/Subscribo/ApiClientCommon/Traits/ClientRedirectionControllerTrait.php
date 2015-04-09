@@ -11,6 +11,7 @@ use Subscribo\RestClient\Exceptions\ServerRequestException;
 use Subscribo\Exception\Exceptions\SessionVariableNotFoundHttpException;
 use Subscribo\Exception\Exceptions\InvalidIdentifierHttpException;
 use Subscribo\Exception\Exceptions\RuntimeException;
+use Subscribo\Localization\Interfaces\LocalizerInterface;
 
 
 /**
@@ -29,14 +30,15 @@ trait ClientRedirectionControllerTrait
      * @param Request $request
      * @param Store $session
      * @param ServerRequestConnector $connector
+     * @param LocalizerInterface $localizer
      * @param string|null $hash
      * @return \Illuminate\Http\RedirectResponse
-     * @throws \Subscribo\Exception\Exceptions\SessionVariableNotFoundHttpException
-     * @throws \Subscribo\Exception\Exceptions\RuntimeException
+     * @throws SessionVariableNotFoundHttpException
+     * @throws RuntimeException
      */
-    public function getClientRedirectionRedirectingBack(Request $request, Store $session, ServerRequestConnector $connector, $hash = null)
+    public function getClientRedirectionRedirectingBack(Request $request, Store $session, ServerRequestConnector $connector, LocalizerInterface $localizer, $hash = null)
     {
-        $hash = $this->validateHashFormat($hash);
+        $hash = $this->validateHashFormat($hash, $localizer);
         /** @var ClientRedirection $clientRedirection */
         $clientRedirection = $session->pull($this->sessionKeyClientRedirection);
         $redirectTo = $session->pull($this->sessionKeyRedirectFromClientRedirection);
@@ -58,7 +60,8 @@ trait ClientRedirectionControllerTrait
             return redirect($redirectTo)->withErrors($e->getValidationErrors());
         } catch (Exception $e) {
             $this->logException($e);
-            return redirect($redirectTo)->withErrors(['Some error has happened. Please try again later or contact an administrator.']);
+            $errorMessage = $localizer->trans('traits.clientRedirection.redirectingBack.errors.fallback', [], 'apiclientcommon::messages');
+            return redirect($redirectTo)->withErrors([$errorMessage]);
         }
         return redirect($redirectTo)->with($this->sessionKeyServerRequestHandledResult, $response);
     }
@@ -70,10 +73,11 @@ trait ClientRedirectionControllerTrait
      * @param Request $request
      * @param Store $session
      * @param ServerRequestConnector $connector
+     * @param LocalizerInterface $localizer
      * @param string $type
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
-    public function getRedirectionByType(Request $request, Store $session, ServerRequestConnector $connector, $type)
+    public function getRedirectionByType(Request $request, Store $session, ServerRequestConnector $connector, LocalizerInterface $localizer, $type)
     {
         try {
             $resultInSession = $session->pull($this->sessionKeyServerRequestHandledResult);
@@ -87,24 +91,27 @@ trait ClientRedirectionControllerTrait
             return view('subscribo::apiclientcommon.errorsonly', ['errorList' => $e->getValidationErrors()]);
         } catch (Exception $e) {
             $this->logException($e);
-            return view('subscribo::apiclientcommon.errorsonly', ['errorList' => ['Some error has happened. Please try again later or contact an administrator.']]);
+            $errorMessage = $localizer->trans('traits.clientRedirection.getRedirection.errors.fallback', [], 'apiclientcommon::messages');
+            return view('subscribo::apiclientcommon.errorsonly', ['errorList' => [$errorMessage]]);
         }
         return redirect($url);
     }
 
     /**
      * @param string|null $hash
+     * @param LocalizerInterface $localizer
      * @return string|null
-     * @throws \Subscribo\Exception\Exceptions\InvalidIdentifierHttpException
+     * @throws InvalidIdentifierHttpException
      */
-    protected function validateHashFormat($hash)
+    protected function validateHashFormat($hash, LocalizerInterface $localizer)
     {
         if (is_null($hash)) {
             return null;
         }
-        $result = filter_var($hash, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => '#[A-Za-z0-9]+#']]);
+        $result = filter_var($hash, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => '#^[A-Za-z0-9]+$#']]);
         if (empty($result)) {
-            throw new InvalidIdentifierHttpException();
+            $errorMessage = $localizer->trans('traits.clientRedirection.validateHash.errors.invalidHash', [], 'apiclientcommon::messages');
+            throw new InvalidIdentifierHttpException([$errorMessage]);
         }
         return $result;
     }
