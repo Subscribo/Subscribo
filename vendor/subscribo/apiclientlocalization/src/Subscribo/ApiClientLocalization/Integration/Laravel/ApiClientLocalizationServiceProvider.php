@@ -19,11 +19,27 @@ class ApiClientLocalizationServiceProvider extends ServiceProvider {
 
     public function register()
     {
+        $this->registerLocalePossibilities();
+
+        $this->app->register('\\Subscribo\\ValidationLocalization\\Integration\\Laravel\\ValidationLocalizationServiceProvider');
+    }
+
+    public function boot()
+    {
+        $this->registerViews('LocaleSelector');
+
+        $this->registerTranslationResources(['main', 'auth'], 'app');
+
+        $this->publishDefaultConfig();
+
+        $this->publishTranslatedViews();
+    }
+
+    public function registerLocalePossibilities()
+    {
         /** @var LocalizationServiceProvider $localizationServiceProvider */
-        $localizationServiceProvider = $this->app->register('\\Subscribo\\Localization\\Integration\\Laravel\\LocalizationServiceProvider');
-        if (true === $localizationServiceProvider) {
-            $localizationServiceProvider = $this->app->getProvider('\\Subscribo\\Localization\\Integration\\Laravel\\LocalizationServiceProvider');
-        }
+        $localizationServiceProvider = $this->registerServiceProvider('\\Subscribo\\Localization\\Integration\\Laravel\\LocalizationServiceProvider');
+
         $localizationServiceProvider->registerLocaleSettingsManager(
             function ($app) {
                 $configManager = $app->make('subscribo.config');
@@ -35,23 +51,9 @@ class ApiClientLocalizationServiceProvider extends ServiceProvider {
             '\\Subscribo\\ApiClientLocalization\\LocalePossibilities',
             null
         );
-        $this->app->register('\\Subscribo\\ValidationLocalization\\Integration\\Laravel\\ValidationLocalizationServiceProvider');
     }
 
-    public function boot()
-    {
-        $packageDir = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
-        $this->loadViewsFrom($packageDir.'/resources/views', 'subscribo');
-
-        $this->app->make('view')->composer('subscribo::apiclientlocalization/localeselector', 'Subscribo\\ApiClientLocalization\\ViewComposers\\LocaleSelectorComposer');
-        $this->publishes([$packageDir.'/install/laravel/subscribo/config/packages/apiclientlocalization/default.yml' => base_path('subscribo/config/packages/apiclientlocalization/default.yml')], 'config');
-        $this->publishes([$packageDir.'/resources/views/apiclientlocalization/localeselector.blade.php' => base_path('resources/views/vendor/subscribo/apiclientlocalization/localeselector.blade.php')], 'view');
-        $this->publishes([$packageDir.'/resources/views/app/' => base_path('resources/views/')], 'translated_views');
-
-        $this->registerTranslationResources(['main', 'auth'], 'app');
-    }
-
-    public function registerRoutes(Router $router, array $middleware, array $paths = array())
+    public function registerRoutes(array $middleware, array $paths = array(), Router $router = null)
     {
         if ($this->routesRegistered) {
             return;
@@ -61,11 +63,40 @@ class ApiClientLocalizationServiceProvider extends ServiceProvider {
             'subscribo.localization.setting.redirect' => '/locale/{locale}',
         ];
         $paths = array_replace($defaultPaths, $paths);
+        $router = $this->getRouter($router);
 
-        $router->post($paths['subscribo.localization.setting.ajax'], ['as' => 'subscribo.localization.setting.ajax', 'middleware' => $middleware, 'uses' => '\\Subscribo\\ApiClientLocalization\\Controllers\\LocaleController@postLocaleAjax']);
-        $router->get($paths['subscribo.localization.setting.redirect'], ['as' => 'subscribo.localization.setting.redirect', 'middleware' => $middleware, 'uses' => '\\Subscribo\\ApiClientLocalization\\Controllers\\LocaleController@getLocaleRedirectBack'])->where(['locale' => '[A-Za-z0-9_-]+']);
+        $router->post($paths['subscribo.localization.setting.ajax'], [
+            'as' => 'subscribo.localization.setting.ajax',
+            'middleware' => $middleware,
+            'uses' => '\\Subscribo\\ApiClientLocalization\\Controllers\\LocaleController@postLocaleAjax'
+        ]);
+        $router->get($paths['subscribo.localization.setting.redirect'], [
+            'as' => 'subscribo.localization.setting.redirect',
+            'middleware' => $middleware,
+            'uses' => '\\Subscribo\\ApiClientLocalization\\Controllers\\LocaleController@getLocaleRedirectBack'
+        ])->where(['locale' => '[A-Za-z0-9_-]+']);
 
         $this->routesRegistered = true;
+    }
+
+    public function publishTranslatedViews()
+    {
+        $packageDir = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+
+        $this->publishes([$packageDir.'/resources/views/app/' => base_path('resources/views/')], 'translated_views');
+    }
+
+    public function publishDefaultConfig()
+    {
+        $packageDir = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+
+        $this->publishes(
+            [
+                $packageDir.'/install/laravel/subscribo/config/packages/apiclientlocalization/default.yml'
+                                => base_path('subscribo/config/packages/apiclientlocalization/default.yml')
+            ],
+            'config'
+        );
     }
 
 }

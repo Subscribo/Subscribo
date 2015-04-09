@@ -5,10 +5,13 @@ localeSettings:
                 - en
         de_AT:
             fallbackLocales:
+                - de
                 - en_US
                 - en
         sk_SK:
             fallbackLocales:
+                - sk
+                - en_US
                 - en
 
     uriStubs:
