@@ -21,6 +21,9 @@ echo " *\n";
 foreach($fields as $field) {
     echo " * @property ".\Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($field['type_hint'])
         ." $".\Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($field['attribute_name']);
+    if ( ! empty($field['translate'])) {
+        echo " Translatable";
+    }
     if ($field['description']) {
         echo " ".\Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($field['description']);
     }
