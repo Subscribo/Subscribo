@@ -1,5 +1,6 @@
 <?php namespace Subscribo\TranslatableModel\Traits;
 
+use App;
 use Subscribo\TranslatableModel\Exceptions\NotImplementedException;
 use Subscribo\TranslatableModel\Interfaces\LocaleConfigurationInterface;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,7 +25,7 @@ trait TranslatableModelTrait
      */
     protected function getLocaleConfiguration()
     {
-        return app('Subscribo\\TranslatableModel\\Interfaces\\LocaleConfigurationInterface');
+        return App::make('Subscribo\\TranslatableModel\\Interfaces\\LocaleConfigurationInterface');
     }
 
 
