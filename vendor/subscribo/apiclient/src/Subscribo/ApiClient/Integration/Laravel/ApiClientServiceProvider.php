@@ -1,6 +1,6 @@
 <?php namespace Subscribo\ApiClient\Integration\Laravel;
 
-use Illuminate\Support\ServiceProvider;
+use Subscribo\Support\ServiceProvider;
 
 /**
  * Class ApiClientServiceProvider
@@ -15,15 +15,17 @@ class ApiClientServiceProvider extends ServiceProvider {
 
     public function register()
     {
-        $this->forRouteRegistration[] = $this->app->register('\\Subscribo\\ApiClientAuth\\Integration\\Laravel\\ApiClientAuthServiceProvider');
-        $this->app->register('\\Subscribo\\ApiClientOAuth\\Integration\\Laravel\\ApiClientOAuthServiceProvider');
-        $this->app->register('\\Subscribo\\RestProxy\\Integration\\Laravel\\RestProxyServiceProvider');
-        $this->forRouteRegistration[] = $this->app->register('\\Subscribo\\ApiClientLocalization\\Integration\\Laravel\\ApiClientLocalizationServiceProvider');
+        $this->registerDependencies();
     }
 
     public function boot()
     {
-        $router = $this->app->make('router');
+        $this->registerRoutes();
+    }
+
+    public function registerRoutes()
+    {
+        $router = $this->getRouter();
         $csrf = class_exists('\\App\\Http\\Middleware\\VerifyCsrfToken') ? '\\App\\Http\\Middleware\\VerifyCsrfToken' : '\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken';
         $middleware = [
             '\\Subscribo\\Localization\\Middleware\\StandardLocaleToResponseHeader',
@@ -33,8 +35,16 @@ class ApiClientServiceProvider extends ServiceProvider {
             $csrf
         ];
         foreach ($this->forRouteRegistration as $serviceProvider) {
-            $serviceProvider->registerRoutes($router, $middleware, array());
+            $serviceProvider->registerRoutes($middleware, array(), $router);
         }
+    }
+
+    protected function registerDependencies()
+    {
+        $this->forRouteRegistration[] = $this->registerServiceProvider('\\Subscribo\\ApiClientAuth\\Integration\\Laravel\\ApiClientAuthServiceProvider');
+        $this->forRouteRegistration[] = $this->registerServiceProvider('\\Subscribo\\ApiClientOAuth\\Integration\\Laravel\\ApiClientOAuthServiceProvider');
+        $this->forRouteRegistration[] = $this->registerServiceProvider('\\Subscribo\\ApiClientLocalization\\Integration\\Laravel\\ApiClientLocalizationServiceProvider');
+        $this->app->register('\\Subscribo\\RestProxy\\Integration\\Laravel\\RestProxyServiceProvider');
     }
 
 }
