@@ -11,6 +11,16 @@ use Subscribo\Localization\Interfaces\TranslationAbilityCheckingInterface;
  */
 interface LocalizerInterface extends TranslatorInterface, TranslationAbilityCheckingInterface
 {
+    /**
+     * @param string $id
+     * @param array $parameters
+     * @param string|null $domain
+     * @param string|null $locale
+     * @param mixed|null $default
+     * @param string|null $mode
+     * @return string|mixed|null
+     */
+    public function transOrDefault($id, array $parameters = array(), $domain = null, $locale = null, $default = null, $mode = null);
 
     /**
      * Whether particular localizer have transparent locale - pointing to current (global) locale

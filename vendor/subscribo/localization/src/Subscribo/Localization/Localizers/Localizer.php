@@ -57,7 +57,7 @@ class Localizer implements TranslatorInterface, LocalizerInterface
     {
         $subdomain = is_null($subdomain) ? $this->subdomain : $subdomain;
         $namespace = is_null($namespace) ? $this->namespace : $namespace;
-        $locale = is_null($locale) ? $this->getLocale() : $locale;
+        $locale = is_null($locale) ? $this->locale : $locale;
         $result = new static($this->manager, $locale, $namespace, $subdomain);
         return $result;
     }
@@ -73,7 +73,7 @@ class Localizer implements TranslatorInterface, LocalizerInterface
     {
         $subdomain = is_null($subdomain) ? $this->subdomain : $subdomain;
         $namespace = is_null($namespace) ? $this->namespace : $namespace;
-        $locale = is_null($locale) ? $this->getLocale() : $locale;
+        $locale = is_null($locale) ? $this->locale : $locale;
         $result = new TemplateLocalizer($this->manager, $locale, $namespace, $subdomain);
         return $result;
     }
@@ -147,6 +147,7 @@ class Localizer implements TranslatorInterface, LocalizerInterface
         return $this->manager->transChoice($id, $number, $parameters, $domain, $locale);
     }
 
+
     public function canTranslate($id, $domain = null, $locale = null, $mode = self::CAN_TRANSLATE_MODE_SAME_LANGUAGE)
     {
         $mode = $mode ?: self::CAN_TRANSLATE_MODE_SAME_LANGUAGE;
@@ -156,6 +157,15 @@ class Localizer implements TranslatorInterface, LocalizerInterface
             throw new RuntimeException('Localizer::transChoice() locale has not been provided neither initialized');
         }
         return $this->manager->canTranslate($id, $domain, $locale, $mode);
+    }
+
+
+    public function transOrDefault($id, array $parameters = array(), $domain = null, $locale = null, $default = null, $mode = null)
+    {
+        if ($this->canTranslate($id, $domain, $locale, $mode)) {
+            return $this->trans($id, $parameters, $domain, $locale);
+        }
+        return $default;
     }
 
     /**
