@@ -7,7 +7,9 @@
 
 <form onsubmit="makeRequest(); return false;">
     <label for="access_token">Access token:</label>
-    <input type="text" id="access_token">
+    <input type="text" id="access_token" style="width:50em">
+    <label for="access_token">Locale:</label>
+    <input type="text" id="locale">
     <br>
     <label for="select_verb">Select:</label>
     <select id="select_verb" onchange="document.getElementById('verb').value=this.value">
@@ -28,7 +30,7 @@
     <label for="verb">Verb:</label>
     <input type="text" value="GET" id="verb" style="width: 10em">
     <label for="url">URL:</label>
-    <input type="text" id="url" value="/api/v0/model/services" style="width: 40em">
+    <input type="text" id="url" value="/api/v1/" style="width: 40em">
     <input type="submit" value="RELOAD">
 
     <br>
@@ -63,10 +65,14 @@
         var url =  document.getElementById('url').value;
         var requestBody = document.getElementById('request_body').value;
         var accessToken = document.getElementById('access_token').value;
+        var locale = document.getElementById('locale').value;
         myRequest.open(verb, url, true);
         myRequest.setRequestHeader('Content-Type', 'text/json');
         if (accessToken) {
             myRequest.setRequestHeader(<?php echo json_encode(\Subscribo\RestCommon\RestCommon::ACCESS_TOKEN_HEADER_FIELD_NAME); ?>, accessToken);
+        }
+        if (locale) {
+            myRequest.setRequestHeader('Accept-Language', locale);
         }
 
 
