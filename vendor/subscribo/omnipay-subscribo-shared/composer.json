@@ -1,0 +1,31 @@
+{
+    "name": "subscribo/omnipay-subscribo-shared",
+    "description": "Package with shared functionality for some Omnipay drivers",
+    "keywords": [
+        "Omnipay",
+        "driver"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner",
+            "homepage": "http://kochabo.com"
+        }
+    ],
+    "require": {
+        "omnipay/common": ">=2.0@dev",
+        "guzzlehttp/guzzle": ">=5.0@dev",
+        "guzzlehttp/psr7": ">=0.1@dev"
+    },
+    "autoload": {
+        "psr-4" : {
+            "Subscribo\\Omnipay\\": "src/"
+        }
+    }
+}

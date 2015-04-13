@@ -1,0 +1,34 @@
+{
+    "name": "subscribo/omnipay-payunity",
+    "description": "PayUnity driver for Omnipay library",
+    "keywords": [
+        "PayUnity",
+        "Omnipay",
+        "payment"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "omnipay/common": "~2.0",
+        "subscribo/omnipay-subscribo-shared": "@dev"
+    },
+    "require-dev": {
+        "omnipay/tests": "~2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Omnipay\\PayUnity\\": "src/"
+        }
+    }
+}
