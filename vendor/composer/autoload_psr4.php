@@ -8,6 +8,8 @@ $baseDir = dirname($vendorDir);
 return array(
     'XdgBaseDir\\' => array($vendorDir . '/dnoegel/php-xdg-base-dir/src'),
     'SuperClosure\\' => array($vendorDir . '/jeremeamia/SuperClosure/src'),
+    'Subscribo\\ValidationLocalization\\' => array($vendorDir . '/subscribo/validationlocalization/src/Subscribo/ValidationLocalization'),
+    'Subscribo\\TranslatableModel\\' => array($vendorDir . '/subscribo/translatablemodel/src/Subscribo/TranslatableModel'),
     'Subscribo\\Support\\' => array($vendorDir . '/subscribo/support/src/Subscribo/Support'),
     'Subscribo\\ServiceProvider\\' => array($vendorDir . '/subscribo/serviceprovider/src/Subscribo/ServiceProvider'),
     'Subscribo\\SchemaBuilder\\' => array($vendorDir . '/subscribo/schemabuilder/src/Subscribo/SchemaBuilder'),
@@ -49,6 +51,7 @@ return array(
     'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
     'Fuel\\Core\\' => array($vendorDir . '/subscribo/schemabuilder/src/lib/fuel/core/src/Fuel/Core'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
+    'Dimsav\\Translatable\\' => array($vendorDir . '/dimsav/laravel-translatable/src/Translatable'),
     'ClassPreloader\\' => array($vendorDir . '/classpreloader/classpreloader/src'),
     'Barryvdh\\LaravelIdeHelper\\' => array($vendorDir . '/barryvdh/laravel-ide-helper/src'),
     'App\\' => array($baseDir . '/app'),

@@ -6,7 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    $vendorDir . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
     $vendorDir . '/symfony/var-dumper/Symfony/Component/VarDumper/Resources/functions/dump.php',
     $vendorDir . '/react/promise/src/functions_include.php',
     $vendorDir . '/swiftmailer/swiftmailer/lib/swift_required.php',
