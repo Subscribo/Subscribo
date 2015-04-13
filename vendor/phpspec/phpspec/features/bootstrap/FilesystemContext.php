@@ -37,7 +37,6 @@ class FilesystemContext implements Context, MatchersProviderInterface
         $this->workingDirectory = tempnam(sys_get_temp_dir(), 'phpspec-behat');
         $this->filesystem->remove($this->workingDirectory);
         $this->filesystem->mkdir($this->workingDirectory);
-        $this->filesystem->mkdir($this->workingDirectory . '/vendor');
         chdir($this->workingDirectory);
     }
 
@@ -60,8 +59,9 @@ class FilesystemContext implements Context, MatchersProviderInterface
     /**
      * @Given the class file :file contains:
      * @Given the spec file :file contains:
+     * @Given the trait file :file contains:
      */
-    public function theClassOrSpecFileContains($file, PyStringNode $contents)
+    public function theClassOrTraitOrSpecFileContains($file, PyStringNode $contents)
     {
         $this->theFileContains($file, $contents);
         require_once($file);
