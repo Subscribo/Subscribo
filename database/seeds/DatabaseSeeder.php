@@ -1,22 +1,22 @@
 <?php
-
+/**
+ * Taken from default Laravel (5.0) project - www.laravel.com - and modified
+ *
+ * @license MIT
+ */
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
-class DatabaseSeeder extends Seeder {
+/**
+ * Class DatabaseSeeder
+ */
+class DatabaseSeeder extends Seeder
+{
 
-	/**
-	 * Run the database seeds.
-	 *
-	 * @return void
-	 */
-	public function run()
-	{
-		Model::unguard();
+    public function run()
+    {
+        Model::unguard();
 
-        $this->call('Subscribo\\App\\Seeder\\BasicSeeder');
-
-		// $this->call('UserTableSeeder');
-	}
-
+        $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\BasicSeeder');
+    }
 }

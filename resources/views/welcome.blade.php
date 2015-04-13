@@ -1,5 +1,25 @@
-<html>
-	<head>
+<?php
+/**
+ * Localized version of Laravel Welcome template
+ * Taken from Laravel Framework (www.laravel.com) and modified
+ *
+ * @license MIT
+ *
+ */
+/** @var \Subscribo\Localizer $localizer */
+$localizer = \Subscribo\Localization::localizer('app', 'main');
+?>
+<html lang="{{ $localizer->getBCPLocale() }}">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>
+            @section('pageTitle')
+            {{ $localizer->trans('page.title') }}
+            @show
+        </title>
+
 		<link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
 
 		<style>
@@ -38,7 +58,7 @@
 	<body>
 		<div class="container">
 			<div class="content">
-				<div class="title">Laravel 5</div>
+				<div class="title">{{ $localizer->trans('welcome.title') }}</div>
 				<div class="quote">{{ Inspiring::quote() }}</div>
 			</div>
 		</div>
