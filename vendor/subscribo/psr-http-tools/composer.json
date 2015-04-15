@@ -1,0 +1,40 @@
+{
+    "name": "subscribo/psr-http-tools",
+    "description": "Tools which could be used with PSR-7: Request factory, Uri factory",
+    "license": "MIT",
+    "keywords": [
+        "PSR-7",
+        "factory",
+        "request",
+        "uri"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner",
+            "homepage": "http://kochabo.com"
+        }
+    ],
+    "require": {
+        "psr/http-message": "^0.10",
+        "phly/http": "*@dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\PsrHttpTools\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
