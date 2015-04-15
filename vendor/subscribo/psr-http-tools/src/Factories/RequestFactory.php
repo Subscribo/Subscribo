@@ -6,6 +6,7 @@ use Psr\Http\Message\UriInterface;
 use Phly\Http\Request;
 use Phly\Http\Stream;
 use Subscribo\PsrHttpTools\Factories\UriFactory;
+use Subscribo\PsrHttpTools\Interfaces\DealingWithContentTypeInterface;
 
 /**
  * Class RequestFactory
@@ -14,17 +15,13 @@ use Subscribo\PsrHttpTools\Factories\UriFactory;
  *
  * @package Subscribo\PsrHttpTools
  */
-class RequestFactory
+class RequestFactory implements DealingWithContentTypeInterface
 {
     const METHOD_GET = 'GET';
     const METHOD_POST = 'POST';
-    const CONTENT_TYPE_FORM = 'application/x-www-form-urlencoded';
-    const CONTENT_TYPE_JSON = 'application/json';
-    const CONTENT_TYPE_XML = 'application/xml';
 
     const CONTENT_CHARSET_UTF_8 = 'UTF-8';
 
-    const DEFAULT_CONTENT_TYPE = self::CONTENT_TYPE_FORM;
     const DEFAULT_CONTENT_CHARSET = self::CONTENT_CHARSET_UTF_8;
 
     /**
