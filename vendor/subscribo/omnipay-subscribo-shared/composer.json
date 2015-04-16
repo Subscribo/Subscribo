@@ -19,9 +19,12 @@
         }
     ],
     "require": {
-        "omnipay/common": ">=2.0@dev",
-        "guzzlehttp/guzzle": ">=5.0@dev",
-        "guzzlehttp/psr7": ">=0.1@dev"
+        "omnipay/common": ">=2.0",
+        "egeloen/http-adapter": "*",
+        "psr/http-message": "*@dev"
+    },
+    "suggest": {
+        "subscribo/psr-http-tools": "For PSR-7 compliant Request object factory"
     },
     "autoload": {
         "psr-4" : {
