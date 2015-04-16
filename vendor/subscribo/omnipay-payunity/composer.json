@@ -1,5 +1,6 @@
 {
     "name": "subscribo/omnipay-payunity",
+    "repositories": [ {"type": "composer", "url": "http://satis.localhost"} ],
     "description": "PayUnity driver for Omnipay library",
     "keywords": [
         "PayUnity",
@@ -20,15 +21,19 @@
     ],
     "require": {
         "php": "~5.4",
-        "omnipay/common": "~2.0",
-        "subscribo/omnipay-subscribo-shared": "@dev"
+        "omnipay/common": "~2.0@stable",
+        "subscribo/omnipay-subscribo-shared": "@dev",
+        "subscribo/psr-http-tools": "@dev",
+        "psr/http-message": "*@dev"
     },
     "require-dev": {
-        "omnipay/tests": "~2.0"
+        "omnipay/tests": "~2.0@stable"
     },
     "autoload": {
         "psr-4": {
             "Omnipay\\PayUnity\\": "src/"
         }
-    }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev"
 }
