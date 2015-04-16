@@ -5,6 +5,8 @@ use Subscribo\PsrHttpTools\Factories\RequestFactory;
 use Subscribo\PsrHttpTools\Parsers\ResponseParser;
 use Omnipay\Common\Message\RequestInterface;
 use Omnipay\Common\Message\ResponseInterface;
+use Omnipay\PayUnity\Traits\DefaultGatewayParametersGettersAndSettersTrait;
+
 
 /**
  * Abstract Class AbstractRequest
@@ -13,14 +15,15 @@ use Omnipay\Common\Message\ResponseInterface;
  */
 abstract class AbstractRequest extends Base
 {
+    use DefaultGatewayParametersGettersAndSettersTrait;
+
     abstract protected function getEndpointUrl();
 
     /**
-     * @param RequestInterface $omnipayRequest
      * @param $data
      * @return ResponseInterface
      */
-    abstract protected function makeOmnipayResponse(RequestInterface $omnipayRequest, $data);
+    abstract protected function createResponse($data);
 
 
     public function sendData($data)
@@ -29,7 +32,7 @@ abstract class AbstractRequest extends Base
         $request = RequestFactory::make($url, $data);
         $response = $this->sendHttpMessage($request, true);
         $responseData = ResponseParser::extractDataFromResponse($response);
-        $this->response = $this->makeOmnipayResponse($this, $responseData);
+        $this->response = $this->makeOmnipayResponse($responseData);
         return $this->response;
     }
 }

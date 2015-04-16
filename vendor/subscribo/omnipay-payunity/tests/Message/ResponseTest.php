@@ -1,5 +1,5 @@
 <?php
-
+/*
 namespace Omnipay\Dummy\Message;
 
 use Omnipay\Tests\TestCase;
@@ -32,3 +32,4 @@ class ResponseTest extends TestCase
         $this->assertSame('Failure', $response->getMessage());
     }
 }
+*/

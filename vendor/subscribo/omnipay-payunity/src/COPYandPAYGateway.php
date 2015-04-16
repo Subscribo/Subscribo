@@ -1,13 +1,21 @@
-<?php namespace Omnipay\PayUnity;
+<?php
+
+namespace Omnipay\PayUnity;
 
 use Omnipay\PayUnity\AbstractGateway;
 
 class COPYandPAYGateway extends AbstractGateway
 {
-    public function acquireToken(array $parameters = [])
-    {
-        return $this->createRequest('Omnipay\\PayUnity\\Message\\AcquireCopyAndPayTokenRequest', $parameters);
 
+
+    public function purchase(array $parameters = [])
+    {
+        return $this->createRequest('Omnipay\\PayUnity\\Message\\CopyAndPayPurchaseRequest', $parameters);
+    }
+
+    public function completePurchase(array $parameters = [])
+    {
+        return $this->createRequest('Omnipay\\PayUnity\\Message\\CopyAndPayCompletePurchaseRequest', $parameters);
     }
 
 }
