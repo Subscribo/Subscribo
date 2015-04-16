@@ -1,24 +1,37 @@
 {
     "name": "subscribo/omnipay-payunity",
-    "repositories": [ {"type": "composer", "url": "http://satis.localhost"} ],
-    "description": "PayUnity driver for Omnipay library",
+    "type": "library",
+    "description": "PayUnity driver for the Omnipay payment processing library",
     "keywords": [
         "PayUnity",
-        "Omnipay",
+        "gateway",
+        "merchant",
+        "omnipay",
+        "pay",
         "payment"
     ],
     "homepage": "http://www.subscribo.io",
     "license": "MIT",
     "authors": [
         {
-            "name": "Slavo",
-            "role": "developer"
+            "name": "Adrian Macneil",
+            "email": "adrian@adrianmacneil.com"
+        },
+        {
+            "name": "Omnipay Contributors",
+            "homepage": "https://github.com/thephpleague/omnipay-dummy/contributors"
+        },
+        {
+            "name": "Slavo"
         },
         {
             "name": "Kochabo",
-            "role": "owner"
+            "homepage": "http://kochabo.com"
         }
     ],
+    "autoload": {
+        "psr-4": {"Omnipay\\PayUnity\\": "src/"}
+    },
     "require": {
         "php": "~5.4",
         "omnipay/common": "~2.0@stable",
@@ -28,11 +41,6 @@
     },
     "require-dev": {
         "omnipay/tests": "~2.0@stable"
-    },
-    "autoload": {
-        "psr-4": {
-            "Omnipay\\PayUnity\\": "src/"
-        }
     },
     "prefer-stable": true,
     "minimum-stability": "dev"
