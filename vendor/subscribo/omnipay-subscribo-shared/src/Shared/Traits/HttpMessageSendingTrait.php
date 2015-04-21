@@ -19,14 +19,14 @@ trait HttpMessageSendingTrait
 {
     /**
      * @param RequestInterface $request
-     * @param null|bool|string $throwExceptions - true for any non-success response, 'client' for client errors only, 'server' for server errors only
+     * @param bool|string $throwExceptionMode - true for any non-success response, 'client' for client errors only, 'server' for server errors only
      * @return ResponseInterface
      * @throws TransportErrorHttpMessageSendingException
      * @throws ClientErrorResponseHttpMessageSendingException
      * @throws ServerErrorResponseHttpMessageSendingException
      * @throws NotSuccessfulResponseHttpMessageSendingException
      */
-    protected function sendHttpMessage(RequestInterface $request, $throwExceptions = null)
+    protected function sendHttpMessage(RequestInterface $request, $throwExceptionMode = false)
     {
         try {
             $client = $this->httpClient;
@@ -35,23 +35,8 @@ trait HttpMessageSendingTrait
         } catch (Exception $e) {
             throw new TransportErrorHttpMessageSendingException($e->getMessage(), $e->getCode(), $e);
         }
-        $statusCode = $response->getStatusCode();
-        if ($statusCode >= 200 and $statusCode <= 299) {
-            return $response;
-        }
-        if ($statusCode >= 400 and $statusCode <= 499) {
-            if (true === $throwExceptions or ('client' === $throwExceptions)) {
-                throw ClientErrorResponseHttpMessageSendingException::makeFromResponse($response);
-            }
-        }
-        if ($statusCode >= 500 and $statusCode <= 599) {
-            if (true === $throwExceptions or ('server' === $throwExceptions)) {
-                throw ServerErrorResponseHttpMessageSendingException::makeFromResponse($response);
-            }
-        }
-        if (true === $throwExceptions) {
-            throw NotSuccessfulResponseHttpMessageSendingException::makeFromResponse($response);
-        }
+        NotSuccessfulResponseHttpMessageSendingException::makeIfResponseNotSuccessful($response, $throwExceptionMode, true);
+
         return $response;
     }
 }

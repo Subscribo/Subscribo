@@ -9,6 +9,11 @@ abstract class AbstractResponse extends Base
         return false;
     }
 
+    public function isWaiting()
+    {
+        return false;
+    }
+
     public function haveWidget()
     {
         return false;
