@@ -32,7 +32,7 @@ abstract class AbstractRequest extends Base
         $request = RequestFactory::make($url, $data);
         $response = $this->sendHttpMessage($request, true);
         $responseData = ResponseParser::extractDataFromResponse($response);
-        $this->response = $this->makeOmnipayResponse($responseData);
+        $this->response = $this->createResponse($responseData);
         return $this->response;
     }
 }

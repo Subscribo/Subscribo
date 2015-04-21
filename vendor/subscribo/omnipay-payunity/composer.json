@@ -40,7 +40,8 @@
         "psr/http-message": "*@dev"
     },
     "require-dev": {
-        "omnipay/tests": "~2.0@stable"
+        "omnipay/tests": "~2.0@stable",
+        "monolog/monolog": "~1.13"
     },
     "prefer-stable": true,
     "minimum-stability": "dev"

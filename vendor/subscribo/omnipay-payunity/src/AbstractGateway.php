@@ -24,7 +24,7 @@ abstract class AbstractGateway extends Base
         return [
             'securitySender' => '',
             'transactionChannel' => '',
-            'transactionMode' => 'LIVE',
+            'transactionMode' => '',
             'userLogin' => '',
             'userPwd' => '',
             'testMode' => false,

@@ -52,15 +52,5 @@ trait DefaultGatewayParametersGettersAndSettersTrait
         return $this->setParameter('userPwd', $value);
     }
 
-    public function setTestMode($value)
-    {
-        if ($value) {
-            $currentTransactionModeNormalized = trim(strtoupper($this->getTransactionMode()));
-            if (empty($currentTransactionModeNormalized) or ($currentTransactionModeNormalized === 'LIVE')) {
-                $this->setTransactionMode('INTEGRATOR_TEST');
-            }
-        }
-        return parent::setTestMode($value);
-    }
 
 }

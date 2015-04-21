@@ -53,12 +53,16 @@ trait CopyAndPayWidgetResponseTrait
 
     /**
      * @param string $token
-     * @param string $redirectUrl
+     * @param string $returnUrl absolute url for processing the result
+     * @param array|string $brands
      * @return string
      */
-    public static function assembleWidgetForm($token, $redirectUrl)
+    public static function assembleWidgetForm($token, $returnUrl, $brands)
     {
-        $result = '<form action="'.$redirectUrl.'" id="'.$token.'"></form>';
+        if (is_array($brands)) {
+            $brands = implode(' ', $brands);
+        }
+        $result = '<form action="'.$returnUrl.'" id="'.$token.'">'.$brands.'</form>';
         return $result;
     }
 
@@ -86,15 +90,16 @@ trait CopyAndPayWidgetResponseTrait
      * @param string|null $language
      * @param string|null $style
      * @param bool $compressed default true for compressed javascript
-     * @param string|null $redirectUrl
+     * @param array|string|null $brands
+     * @param string|null $returnUrl absolute url for processing the result
      * @return null|string
      */
-    public function getWidget($language = null, $style = null, $compressed = true, $redirectUrl = null)
+    public function getWidget($language = null, $style = null, $compressed = true, $brands = null, $returnUrl = null)
     {
         if ( ! $this->isTransactionToken()) {
             return null;
         }
-        $result = $this->getWidgetJavascript($language, $style, $compressed).$this->getWidgetForm($redirectUrl);
+        $result = $this->getWidgetJavascript($language, $style, $compressed).$this->getWidgetForm($brands, $returnUrl);
         return $result;
     }
 
@@ -118,26 +123,37 @@ trait CopyAndPayWidgetResponseTrait
     }
 
     /**
-     * @param null|string $redirectUrl
+     * @param null|string|array brands
+     * @param null|string $returnUrl absolute url for processing the result
      * @return null|string
      * @throws InvalidArgumentException
      */
-    public function getWidgetForm($redirectUrl = null)
+    public function getWidgetForm($brands = null, $returnUrl = null)
     {
         $token = $this->getTransactionToken();
         if (empty($token)) {
             return null;
         }
-        // If $redirectUrl was not provided as a parameter, we try to get it from request
-        if (empty($redirectUrl)) {
+        // If $brands was not provided as a parameter, we try to get it from request
+        if (is_null($brands)) {
+            /** @var \Omnipay\PayUnity\Message\AbstractRequest|null $request */
+            $request = $this->getRequest();
+            $parameters = $request->getParameters();
+            $brands = isset($parameters['brands']) ? $parameters['brands'] : null;
+        }
+        if (is_null($brands)) {
+            throw new InvalidArgumentException('Parameter brands (string or array) was not provided neither found in request');
+        }
+        // If $returnUrl was not provided as a parameter, we try to get it from request
+        if (empty($returnUrl)) {
             /** @var \Omnipay\Common\Message\AbstractRequest|null $request */
             $request = $this->getRequest();
-            $redirectUrl = $request ? $request->getReturnUrl() : null;
+            $returnUrl = $request ? $request->getReturnUrl() : null;
         }
-        if (empty($redirectUrl)) {
-            throw new InvalidArgumentException('Parameter redirectUrl was not provided neither found in request');
+        if (empty($returnUrl)) {
+            throw new InvalidArgumentException('Parameter returnUrl was not provided neither found in request');
         }
-        $result = static::assembleWidgetForm($token, $redirectUrl);
+        $result = static::assembleWidgetForm($token, $returnUrl, $brands);
         return $result;
     }
 }

@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <title>Omnipay PayUnity Driver Complete Purchase Example page</title>
+    </head>
+    <body>
+        <h1>Omnipay PayUnity Driver Complete Purchase Example page</h1>
+
+<?php
+/**
+ * Code example for page for return url
+ */
+
+/** @var \Omnipay\PayUnity\COPYandPAYGateway $gateway */
+$gateway = \Omnipay\Omnipay::create('PayUnity\\COPYandPAY');
+
+$gateway->initialize([
+    'testMode' => true,
+]);
+
+$request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
+
+$transactionToken = $request->query->get('token');
+
+$response = $gateway->completePurchase(['transactionToken' => $transactionToken])->send();
+
+if ($response->isSuccessful()) {
+    echo '<div>Success!</div>';
+    echo '<div>Transaction ID:'.$response->getTransactionReference().'</div>';
+
+} else {
+    echo '<div>Something has happened.</div>';
+    $message = $response->getMessage();
+    if ($message) {
+        echo '<div>Message: '.$message.'</div>';
+    }
+}
+?>
+
+    </body>
+</html>

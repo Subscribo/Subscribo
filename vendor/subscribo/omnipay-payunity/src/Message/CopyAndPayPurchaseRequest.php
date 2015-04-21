@@ -11,6 +11,23 @@ class CopyAndPayPurchaseRequest extends AbstractRequest
 
     protected $testEndpointUrl = 'https://test.ctpe.net/frontend/GenerateToken';
 
+    /**
+     * @return null|string|array
+     */
+    public function getBrands()
+    {
+        return $this->getParameter('brands');
+    }
+
+    /**
+     * @param string|array $value
+     * @return \Omnipay\Common\Message\AbstractRequest
+     */
+    public function setBrands($value)
+    {
+        return $this->setParameter('brands', $value);
+    }
+
     protected function getEndpointUrl()
     {
         return $this->getTestMode() ? $this->testEndpointUrl : $this->liveEndpointUrl;
@@ -23,17 +40,23 @@ class CopyAndPayPurchaseRequest extends AbstractRequest
 
     public function getData()
     {
-        $this->validate('securitySender', 'transactionChannel', 'transactionMode', 'userLogin', 'userPwd', 'amount');
+        $transactionMode = $this->getTransactionMode() ?: $this->chooseTransactionMode();
+        $this->validate('securitySender', 'transactionChannel', 'userLogin', 'userPwd', 'amount');
         $result = [
-            'SECURITY.SENDER' => $this->getParameter('securitySender'),
-            'TRANSACTION.CHANNEL' => $this->getParameter('transactionChannel'),
-            'TRANSACTION.MODE' => $this->getParameter('transactionMode'),
-            'USER.LOGIN'  => $this->getParameter('userLogin'),
-            'USER.PWD'   => $this->getParameter('userPwd'),
+            'SECURITY.SENDER' => $this->getSecuritySender(),
+            'TRANSACTION.CHANNEL' => $this->getTransactionChannel(),
+            'TRANSACTION.MODE' => $transactionMode,
+            'USER.LOGIN'  => $this->getUserLogin(),
+            'USER.PWD'   => $this->getUserPwd(),
             'PAYMENT.TYPE' => 'DB',
             'PRESENTATION.AMOUNT' => $this->getAmount(),
             'PRESENTATION.CURRENCY' => $this->getCurrency(),
         ];
         return $result;
+    }
+
+    protected function chooseTransactionMode()
+    {
+        return $this->getTestMode() ? 'INTEGRATOR_TEST' : 'LIVE';
     }
 }
