@@ -37,12 +37,16 @@ Gateways in this package have following required options:
 * userPwd
 
 To get those please contact your PayUnity representative.
-(note: they are provided usually in the form 'SECURITY.SENDER' etc.)
+
+(Note: they are provided usually in the form 'SECURITY.SENDER' etc.)
 
 Additionally these options could be specified:
 
 * transactionMode
 * testMode
+* identificationShopperId
+* identificationInvoiceId
+* identificationBulkId (Note: not sure of having any effect at the moment)
 
 For meaning and possible values of transactionMode ('TRANSACTION.MODE') see PayUnity documentation.
 
@@ -57,7 +61,7 @@ Gateway PayUnity\COPYandPAY supports these request-sending methods:
 
 #### purchase()
 
-Method purchase() expects an array with these keys as its arguments:
+Method purchase() expects an array with this key as its argument:
 
 * amount
 
@@ -66,13 +70,18 @@ Additionally these keys could be specified:
 * currency (e.g. EUR)
 * brands
 * returnUrl
+* identificationTransactionId
+* presentationUsage
+* paymentMemo
 
-Brands could be an array or string with space separated list of (uppercase) brand identifiers, supported by COPYandPAY widget.
+Option brands could be an array or string with space separated list of (uppercase) brand identifiers, supported by COPYandPAY widget.
 For supported brands see COPYandPAY documentation.
 
-returnUrl is an absolute url in your site, where user should be redirected after payment.
+Option returnUrl should be an absolute url in your site, where user should be redirected after payment.
 
-Method purchase() returns an instance of CopyAndPayPurchaseRequest, with method send(), sending the request and returning an instance of CopyAndPayPurchaseResponse with following methods (additional to standard Omnipay RequestInterface methods and besides other helper and static methods):
+You need to provide brands and returnUrl either as part of purchase() argument, or when creating a widget later.
+
+Method purchase() returns an instance of CopyAndPayPurchaseRequest having method send(), which in turn is sending the request and returning an instance of CopyAndPayPurchaseResponse having the following methods (additional to standard Omnipay RequestInterface methods and besides other helper and static methods):
 
 * isTransactionToken()
 * getTransactionToken()
@@ -81,20 +90,28 @@ Method purchase() returns an instance of CopyAndPayPurchaseRequest, with method 
 * getWidgetJavascript()
 * getWidgetForm()
 
-isSuccessful() always returns false, as the COPYandPAY workflow is, that using purchase() method you acquire transactionToken,
-and you either manually, using static helpers
-or using CopyAndPayPurchaseResponse methods: getWidget() (or getWidgetJavascript() and getWidgetForm() if you want to have these parts separated)
-create and display frontend widget, display it to customer, and when customer fill and sends the widget, he is redirected to returnUrl provided,
-where you can finish/check the transaction (see below)
+Method isSuccessful() always returns false, as the COPYandPAY workflow is as follows:
+
+  1. using purchase() method you acquire transactionToken,
+  2. then and you either manually, using static helpers
+     or using CopyAndPayPurchaseResponse methods: getWidget()
+     (or getWidgetJavascript() and getWidgetForm() if you want to have these parts separated)
+     create the frontend widget and display it to customer
+  3. and when customer fill and sends the widget,
+  4. he is redirected to returnUrl provided,
+  5. where you can finish/check the transaction (see below)
 
 #### completePurchase()
 
 Method completePurchase() could be called after customer had been redirected from widget (see above) back to your site.
-It expects array with 'transactionToken' as a parameter, however it could be invoked also with empty array and you can provide transaction token to returned instance of CopyAndPayCompletePurchaseRequest
+It expects an array with key 'transactionToken' as a parameter,
+however it could be invoked also with an empty array
+and you can provide transaction token to returned instance of CopyAndPayCompletePurchaseRequest
 via setTransactionToken($token) or fill(CopyAndPayPurchaseResponse $response) methods.
+
 After transactionToken is provided to CopyAndPayCompletePurchaseRequest, you can call its send() method and receive CopyAndPayCompletePurchaseResponse, with following methods (additional to standard Omnipay RequestInterface methods):
 
-* isWaiting() true when customer did not yet sent the widget form
+* isWaiting() returns true when customer did not yet sent the widget form
 
 ### Example code
 

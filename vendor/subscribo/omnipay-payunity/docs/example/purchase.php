@@ -20,8 +20,11 @@ $gateway->initialize([
     "securitySender" => "696a8f0fabffea91517d0eb0a0bf9c33",
     "transactionChannel" => "52275ebaf361f20a76b038ba4c806991",
     "userLogin" => "1143238d620a572a726fe92eede0d1ab",
-    "transactionMode" => "CONNECTOR_TEST",
+    "transactionMode" => "INTEGRATOR_TEST",
     "userPwd" => "demo",
+    'identificationShopperId' => 'Optional identification of customer',
+    'identificationInvoiceId' => 'Optional identifier which you also might print on invoice',
+    'identificationBulkId' => 'Optional identifier to group some transactions together',
     'testMode' => true,
 ]);
 
@@ -31,6 +34,9 @@ $response = $gateway->purchase([
     'currency' => 'EUR',
     'brands' => 'VISA MASTER MAESTRO SOFORTUEBERWEISUNG',
     'returnUrl' => 'https://localhost/example/complete/purchase',
+    'identificationTransactionId' => 'Optional identification of this transaction',
+    'presentationUsage' => 'Optional: Just for testing',
+    'paymentMemo' => 'Optional MEMO',
 ])->send();
 
 if ( ! $response->haveWidget()) {

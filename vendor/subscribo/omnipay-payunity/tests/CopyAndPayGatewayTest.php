@@ -25,18 +25,20 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->gateway->setTransactionChannel('ff80808144d46be50144d4a732ae0083');
         $this->gateway->setUserLogin('ff80808144d46be50144d4a6f6cf0081');
         $this->gateway->setUserPwd('M5Ynx692');
+        $this->gateway->setIdentificationShopperId('Shopper 13245');
         $this->options = array(
             'amount' => '10.00',
             'currency' => 'EUR',
         );
         $this->connectorModeGateway = new COPYandPAYGateway($this->getHttpClient(), $this->getHttpRequest());
-        $this->connectorModeGateway->initializeLogger($this->logger);
         $this->connectorModeGateway->initialize([
             "securitySender" => "696a8f0fabffea91517d0eb0a0bf9c33",
             "transactionChannel" => "52275ebaf361f20a76b038ba4c806991",
             "transactionMode" => "CONNECTOR_TEST",
             "userLogin" => "1143238d620a572a726fe92eede0d1ab",
             "userPwd" => "demo",
+            "testMode" => true,
+            'identificationBulkId' => 'Some bulk ID'
         ]);
     }
 
@@ -48,9 +50,18 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $options = $this->options;
         $options['returnUrl'] = 'https://localhost/redirect/url';
         $options['brands'] = 'VISA';
-        $response = $this->gateway->purchase($options)->send();
-
+        $options['identificationTransactionId'] = 'Transaction 12345';
+        $request = $this->gateway->purchase($options);
+        $request->setPresentationUsage('Used for test');
+        $response = $request->send();
+        $this->assertInstanceOf('\\Omnipay\\PayUnity\\Message\\CopyAndPayPurchaseRequest', $request);
         $this->assertInstanceOf('\\Omnipay\\PayUnity\\Message\\CopyAndPayPurchaseResponse', $response);
+        /** @var \Omnipay\PayUnity\Message\CopyAndPayPurchaseRequest $request */
+        $this->assertSame('Shopper 13245', $request->getIdentificationShopperId());
+        $this->assertSame('Transaction 12345', $request->getIdentificationTransactionId());
+        $this->assertSame('Used for test', $request->getPresentationUsage());
+        $this->assertEmpty($request->getIdentificationBulkId());
+        $this->assertEmpty($request->getIdentificationInvoiceId());
         /** @var CopyAndPayPurchaseResponse $response */
         $this->assertFalse($response->isSuccessful());
         $this->assertFalse($response->isRedirect());
@@ -69,7 +80,6 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->assertEmpty($response->getMessage());
         $this->assertEmpty($response->getCode());
         $this->assertEmpty($response->getTransactionReference());
-
         return $response;
     }
 
@@ -91,16 +101,28 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->assertEmpty($response->getMessage());
         $this->assertEmpty($response->getCode());
         $this->assertEmpty($response->getTransactionReference());
+        $this->assertEmpty($response->getIdentificationTransactionId());
+        $this->assertEmpty($response->getIdentificationShopperId());
+        $this->assertEmpty($response->getIdentificationUniqueId());
+        $this->assertEmpty($response->getIdentificationShortId());
     }
 
     public function testConnectorModePurchase()
     {
         $options = $this->options;
         $options['brands'] = ['MAESTRO', 'MASTER'];
+        $options['paymentMemo'] = 'TEST MEMO';
 
-        $response = $this->connectorModeGateway->purchase($options)->send();
-
+        $request = $this->connectorModeGateway->purchase($options);
+        $request->setIdentificationInvoiceId(248);
+        $response = $request->send();
+        $this->assertInstanceOf('\\Omnipay\\PayUnity\\Message\\CopyAndPayPurchaseRequest', $request);
         $this->assertInstanceOf('\\Omnipay\\PayUnity\\Message\\CopyAndPayPurchaseResponse', $response);
+        /** @var \Omnipay\PayUnity\Message\CopyAndPayPurchaseRequest $request */
+        $this->assertEmpty($request->getIdentificationShopperId());
+        $this->assertEmpty($request->getIdentificationTransactionId());
+        $this->assertSame('Some bulk ID', $request->getIdentificationBulkId());
+        $this->assertSame(248, $request->getIdentificationInvoiceId());
         /** @var CopyAndPayPurchaseResponse $response */
         $this->assertFalse($response->isSuccessful());
         $this->assertFalse($response->isRedirect());
@@ -141,6 +163,10 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->assertEmpty($response->getMessage());
         $this->assertEmpty($response->getCode());
         $this->assertEmpty($response->getTransactionReference());
+        $this->assertEmpty($response->getIdentificationTransactionId());
+        $this->assertEmpty($response->getIdentificationShopperId());
+        $this->assertEmpty($response->getIdentificationUniqueId());
+        $this->assertEmpty($response->getIdentificationShortId());
     }
 
 

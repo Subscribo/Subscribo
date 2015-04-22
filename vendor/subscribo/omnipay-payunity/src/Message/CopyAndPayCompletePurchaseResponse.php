@@ -28,10 +28,7 @@ class CopyAndPayCompletePurchaseResponse extends AbstractResponse
 
     public function getTransactionReference()
     {
-        if ( ! empty($this->data['transaction']['identification']['uniqueId'])) {
-            return $this->data['transaction']['identification']['uniqueId'];
-        }
-        return null;
+        return $this->getIdentificationUniqueId();
     }
 
     public function getMessage()
@@ -53,4 +50,37 @@ class CopyAndPayCompletePurchaseResponse extends AbstractResponse
         }
         return null;
     }
+
+    public function getIdentificationUniqueId()
+    {
+        if ( ! empty($this->data['transaction']['identification']['uniqueId'])) {
+            return $this->data['transaction']['identification']['uniqueId'];
+        }
+        return null;
+    }
+
+    public function getIdentificationShortId()
+    {
+        if ( ! empty($this->data['transaction']['identification']['shortId'])) {
+            return $this->data['transaction']['identification']['shortId'];
+        }
+        return null;
+    }
+
+    public function getIdentificationTransactionId()
+    {
+        if ( ! empty($this->data['transaction']['identification']['transactionid'])) {
+            return $this->data['transaction']['identification']['transactionid'];
+        }
+        return null;
+    }
+
+    public function getIdentificationShopperId()
+    {
+        if ( ! empty($this->data['transaction']['identification']['shopperid'])) {
+            return $this->data['transaction']['identification']['shopperid'];
+        }
+        return null;
+    }
+
 }

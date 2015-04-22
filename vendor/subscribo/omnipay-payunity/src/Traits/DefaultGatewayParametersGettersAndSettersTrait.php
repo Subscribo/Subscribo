@@ -52,5 +52,55 @@ trait DefaultGatewayParametersGettersAndSettersTrait
         return $this->setParameter('userPwd', $value);
     }
 
+    /**
+     * @return string|int
+     */
+    public function getIdentificationShopperId()
+    {
+        return $this->getParameter('identificationShopperId');
+    }
+
+    /**
+     * @param string|int $value
+     * @return $this
+     */
+    public function setIdentificationShopperId($value)
+    {
+        return $this->setParameter('identificationShopperId', $value);
+    }
+
+    /**
+     * @return string|int
+     */
+    public function getIdentificationInvoiceId()
+    {
+        return $this->getParameter('identificationInvoiceId');
+    }
+
+    /**
+     * @param string|int $value
+     * @return $this
+     */
+    public function setIdentificationInvoiceId($value)
+    {
+        return $this->setParameter('identificationInvoiceId', $value);
+    }
+
+    /**
+     * @return string|int
+     */
+    public function getIdentificationBulkId()
+    {
+        return $this->getParameter('identificationBulkId');
+    }
+
+    /**
+     * @param string|int $value
+     * @return $this
+     */
+    public function setIdentificationBulkId($value)
+    {
+        return $this->setParameter('identificationBulkId', $value);
+    }
 
 }

@@ -25,7 +25,62 @@ abstract class AbstractRequest extends Base
      */
     abstract protected function createResponse($data);
 
+    /**
+     * @return string|int
+     */
+    public function getIdentificationTransactionId()
+    {
+        return $this->getParameter('identificationTransactionId');
+    }
 
+    /**
+     * @param string|int $value
+     * @return $this
+     */
+    public function setIdentificationTransactionId($value)
+    {
+        return $this->setParameter('identificationTransactionId', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPresentationUsage()
+    {
+        return $this->getParameter('presentationUsage');
+    }
+
+    /**
+     * @param string $value
+     * @return $this
+     */
+    public function setPresentationUsage($value)
+    {
+        return $this->setParameter('presentationUsage', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentMemo()
+    {
+        return $this->getParameter('paymentMemo');
+    }
+
+    /**
+     * @param string $value
+     * @return $this
+     */
+    public function setPaymentMemo($value)
+    {
+        return $this->setParameter('paymentMemo', $value);
+    }
+
+
+    /**
+     * @param mixed $data
+     * @return ResponseInterface
+     */
     public function sendData($data)
     {
         $url = $this->getEndpointUrl();

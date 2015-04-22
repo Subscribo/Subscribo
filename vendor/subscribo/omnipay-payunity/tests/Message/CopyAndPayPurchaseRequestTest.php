@@ -64,4 +64,31 @@ class CopyAndPayPurchaseRequestTest extends TestCase
         $request->setBrands(['VISA', 'MAESTRO', "MASTER"]);
         $this->assertSame(['VISA', "MAESTRO", 'MASTER'], $request->getBrands());
     }
+
+    public function testSetPresentationUsage()
+    {
+        $request = new CopyAndPayPurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->assertNull($request->getPresentationUsage());
+        $value = uniqid();
+        $this->assertSame($request, $request->setPresentationUsage($value));
+        $this->assertSame($value, $request->getPresentationUsage());
+    }
+
+    public function testSetIdentificationTransactionId()
+    {
+        $request = new CopyAndPayPurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->assertNull($request->getIdentificationTransactionId());
+        $value = uniqid();
+        $this->assertSame($request, $request->setIdentificationTransactionId($value));
+        $this->assertSame($value, $request->getIdentificationTransactionId());
+    }
+
+    public function testSetPaymentMemo()
+    {
+        $request = new CopyAndPayPurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->assertNull($request->getPaymentMemo());
+        $value = uniqid();
+        $this->assertSame($request, $request->setPaymentMemo($value));
+        $this->assertSame($value, $request->getPaymentMemo());
+    }
 }

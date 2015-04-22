@@ -27,6 +27,9 @@ abstract class AbstractGateway extends Base
             'transactionMode' => '',
             'userLogin' => '',
             'userPwd' => '',
+            'identificationShopperId' => '',
+            'identificationInvoiceId' => '',
+            'identificationBulkId' => '',
             'testMode' => false,
         ];
     }

@@ -41,6 +41,13 @@ class CopyAndPayPurchaseRequest extends AbstractRequest
     public function getData()
     {
         $transactionMode = $this->getTransactionMode() ?: $this->chooseTransactionMode();
+        $paymentType = 'DB';
+        $transactionId = $this->getIdentificationTransactionId();
+        $shopperId = $this->getIdentificationShopperId();
+        $invoiceId = $this->getIdentificationInvoiceId();
+        $bulkId = $this->getIdentificationBulkId();
+        $usage = $this->getPresentationUsage();
+        $paymentMemo = $this->getPaymentMemo();
         $this->validate('securitySender', 'transactionChannel', 'userLogin', 'userPwd', 'amount');
         $result = [
             'SECURITY.SENDER' => $this->getSecuritySender(),
@@ -48,10 +55,29 @@ class CopyAndPayPurchaseRequest extends AbstractRequest
             'TRANSACTION.MODE' => $transactionMode,
             'USER.LOGIN'  => $this->getUserLogin(),
             'USER.PWD'   => $this->getUserPwd(),
-            'PAYMENT.TYPE' => 'DB',
+            'PAYMENT.TYPE' => $paymentType,
             'PRESENTATION.AMOUNT' => $this->getAmount(),
             'PRESENTATION.CURRENCY' => $this->getCurrency(),
+            'PRESENTATION.USAGE' => 'Some usage',
         ];
+        if ($transactionId) {
+            $result['IDENTIFICATION.TRANSACTIONID'] = $transactionId;
+        }
+        if ($shopperId) {
+            $result['IDENTIFICATION.SHOPPERID'] = $shopperId;
+        }
+        if ($invoiceId) {
+            $result['IDENTIFICATION.INVOICEID'] = $invoiceId;
+        }
+        if ($bulkId) {
+            $result['IDENTIFICATION.BULKID'] = $bulkId;
+        }
+        if ($usage) {
+            $result['PRESENTATION.USAGE'] = $usage;
+        }
+        if ($paymentMemo) {
+            $result['PAYMENT.MEMO'] = $paymentMemo;
+        }
         return $result;
     }
 

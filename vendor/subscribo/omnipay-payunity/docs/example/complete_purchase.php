@@ -21,11 +21,16 @@ $request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
 
 $transactionToken = $request->query->get('token');
 
+/** @var \Omnipay\PayUnity\Message\CopyAndPayCompletePurchaseResponse $response */
 $response = $gateway->completePurchase(['transactionToken' => $transactionToken])->send();
 
 if ($response->isSuccessful()) {
     echo '<div>Success!</div>';
-    echo '<div>Transaction ID:'.$response->getTransactionReference().'</div>';
+    echo '<div>Transaction Reference:'.$response->getTransactionReference().'</div>';
+    echo '<div>Identification Unique ID:'.$response->getIdentificationUniqueId().'</div>';
+    echo '<div>Identification Short ID:'.$response->getIdentificationShortId().'</div>';
+    echo '<div>Identification Shopper ID:'.$response->getIdentificationShopperId().'</div>';
+    echo '<div>Identification Transaction ID:'.$response->getIdentificationTransactionId().'</div>';
 
 } else {
     echo '<div>Something has happened.</div>';
