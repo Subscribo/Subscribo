@@ -3,9 +3,10 @@
 namespace Omnipay\PayUnity\Message;
 
 use InvalidArgumentException;
+use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\PayUnity\Message\AbstractRequest;
 use Omnipay\PayUnity\Message\CopyAndPayPurchaseResponse;
-use Omnipay\PayUnity\Message\CopyAndPayPurchaseCompleteResponse;
+use Omnipay\PayUnity\Message\CopyAndPayCompletePurchaseResponse;
 use Subscribo\PsrHttpTools\Factories\RequestFactory;
 use Subscribo\PsrHttpTools\Parsers\ResponseParser;
 
@@ -44,8 +45,14 @@ class CopyAndPayCompletePurchaseRequest extends AbstractRequest
 
     public function getData()
     {
-        $this->validate('transactionToken');
-        return ['transactionToken' => $this->getTransactionToken()];
+        $transactionToken = $this->getTransactionToken();
+        if (empty($transactionToken)) {
+            $transactionToken = $this->httpRequest->query->get('token');
+        }
+        if (empty($transactionToken)) {
+            throw new InvalidRequestException('Token has not been provided as parameter, neither found in httpRequest');
+        }
+        return ['transactionToken' => $transactionToken];
     }
 
     public function sendData($data)

@@ -108,6 +108,8 @@ It expects an array with key 'transactionToken' as a parameter,
 however it could be invoked also with an empty array
 and you can provide transaction token to returned instance of CopyAndPayCompletePurchaseRequest
 via setTransactionToken($token) or fill(CopyAndPayPurchaseResponse $response) methods.
+If transactionToken is not provided manually, an attempt will be made to retrieve it from httpRequest, provided to gateway constructor.
+(That usually means, that if you do not specify transactionToken, it will be taken from url query of current page automatically.)
 
 After transactionToken is provided to CopyAndPayCompletePurchaseRequest, you can call its send() method and receive CopyAndPayCompletePurchaseResponse, with following methods (additional to standard Omnipay RequestInterface methods):
 

@@ -17,12 +17,8 @@ $gateway->initialize([
     'testMode' => true,
 ]);
 
-$request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
-
-$transactionToken = $request->query->get('token');
-
 /** @var \Omnipay\PayUnity\Message\CopyAndPayCompletePurchaseResponse $response */
-$response = $gateway->completePurchase(['transactionToken' => $transactionToken])->send();
+$response = $gateway->completePurchase()->send();
 
 if ($response->isSuccessful()) {
     echo '<div>Success!</div>';

@@ -2,9 +2,11 @@
 
 namespace Omnipay\PayUnity\Message;
 
+use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Tests\TestCase;
 use Omnipay\PayUnity\Message\CopyAndPayCompletePurchaseRequest;
 use Omnipay\PayUnity\Message\CopyAndPayPurchaseResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class CopyAndPayCompletePurchaseRequestTest extends TestCase
 {
@@ -20,6 +22,23 @@ class CopyAndPayCompletePurchaseRequestTest extends TestCase
     public function testGetData()
     {
         $this->request->fill($this->purchaseResponse);
+        $data = $this->request->getData();
+        $this->assertSame('33E47BC8E286B472A1299EAC39F4556D.sbg-vm-fe01', $data['transactionToken']);
+    }
+
+    public function testGetTokenFromHttpRequest()
+    {
+        $httpRequest = new Request(['token' => '33E47BC8E286B472A1299EAC39F4556D.sbg-vm-fe01']);
+        $request = new CopyAndPayCompletePurchaseRequest($this->getHttpClient(), $httpRequest);
+        $data = $request->getData();
+        $this->assertSame('33E47BC8E286B472A1299EAC39F4556D.sbg-vm-fe01', $data['transactionToken']);
+    }
+
+    /**
+     * @expectedException \Omnipay\Common\Exception\InvalidRequestException
+     */
+    public function testNoTokenFound()
+    {
         $data = $this->request->getData();
         $this->assertSame('33E47BC8E286B472A1299EAC39F4556D.sbg-vm-fe01', $data['transactionToken']);
     }
