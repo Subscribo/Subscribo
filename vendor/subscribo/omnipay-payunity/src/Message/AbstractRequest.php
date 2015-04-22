@@ -26,23 +26,6 @@ abstract class AbstractRequest extends Base
     abstract protected function createResponse($data);
 
     /**
-     * @return string|int
-     */
-    public function getIdentificationTransactionId()
-    {
-        return $this->getParameter('identificationTransactionId');
-    }
-
-    /**
-     * @param string|int $value
-     * @return $this
-     */
-    public function setIdentificationTransactionId($value)
-    {
-        return $this->setParameter('identificationTransactionId', $value);
-    }
-
-    /**
      * @return string
      */
     public function getPresentationUsage()

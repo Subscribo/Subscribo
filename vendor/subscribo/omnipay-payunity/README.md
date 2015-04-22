@@ -70,7 +70,7 @@ Additionally these keys could be specified:
 * currency (e.g. EUR)
 * brands
 * returnUrl
-* identificationTransactionId
+* transactionId
 * presentationUsage
 * paymentMemo
 
@@ -112,6 +112,11 @@ via setTransactionToken($token) or fill(CopyAndPayPurchaseResponse $response) me
 After transactionToken is provided to CopyAndPayCompletePurchaseRequest, you can call its send() method and receive CopyAndPayCompletePurchaseResponse, with following methods (additional to standard Omnipay RequestInterface methods):
 
 * isWaiting() returns true when customer did not yet sent the widget form
+* getIdentificationShortId()
+* getIdentificationShopperId()
+
+* getTransactionId() is alias for getIdentificationTransactionId()
+* getTransactionReference() is alias for getIdentificationUniqueId()
 
 ### Example code
 

@@ -31,10 +31,12 @@ class CopyAndPayCompletePurchaseResponseTest extends TestCase
         $this->assertEmpty($response->getCode());
         $this->assertEmpty($response->getMessage());
         $this->assertEmpty($response->getTransactionReference());
+        $this->assertEmpty($response->getTransactionId());
         $this->assertEmpty($response->getIdentificationTransactionId());
         $this->assertEmpty($response->getIdentificationShopperId());
         $this->assertEmpty($response->getIdentificationUniqueId());
         $this->assertEmpty($response->getIdentificationShortId());
+        $this->assertSame($response->getIdentificationTransactionId(), $response->getTransactionId());
     }
 
     public function testSuccess()
@@ -89,6 +91,7 @@ class CopyAndPayCompletePurchaseResponseTest extends TestCase
         $this->assertSame('40288b163c865d30013c86600d6d0002', $response->getIdentificationUniqueId());
         $this->assertSame('7307.0292.8546', $response->getIdentificationShortId());
         $this->assertSame($response->getIdentificationUniqueId(), $response->getTransactionReference());
+        $this->assertSame($response->getIdentificationTransactionId(), $response->getTransactionId());
     }
 
     public function testRejected()
@@ -143,6 +146,7 @@ class CopyAndPayCompletePurchaseResponseTest extends TestCase
         $this->assertSame('40288b163c865d30013c866d69a2002a', $response->getIdentificationUniqueId());
         $this->assertSame('0435.0816.1186', $response->getIdentificationShortId());
         $this->assertSame($response->getIdentificationUniqueId(), $response->getTransactionReference());
+        $this->assertSame($response->getIdentificationTransactionId(), $response->getTransactionId());
     }
 
     public function testInvalidResponse()
@@ -162,6 +166,11 @@ class CopyAndPayCompletePurchaseResponseTest extends TestCase
         $this->assertNotEmpty($response->getMessage());
         $this->assertSame('Invalid or expired token', $response->getMessage());
         $this->assertEmpty($response->getTransactionReference());
+        $this->assertEmpty($response->getTransactionId());
+        $this->assertEmpty($response->getIdentificationTransactionId());
+        $this->assertEmpty($response->getIdentificationShopperId());
+        $this->assertEmpty($response->getIdentificationUniqueId());
+        $this->assertEmpty($response->getIdentificationShortId());
         $this->assertSame($response->getIdentificationUniqueId(), $response->getTransactionReference());
     }
 

@@ -31,6 +31,11 @@ class CopyAndPayCompletePurchaseResponse extends AbstractResponse
         return $this->getIdentificationUniqueId();
     }
 
+    public function getTransactionId()
+    {
+        return $this->getIdentificationTransactionId();
+    }
+
     public function getMessage()
     {
         if ( ! empty($this->data['transaction']['processing']['return']['message'])) {

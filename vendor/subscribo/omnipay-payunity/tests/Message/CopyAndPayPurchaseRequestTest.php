@@ -74,15 +74,6 @@ class CopyAndPayPurchaseRequestTest extends TestCase
         $this->assertSame($value, $request->getPresentationUsage());
     }
 
-    public function testSetIdentificationTransactionId()
-    {
-        $request = new CopyAndPayPurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
-        $this->assertNull($request->getIdentificationTransactionId());
-        $value = uniqid();
-        $this->assertSame($request, $request->setIdentificationTransactionId($value));
-        $this->assertSame($value, $request->getIdentificationTransactionId());
-    }
-
     public function testSetPaymentMemo()
     {
         $request = new CopyAndPayPurchaseRequest($this->getHttpClient(), $this->getHttpRequest());

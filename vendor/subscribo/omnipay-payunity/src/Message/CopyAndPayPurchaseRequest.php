@@ -42,7 +42,7 @@ class CopyAndPayPurchaseRequest extends AbstractRequest
     {
         $transactionMode = $this->getTransactionMode() ?: $this->chooseTransactionMode();
         $paymentType = 'DB';
-        $transactionId = $this->getIdentificationTransactionId();
+        $transactionId = $this->getTransactionId();
         $shopperId = $this->getIdentificationShopperId();
         $invoiceId = $this->getIdentificationInvoiceId();
         $bulkId = $this->getIdentificationBulkId();

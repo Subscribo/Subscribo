@@ -34,7 +34,7 @@ $response = $gateway->purchase([
     'currency' => 'EUR',
     'brands' => 'VISA MASTER MAESTRO SOFORTUEBERWEISUNG',
     'returnUrl' => 'https://localhost/example/complete/purchase',
-    'identificationTransactionId' => 'Optional identification of this transaction',
+    'transactionId' => 'Optional identification of this transaction',
     'presentationUsage' => 'Optional: Just for testing',
     'paymentMemo' => 'Optional MEMO',
 ])->send();
