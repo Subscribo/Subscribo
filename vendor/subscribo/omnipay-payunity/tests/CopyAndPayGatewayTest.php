@@ -19,7 +19,7 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->gateway->setTestMode(true);
         $this->logger = new \Monolog\Logger('UnitTest logger');
         $this->logger->pushHandler(new \Monolog\Handler\RotatingFileHandler(__DIR__.'/../tmp/logs/unit-tests.log'));
-        $this->gateway->initializeLogger($this->logger);
+        $this->gateway->attachPsrLogger($this->logger);
 
         $this->gateway->setSecuritySender('ff80808144d46be50144d4a6f6ce007f');
         $this->gateway->setTransactionChannel('ff80808144d46be50144d4a732ae0083');
@@ -40,6 +40,13 @@ class CopyAndPayGatewayTest extends GatewayTestCase
             "testMode" => true,
             'identificationBulkId' => 'Some bulk ID'
         ]);
+        $this->card = $this->getValidCard();
+        $this->card['email'] = 'email@example.com';
+        $this->card['title'] = 'DR';
+        $this->card['gender'] = 'M';
+        $this->card['birthday'] = '1970-01-01';
+        $this->card['company'] = 'Company name Inc.';
+
     }
 
     /**
@@ -51,6 +58,7 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $options['returnUrl'] = 'https://localhost/redirect/url';
         $options['brands'] = 'VISA';
         $options['transactionId'] = 'Transaction 12345';
+        $options['card'] = $this->card;
         $request = $this->gateway->purchase($options);
         $request->setPresentationUsage('Used for test');
         $response = $request->send();

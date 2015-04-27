@@ -35,6 +35,8 @@ class CopyAndPayPurchaseResponseTest extends TestCase
         $this->assertTrue($response->isTransactionToken());
         $this->assertTrue($response->haveWidget());
         $this->assertNotEmpty($response->getWidget('de', 'plain', false, ['VISA'], 'https://localhost/redirect/url'));
+        $this->assertSame('A550D17DC663DFA8973CCAB8A117669A.sbg-vm-fe01', $response->getTransactionToken());
+        $this->assertNull($response->getTransactionReference());
     }
 
     public function testEmptyTransactionToken()
@@ -50,5 +52,7 @@ class CopyAndPayPurchaseResponseTest extends TestCase
         $this->assertNull($response->getWidgetJavascript('de', 'plain', false));
         $this->assertNull($response->getWidgetForm());
         $this->assertNull($response->getWidget());
+        $this->assertNull($response->getTransactionToken());
+        $this->assertNull($response->getTransactionReference());
     }
 }

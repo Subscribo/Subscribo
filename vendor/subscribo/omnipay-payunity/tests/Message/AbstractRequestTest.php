@@ -9,19 +9,15 @@ use Guzzle\Plugin\Log\LogPlugin;
 use Guzzle\Log\PsrLogAdapter;
 use Guzzle\Log\MessageFormatter;
 use Guzzle\Http\Message\Response;
+use Subscribo\Omnipay\Shared\Helpers\GuzzleClientHelper;
 
 class AbstractRequestTest extends TestCase
 {
     public function setUp()
     {
-        $this->logger = new \Monolog\Logger('UnitTest logger');
-        $this->logger->pushHandler(new \Monolog\Handler\RotatingFileHandler(__DIR__.'/../../tmp/logs/unit-tests.log'));
-
-        $logPlugin = new LogPlugin(new PsrLogAdapter($this->logger), MessageFormatter::DEBUG_FORMAT);
-        $this->clientMock = new MockPlugin();
-        $this->client = $this->getHttpClient();
-        $this->client->addSubscriber($logPlugin);
-        $this->client->addSubscriber($this->clientMock);
+        $logger = new \Monolog\Logger('UnitTest logger');
+        $logger->pushHandler(new \Monolog\Handler\RotatingFileHandler(__DIR__.'/../../tmp/logs/unit-tests.log'));
+        GuzzleClientHelper::addPsrLoggerToClient($this->getHttpClient(), $logger);
     }
 
 
@@ -32,34 +28,33 @@ class AbstractRequestTest extends TestCase
      */
     public function testSendData()
     {
-        $httpResponse = new Response(200, ['Content-Type' => 'application/json'], '{"result":"test"}');
-        $this->clientMock->addResponse($httpResponse);
+        $this->setMockHttpResponse('simpleAbstractSuccess.txt');
 
-        $url = 'https://localhost/testurl';
-        $stub = $this->getMockForAbstractClass(
+        $url = 'https://nonexistent.localhost/testurl';
+        $requestStub = $this->getMockForAbstractClass(
             '\\Omnipay\\PayUnity\\Message\\AbstractRequest',
             [
-                $this->client,
+                $this->getHttpClient(),
                 $this->getHttpRequest(),
             ]
         );
         $responseStub = $this->getMockForAbstractClass(
             '\\Omnipay\\PayUnity\\Message\\AbstractResponse',
             [
-                $stub,
+                $requestStub,
                 ['result' => 'test'],
             ]
         );
-        $stub->expects($this->once())
+        $requestStub->expects($this->once())
             ->method('getEndPointUrl')
             ->will($this->returnValue($url));
-        $stub->expects($this->once())
+        $requestStub->expects($this->once())
             ->method('createResponse')
             ->with(['result' => 'test'])
             ->will($this->returnValue($responseStub));
         $this->assertInstanceOf(
             '\\Omnipay\\PayUnity\\Message\\AbstractResponse',
-            $stub->sendData(['testData' => 'someData'])
+            $requestStub->sendData(['testData' => 'someData'])
         );
     }
 }

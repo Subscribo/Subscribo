@@ -34,15 +34,15 @@
     },
     "require": {
         "php": "~5.4",
-        "omnipay/common": "~2.0@stable",
-        "subscribo/omnipay-subscribo-shared": "@dev",
-        "subscribo/psr-http-tools": "@dev",
-        "psr/http-message": "*@dev"
+        "omnipay/common": "^2.3.2",
+        "psr/http-message": "^0.10.1",
+        "egeloen/http-adapter": "^0.8@dev",
+        "subscribo/omnipay-subscribo-shared": "^0.1.7",
+        "subscribo/psr-http-tools": "^0.1.4"
     },
     "require-dev": {
-        "omnipay/tests": "~2.0@stable",
-        "monolog/monolog": "~1.13"
+        "omnipay/tests": "^2.0",
+        "monolog/monolog": "^1.13.1"
     },
-    "prefer-stable": true,
-    "minimum-stability": "dev"
+    "prefer-stable": true
 }

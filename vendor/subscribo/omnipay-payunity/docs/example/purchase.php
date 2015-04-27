@@ -28,6 +28,22 @@ $gateway->initialize([
     'testMode' => true,
 ]);
 
+$card = [
+    'firstName' => 'Sam',
+    'lastName' => 'Tester',
+    'title' => 'DR',
+    'gender' => 'M',
+    'birthday' => '1975-01-30',
+    'company' => 'Very Limited',
+    'address1' => 'Main street 1/1',
+    'address2' => 'Central District',
+    'city' => 'Wien',
+    'state' => 'AT13',
+    'country' => 'AT',
+    'email' => 'email@example.com',
+    'phone' => '+43 111 111 111',
+];
+
 
 $response = $gateway->purchase([
     'amount' => $amount,
@@ -37,6 +53,7 @@ $response = $gateway->purchase([
     'transactionId' => 'Optional identification of this transaction',
     'presentationUsage' => 'Optional: Just for testing',
     'paymentMemo' => 'Optional MEMO',
+    'card' => $card, //Optional
 ])->send();
 
 if ( ! $response->haveWidget()) {
