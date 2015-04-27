@@ -16,12 +16,19 @@ class ResponseParser implements DealingWithContentTypeInterface
         $this->response = $response;
     }
 
+    /**
+     * @param ResponseInterface $response
+     * @return array
+     */
     public static function extractDataFromResponse(ResponseInterface $response)
     {
         $instance = new static($response);
         return $instance->extractData();
     }
 
+    /**
+     * @return array
+     */
     public function extractData()
     {
         if (false !== $this->data) {
@@ -40,6 +47,12 @@ class ResponseParser implements DealingWithContentTypeInterface
         return $data;
     }
 
+    /**
+     * @param string $value
+     * @param string $format
+     * @return array
+     * @throws \InvalidArgumentException
+     */
     protected static function parseStringByFormat($value, $format)
     {
         $format = strtolower($format);
@@ -49,7 +62,9 @@ class ResponseParser implements DealingWithContentTypeInterface
                 parse_str($value, $data);
                 return $data;
             case static::CONTENT_TYPE_JSON:
-                return json_decode($value, true, 512, JSON_BIGINT_AS_STRING);
+                $data = json_decode($value, true, 512, JSON_BIGINT_AS_STRING);
+                $data = is_array($data) ? $data : [];
+                return $data;
             default:
                 throw new InvalidArgumentException('Format not supported');
         }

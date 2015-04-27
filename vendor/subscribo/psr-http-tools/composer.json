@@ -1,12 +1,14 @@
 {
     "name": "subscribo/psr-http-tools",
-    "description": "Tools which could be used with PSR-7: Request factory, Uri factory",
+    "description": "Tools which could be used with PSR-7: Request factory, Uri factory, Response parser",
     "license": "MIT",
     "keywords": [
         "PSR-7",
         "factory",
         "request",
-        "uri"
+        "uri",
+        "parser",
+        "response"
     ],
     "homepage": "http://www.subscribo.io",
     "authors": [
@@ -21,11 +23,11 @@
         }
     ],
     "require": {
-        "psr/http-message": "^0.10",
-        "phly/http": "*@dev"
+        "psr/http-message": "^0.10.1",
+        "phly/http": "^0.12"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "<5.0"
     },
     "autoload": {
         "psr-4": {
@@ -34,7 +36,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0.x-dev"
+            "dev-master": "0.1.x-dev"
         }
     }
 }
