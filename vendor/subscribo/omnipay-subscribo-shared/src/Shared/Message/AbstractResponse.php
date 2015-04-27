@@ -1,8 +1,19 @@
 <?php namespace Subscribo\Omnipay\Shared\Message;
 
 use Omnipay\Common\Message\AbstractResponse as Base;
+use Subscribo\Omnipay\Shared\Interfaces\ResponseCanHaveWidgetInterface;
+use Subscribo\Omnipay\Shared\Interfaces\ResponseCanBeTransactionTokenInterface;
+use Subscribo\Omnipay\Shared\Interfaces\ResponseCanBeWaitingInterface;
 
-abstract class AbstractResponse extends Base
+/**
+ * Abstract class AbstractResponse
+ *
+ * @package Subscribo\OmnipaySubscriboShared
+ */
+abstract class AbstractResponse extends Base implements
+    ResponseCanHaveWidgetInterface,
+    ResponseCanBeTransactionTokenInterface,
+    ResponseCanBeWaitingInterface
 {
     public function isTransactionToken()
     {
@@ -19,4 +30,13 @@ abstract class AbstractResponse extends Base
         return false;
     }
 
+    public function getWidget()
+    {
+        return null;
+    }
+
+    public function getTransactionToken()
+    {
+        return null;
+    }
 }

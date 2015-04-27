@@ -1,11 +1,8 @@
 <?php namespace Subscribo\Omnipay\Shared;
 
 use Psr\Log\LoggerInterface;
-use Guzzle\Log\MessageFormatter;
 use Omnipay\Common\AbstractGateway as Base;
-use Guzzle\Http\ClientInterface;
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
-use Subscribo\Omnipay\Shared\Traits\PsrLoggerAddingTrait;
+use Subscribo\Omnipay\Shared\Helpers\GuzzleClientHelper;
 
 /**
  * Class AbstractGateway
@@ -14,21 +11,22 @@ use Subscribo\Omnipay\Shared\Traits\PsrLoggerAddingTrait;
  */
 abstract class AbstractGateway extends Base
 {
-    use PsrLoggerAddingTrait;
-
-    protected $psrLoggerAdded = false;
+    /** @var  LoggerInterface|null */
+    protected $psrLogger;
 
     /**
      * @param LoggerInterface $logger
-     * @param null|bool|string|MessageFormatter $formatter
+     * @param null|bool|string|\Guzzle\Log\MessageFormatter $formatter
+     * @return bool|null
      */
-    public function initializeLogger(LoggerInterface $logger, $formatter = true)
+    public function attachPsrLogger(LoggerInterface $logger, $formatter = null)
     {
-        if ($this->psrLoggerAdded) {
-            return;
+        if ($this->psrLogger) {
+            return null;
         }
-        $this->addPsrLogger($logger, $formatter);
-        $this->psrLoggerAdded = true;
+        GuzzleClientHelper::addPsrLoggerToClient($this->httpClient, $logger, $formatter);
+        $this->psrLogger = $logger;
+        return true;
     }
 
 }
