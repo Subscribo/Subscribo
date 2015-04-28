@@ -10,8 +10,11 @@
          stopOnFailure="false"
          syntaxCheck="false">
     <testsuites>
-        <testsuite name="Omnipay PayUnity driver Test Suite">
-            <directory>./tests/</directory>
+        <testsuite name="Omnipay PayUnity driver Offline Test Suite">
+            <directory>./tests/offline/</directory>
+        </testsuite>
+        <testsuite name="Omnipay PayUnity driver Online Test Suite">
+            <directory>./tests/online/</directory>
         </testsuite>
     </testsuites>
     <listeners>

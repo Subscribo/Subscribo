@@ -28,6 +28,58 @@ abstract class AbstractRequest extends Base
     /**
      * @return string
      */
+    public function getCardReference()
+    {
+        return $this->getIdentificationReferenceId();
+    }
+
+    /**
+     * @param string $value
+     * @return $this
+     */
+    public function setCardReference($value)
+    {
+        return $this->setIdentificationReferenceId($value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentType()
+    {
+        return $this->getParameter('paymentType');
+    }
+
+    /**
+     * @param string $value
+     * @return $this
+     */
+    public function setPaymentType($value)
+    {
+        return $this->setParameter('paymentType', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentificationReferenceId()
+    {
+        return $this->getParameter('identificationReferenceId');
+    }
+
+    /**
+     * @param string $value
+     * @return $this
+     */
+    public function setIdentificationReferenceId($value)
+    {
+        return $this->setParameter('identificationReferenceId', $value);
+    }
+
+
+    /**
+     * @return string
+     */
     public function getPresentationUsage()
     {
         return $this->getParameter('presentationUsage');

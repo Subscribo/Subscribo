@@ -26,12 +26,14 @@ $gateway->initialize([
     'identificationInvoiceId' => 'Optional identifier which you also might print on invoice',
     'identificationBulkId' => 'Optional identifier to group some transactions together',
     'testMode' => true,
+    'registrationMode' => true,
 ]);
 
 $card = [
     'firstName' => 'Sam',
     'lastName' => 'Tester',
     'title' => 'DR',
+    'salutation' => 'MR',
     'gender' => 'M',
     'birthday' => '1975-01-30',
     'company' => 'Very Limited',
@@ -41,7 +43,8 @@ $card = [
     'state' => 'AT13',
     'country' => 'AT',
     'email' => 'email@example.com',
-    'phone' => '+43 111 111 111',
+    'phone' => '+44 1632 960 111',
+    'mobile' => '+44 7700 900 222',
 ];
 
 

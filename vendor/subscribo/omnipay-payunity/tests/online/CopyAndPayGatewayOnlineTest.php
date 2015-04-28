@@ -8,8 +8,13 @@ use Guzzle\Log\MessageFormatter;
 use Omnipay\PayUnity\Message\CopyAndPayPurchaseResponse;
 use Omnipay\PayUnity\Message\CopyAndPayCompletePurchaseResponse;
 
-
-class CopyAndPayGatewayTest extends GatewayTestCase
+/**
+ * Class CopyAndPayGatewayOnlineTest
+ *
+ * Testing class actually connecting to remote API
+ *
+ */
+class CopyAndPayGatewayOnlineTest extends GatewayTestCase
 {
     public function setUp()
     {
@@ -18,13 +23,13 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->gateway = new COPYandPAYGateway($this->getHttpClient(), $this->getHttpRequest());
         $this->gateway->setTestMode(true);
         $this->logger = new \Monolog\Logger('UnitTest logger');
-        $this->logger->pushHandler(new \Monolog\Handler\RotatingFileHandler(__DIR__.'/../tmp/logs/unit-tests.log'));
+        $this->logger->pushHandler(new \Monolog\Handler\RotatingFileHandler(__DIR__.'/../../tmp/logs/unit-tests.log'));
         $this->gateway->attachPsrLogger($this->logger);
 
-        $this->gateway->setSecuritySender('ff80808144d46be50144d4a6f6ce007f');
-        $this->gateway->setTransactionChannel('ff80808144d46be50144d4a732ae0083');
-        $this->gateway->setUserLogin('ff80808144d46be50144d4a6f6cf0081');
-        $this->gateway->setUserPwd('M5Ynx692');
+        $this->gateway->setSecuritySender('696a8f0fabffea91517d0eb0a0bf9c33');
+        $this->gateway->setTransactionChannel('52275ebaf361f20a76b038ba4c806991');
+        $this->gateway->setUserLogin('1143238d620a572a726fe92eede0d1ab');
+        $this->gateway->setUserPwd('demo');
         $this->gateway->setIdentificationShopperId('Shopper 13245');
         $this->options = array(
             'amount' => '10.00',
@@ -62,6 +67,7 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $request = $this->gateway->purchase($options);
         $request->setPresentationUsage('Used for test');
         $response = $request->send();
+
         $this->assertInstanceOf('\\Omnipay\\PayUnity\\Message\\CopyAndPayPurchaseRequest', $request);
         $this->assertInstanceOf('\\Omnipay\\PayUnity\\Message\\CopyAndPayPurchaseResponse', $response);
         /** @var \Omnipay\PayUnity\Message\CopyAndPayPurchaseRequest $request */

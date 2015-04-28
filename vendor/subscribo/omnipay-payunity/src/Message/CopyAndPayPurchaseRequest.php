@@ -12,6 +12,8 @@ class CopyAndPayPurchaseRequest extends AbstractRequest
 
     protected $testEndpointUrl = 'https://test.ctpe.net/frontend/GenerateToken';
 
+    protected $defaultPaymentType = 'DB';
+
     /**
      * @return null|string|array
      */
@@ -39,15 +41,19 @@ class CopyAndPayPurchaseRequest extends AbstractRequest
         return new CopyAndPayPurchaseResponse($this, $data);
     }
 
+    /**
+     * @return array
+     */
     public function getData()
     {
         $this->validate('securitySender', 'transactionChannel', 'userLogin', 'userPwd', 'amount');
         $transactionMode = $this->getTransactionMode() ?: $this->chooseTransactionMode();
-        $paymentType = 'DB';
+        $paymentType = $this->getPaymentType() ?: $this->choosePaymentType();
         $transactionId = $this->getTransactionId();
         $shopperId = $this->getIdentificationShopperId();
         $invoiceId = $this->getIdentificationInvoiceId();
         $bulkId = $this->getIdentificationBulkId();
+        $referenceId = $this->getIdentificationReferenceId();
         $usage = $this->getPresentationUsage();
         $paymentMemo = $this->getPaymentMemo();
         $clientIp = $this->getClientIp();
@@ -75,6 +81,9 @@ class CopyAndPayPurchaseRequest extends AbstractRequest
         if ($bulkId) {
             $result['IDENTIFICATION.BULKID'] = $bulkId;
         }
+        if ($referenceId) {
+            $result['IDENTIFICATION.REFERENCEID'] = $referenceId;
+        }
         if ($usage) {
             $result['PRESENTATION.USAGE'] = $usage;
         }
@@ -90,11 +99,31 @@ class CopyAndPayPurchaseRequest extends AbstractRequest
         return $result;
     }
 
+    /**
+     * @return string
+     */
     protected function chooseTransactionMode()
     {
         return $this->getTestMode() ? 'INTEGRATOR_TEST' : 'LIVE';
     }
 
+    /**
+     * @return string
+     */
+    protected function choosePaymentType()
+    {
+        $paymentType = $this->defaultPaymentType;
+        if ($this->getRegistrationMode()) {
+            $paymentType = 'RG.'.$paymentType;
+        }
+        return $paymentType;
+    }
+
+    /**
+     * @param CreditCard $card
+     * @param array $data
+     * @return array
+     */
     protected function addDataFromCard(CreditCard $card, array $data)
     {
         if ($card->getFirstName()) {

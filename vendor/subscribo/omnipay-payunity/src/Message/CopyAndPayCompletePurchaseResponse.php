@@ -56,6 +56,17 @@ class CopyAndPayCompletePurchaseResponse extends AbstractResponse
         return null;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getCardReference()
+    {
+        if (empty($this->data['transaction']['account']['registration'])) {
+            return null;
+        }
+        return $this->data['transaction']['account']['registration'];
+    }
+
     public function getIdentificationUniqueId()
     {
         if ( ! empty($this->data['transaction']['identification']['uniqueId'])) {

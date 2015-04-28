@@ -31,6 +31,7 @@ abstract class AbstractGateway extends Base
             'identificationInvoiceId' => '',
             'identificationBulkId' => '',
             'testMode' => false,
+            'registrationMode' => false,
         ];
     }
 

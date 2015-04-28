@@ -53,6 +53,23 @@ trait DefaultGatewayParametersGettersAndSettersTrait
     }
 
     /**
+     * @return bool
+     */
+    public function getRegistrationMode()
+    {
+        return $this->getParameter('registrationMode');
+    }
+
+    /**
+     * @param bool $value
+     * @return $this
+     */
+    public function setRegistrationMode($value)
+    {
+        return $this->setParameter('registrationMode', $value);
+    }
+
+    /**
      * @return string|int
      */
     public function getIdentificationShopperId()

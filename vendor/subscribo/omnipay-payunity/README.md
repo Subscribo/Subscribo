@@ -42,6 +42,7 @@ To get those please contact your PayUnity representative.
 
 Additionally these options could be specified:
 
+* registrationMode
 * transactionMode
 * testMode
 * identificationShopperId
@@ -51,6 +52,9 @@ Additionally these options could be specified:
 For meaning and possible values of transactionMode ('TRANSACTION.MODE') see PayUnity documentation.
 
 For meaning of testMode see general [Omnipay documentation](https://thephpleague.com/omnipay)
+
+Registration mode prepends 'RG.' to default transaction mode, thus making the request also registration request.
+When transaction mode is specified, then registration mode is ignored (so you have to prepend 'RG.' manually, if you want to make the request registration)
 
 ### Usage of gateway PayUnity\COPYandPAY
 
@@ -68,6 +72,9 @@ Method purchase() expects an array with this key as its argument:
 Additionally these keys could be specified:
 
 * currency (e.g. EUR)
+* card
+* cardReference
+* identificationReferenceId
 * brands
 * returnUrl
 * transactionId
@@ -116,9 +123,13 @@ After transactionToken is provided to CopyAndPayCompletePurchaseRequest, you can
 * isWaiting() returns true when customer did not yet sent the widget form
 * getIdentificationShortId()
 * getIdentificationShopperId()
+* getCardReference()
 
 * getTransactionId() is alias for getIdentificationTransactionId()
 * getTransactionReference() is alias for getIdentificationUniqueId()
+
+getCardReference returns tokens, which could be used for subsequent requests, via specifying cardReference option on purchase request
+(setCardReference is actually an alias for setIdentificationReferenceId, and getCardReference is an alias for getIdentificationReferenceId)
 
 ### Example code
 
