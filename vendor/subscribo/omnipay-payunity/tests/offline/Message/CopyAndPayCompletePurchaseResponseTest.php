@@ -238,9 +238,6 @@ class CopyAndPayCompletePurchaseResponseTest extends TestCase
         $this->assertSame($response->getIdentificationTransactionId(), $response->getTransactionId());
     }
 
-    /**
-     * Relevance of this test is questionable, as API has recently (2015-04-29) probably changed
-     */
     public function testInvalidResponse()
     {
         $response = new CopyAndPayCompletePurchaseResponse(
