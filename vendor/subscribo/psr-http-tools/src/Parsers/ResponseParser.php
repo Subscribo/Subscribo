@@ -4,6 +4,11 @@ use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Subscribo\PsrHttpTools\Interfaces\DealingWithContentTypeInterface;
 
+/**
+ * Class ResponseParser
+ *
+ * @package Subscribo\PsrHttpTools
+ */
 class ResponseParser implements DealingWithContentTypeInterface
 {
     /** @var ResponseInterface  */
