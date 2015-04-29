@@ -210,23 +210,19 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->assertNotEmpty($response->getWidget(null, null, false, 'VISA'));
     }
 
+    /**
+     * @expectedException \Subscribo\Omnipay\Shared\Exception\ClientErrorResponseHttpMessageSendingException
+     * @expectedExceptionMessage Not Found
+     */
     public function testInvalidTokenCompletePurchase()
     {
         $this->setMockHttpResponse('CopyAndPayIntegratorGetStatusInvalidTokenError.txt');
 
-        $response = $this->gateway->completePurchase()->setTransactionToken('TEST_INVALID_TOKEN')->send();
+        $request = $this->gateway->completePurchase()->setTransactionToken('TEST_INVALID_TOKEN');
 
-        $this->assertInstanceOf('\\Omnipay\\PayUnity\\Message\\CopyAndPayCompletePurchaseResponse', $response);
-        /** @var CopyAndPayCompletePurchaseResponse $response */
-        $this->assertFalse($response->isSuccessful());
-        $this->assertFalse($response->isRedirect());
-        $this->assertFalse($response->isTransparentRedirect());
-        $this->assertFalse($response->isTransactionToken());
-        $this->assertFalse($response->haveWidget());
-        $this->assertFalse($response->isWaiting());
-        $this->assertSame('Invalid or expired token', $response->getMessage());
-        $this->assertEmpty($response->getCode());
-        $this->assertEmpty($response->getTransactionReference());
+        $this->assertInstanceOf('\\Omnipay\\PayUnity\\Message\\CopyAndPayCompletePurchaseRequest', $request);
+
+        $request->send();
     }
 
     public function testSuccessRegisteredCompletePurchase()
