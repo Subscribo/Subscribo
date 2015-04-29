@@ -2,6 +2,11 @@
 
 use Omnipay\PayUnity\Message\AbstractResponse;
 
+/**
+ * Class CopyAndPayCompletePurchaseResponse
+ *
+ * @package Omnipay\PayUnity
+ */
 class CopyAndPayCompletePurchaseResponse extends AbstractResponse
 {
     public function isSuccessful()

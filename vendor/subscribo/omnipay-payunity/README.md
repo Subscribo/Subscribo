@@ -143,6 +143,22 @@ For example code see:
 For general usage instructions, please see the main [Omnipay](https://github.com/thephpleague/omnipay)
 repository.
 
+### Testing
+
+For testing you need to install development dependencies:
+```sh
+    cd path/to/your/project
+    cd vendor/subscribo/omnipay-payunity
+    composer update
+```
+
+If you want to run both online and offline tests, run just phpunit.
+
+If you want to run offline (not requiring internet connection) tests only, run:
+```sh
+    phpunit tests/offline
+```
+
 ## Support
 
 If you are having general issues with Omnipay, we suggest posting on

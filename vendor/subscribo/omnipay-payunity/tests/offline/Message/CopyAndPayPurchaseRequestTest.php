@@ -62,11 +62,13 @@ class CopyAndPayPurchaseRequestTest extends TestCase
         $this->assertSame('696a8f0fabffea91517d0eb0a0bf9c33', $data['SECURITY.SENDER']);
         $this->assertSame('52275ebaf361f20a76b038ba4c806991', $data['TRANSACTION.CHANNEL']);
         $this->assertSame('INTEGRATOR_TEST', $data['TRANSACTION.MODE']);
+        $this->assertSame('SYNC', $data['TRANSACTION.RESPONSE']);
         $this->assertSame('1143238d620a572a726fe92eede0d1ab', $data['USER.LOGIN']);
         $this->assertSame('demo', $data['USER.PWD']);
         $this->assertSame('DB', $data['PAYMENT.TYPE']);
         $this->assertSame('12.35', $data['PRESENTATION.AMOUNT']);
         $this->assertSame('EUR', $data['PRESENTATION.CURRENCY']);
+        $this->assertSame('1.0', $data['REQUEST.VERSION']);
         $this->assertArrayNotHasKey('IDENTIFICATION.TRANSACTIONID', $data);
         $this->assertArrayNotHasKey('IDENTIFICATION.SHOPPERID', $data);
         $this->assertArrayNotHasKey('IDENTIFICATION.INVOICEID', $data);
@@ -120,6 +122,7 @@ class CopyAndPayPurchaseRequestTest extends TestCase
         $this->assertSame('696a8f0fabffea91517d0eb0a0bf9c33', $data['SECURITY.SENDER']);
         $this->assertSame('52275ebaf361f20a76b038ba4c806991', $data['TRANSACTION.CHANNEL']);
         $this->assertSame('CONNECTOR_TEST', $data['TRANSACTION.MODE']);
+        $this->assertSame('SYNC', $data['TRANSACTION.RESPONSE']);
         $this->assertSame('1143238d620a572a726fe92eede0d1ab', $data['USER.LOGIN']);
         $this->assertSame('demo', $data['USER.PWD']);
         $this->assertSame('RB', $data['PAYMENT.TYPE']);
@@ -130,6 +133,7 @@ class CopyAndPayPurchaseRequestTest extends TestCase
         $this->assertSame('Inv1234', $data['IDENTIFICATION.INVOICEID']);
         $this->assertSame('Bulk:SomeTag', $data['IDENTIFICATION.BULKID']);
         $this->assertSame('12345678abcdefgh12345678abcdefgh', $data['IDENTIFICATION.REFERENCEID']);
+        $this->assertSame('1.0', $data['REQUEST.VERSION']);
 
         $this->assertArrayNotHasKey('NAME.SALUTATION', $data);
         $this->assertArrayNotHasKey('NAME.TITLE', $data);
@@ -163,11 +167,14 @@ class CopyAndPayPurchaseRequestTest extends TestCase
         $this->assertSame('696a8f0fabffea91517d0eb0a0bf9c33', $data['SECURITY.SENDER']);
         $this->assertSame('52275ebaf361f20a76b038ba4c806991', $data['TRANSACTION.CHANNEL']);
         $this->assertSame('INTEGRATOR_TEST', $data['TRANSACTION.MODE']);
+        $this->assertSame('SYNC', $data['TRANSACTION.RESPONSE']);
         $this->assertSame('1143238d620a572a726fe92eede0d1ab', $data['USER.LOGIN']);
         $this->assertSame('demo', $data['USER.PWD']);
         $this->assertSame('DB', $data['PAYMENT.TYPE']);
         $this->assertSame('12.35', $data['PRESENTATION.AMOUNT']);
         $this->assertSame('EUR', $data['PRESENTATION.CURRENCY']);
+        $this->assertSame('1.0', $data['REQUEST.VERSION']);
+
         $this->assertSame('MR', $data['NAME.SALUTATION']);
         $this->assertSame('DR', $data['NAME.TITLE']);
         $this->assertSame('John', $data['NAME.GIVEN']);

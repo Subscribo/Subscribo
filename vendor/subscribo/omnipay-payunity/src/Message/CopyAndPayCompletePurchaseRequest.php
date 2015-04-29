@@ -10,7 +10,11 @@ use Omnipay\PayUnity\Message\CopyAndPayCompletePurchaseResponse;
 use Subscribo\PsrHttpTools\Factories\RequestFactory;
 use Subscribo\PsrHttpTools\Parsers\ResponseParser;
 
-
+/**
+ * Class CopyAndPayCompletePurchaseRequest
+ *
+ * @package Omnipay\PayUnity
+ */
 class CopyAndPayCompletePurchaseRequest extends AbstractRequest
 {
     protected $liveEndpointUrl = 'https://ctpe.net/frontend/GetStatus';
@@ -18,31 +22,53 @@ class CopyAndPayCompletePurchaseRequest extends AbstractRequest
     protected $testEndpointUrl = 'https://test.ctpe.net/frontend/GetStatus';
 
 
+    /**
+     * @param string $value
+     * @return $this
+     */
     public function setTransactionToken($value)
     {
         return $this->setParameter('transactionToken', $value);
     }
 
+    /**
+     * @return string
+     */
     public function getTransactionToken()
     {
         return $this->getParameter('transactionToken');
     }
 
+    /**
+     * @param CopyAndPayPurchaseResponse $purchaseResponse
+     * @return $this
+     */
     public function fill(CopyAndPayPurchaseResponse $purchaseResponse)
     {
         return $this->setTransactionToken($purchaseResponse->getTransactionToken());
     }
 
+    /**
+     * @return string
+     */
     protected function getEndpointUrl()
     {
         return $this->getTestMode() ? $this->testEndpointUrl : $this->liveEndpointUrl;
     }
 
+    /**
+     * @param array $data
+     * @return CopyAndPayCompletePurchaseResponse
+     */
     protected function createResponse($data)
     {
         return new CopyAndPayCompletePurchaseResponse($this, $data);
     }
 
+    /**
+     * @return array
+     * @throws InvalidRequestException
+     */
     public function getData()
     {
         $transactionToken = $this->getTransactionToken();
@@ -55,6 +81,11 @@ class CopyAndPayCompletePurchaseRequest extends AbstractRequest
         return ['transactionToken' => $transactionToken];
     }
 
+    /**
+     * @param array $data
+     * @return CopyAndPayCompletePurchaseResponse
+     * @throws \InvalidArgumentException
+     */
     public function sendData($data)
     {
         if (( ! is_array($data)) or empty($data['transactionToken'])) {

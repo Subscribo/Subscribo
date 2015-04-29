@@ -36,11 +36,11 @@ class CopyAndPayCompletePurchaseRequestTest extends TestCase
 
     /**
      * @expectedException \Omnipay\Common\Exception\InvalidRequestException
+     * @expectedExceptionMessage Token
      */
     public function testNoTokenFound()
     {
-        $data = $this->request->getData();
-        $this->assertSame('33E47BC8E286B472A1299EAC39F4556D.sbg-vm-fe01', $data['transactionToken']);
+        $this->request->getData();
     }
 
     /**

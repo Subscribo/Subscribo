@@ -6,7 +6,7 @@ use Omnipay\Tests\GatewayTestCase;
 use Omnipay\PayUnity\COPYandPAYGateway;
 use Omnipay\PayUnity\Message\CopyAndPayPurchaseResponse;
 use Omnipay\PayUnity\Message\CopyAndPayCompletePurchaseResponse;
-
+use Symfony\Component\HttpFoundation\Request;
 
 class CopyAndPayGatewayTest extends GatewayTestCase
 {
@@ -227,5 +227,40 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->assertSame('Invalid or expired token', $response->getMessage());
         $this->assertEmpty($response->getCode());
         $this->assertEmpty($response->getTransactionReference());
+    }
+
+    public function testSuccessRegisteredCompletePurchase()
+    {
+        $this->setMockHttpResponse('CopyAndPayIntegratorGetStatusRegisteredSuccess.txt');
+        $token = 'E60B057DF9CDADE6784DA3E5E285385D.sbg-vm-fe01';
+        $httpRequest = new Request(['token' => $token]);
+        $gateway = new COPYandPAYGateway($this->getHttpClient(), $httpRequest);
+        $gateway->setTestMode(true);
+        $request = $gateway->completePurchase();
+        $response = $request->send();
+
+        $this->assertInstanceOf('\\Omnipay\\PayUnity\\Message\\CopyAndPayCompletePurchaseRequest', $request);
+        $this->assertInstanceOf('\\Omnipay\\PayUnity\\Message\\CopyAndPayCompletePurchaseResponse', $response);
+        /** @var $response CopyAndPayCompletePurchaseResponse */
+        $this->assertFalse($response->isWaiting());
+        $this->assertTrue($response->isSuccessful());
+        $this->assertFalse($response->isCancelled());
+        $this->assertFalse($response->isTransactionToken());
+        $this->assertFalse($response->isRedirect());
+        $this->assertFalse($response->isTransparentRedirect());
+        $this->assertFalse($response->haveWidget());
+        $this->assertNotEmpty($response->getCode());
+        $this->assertSame('000.100.110', $response->getCode());
+        $this->assertNotEmpty($response->getMessage());
+        $this->assertSame("Request successfully processed in 'Merchant in Integrator Test Mode'", $response->getMessage());
+        $this->assertNotEmpty($response->getTransactionReference());
+        $this->assertSame('8a82944a4cfff62d014d01522e25136a', $response->getTransactionReference());
+        $this->assertSame('Optional identification of this transaction 123', $response->getIdentificationTransactionId());
+        $this->assertSame('Optional identification of customer', $response->getIdentificationShopperId());
+        $this->assertSame('8a82944a4cfff62d014d01522e25136a', $response->getIdentificationUniqueId());
+        $this->assertSame('5871.8096.6562', $response->getIdentificationShortId());
+        $this->assertSame($response->getIdentificationUniqueId(), $response->getTransactionReference());
+        $this->assertSame($response->getIdentificationTransactionId(), $response->getTransactionId());
+        $this->assertSame('8a82944a4cfff62d014d01522c541111', $response->getCardReference());
     }
 }

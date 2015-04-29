@@ -4,6 +4,11 @@ namespace Omnipay\PayUnity\Traits;
 
 use InvalidArgumentException;
 
+/**
+ * Trait CopyAndPayWidgetResponseTrait
+ *
+ * @package Omnipay\PayUnity
+ */
 trait CopyAndPayWidgetResponseTrait
 {
     /**
@@ -66,21 +71,33 @@ trait CopyAndPayWidgetResponseTrait
         return $result;
     }
 
+    /**
+     * @return bool
+     */
     public function isSuccessful()
     {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function isTransactionToken()
     {
         return ( ! empty($this->data['transaction']['token']));
     }
 
+    /**
+     * @return bool
+     */
     public function haveWidget()
     {
         return $this->isTransactionToken();
     }
 
+    /**
+     * @return null|string
+     */
     public function getTransactionToken()
     {
         return empty($this->data['transaction']['token']) ? null : $this->data['transaction']['token'];

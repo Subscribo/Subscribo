@@ -6,6 +6,11 @@ use Subscribo\Omnipay\Shared\CreditCard;
 use Omnipay\PayUnity\Message\AbstractRequest;
 use Omnipay\PayUnity\Message\CopyAndPayPurchaseResponse;
 
+/**
+ * Class CopyAndPayPurchaseRequest
+ *
+ * @package Omnipay\PayUnity
+ */
 class CopyAndPayPurchaseRequest extends AbstractRequest
 {
     protected $liveEndpointUrl = 'https://ctpe.net/frontend/GenerateToken';
@@ -31,11 +36,18 @@ class CopyAndPayPurchaseRequest extends AbstractRequest
         return $this->setParameter('brands', $value);
     }
 
+    /**
+     * @return string
+     */
     protected function getEndpointUrl()
     {
         return $this->getTestMode() ? $this->testEndpointUrl : $this->liveEndpointUrl;
     }
 
+    /**
+     * @param array $data
+     * @return CopyAndPayPurchaseResponse
+     */
     protected function createResponse($data)
     {
         return new CopyAndPayPurchaseResponse($this, $data);
@@ -59,9 +71,11 @@ class CopyAndPayPurchaseRequest extends AbstractRequest
         $clientIp = $this->getClientIp();
         $card = $this->getCard();
         $result = [
+            'REQUEST.VERSION' => '1.0',
             'SECURITY.SENDER' => $this->getSecuritySender(),
             'TRANSACTION.CHANNEL' => $this->getTransactionChannel(),
             'TRANSACTION.MODE' => $transactionMode,
+            'TRANSACTION.RESPONSE' => 'SYNC',
             'USER.LOGIN'  => $this->getUserLogin(),
             'USER.PWD'   => $this->getUserPwd(),
             'PAYMENT.TYPE' => $paymentType,

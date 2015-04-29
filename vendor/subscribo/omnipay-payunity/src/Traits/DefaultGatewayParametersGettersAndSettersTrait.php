@@ -1,52 +1,92 @@
 <?php namespace Omnipay\PayUnity\Traits;
 
+/**
+ * Trait DefaultGatewayParametersGettersAndSettersTrait
+ *
+ * @package Omnipay\PayUnity
+ */
 trait DefaultGatewayParametersGettersAndSettersTrait
 {
+    /**
+     * @return string
+     */
     public function getSecuritySender()
     {
         return $this->getParameter('securitySender');
     }
 
+    /**
+     * @param string $value
+     * @return $this
+     */
     public function setSecuritySender($value)
     {
         return $this->setParameter('securitySender', $value);
     }
 
+    /**
+     * @return string
+     */
     public function getTransactionChannel()
     {
         return $this->getParameter('transactionChannel');
     }
 
+    /**
+     * @param string $value
+     * @return $this
+     */
     public function setTransactionChannel($value)
     {
         return $this->setParameter('transactionChannel', $value);
     }
 
+    /**
+     * @return string
+     */
     public function getTransactionMode()
     {
         return $this->getParameter('transactionMode');
     }
 
+    /**
+     * @param string $value
+     * @return $this
+     */
     public function setTransactionMode($value)
     {
         return $this->setParameter('transactionMode', $value);
     }
 
+    /**
+     * @return string
+     */
     public function getUserLogin()
     {
         return $this->getParameter('userLogin');
     }
 
+    /**
+     * @param string $value
+     * @return $this
+     */
     public function setUserLogin($value)
     {
         return $this->setParameter('userLogin', $value);
     }
 
+    /**
+     * @return string
+     */
     public function getUserPwd()
     {
         return $this->getParameter('userPwd');
     }
 
+    /**
+     * @param string $value
+     * @return $this
+     */
     public function setUserPwd($value)
     {
         return $this->setParameter('userPwd', $value);
