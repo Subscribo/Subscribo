@@ -14,6 +14,8 @@ use Subscribo\PsrHttpTools\Parsers\ResponseParser;
  * Class CopyAndPayCompletePurchaseRequest
  *
  * @package Omnipay\PayUnity
+ *
+ * @method \Omnipay\PayUnity\Message\CopyAndPayCompletePurchaseResponse send() send()
  */
 class CopyAndPayCompletePurchaseRequest extends AbstractRequest
 {

@@ -52,7 +52,7 @@ class CopyAndPayGatewayTest extends GatewayTestCase
     {
         $this->setMockHttpResponse('CopyAndPayIntegratorGenerateTokenSuccess.txt');
         $options = $this->options;
-        $options['returnUrl'] = 'https://localhost/redirect/url';
+        $options['returnUrl'] = 'https://nonexistent.example/some/return/url';
         $options['brands'] = 'VISA';
         $options['transactionId'] = 'Transaction 12345';
         $options['card'] = $this->card;
@@ -79,9 +79,9 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->assertNotEmpty($response->getTransactionToken());
         $widget = $response->getWidget();
         $this->assertNotEmpty($widget);
-        $this->assertStringEndsWith('>VISA</form>', $widget);
-        $this->assertStringEndsWith('>VISA</form>', $response->getWidgetForm());
-        $this->assertStringStartsWith('<form action="https://localhost/redirect/url"', $response->getWidgetForm());
+        $this->assertStringEndsWith('>VISA</form>', (string) $widget);
+        $this->assertStringEndsWith('>VISA</form>', $widget->renderHtmlForm());
+        $this->assertStringStartsWith('<form action="https://nonexistent.example/some/return/url"', $widget->renderHtmlForm());
         $this->assertNotEmpty($response->getWidget());
         $this->assertEmpty($response->getMessage());
         $this->assertEmpty($response->getCode());
@@ -123,6 +123,7 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $options = $this->options;
         $options['brands'] = ['MAESTRO', 'MASTER'];
         $options['paymentMemo'] = 'TEST MEMO';
+        $options['returnUrl'] = 'https://nonexistent.example/return/url';
 
         $request = $this->connectorModeGateway->purchase($options);
         $request->setIdentificationInvoiceId(248);
@@ -144,11 +145,12 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->assertFalse($response->isWaiting());
         $this->assertEmpty($response->getTransactionReference());
         $this->assertNotEmpty($response->getTransactionToken());
-        $widget = $response->getWidget(null, null, false, null, '/redirect/url');
+        $widget = $response->getWidget();
         $this->assertNotEmpty($widget);
-        $this->assertStringEndsWith('>MAESTRO MASTER</form>', $widget);
-        $this->assertStringEndsWith('>MAESTRO MASTER</form>', $response->getWidgetForm(null, 'https://localhost/redirect/url'));
-        $this->assertStringStartsWith('<form action="https://localhost/redirect/url"', $response->getWidgetForm(null, 'https://localhost/redirect/url'));
+        $this->assertInstanceOf('\\Omnipay\\PayUnity\\Widget\\CopyAndPayWidget', $widget);
+        $this->assertStringEndsWith('>MAESTRO MASTER</form>', (string) $widget);
+        $this->assertStringEndsWith('>MAESTRO MASTER</form>', $widget->renderHtmlForm());
+        $this->assertStringStartsWith('<form action="https://nonexistent.example/return/other/url"', $widget->renderHtmlForm(['returnUrl' => 'https://nonexistent.example/return/other/url']));
         $this->assertEmpty($response->getMessage());
         $this->assertEmpty($response->getCode());
         $this->assertEmpty($response->getTransactionReference());
@@ -160,6 +162,7 @@ class CopyAndPayGatewayTest extends GatewayTestCase
 
     /**
      * @expectedException \InvalidArgumentException
+     * @expectedException \Subscribo\Omnipay\Shared\Exception\WidgetNotRenderableException
      * @expectedExceptionMessage brands
      */
     public function testEmptyBrandsPurchase()
@@ -181,11 +184,15 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->assertEmpty($response->getMessage());
         $this->assertEmpty($response->getCode());
         $this->assertEmpty($response->getTransactionReference());
-        $this->assertNotEmpty($response->getWidget());
+        $widget = $response->getWidget();
+        $this->assertNotEmpty($widget);
+        $this->assertInstanceOf('\\Omnipay\\PayUnity\\Widget\\CopyAndPayWidget', $widget);
+        $widget->render(['returnUrl' => 'https://nonexistent.example/return/url']);
     }
 
     /**
      * @expectedException \InvalidArgumentException
+     * @expectedException \Subscribo\Omnipay\Shared\Exception\WidgetNotRenderableException
      * @expectedExceptionMessage returnUrl
      */
     public function testEmptyReturnUrlPurchase()
@@ -207,7 +214,10 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->assertEmpty($response->getMessage());
         $this->assertEmpty($response->getCode());
         $this->assertEmpty($response->getTransactionReference());
-        $this->assertNotEmpty($response->getWidget(null, null, false, 'VISA'));
+        $widget = $response->getWidget();
+        $this->assertNotEmpty($widget);
+        $this->assertInstanceOf('\\Omnipay\\PayUnity\\Widget\\CopyAndPayWidget', $widget);
+        $widget->render(['brands' => ['VISA']]);
     }
 
     public function testInvalidTokenCompletePurchase()

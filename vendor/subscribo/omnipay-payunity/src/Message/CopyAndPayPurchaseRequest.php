@@ -10,6 +10,8 @@ use Omnipay\PayUnity\Message\CopyAndPayPurchaseResponse;
  * Class CopyAndPayPurchaseRequest
  *
  * @package Omnipay\PayUnity
+ *
+ * @method \Omnipay\PayUnity\Message\CopyAndPayPurchaseResponse send() send()
  */
 class CopyAndPayPurchaseRequest extends AbstractRequest
 {

@@ -34,7 +34,9 @@ class CopyAndPayPurchaseResponseTest extends TestCase
         $this->assertFalse($response->isCancelled());
         $this->assertTrue($response->isTransactionToken());
         $this->assertTrue($response->haveWidget());
-        $this->assertNotEmpty($response->getWidget('de', 'plain', false, ['VISA'], 'https://localhost/redirect/url'));
+        $widget = $response->getWidget();
+        $this->assertNotEmpty($widget);
+        $this->assertInstanceOf('\\Omnipay\\PayUnity\\Widget\\CopyAndPayWidget', $widget);
         $this->assertSame('A550D17DC663DFA8973CCAB8A117669A.sbg-vm-fe01', $response->getTransactionToken());
         $this->assertNull($response->getTransactionReference());
     }
@@ -49,8 +51,6 @@ class CopyAndPayPurchaseResponseTest extends TestCase
         $this->assertFalse($response->isCancelled());
         $this->assertFalse($response->isTransactionToken());
         $this->assertFalse($response->haveWidget());
-        $this->assertNull($response->getWidgetJavascript('de', 'plain', false));
-        $this->assertNull($response->getWidgetForm());
         $this->assertNull($response->getWidget());
         $this->assertNull($response->getTransactionToken());
         $this->assertNull($response->getTransactionReference());
