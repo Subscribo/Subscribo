@@ -2,6 +2,8 @@
 
 namespace Subscribo\Omnipay\Shared\Interfaces;
 
+use Subscribo\Omnipay\Shared\Interfaces\WidgetInterface;
+
 /**
  * Interface ResponseCanHaveWidgetInterface
  *
@@ -15,7 +17,7 @@ interface ResponseCanHaveWidgetInterface
     public function haveWidget();
 
     /**
-     * @return string|null
+     * @return WidgetInterface|string|null
      */
     public function getWidget();
 

@@ -16,7 +16,7 @@ class SharedAbstractRequestTestCase extends TestCase
     public function setUp()
     {
         $this->message = RequestFactory::make('http://nonexistent.localhost/path', null, ['param' => 'value']);
-        $this->request = new ExtendingAbstractRequestForTesting($this->getHttpClient(), $this->getHttpRequest());
+        $this->request = new ExtendedAbstractRequestForTesting($this->getHttpClient(), $this->getHttpRequest());
     }
 
     public function testSendHttpMessageSimpleGet()
@@ -159,7 +159,7 @@ class SharedAbstractRequestTestCase extends TestCase
 }
 
 
-class ExtendingAbstractRequestForTesting extends AbstractRequest
+class ExtendedAbstractRequestForTesting extends AbstractRequest
 {
     public function sendData($data)
     {

@@ -12,7 +12,7 @@ class SharedAbstractGatewayTest extends GatewayTestCase
 
     public function setUp()
     {
-        $this->gateway = new ExtendedGatewayForTesting($this->getHttpClient(), $this->getHttpRequest());
+        $this->gateway = new ExtendedAbstractGatewayForTesting($this->getHttpClient(), $this->getHttpRequest());
     }
 
     public function testAttachPsrLogger()
@@ -24,7 +24,7 @@ class SharedAbstractGatewayTest extends GatewayTestCase
     }
 }
 
-class ExtendedGatewayForTesting extends AbstractGateway
+class ExtendedAbstractGatewayForTesting extends AbstractGateway
 {
     public function getName()
     {
