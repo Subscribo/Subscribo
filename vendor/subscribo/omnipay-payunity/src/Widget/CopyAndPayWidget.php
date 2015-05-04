@@ -20,8 +20,13 @@ class CopyAndPayWidget extends AbstractWidget
      * @param string|null $style Possibilities: card plain none
      * @return string
      */
-    public static function assembleJavascriptUrl($token, $testMode = true, $language = null, $style = null, $compressed = true)
-    {
+    public static function assembleJavascriptUrl(
+        $token,
+        $testMode = true,
+        $language = null,
+        $style = null,
+        $compressed = true
+    ) {
         $urlBase = $testMode
             ? 'https://test.ctpe.net/frontend/widget/v4/widget.js;jsessionid='
             : 'https://ctpe.net/frontend/widget/v4/widget.js;jsessionid=';
@@ -51,8 +56,14 @@ class CopyAndPayWidget extends AbstractWidget
      * @param bool $asynchronous
      * @return string
      */
-    public static function assembleJavascript($token, $testMode = true, $language = null, $style = null, $compressed = true, $asynchronous = true)
-    {
+    public static function assembleJavascript(
+        $token,
+        $testMode = true,
+        $language = null,
+        $style = null,
+        $compressed = true,
+        $asynchronous = true
+    ) {
         $async = $asynchronous ? 'async ' : '';
         $url = static::assembleJavascriptUrl($token, $testMode, $language, $style, $compressed);
         $result = '<script '.$async.'src="'.$url.'" ></script>';
@@ -107,7 +118,14 @@ class CopyAndPayWidget extends AbstractWidget
     public function renderJavascript($parameters = [])
     {
         $data = $this->checkParameters($parameters);
-        $result = static::assembleJavascript($data['transactionToken'], $data['testMode'], $data['language'], $data['style'], $data['loadCompressedJavascript'], $data['loadJavascriptAsynchronously']);
+        $result = static::assembleJavascript(
+            $data['transactionToken'],
+            $data['testMode'],
+            $data['language'],
+            $data['style'],
+            $data['loadCompressedJavascript'],
+            $data['loadJavascriptAsynchronously']
+        );
         return $result;
     }
 
@@ -284,7 +302,7 @@ class CopyAndPayWidget extends AbstractWidget
      */
     protected function collectRenderingObstacles($parameters = [])
     {
-        if ( ! is_array($parameters)) {
+        if (( ! is_array($parameters))) {
             return ['Parameters have to be an array'];
         }
         $obstacles = [];

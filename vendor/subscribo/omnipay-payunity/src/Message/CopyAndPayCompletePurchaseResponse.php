@@ -43,10 +43,10 @@ class CopyAndPayCompletePurchaseResponse extends AbstractResponse
 
     public function getMessage()
     {
-        if ( ! empty($this->data['transaction']['processing']['return']['message'])) {
+        if (isset($this->data['transaction']['processing']['return']['message'])) {
             return $this->data['transaction']['processing']['return']['message'];
         }
-        if ( ! empty($this->data['errorMessage'])) {
+        if (isset($this->data['errorMessage'])) {
             return $this->data['errorMessage'];
         }
         return null;
@@ -55,7 +55,7 @@ class CopyAndPayCompletePurchaseResponse extends AbstractResponse
 
     public function getCode()
     {
-        if ( ! empty($this->data['transaction']['processing']['return']['code'])) {
+        if (isset($this->data['transaction']['processing']['return']['code'])) {
             return $this->data['transaction']['processing']['return']['code'];
         }
         return null;
@@ -74,7 +74,7 @@ class CopyAndPayCompletePurchaseResponse extends AbstractResponse
 
     public function getIdentificationUniqueId()
     {
-        if ( ! empty($this->data['transaction']['identification']['uniqueId'])) {
+        if (isset($this->data['transaction']['identification']['uniqueId'])) {
             return $this->data['transaction']['identification']['uniqueId'];
         }
         return null;
@@ -82,7 +82,7 @@ class CopyAndPayCompletePurchaseResponse extends AbstractResponse
 
     public function getIdentificationShortId()
     {
-        if ( ! empty($this->data['transaction']['identification']['shortId'])) {
+        if (isset($this->data['transaction']['identification']['shortId'])) {
             return $this->data['transaction']['identification']['shortId'];
         }
         return null;
@@ -90,7 +90,7 @@ class CopyAndPayCompletePurchaseResponse extends AbstractResponse
 
     public function getIdentificationTransactionId()
     {
-        if ( ! empty($this->data['transaction']['identification']['transactionid'])) {
+        if (isset($this->data['transaction']['identification']['transactionid'])) {
             return $this->data['transaction']['identification']['transactionid'];
         }
         return null;
@@ -98,10 +98,9 @@ class CopyAndPayCompletePurchaseResponse extends AbstractResponse
 
     public function getIdentificationShopperId()
     {
-        if ( ! empty($this->data['transaction']['identification']['shopperid'])) {
+        if (isset($this->data['transaction']['identification']['shopperid'])) {
             return $this->data['transaction']['identification']['shopperid'];
         }
         return null;
     }
-
 }

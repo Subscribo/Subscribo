@@ -159,5 +159,4 @@ trait DefaultGatewayParametersGettersAndSettersTrait
     {
         return $this->setParameter('identificationBulkId', $value);
     }
-
 }

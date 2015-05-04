@@ -52,7 +52,7 @@ class CopyAndPayPurchaseResponse extends AbstractResponse
      */
     public function getWidget(array $parameters = [])
     {
-        if ( ! $this->haveWidget()) {
+        if (( ! $this->haveWidget())) {
             return null;
         }
         $defaultParameters = [
@@ -68,5 +68,4 @@ class CopyAndPayPurchaseResponse extends AbstractResponse
 
         return $widget;
     }
-
 }

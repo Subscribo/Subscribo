@@ -28,5 +28,4 @@ class COPYandPAYGateway extends AbstractGateway
     {
         return $this->createRequest('Omnipay\\PayUnity\\Message\\CopyAndPayCompletePurchaseRequest', $parameters);
     }
-
 }

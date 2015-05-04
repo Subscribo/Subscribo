@@ -34,6 +34,4 @@ abstract class AbstractGateway extends Base
             'registrationMode' => false,
         ];
     }
-
-
 }

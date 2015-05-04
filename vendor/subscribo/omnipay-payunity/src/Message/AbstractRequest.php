@@ -7,7 +7,6 @@ use Omnipay\Common\Message\RequestInterface;
 use Omnipay\Common\Message\ResponseInterface;
 use Omnipay\PayUnity\Traits\DefaultGatewayParametersGettersAndSettersTrait;
 
-
 /**
  * Abstract Class AbstractRequest
  *
