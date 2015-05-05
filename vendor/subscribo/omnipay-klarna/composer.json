@@ -18,14 +18,18 @@
             "role": "owner"
         }
     ],
+    "support": {
+        "email": "packages@subscribo.io"
+    },
     "require": {
-        "php": "~5.4",
+        "php": ">=5.4",
         "omnipay/common": "^2.0",
         "subscribo/omnipay-subscribo-shared": "^0.2.1",
         "subscribo/psr-http-tools": "^0.2.0"
     },
     "require-dev": {
-        "omnipay/tests": "^2.0"
+        "omnipay/tests": "^2.0",
+        "phpunit/phpunit": "<5.0"
     },
     "autoload": {
         "psr-4": {
