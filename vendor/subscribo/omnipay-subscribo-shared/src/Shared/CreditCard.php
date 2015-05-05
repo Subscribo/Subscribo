@@ -22,6 +22,40 @@ use Omnipay\Common\CreditCard as Base;
  */
 class CreditCard extends Base
 {
+    const MODE_FILTER_EMPTY_VALUES = 'filter_empty_values';
+    const MODE_FILTER_EMPTY_WHEN_STRING_VALUES = 'filter_empty_when_string_values';
+
+
+    /**
+     * Returns those shipping contact parameters which are different for shipping and billing
+     * Keys are camel cased parameter names without shipping prefix, values are shipping contact parameter values
+     *
+     * @param string $mode Filtering mode (if any): By default this methods filters out values, which are empty when converted to string
+     * @return array
+     */
+    public function getShippingContactDifferences($mode = self::MODE_FILTER_EMPTY_WHEN_STRING_VALUES)
+    {
+        $difference = [];
+        foreach ($this->getContactParameterNames() as $parameterName)
+        {
+            $billingGetter = 'getBilling'.ucfirst($parameterName);
+            $shippingGetter = 'getShipping'.ucfirst($parameterName);
+            $billingValue = $this->$billingGetter();
+            $shippingValue = $this->$shippingGetter();
+            if ($billingValue !== $shippingValue) {
+                $difference[$parameterName] = $shippingValue;
+            }
+        }
+        if ($mode === self::MODE_FILTER_EMPTY_WHEN_STRING_VALUES) {
+            $result = array_filter($difference, 'strlen');
+        } elseif ($mode === self::MODE_FILTER_EMPTY_VALUES) {
+            $result = array_filter($difference);
+        }
+        else {
+            $result = $difference;
+        }
+        return $result;
+    }
     /**
      * @return int|string
      */
@@ -181,5 +215,30 @@ class CreditCard extends Base
     public function setShippingSalutation($value)
     {
         return $this->setParameter('shippingSalutation', $value);
+    }
+
+    /**
+     * Returns list of parameters, which are part of contact information and have a billing and shipping counterpart
+     * Name is not included, as it is implemented as a compound of firstName and lastName
+     * @return array
+     */
+    protected function getContactParameterNames()
+    {
+        return [
+            'title',
+            'firstName',
+            'lastName',
+            'company',
+            'address1',
+            'address2',
+            'city',
+            'postcode',
+            'state',
+            'country',
+            'phone',
+            'fax',
+            'mobile',
+            'salutation'
+        ];
     }
 }

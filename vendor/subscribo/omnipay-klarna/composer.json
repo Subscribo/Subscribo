@@ -20,15 +20,21 @@
     ],
     "require": {
         "php": "~5.4",
-        "omnipay/common": "~2.0",
-        "subscribo/omnipay-subscribo-shared": "@dev"
+        "omnipay/common": "^2.0",
+        "subscribo/omnipay-subscribo-shared": "^0.2.1",
+        "subscribo/psr-http-tools": "^0.2.0"
     },
     "require-dev": {
-        "omnipay/tests": "~2.0"
+        "omnipay/tests": "^2.0"
     },
     "autoload": {
         "psr-4": {
             "Omnipay\\Klarna\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
         }
     }
 }

@@ -22,6 +22,77 @@ class SharedCreditCardTest extends CreditCardTest
         ]);
     }
 
+    public function testGetShippingContactDifferences()
+    {
+        $card =  new CreditCard;
+        $card->setName('John Tester');
+        $card->setShippingName(null);
+        $card->setMobile('+44 7700 900 222');
+        $card->setShippingMobile(0);
+        $card->setBillingCity('Wien');
+        $card->setShippingCity('Berlin');
+        $card->setShippingCountry('de');
+        $card->setBillingCountry('at');
+        $card->setBillingAddress1('Main street');
+        $card->setShippingAddress2('Main street');
+        $expectedDifferenceWithoutEmptyAsString = [
+            'address2' => 'Main street',
+            'city' => 'Berlin',
+            'country' => 'de',
+            'mobile' => 0,
+        ];
+        $this->assertSame($expectedDifferenceWithoutEmptyAsString, $card->getShippingContactDifferences());
+        $expectedDifferenceWithEmpty = [
+            'firstName' => '',
+            'lastName' => null,
+            'address1' => null,
+            'address2' => 'Main street',
+            'city' => 'Berlin',
+            'country' => 'de',
+            'mobile' => 0,
+        ];
+        $this->assertSame($expectedDifferenceWithEmpty, $card->getShippingContactDifferences(false));
+        $expectedDifferenceWithoutEmpty = [
+            'address2' => 'Main street',
+            'city' => 'Berlin',
+            'country' => 'de',
+        ];
+        $this->assertSame($expectedDifferenceWithoutEmpty, $card->getShippingContactDifferences($card::MODE_FILTER_EMPTY_VALUES));
+        $card2 = new CreditCard();
+        $card2->setBillingName('Peter Tester')
+            ->setBillingTitle('Dr')
+            ->setBillingSalutation('Mr.')
+            ->setBillingMobile('+44 7700 900 222')
+            ->setBillingPhone('+44 1632 960 111')
+            ->setBillingFax('+44 1632 960 110')
+            ->setBillingAddress1('Other Street 1/1')
+            ->setBillingAddress2('Close to park')
+            ->setBillingCity('Wien')
+            ->setBillingPostCode('1000')
+            ->setBillingState('Wien')
+            ->setBillingCountry('AT')
+            ->setBillingCompany('Very Limited Ltd.');
+        $this->assertSame([], $card2->getShippingContactDifferences($card2::MODE_FILTER_EMPTY_WHEN_STRING_VALUES));
+        $this->assertSame([], $card2->getShippingContactDifferences($card2::MODE_FILTER_EMPTY_VALUES));
+        $expected2 = [
+            'title' => null,
+            'firstName' => null,
+            'lastName' => null,
+            'company' => null,
+            'address1' => null,
+            'address2' => null,
+            'city' => null,
+            'postcode' => null,
+            'state' => null,
+            'country' => null,
+            'phone' => null,
+            'fax' => null,
+            'mobile' => null,
+            'salutation' => null,
+        ];
+        $this->assertSame($expected2, $card2->getShippingContactDifferences(''));
+    }
+
     public function testSetBillingMobile()
     {
         $card = new CreditCard();
