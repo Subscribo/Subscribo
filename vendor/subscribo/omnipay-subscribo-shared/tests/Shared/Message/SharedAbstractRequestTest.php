@@ -4,7 +4,9 @@ namespace Subscribo\Omnipay\Shared\Message;
 
 use Omnipay\Tests\TestCase;
 use Omnipay\Common\CreditCard;
+use Omnipay\Common\ItemBag;
 use Subscribo\Omnipay\Shared\CreditCard as ExtendedCreditCard;
+use Subscribo\Omnipay\Shared\ItemBag as ExtendedItemBag;
 use Subscribo\PsrHttpTools\Factories\RequestFactory;
 use Subscribo\Omnipay\Shared\Message\AbstractRequest;
 use Guzzle\Plugin\Mock\MockPlugin;
@@ -17,6 +19,24 @@ class SharedAbstractRequestTestCase extends TestCase
     {
         $this->message = RequestFactory::make('http://nonexistent.localhost/path', null, ['param' => 'value']);
         $this->request = new ExtendedAbstractRequestForTesting($this->getHttpClient(), $this->getHttpRequest());
+        $this->items = $items = [
+            [
+                'name' => 'Some Article',
+                'identifier' => 'A001',
+                'price' => '10.00',
+                'description' => 'Just article for testing',
+                'quantity' => 2,
+                'discountPercent' => '10',
+                'taxPercent' => '20',
+                'flags' => 5,
+            ],
+            [
+                'name' => 'Another Article',
+                'identifier' => 'A002',
+                'price' => '10.00',
+                'description' => 'Another article for testing',
+            ]
+        ];
     }
 
     public function testSendHttpMessageSimpleGet()
@@ -155,6 +175,149 @@ class SharedAbstractRequestTestCase extends TestCase
         $this->request->setCard(null);
         $this->assertNull($this->request->getCard());
 
+    }
+
+
+    public function testSetItemsArray()
+    {
+        $this->assertNull($this->request->getItems());
+        $this->request->initialize(['items' => $this->items]);
+        $items = $this->request->getItems();
+        $this->assertNotEmpty($items);
+        $this->assertInstanceOf('Omnipay\\Common\\ItemBag', $items);
+        $this->assertInstanceOf('Subscribo\\Omnipay\\Shared\\ItemBag', $items);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\Item', $items);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\ItemInterface', $items);
+        $this->assertContainsOnlyInstancesOf('Subscribo\\Omnipay\\Shared\\Item', $items);
+        $this->assertCount(2, $items);
+        $allItems = $items->all();
+        $firstItem = reset($allItems);
+        $this->assertInstanceOf('Omnipay\\Common\\Item', $firstItem);
+        $this->assertInstanceOf('Omnipay\\Common\\ItemInterface', $firstItem);
+        $this->assertInstanceOf('Subscribo\\Omnipay\\Shared\\Item', $firstItem);
+        $this->assertSame('Some Article', $firstItem->getName());
+        $this->assertSame('Just article for testing', $firstItem->getDescription());
+        $this->assertSame('A001', $firstItem->getIdentifier());
+        $this->assertSame('10.00', $firstItem->getPrice());
+        $this->assertSame(2, $firstItem->getQuantity());
+        $this->assertSame('10', $firstItem->getDiscountPercent());
+        $this->assertSame('20', $firstItem->getTaxPercent());
+        $this->assertSame(5, $firstItem->getFlags());
+        $this->assertSame($this->request, $this->request->setItems(null));
+        $this->assertNull($this->request->getItems());
+    }
+
+
+    public function testSetItemsItemBag()
+    {
+        $this->assertNull($this->request->getItems());
+        $original = new ItemBag($this->items);
+        $this->assertInstanceOf('Omnipay\\Common\\ItemBag', $original);
+        $this->assertNotInstanceOf('Subscribo\\Omnipay\\Shared\\ItemBag', $original);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\Item', $original);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\ItemInterface', $original);
+
+        $this->assertSame($this->request, $this->request->setItems($original));
+        $items = $this->request->getItems();
+        $this->assertNotEmpty($items);
+        $this->assertInstanceOf('Omnipay\\Common\\ItemBag', $items);
+        $this->assertInstanceOf('Subscribo\\Omnipay\\Shared\\ItemBag', $items);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\Item', $items);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\ItemInterface', $items);
+        $this->assertContainsOnlyInstancesOf('Subscribo\\Omnipay\\Shared\\Item', $items);
+        $this->assertCount(2, $items);
+        $allItems = $items->all();
+        $firstItem = reset($allItems);
+        $this->assertInstanceOf('Omnipay\\Common\\Item', $firstItem);
+        $this->assertInstanceOf('Omnipay\\Common\\ItemInterface', $firstItem);
+        $this->assertInstanceOf('Subscribo\\Omnipay\\Shared\\Item', $firstItem);
+        $this->assertSame('Some Article', $firstItem->getName());
+        $this->assertSame('Just article for testing', $firstItem->getDescription());
+        $this->assertNull($firstItem->getIdentifier());
+        $this->assertSame('10.00', $firstItem->getPrice());
+        $this->assertSame(2, $firstItem->getQuantity());
+        $this->assertNull($firstItem->getDiscountPercent());
+        $this->assertNull($firstItem->getTaxPercent());
+        $this->assertNull($firstItem->getFlags());
+        $this->assertSame($this->request, $this->request->setItems(null));
+        $this->assertNull($this->request->getItems());
+    }
+
+
+    public function testSetItemsExtended()
+    {
+        $this->assertNull($this->request->getItems());
+        $original = new ExtendedItemBag($this->items);
+        $this->assertInstanceOf('Omnipay\\Common\\ItemBag', $original);
+        $this->assertInstanceOf('Subscribo\\Omnipay\\Shared\\ItemBag', $original);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\Item', $original);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\ItemInterface', $original);
+        $this->assertContainsOnlyInstancesOf('Subscribo\\Omnipay\\Shared\\Item', $original);
+
+        $this->request->initialize(['items' => $original]);
+        $items = $this->request->getItems();
+        $this->assertNotEmpty($items);
+        $this->assertInstanceOf('Omnipay\\Common\\ItemBag', $items);
+        $this->assertInstanceOf('Subscribo\\Omnipay\\Shared\\ItemBag', $items);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\Item', $items);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\ItemInterface', $items);
+        $this->assertContainsOnlyInstancesOf('Subscribo\\Omnipay\\Shared\\Item', $items);
+        $this->assertCount(2, $items);
+        $allItems = $items->all();
+        $firstItem = reset($allItems);
+        $this->assertInstanceOf('Omnipay\\Common\\Item', $firstItem);
+        $this->assertInstanceOf('Omnipay\\Common\\ItemInterface', $firstItem);
+        $this->assertInstanceOf('Subscribo\\Omnipay\\Shared\\Item', $firstItem);
+
+        $this->assertSame('Some Article', $firstItem->getName());
+        $this->assertSame('Just article for testing', $firstItem->getDescription());
+        $this->assertSame('A001', $firstItem->getIdentifier());
+        $this->assertSame('10.00', $firstItem->getPrice());
+        $this->assertSame(2, $firstItem->getQuantity());
+        $this->assertSame('10', $firstItem->getDiscountPercent());
+        $this->assertSame('20', $firstItem->getTaxPercent());
+        $this->assertSame(5, $firstItem->getFlags());
+        $this->assertSame($this->request, $this->request->setItems(null));
+        $this->assertNull($this->request->getItems());
+    }
+
+    public function testSetItemsExtendedArray()
+    {
+        $this->assertNull($this->request->getItems());
+        $original = new ExtendedItemBag($this->items);
+        $this->assertInstanceOf('Omnipay\\Common\\ItemBag', $original);
+        $this->assertInstanceOf('Subscribo\\Omnipay\\Shared\\ItemBag', $original);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\Item', $original);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\ItemInterface', $original);
+        $this->assertContainsOnlyInstancesOf('Subscribo\\Omnipay\\Shared\\Item', $original);
+        $originalItems = $original->all();
+        $this->assertInternalType('array', $originalItems);
+
+        $this->assertSame($this->request, $this->request->setItems($originalItems));
+        $items = $this->request->getItems();
+        $this->assertNotEmpty($items);
+        $this->assertInstanceOf('Omnipay\\Common\\ItemBag', $items);
+        $this->assertInstanceOf('Subscribo\\Omnipay\\Shared\\ItemBag', $items);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\Item', $items);
+        $this->assertContainsOnlyInstancesOf('Omnipay\\Common\\ItemInterface', $items);
+        $this->assertContainsOnlyInstancesOf('Subscribo\\Omnipay\\Shared\\Item', $items);
+        $this->assertCount(2, $items);
+        $allItems = $items->all();
+        $firstItem = reset($allItems);
+        $this->assertInstanceOf('Omnipay\\Common\\Item', $firstItem);
+        $this->assertInstanceOf('Omnipay\\Common\\ItemInterface', $firstItem);
+        $this->assertInstanceOf('Subscribo\\Omnipay\\Shared\\Item', $firstItem);
+
+        $this->assertSame('Some Article', $firstItem->getName());
+        $this->assertSame('Just article for testing', $firstItem->getDescription());
+        $this->assertSame('A001', $firstItem->getIdentifier());
+        $this->assertSame('10.00', $firstItem->getPrice());
+        $this->assertSame(2, $firstItem->getQuantity());
+        $this->assertSame('10', $firstItem->getDiscountPercent());
+        $this->assertSame('20', $firstItem->getTaxPercent());
+        $this->assertSame(5, $firstItem->getFlags());
+        $this->assertSame($this->request, $this->request->setItems(null));
+        $this->assertNull($this->request->getItems());
     }
 }
 
