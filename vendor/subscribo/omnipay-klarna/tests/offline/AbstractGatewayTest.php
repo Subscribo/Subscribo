@@ -28,23 +28,23 @@ class AbstractGatewayTest extends GatewayTestCase
         $this->assertSame('', $this->gateway->getCurrency());
         $this->assertSame($this->gateway, $this->gateway->setLocale('de_AT'));
         $this->assertSame('de', $this->gateway->getLanguage());
-        $this->assertSame('at', $this->gateway->getCountry());
+        $this->assertSame('AT', $this->gateway->getCountry());
         $this->assertSame('EUR', $this->gateway->getCurrency());
         $this->assertSame($this->gateway, $this->gateway->setLocale('no-NO'));
         $this->assertSame('no', $this->gateway->getLanguage());
-        $this->assertSame('no', $this->gateway->getCountry());
+        $this->assertSame('NO', $this->gateway->getCountry());
         $this->assertSame('NOK', $this->gateway->getCurrency());
         $this->assertSame($this->gateway, $this->gateway->setLocale('da_dk'));
         $this->assertSame('da', $this->gateway->getLanguage());
-        $this->assertSame('dk', $this->gateway->getCountry());
+        $this->assertSame('DK', $this->gateway->getCountry());
         $this->assertSame('DKK', $this->gateway->getCurrency());
         $this->assertSame($this->gateway, $this->gateway->setLocale('SV_SE'));
         $this->assertSame('sv', $this->gateway->getLanguage());
-        $this->assertSame('se', $this->gateway->getCountry());
+        $this->assertSame('SE', $this->gateway->getCountry());
         $this->assertSame('SEK', $this->gateway->getCurrency());
         $this->assertSame($this->gateway, $this->gateway->setLocale('en_GB'));
         $this->assertSame('en', $this->gateway->getLanguage());
-        $this->assertSame('gb', $this->gateway->getCountry());
+        $this->assertSame('GB', $this->gateway->getCountry());
         $this->assertSame('', $this->gateway->getCurrency());
     }
 

@@ -8,8 +8,8 @@
 
 use Omnipay\Omnipay;
 
-$merchantId = env('KLARNA_MERCHANT_ID');
-$sharedSecret = env('KLARNA_SHARED_SECRET');
+$merchantId = getenv('KLARNA_MERCHANT_ID');
+$sharedSecret = getenv('KLARNA_SHARED_SECRET');
 
 $amount = '1.19';
 

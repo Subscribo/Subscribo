@@ -88,7 +88,7 @@ trait AbstractGatewayDefaultParametersGettersAndSettersTrait
             throw new \InvalidArgumentException('Locale should be in the format language-country');
         }
         $language = strtolower($parts[0]);
-        $country = strtolower($parts[1]);
+        $country = strtoupper($parts[1]);
         $this->setLanguage($language);
         $this->setCountry($country);
         $this->setDefaultCurrency($country);
@@ -104,32 +104,32 @@ trait AbstractGatewayDefaultParametersGettersAndSettersTrait
     private function setDefaultCurrency($country)
     {
         switch ($country) {
-            case 'dk':
-                return $this->setCurrency('dkk');
-            case 'no':
-                return $this->setCurrency('nok');
-            case 'se':
-                return $this->setCurrency('sek');
-            case 'at':
-            case 'be':
-            case 'cy':
-            case 'de':
-            case 'ee':
-            case 'es':
-            case 'fi':
-            case 'fr':
-            case 'gr':
-            case 'ie':
-            case 'it':
-            case 'lt':
-            case 'lu':
-            case 'lv':
-            case 'mt':
-            case 'nl':
-            case 'pt':
-            case 'si':
-            case 'sk':
-                return $this->setCurrency('eur');
+            case 'DK':
+                return $this->setCurrency('DKK');
+            case 'NO':
+                return $this->setCurrency('NOK');
+            case 'SE':
+                return $this->setCurrency('SEK');
+            case 'AT':
+            case 'BE':
+            case 'CY':
+            case 'DE':
+            case 'EE':
+            case 'ES':
+            case 'FI':
+            case 'FR':
+            case 'GR':
+            case 'IE':
+            case 'IT':
+            case 'LT':
+            case 'LU':
+            case 'LV':
+            case 'MT':
+            case 'NL':
+            case 'PT':
+            case 'SI':
+            case 'SK':
+                return $this->setCurrency('EUR');
             default:
         }
         return $this->setCurrency('');

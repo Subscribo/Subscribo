@@ -27,7 +27,7 @@ class InvoiceAuthorizeRequestTest extends TestCase
         $this->assertSame('m', $data['gender']);
         $this->assertSame(-1, $data['amount']);
         $this->assertSame('de', $data['language']);
-        $this->assertSame('at', $data['country']);
+        $this->assertSame('AT', $data['country']);
         $this->assertSame('EUR', $data['currency']);
 
 
