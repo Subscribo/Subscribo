@@ -27,18 +27,18 @@
     "require": {
         "omnipay/common": "^2.3.2",
         "egeloen/http-adapter": "^0.8@dev",
-        "psr/http-message": "^0.10.1"
+        "psr/http-message": "^0.11.0"
     },
     "require-dev": {
         "omnipay/tests": "^2.0",
         "phpunit/phpunit": "<5.0",
         "psr/log": "^1.0",
         "symfony/http-foundation": "<=3.0",
-        "subscribo/psr-http-tools": "^0.2",
-        "phly/http": "^0.12"
+        "subscribo/psr-http-message-tools": "^0.3.0",
+        "phly/http": "^0.13.0"
     },
     "suggest": {
-        "subscribo/psr-http-tools": "For PSR-7 compliant Request object factory",
+        "subscribo/psr-http-message-tools": "For PSR-7 compliant Request object factory",
         "psr/log": "When GuzzleClientHelper or AbstractGateway::attachPsrLogger() is used"
     },
     "autoload": {

@@ -20,7 +20,7 @@ You might need to add dependency to development version of egeloen/http-adapter 
 
 ```json
     "require": {
-        "subscribo/omnipay-subscribo-shared": "^0.2",
+        "subscribo/omnipay-subscribo-shared": "^0.2.3",
         "egeloen/http-adapter": "^0.8@dev"
     }
 ```
@@ -38,4 +38,4 @@ For contribution guidelines see [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 
-Package Subscribo PsrHttpTools is published under [MIT License](http://opensource.org/licenses/MIT)
+Package Subscribo OmnipaySubscriboShared is published under [MIT License](http://opensource.org/licenses/MIT)

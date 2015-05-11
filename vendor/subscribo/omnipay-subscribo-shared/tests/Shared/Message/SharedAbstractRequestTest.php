@@ -7,7 +7,7 @@ use Omnipay\Common\CreditCard;
 use Omnipay\Common\ItemBag;
 use Subscribo\Omnipay\Shared\CreditCard as ExtendedCreditCard;
 use Subscribo\Omnipay\Shared\ItemBag as ExtendedItemBag;
-use Subscribo\PsrHttpTools\Factories\RequestFactory;
+use Subscribo\PsrHttpMessageTools\Factories\RequestFactory;
 use Subscribo\Omnipay\Shared\Message\AbstractRequest;
 use Guzzle\Plugin\Mock\MockPlugin;
 
