@@ -3,13 +3,23 @@
 namespace Omnipay\Klarna\Message;
 
 use Omnipay\Klarna\Message\AbstractInvoiceResponse;
+use KlarnaFlags;
 
-
+/**
+ * Class InvoiceAuthorizeResponse
+ *
+ * @package Omnipay\Klarna
+ */
 class InvoiceAuthorizeResponse extends AbstractInvoiceResponse
 {
     public function isSuccessful()
     {
-        return '1' === strval($this->getInvoiceStatus());
+        return $this->isResolved();
+    }
+
+    public function isResolved()
+    {
+        return (strval(KlarnaFlags::ACCEPTED) === strval($this->getInvoiceStatus()));
     }
 
 

@@ -28,4 +28,23 @@ class InvoiceGateway extends AbstractGateway
     {
         return $this->createRequest('Omnipay\\Klarna\\Message\\InvoiceAuthorizeRequest', $parameters);
     }
+
+    /**
+     * @param array $parameters
+     * @return \Omnipay\Klarna\Message\InvoiceCaptureRequest
+     */
+    public function capture(array $parameters = [])
+    {
+        return $this->createRequest('Omnipay\\Klarna\\Message\\InvoiceCaptureRequest', $parameters);
+    }
+
+    /**
+     * @param array $parameters
+     * @return \Omnipay\Klarna\Message\InvoiceCheckOrderStatusRequest
+     */
+    public function checkOrderStatus(array $parameters = [])
+    {
+        return $this->createRequest('Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusRequest', $parameters);
+    }
+
 }

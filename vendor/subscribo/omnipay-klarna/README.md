@@ -5,6 +5,11 @@
 [Omnipay](https://github.com/thephpleague/omnipay) is a framework agnostic, multi-gateway payment
 processing library for PHP 5.3+. This package implements Klarna support for Omnipay.
 
+## Important note:
+
+This is a work-in-progress, unstable version.
+Stable version has not yet been released.
+
 ## Installation
 
 Omnipay is installed via [Composer](http://getcomposer.org/). To install, add it
@@ -13,7 +18,7 @@ to your `composer.json` file (you might need to add also development version of 
 ```json
 {
     "require": {
-        "subscribo/omnipay-klarna": "^0.2.0",
+        "subscribo/omnipay-klarna": "^0.1.0@dev",
         "egeloen/http-adapter": "^0.8@dev"
     }
 }
@@ -28,41 +33,32 @@ And run composer to update your dependencies:
 
 The following gateways are provided by this package:
 
-* Klarna\Checkout
+* Klarna\Invoice
 
 Gateways in this package have following required options:
 
-* securitySender
-* transactionChannel
-* userLogin
-* userPwd
+* merchantId
+* sharedSecret
 
 To get those please contact your Klarna representative.
 
-(Note: they are provided usually in the form 'SECURITY.SENDER' etc.)
-
 Additionally these options could be specified:
 
-* registrationMode
-* transactionMode
 * testMode
-* identificationShopperId
-* identificationInvoiceId
-* identificationBulkId (Note: not sure of having any effect at the moment)
+* country
+* language
+* currency
 
-For meaning and possible values of transactionMode ('TRANSACTION.MODE') see PayUnity documentation.
+You can set up country, language and currency (for supported countries) at once using setLocale() method
 
 For meaning of testMode see general [Omnipay documentation](https://thephpleague.com/omnipay)
 
-Registration mode prepends 'RG.' to default transaction mode, thus making the request also registration request.
-When transaction mode is specified, then registration mode is ignored (so you have to prepend 'RG.' manually, if you want to make the request registration)
-
-### Usage of gateway Klarna\Checkout
+### Usage of gateway Klarna\Invoice
 
 Gateway Klarna\Checkout supports these request-sending methods:
 
-* purchase()
-* completePurchase()
+* authorize()
+* capture()
 
 #### purchase()
 

@@ -2,8 +2,8 @@
 
 namespace Omnipay\Klarna;
 
+use KlarnaFlags;
 use Omnipay\Tests\GatewayTestCase;
-
 use Omnipay\Klarna\InvoiceGateway;
 
 class InvoiceGatewayOnlineTest extends GatewayTestCase
@@ -25,7 +25,7 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
             'firstName' => 'Testperson-at',
             'lastName' => 'Approved',
             'address1' => 'Klarna-Straße 1/2/3',
-            'address2' => '',
+            'address2' => null,
             'postCode' => '8071',
             'city'     => 'Hausmannstätten',
             'country'  => 'at',
@@ -36,19 +36,36 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
             [
                 'name' => 'Some Article',
                 'identifier' => 'A001',
-                'price' => '10.00',
+                'price' => '2.00',
                 'description' => 'Just article for testing',
-                'quantity' => 2,
-                'discountPercent' => '10',
+                'quantity' => 9,
                 'taxPercent' => '20',
-                'flags' => 5,
             ],
             [
                 'name' => 'Another Article',
                 'identifier' => 'A002',
                 'price' => '10.00',
                 'quantity' => 1,
-                'description' => 'Another article for testing',
+                'taxPercent' => '20',
+                'description' => 'An article with different VAT set up',
+                'flags' => 0,
+            ],
+            [
+                'name' => 'Discounted Article',
+                'identifier' => 'A003',
+                'price' => '10.00',
+                'description' => 'Some discounted article for testing',
+                'quantity' => 1,
+                'discountPercent' => '10',
+                'taxPercent' => '20',
+            ],
+            [
+                'name' => 'Shipping Fee',
+                'identifier' => 'SHIPPING',
+                'price' => '5.00',
+                'quantity' => 3,
+                'description' => 'Testing shipping fee',
+                'flags' => 8,
             ]
         ];
     }
@@ -65,14 +82,70 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
         if (empty($this->sharedSecret)) {
             $this->markTestSkipped('API credentials not provided, online test skipped.');
         }
-
         $response = $request->send();
+
         $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceAuthorizeResponse', $response);
         $this->assertTrue($response->isSuccessful());
         $reservationNumber = $response->getReservationNumber();
         $this->assertNotEmpty($reservationNumber);
         return $reservationNumber;
     }
+
+    /**
+     * @depends testAuthorize
+     */
+    public function testPartialCapture($reservationNumber)
+    {
+        $this->assertNotEmpty($reservationNumber);
+        $data = ['reservationNumber' => $reservationNumber];
+        $request = $this->gateway->capture($data);
+        $request->setItems([
+            [
+                'identifier' => 'A001',
+                'quantity' => 2,
+            ],
+            [
+                'identifier' => 'SHIPPING',
+                'quantity' => 1,
+            ]
+        ]);
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureRequest', $request);
+        $response = $request->send();
+
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureResponse', $response);
+        $this->assertTrue($response->isSuccessful());
+        $this->assertNotEmpty($response->getTransactionReference());
+        $this->assertSame($response->getTransactionReference(), $response->getInvoiceNumber());
+
+        $response2 = $request->send();
+
+
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureResponse', $response2);
+        $this->assertTrue($response2->isSuccessful());
+        $this->assertNotEmpty($response2->getTransactionReference());
+        $this->assertSame($response2->getTransactionReference(), $response2->getInvoiceNumber());
+        $this->assertNotSame($response->getTransactionReference(), $response2->getTransactionReference());
+
+        return $reservationNumber;
+    }
+
+    /**
+     * @depends testPartialCapture
+     */
+    public function testFinalCapture($reservationNumber)
+    {
+        $this->assertNotEmpty($reservationNumber);
+        $data = ['reservationNumber' => $reservationNumber];
+        $request = $this->gateway->capture($data);
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureRequest', $request);
+        $response = $request->send();
+
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureResponse', $response);
+        $this->assertTrue($response->isSuccessful());
+        $this->assertNotEmpty($response->getTransactionReference());
+        $this->assertSame($response->getTransactionReference(), $response->getInvoiceNumber());
+    }
+
 
     public function testPurchaseParameters()
     {

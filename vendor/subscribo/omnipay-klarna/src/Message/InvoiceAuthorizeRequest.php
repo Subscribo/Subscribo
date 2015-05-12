@@ -13,8 +13,15 @@ use Omnipay\Klarna\Message\InvoiceAuthorizeResponse;
 use Omnipay\Klarna\Traits\InvoiceGatewayDefaultParametersGettersAndSettersTrait;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Subscribo\Omnipay\Shared\CreditCard;
+use Subscribo\Omnipay\Shared\Helpers\AddressParser;
 
-
+/**
+ * Class InvoiceAuthorizeRequest
+ *
+ * @package Omnipay\Klarna
+ *
+ * @method \Omnipay\Klarna\Message\InvoiceAuthorizeResponse send() send()
+ */
 class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
 {
     use InvoiceGatewayDefaultParametersGettersAndSettersTrait;
@@ -48,33 +55,15 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
                 $data['gender'] = null;
         }
         $data['pno'] = $pno;
-        $itemBag = $this->getItems();
-        /** @var \Subscribo\Omnipay\Shared\Item $item */
-        $items = $itemBag ? $itemBag->all() : [];
-        $articles = [];
-        foreach ($items as $item) {
-            $article = [
-                'quantity' => $item->getQuantity(),
-                'artNo' => $item->getIdentifier(),
-                'title' => $item->getName(),
-                'price' => $item->getPrice(),
-                'vat'   => $item->getTaxPercent() ?: 0,
-                'discount' => $item->getDiscountPercent() ?: 0,
-                'flags' => $item->getFlags(),
-            ];
-            $articles[] = $article;
-        }
-        $data['articles'] = $articles;
+        $data['articles'] = $this->extractArticles($this->getItems());
         return $data;
     }
 
 
     public function sendData($data)
     {
-        if (( ! is_array($data))) {
-            throw new \InvalidArgumentException('Data parameter should be an array');
-        }
-        $k = new Klarna();
+        $k = $this->createKlarnaConnector($data);
+
         /** @var \Subscribo\Omnipay\Shared\CreditCard $card */
         $card = $data['card'];
         $billingAddress = $this->createKlarnaAddr($card);
@@ -83,18 +72,6 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
         } else {
             $shippingAddress = $billingAddress;
         }
-        $country = KlarnaCountry::fromCode($data['country']);
-        $language = KlarnaLanguage::fromCode($data['language']);
-        $currency = KlarnaCurrency::fromCode($data['currency']);
-        $mode = $data['testMode'] ? Klarna::BETA : Klarna::LIVE;
-        $k->config(
-            $data['merchantId'],
-            $data['sharedSecret'],
-            $country,
-            $language,
-            $currency,
-            $mode
-        );
         $k->setAddress(KlarnaFlags::IS_BILLING, $billingAddress);
         $k->setAddress(KlarnaFlags::IS_SHIPPING, $shippingAddress);
         foreach ($data['articles'] as $article) {
@@ -140,7 +117,7 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
         $houseExt = null;
         if (('AT' === $country) or ('DE' === $country) or ('NL' === $country)) {
             if (is_null($address2)) {
-                list($street, $houseNo) = $this->parseAddressLine($address1, ('NL' === $country));
+                list($street, $houseNo) = AddressParser::parseFirstLine($address1);
             } else {
                 $houseNo = $address2;
             }
@@ -164,54 +141,5 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
             $houseExt
         );
         return $result;
-    }
-
-
-    protected function parseAddressLine($addressLine, $romanNumerals = false)
-    {
-        $parts = preg_split('/[\\s]+/', $addressLine, null, PREG_SPLIT_NO_EMPTY);
-        if (2 === count($parts)) { // Most simple case
-            return $parts;
-        }
-        if ($romanNumerals) {
-            $houseNoPattern = '%^[ivxIVX0-9\\/\\-\\.\\|\\+\\#\\~\\(\\)\\[\\]\\{\\}\\<\\>\\,\\#]]+$%';
-        } else {
-            $houseNoPattern = '%^[0-9\\/\\-\\.\\|\\+\\#\\~\\(\\)\\[\\]\\{\\}\\<\\>\\,\\#]]+$%';
-        }
-        $street = array_shift($parts);
-        $houseNo = '';
-        while ($parts) {
-            $last = end($parts);
-            //If the last element consists only of numeric and punctuation, we consider it part of House Number
-            if (preg_match($houseNoPattern, $last)) {
-                $houseNo = array_pop($parts).$houseNo;
-            } else {
-                break;
-            }
-        }
-        while ($parts) {
-            $first = reset($parts);
-            if (preg_match('/^[^0-9]+$/', $first)) {
-                $street .= ' '.array_shift($parts);
-            } else {
-                break;
-            }
-        }
-        //If we still have some combination of letters and digits, which were in the middle:
-        //Those (from the end) which start with a digit, we add to houseNo
-        while ($parts) {
-            $last = end($parts);
-            //If the last element consists only of numeric and punctuation, we consider it part of House Number
-            if (preg_match('%^[0-9]%', $last)) {
-                $houseNo = array_pop($parts).$houseNo;
-            } else {
-                break;
-            }
-        }
-        //and the rest (if any) to street
-        if ($parts) {
-            $street .= ' '.implode(' ', $parts);
-        }
-        return [$street, $houseNo];
     }
 }
