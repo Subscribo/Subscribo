@@ -2,87 +2,74 @@
 
 namespace Subscribo\Omnipay\Shared\Widget;
 
-use Subscribo\Omnipay\Shared\Interfaces\WidgetInterface;
-use Omnipay\Common\Helper;
+use Subscribo\Omnipay\Shared\Widget\AbstractBasicWidget;
+use Subscribo\Omnipay\Shared\Exception\WidgetInvalidRenderingParametersException;
 
-abstract class AbstractWidget implements WidgetInterface
+/**
+ * Class AbstractWidget
+ *
+ * @package Subscribo\OmnipaySubscriboShared
+ */
+abstract class AbstractWidget extends AbstractBasicWidget
 {
-    protected $parameters = [];
-
-    public function __construct($parameters = [])
-    {
-        $this->initialize($parameters);
-    }
-
-    public function __toString()
-    {
-        if ($this->isRenderable()) {
-            return $this->render();
-        }
-        return '';
-    }
-
     /**
-     * @param array $parameters
-     * @return $this
-     */
-    public function initialize($parameters = [])
-    {
-        $defaultParameters = [];
-        foreach($this->getDefaultParameters() as $key => $value) {
-            $defaultParameters[$key] = is_array($value) ? reset($value) : $value;
-        }
-        $parameters = array_replace($defaultParameters, $parameters);
-
-        return $this->loadParameters($parameters);
-    }
-
-    /**
-     * @param array $parameters
-     * @return $this
-     */
-    public function loadParameters($parameters = [])
-    {
-        Helper::initialize($this, $parameters);
-        return $this;
-    }
-
-    /**
+     * Returns (as array values) name of parameters, which are required (and non-empty) for widget rendering
+     *
      * @return array
      */
-    public function getDefaultParameters()
+    abstract public function getRequiredParameters();
+
+
+    public function isRenderable($parameters = [])
     {
-        return [];
+        if (is_array($parameters)) {
+            $parameters = array_replace($this->getParameters(), $parameters);
+        }
+        $obstacles = $this->collectRenderingObstacles($parameters);
+        return empty($obstacles);
     }
 
     /**
+     * Merges provided parameters with those from objects and checks them
+     *
+     * @param array $parameters
+     * @param bool|array $requirements - required parameter names or true for getting them from getRequiredParameters()
+     * @return array
+     * @throws \Subscribo\Omnipay\Shared\Exception\WidgetInvalidRenderingParametersException
+     */
+    protected function checkParameters($parameters, $requirements = true)
+    {
+        if (is_array($parameters)) {
+            $parameters = array_replace($this->getParameters(), $parameters);
+        }
+        $obstacles = $this->collectRenderingObstacles($parameters, $requirements);
+        if ($obstacles) {
+            throw new WidgetInvalidRenderingParametersException(reset($obstacles));
+        }
+        return $parameters;
+    }
+
+    /**
+     * Returns an array of possible problems for rendering widget or of some widget rendering functionality
+     *
+     * @param $parameters
+     * @param bool|array $requirements - required parameter names or true for getting them from getRequiredParameters()
      * @return array
      */
-    public function getParameters()
+    protected function collectRenderingObstacles($parameters, $requirements = true)
     {
-        return $this->parameters;
-    }
-
-    /**
-     * @param string $key
-     * @return mixed|null
-     */
-    protected function getParameter($key)
-    {
-        if (array_key_exists($key, $this->parameters)) {
-            return $this->parameters[$key];
+        if ( ! is_array($parameters)) {
+            return ['Parameters should be an array'];
         }
-        return null;
-    }
-
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @return $this
-     */
-    protected function setParameter($key, $value)
-    {
-        $this->parameters[$key] = $value;
-        return $this;
+        if (true === $requirements) {
+            $requirements = $this->getRequiredParameters();
+        }
+        $obstacles = [];
+        foreach ($requirements as $requiredParameterName) {
+            if (empty($parameters[$requiredParameterName])) {
+                $obstacles[] = "Parameter '".$requiredParameterName."' is required";
+            }
+        }
+        return $obstacles;
     }
 }

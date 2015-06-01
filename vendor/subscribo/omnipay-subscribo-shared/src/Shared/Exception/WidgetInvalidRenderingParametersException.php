@@ -5,7 +5,7 @@ namespace Subscribo\Omnipay\Shared\Exception;
 use \InvalidArgumentException;
 
 /**
- * Class WidgetNotRenderableException
+ * Class WidgetInvalidRenderingParametersException
  *
  * Exception to be thrown by render() or similar methods
  * of objects implementing Subscribo\Omnipay\Shared\Interfaces\WidgetInterface
@@ -13,4 +13,4 @@ use \InvalidArgumentException;
  *
  * @package Subscribo\OmnipaySubscriboShared
  */
-class WidgetNotRenderableException extends InvalidArgumentException {}
+class WidgetInvalidRenderingParametersException extends InvalidArgumentException {}

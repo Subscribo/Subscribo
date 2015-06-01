@@ -25,21 +25,24 @@
         "source": "https://github.com/Subscribo/omnipay-subscribo-shared"
     },
     "require": {
-        "omnipay/common": "^2.3.2",
-        "egeloen/http-adapter": "^0.8@dev",
-        "psr/http-message": "^0.11.0"
+        "php": ">=5.4",
+        "omnipay/common": "^2.3.2"
     },
     "require-dev": {
         "omnipay/tests": "^2.0",
         "phpunit/phpunit": "<5.0",
+        "egeloen/http-adapter": "^0.8@dev",
+        "psr/http-message": "^1.0",
         "psr/log": "^1.0",
         "symfony/http-foundation": "<=3.0",
-        "subscribo/psr-http-message-tools": "^0.3.0",
-        "phly/http": "^0.13.0"
+        "subscribo/psr-http-message-tools": ">=0.3.1 <0.5",
+        "phly/http": ">=0.13.3 <0.15.0"
     },
     "suggest": {
-        "subscribo/psr-http-message-tools": "For PSR-7 compliant Request object factory",
-        "psr/log": "When GuzzleClientHelper or AbstractGateway::attachPsrLogger() is used"
+        "subscribo/psr-http-message-tools": "(>=0.3.1 <0.5) For PSR-7 compliant Request object factory",
+        "psr/log": "(^1.0) When GuzzleClientHelper or AbstractGateway::attachPsrLogger() is used",
+        "egeloen/http-adapter": "(^0.8@dev) when HttpMessageSendingTrait is used",
+        "psr/http-message": "(^1.0) when HttpMessageSendingTrait is used"
     },
     "autoload": {
         "psr-4" : {
@@ -48,7 +51,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.2.x-dev"
+            "dev-master": "0.3.x-dev"
         }
     }
 }

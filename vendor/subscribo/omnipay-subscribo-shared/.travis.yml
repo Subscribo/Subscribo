@@ -10,6 +10,8 @@ php:
 install:
   - composer update
 
+script: phpunit --coverage-text --colors
+
 notifications:
   email:
     packages@subscribo.io

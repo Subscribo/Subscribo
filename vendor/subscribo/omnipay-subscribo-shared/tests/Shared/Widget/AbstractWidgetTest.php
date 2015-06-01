@@ -4,240 +4,241 @@ namespace Subscribo\Omnipay\Shared\Widget;
 
 use PHPUnit_Framework_TestCase;
 use Subscribo\Omnipay\Shared\Widget\AbstractWidget;
-use Subscribo\Omnipay\Shared\Exception\WidgetNotRenderableException;
 
 class AbstractWidgetTest extends PHPUnit_Framework_TestCase
 {
-    public function testRenderSuccess()
+    public function testEmptyWidget()
     {
         $widget = new ExtendedAbstractWidgetForTesting();
-        $text = 'This is widget';
-        $widget->stringToRender = $text;
-        $this->assertTrue($widget->isRenderable());
-        $this->assertSame($text, $widget->render());
-        $this->assertSame($text, (string) $widget);
-    }
 
-    public function testRenderNotRenderable()
-    {
-        $widget = new ExtendedAbstractWidgetForTesting();
         $this->assertFalse($widget->isRenderable());
-        $this->assertSame('', (string) $widget);
+        $this->assertSame(['simpleParameter'], $widget->getRequiredParameters());
+        $expectedDefaultParameters = [
+            'simpleParameter' => ['', 'one', 'two'],
+            'someArrayParameter' => [[]],
+        ];
+        $this->assertSame($expectedDefaultParameters, $widget->getDefaultParameters());
+        $parameters = $widget->getParameters();
+        $this->assertSame('', $parameters['simpleParameter']);
+        $this->assertSame([], $parameters['someArrayParameter']);
+
+        $this->assertSame('', $widget->getSimpleParameter());
+        $this->assertSame([], $widget->getSomeArrayParameter());
+
+        $this->assertSame($widget, $widget->setSomeArrayParameter(['some', 'content']));
+        $this->assertSame(['some', 'content'], $widget->getSomeArrayParameter());
+        $this->assertFalse($widget->isRenderable());
+        $this->assertFalse($widget->isRenderable('wrong argument'));
+        $this->assertFalse($widget->isRenderable(['simpleParameter' => '']));
+
+        $expectedValue2 = 'Simple parameter is two';
+        $parameters = ['simpleParameter' => 'two'];
+        $this->assertTrue($widget->isRenderable($parameters));
+        $this->assertSame($expectedValue2, $widget->render($parameters));
+
+        $this->assertFalse($widget->isRenderable());
     }
 
-    public function testRenderParameters()
+
+    public function testWidgetFilledBySetters()
     {
         $widget = new ExtendedAbstractWidgetForTesting();
-        $text = 'This is widget';
-        $parameters = ['stringToRender' => $text];
+
+        $this->assertFalse($widget->isRenderable());
+
+        $this->assertSame($widget, $widget->setSimpleParameter('one'));
+        $this->assertTrue($widget->isRenderable());
+        $this->assertSame('one', $widget->getSimpleParameter());
+        $expectedValue = 'Simple parameter is one';
+        $this->assertSame($expectedValue, (string) $widget);
+        $this->assertSame($expectedValue, $widget->render());
+
+        $this->assertSame($widget, $widget->setSomeArrayParameter(['some', 'content']));
+        $this->assertSame(['some', 'content'], $widget->getSomeArrayParameter());
+        $this->assertTrue($widget->isRenderable());
+        $this->assertSame($expectedValue, (string) $widget);
+        $this->assertSame($expectedValue, $widget->render());
+
+        $expectedValue2 = 'Simple parameter is two';
+        $parameters = ['simpleParameter' => 'two'];
+
         $this->assertTrue($widget->isRenderable($parameters));
-        $this->assertSame($text, $widget->render($parameters));
-        $this->assertSame('', (string) $widget);
+        $this->assertSame($expectedValue2, $widget->render($parameters));
+
+        $this->assertFalse($widget->isRenderable('wrong argument'));
+        $this->assertFalse($widget->isRenderable(['simpleParameter' => '']));
+
+        $this->assertTrue($widget->isRenderable());
+        $this->assertTrue($widget->isRenderable(['something' => 'else']));
+        $this->assertTrue($widget->isRenderable(['simpleParameter' => 'something else']));
+        $this->assertSame($expectedValue, $widget->render());
+    }
+
+
+    public function testWidgetFilledByConstructor()
+    {
+        $widget = new ExtendedAbstractWidgetForTesting([
+            'simpleParameter' => 'one',
+            'someArrayParameter' => ['some', 'content'],
+        ]);
+
+        $this->assertTrue($widget->isRenderable());
+        $this->assertSame('one', $widget->getSimpleParameter());
+        $this->assertSame(['some', 'content'], $widget->getSomeArrayParameter());
+        $expectedValue = 'Simple parameter is one';
+        $this->assertSame($expectedValue, (string) $widget);
+        $this->assertSame($expectedValue, $widget->render());
+
+        $expectedValue2 = 'Simple parameter is two';
+        $parameters = ['simpleParameter' => 'two'];
+
+        $this->assertTrue($widget->isRenderable($parameters));
+        $this->assertSame($expectedValue2, $widget->render($parameters));
+
+        $this->assertFalse($widget->isRenderable('wrong argument'));
+        $this->assertFalse($widget->isRenderable(['simpleParameter' => '']));
+
+        $this->assertTrue($widget->isRenderable());
+        $this->assertTrue($widget->isRenderable(['something' => 'else']));
+        $this->assertTrue($widget->isRenderable(['simpleParameter' => 'something else']));
+        $this->assertSame($expectedValue, $widget->render());
+    }
+
+
+    public function testInitialize()
+    {
+        $widget = new ExtendedAbstractWidgetForTesting([
+            'simpleParameter' => 'one',
+            'someArrayParameter' => ['some', 'content'],
+        ]);
+
+        $this->assertTrue($widget->isRenderable());
+        $this->assertSame('one', $widget->getSimpleParameter());
+        $this->assertSame(['some', 'content'], $widget->getSomeArrayParameter());
+        $expectedValue = 'Simple parameter is one';
+        $this->assertSame($expectedValue, (string) $widget);
+        $this->assertSame($expectedValue, $widget->render());
+
+        $parameters = [
+            'simpleParameter' => 'two',
+            'someArrayParameter' => ['different', 'content'],
+
+        ];
+        $widget->initialize($parameters);
+
+        $this->assertTrue($widget->isRenderable());
+        $this->assertSame('two', $widget->getSimpleParameter());
+        $expectedValue2 = 'Simple parameter is two';
+        $this->assertSame($expectedValue2, (string) $widget);
+        $this->assertSame($expectedValue2, $widget->render());
+
+        $this->assertSame(['different', 'content'], $widget->getSomeArrayParameter());
+        $this->assertTrue($widget->isRenderable());
+        $this->assertSame($expectedValue2, (string) $widget);
+        $this->assertSame($expectedValue2, $widget->render());
+
+        $this->assertFalse($widget->isRenderable('wrong argument'));
+        $this->assertFalse($widget->isRenderable(['simpleParameter' => '']));
+
+        $this->assertTrue($widget->isRenderable());
+        $this->assertTrue($widget->isRenderable(['something' => 'else']));
+        $this->assertTrue($widget->isRenderable(['simpleParameter' => 'something else']));
+        $this->assertSame($expectedValue2, $widget->render());
+    }
+
+
+    public function testAlternateRenderingMethod()
+    {
+        $widget = new ExtendedAbstractWidgetForTesting();
+        $this->assertSame('some value', $widget->renderFromArray(['someArrayParameter' => ['some', 'value']]));
+        $this->assertSame($widget, $widget->setSomeArrayParameter(['another', 'value']));
+        $this->assertSame('another value', $widget->renderFromArray());
+        $this->assertSame('some value', $widget->renderFromArray(['someArrayParameter' => ['some', 'value']]));
     }
 
     /**
-     * @expectedException \Subscribo\Omnipay\Shared\Exception\WidgetNotRenderableException
+     * @expectedException \Subscribo\Omnipay\Shared\Exception\WidgetInvalidRenderingParametersException
+     * @expectedExceptionMessage Parameter 'simpleParameter' is required
      */
-    public function testRenderFailure()
+    public function testExceptionForEmptyWidget()
     {
         $widget = new ExtendedAbstractWidgetForTesting();
         $widget->render();
     }
 
-    public function testSimpleWidget()
+    /**
+     * @expectedException \Subscribo\Omnipay\Shared\Exception\WidgetInvalidRenderingParametersException
+     * @expectedExceptionMessage Parameters should be an array
+     */
+    public function testExceptionWrongParameters()
     {
-        $widget= new SimpleExtendedAbstractWidgetForTesting(['someOption' => 'someValue']);
-        $this->assertSame('Simple widget', (string) $widget);
-        $this->assertTrue($widget->isRenderable());
-        $this->assertSame('Simple widget', $widget->render());
-        $this->assertSame([], $widget->getDefaultParameters());
-        $this->assertSame([], $widget->getParameters());
-        $this->assertSame($widget, $widget->initialize(['nonexistent' => 'some value']));
-        $this->assertSame([], $widget->getParameters());
-        $this->assertSame($widget, $widget->loadParameters(['nonexistent2' => 'some value2']));
-        $this->assertSame([], $widget->getParameters());
+        $widget = new ExtendedAbstractWidgetForTesting();
+        $widget->render('wrong parameter');
     }
 
-    public function testSettersAndGetters()
+    /**
+     * @expectedException \Subscribo\Omnipay\Shared\Exception\WidgetInvalidRenderingParametersException
+     * @expectedExceptionMessage Parameter 'someArrayParameter' is required
+     */
+    public function testExceptionForAlternativeRenderingMethod()
     {
-        $widget = new WithParametersExtendedAbstractWidgetForTesting();
-        $defaults = $widget->getDefaultParameters();
-        foreach($defaults as $key => $val) {
-            $getter = 'get'.ucfirst($key);
-            $setter = 'set'.ucfirst($key);
-            $this->assertTrue(method_exists($widget, $getter), "Getter '".$getter."' does not exists for default parameter '".$key."'");
-            $this->assertTrue(method_exists($widget, $setter), "Setter '".$setter."' does not exists for default parameter '".$key."'");
-            $testValue = uniqid();
-            $this->assertSame($widget, $widget->$setter($testValue), "Setter '".$setter."' does not have fluent interface'");
-            $this->assertSame($testValue, $widget->$getter(), "Getter '".$getter."' does not return the same value as the one provided for setter '".$setter."'");
-        }
+        $widget = new ExtendedAbstractWidgetForTesting();
+        $widget->renderFromArray();
     }
-
-    public function testParametersEmptyConstruct()
-    {
-        $widget = new WithParametersExtendedAbstractWidgetForTesting();
-        $expectedDefaults = [
-            'selection' => ['one', 'two', 'three'],
-            'simpleParameter' => 'Some string',
-        ];
-        $expectedUnchanged = [
-            'selection' => 'one',
-            'simpleParameter' => 'Some string',
-        ];
-        $this->assertSame($expectedDefaults, $widget->getDefaultParameters());
-        $this->assertSame($expectedUnchanged, $widget->getParameters());
-        $this->assertNull($widget->getNonDefaultParameter());
-        $this->assertSame($widget, $widget->setNonDefaultParameter('Some value'));
-        $this->assertSame('Some value', $widget->getNonDefaultParameter());
-        $expected = $expectedUnchanged;
-        $expected['nonDefaultParameter'] = 'Some value';
-        $this->assertSame($expectedDefaults, $widget->getDefaultParameters());
-        $this->assertSame($expected, $widget->getParameters());
-        $this->assertSame($widget, $widget->loadParameters(['simpleParameter' => 'Different string']));
-        $expected['simpleParameter'] = 'Different string';
-        $this->assertSame($expectedDefaults, $widget->getDefaultParameters());
-        $this->assertSame($expected, $widget->getParameters());
-        $this->assertSame($widget, $widget->initialize(['selection' => 'two']));
-        // initialize resets parameters in defaults to defaults
-        $expected = $expectedUnchanged;
-        $expected['selection'] = 'two';
-        $expected['nonDefaultParameter'] = 'Some value';
-        $this->assertSame($expectedDefaults, $widget->getDefaultParameters());
-        $this->assertSame($expected, $widget->getParameters());
-        $this->assertSame('Some value', $widget->getNonDefaultParameter());
-    }
-
-    public function testParametersWithConstruct()
-    {
-        $parameters = [
-            'nonDefaultParameter' => 5,
-            'simpleParameter' => '',
-        ];
-        $widget = new WithParametersExtendedAbstractWidgetForTesting($parameters);
-        $expected = [
-            'selection' => 'one',
-            'simpleParameter' => '',
-            'nonDefaultParameter' => 5,
-        ];
-        $this->assertSame($expected, $widget->getParameters());
-        $this->assertSame('', $widget->getSimpleParameter());
-        $this->assertSame(5, $widget->getNonDefaultParameter());
-        $this->assertSame('one', $widget->getSelection());
-        $this->assertSame($widget, $widget->setSimpleParameter(null));
-        $this->assertNull($widget->getSimpleParameter());
-        $expected['simpleParameter'] = null;
-        $this->assertSame($expected, $widget->getParameters());
-        $this->assertSame($widget, $widget->setNonDefaultParameter(null));
-        $this->assertNull($widget->getNonDefaultParameter());
-        $expected['nonDefaultParameter'] = null;
-        $this->assertSame($expected, $widget->getParameters());
-    }
-
-    public function testSettersAndGettersSimple()
-    {
-        $widget = new SimpleExtendedAbstractWidgetForTesting();
-        $defaults = $widget->getDefaultParameters();
-        foreach($defaults as $key => $val) {
-            $getter = 'get'.ucfirst($key);
-            $setter = 'set'.ucfirst($key);
-            $this->assertTrue(method_exists($widget, $getter), "Getter '".$getter."' does not exists for default parameter '".$key."'");
-            $this->assertTrue(method_exists($widget, $setter), "Setter '".$setter."' does not exists for default parameter '".$key."'");
-            $testValue = uniqid();
-            $this->assertSame($widget, $widget->$setter($testValue), "Setter '".$setter."' does not have fluent interface'");
-            $this->assertSame($testValue, $widget->$getter(), "Getter '".$getter."' does not return the same value as the one provided for setter '".$setter."'");
-        }
-    }
-
-
 }
 
 
 class ExtendedAbstractWidgetForTesting extends AbstractWidget
 {
-    public $stringToRender;
-
-    public function isRenderable($parameters = [])
-    {
-        if (isset($parameters['stringToRender'])) {
-            return true;
-        }
-        return ! is_null($this->stringToRender);
-    }
-
-    public function render($parameters = [])
-    {
-        if (isset($parameters['stringToRender'])) {
-            return $parameters['stringToRender'];
-        }
-        if (is_null($this->stringToRender)) {
-            throw new WidgetNotRenderableException('stringToRender not provided');
-        }
-        return $this->stringToRender;
-    }
-}
-
-
-class SimpleExtendedAbstractWidgetForTesting extends AbstractWidget
-{
-    public function isRenderable($parameters = [])
-    {
-        return true;
-    }
-
-    public function render($parameters = [])
-    {
-        return 'Simple widget';
-    }
-}
-
-
-class WithParametersExtendedAbstractWidgetForTesting extends AbstractWidget
-{
-    public function isRenderable($parameters = [])
-    {
-        return true;
-    }
-
-    public function render($parameters = [])
-    {
-        return 'Widget with parameters';
-    }
-
     public function getDefaultParameters()
     {
         return [
-            'selection' => ['one', 'two', 'three'],
-            'simpleParameter' => 'Some string',
+            'simpleParameter' => ['', 'one', 'two'],
+            'someArrayParameter' => [[]],
         ];
     }
 
-    public function getSelection()
+
+    public function render($parameters = [])
     {
-        return $this->getParameter('selection');
+        $parameters = $this->checkParameters($parameters);
+        return 'Simple parameter is '.$parameters['simpleParameter'];
     }
 
-    public function setSelection($value)
+
+    public function renderFromArray($parameters = [])
     {
-        return $this->setParameter('selection', $value);
+        $parameters = $this->checkParameters($parameters, ['someArrayParameter']);
+        return implode(' ', $parameters['someArrayParameter']);
     }
+
+
+    public function getRequiredParameters()
+    {
+        return ['simpleParameter'];
+    }
+
 
     public function getSimpleParameter()
     {
         return $this->getParameter('simpleParameter');
     }
 
+
     public function setSimpleParameter($value)
     {
         return $this->setParameter('simpleParameter', $value);
     }
 
-    public function getNonDefaultParameter()
+
+    public function getSomeArrayParameter()
     {
-        return $this->getParameter('nonDefaultParameter');
+        return $this->getParameter('someArrayParameter');
     }
 
-    public function setNonDefaultParameter($value)
+
+    public function setSomeArrayParameter(array $value)
     {
-        return $this->setParameter('nonDefaultParameter', $value);
+        return $this->setParameter('someArrayParameter', $value);
     }
 }

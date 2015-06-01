@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 use Ivory\HttpAdapter\GuzzleHttpAdapter;
 
 /**
- * Trait HttpMessageSendingTrait
+ * Trait HttpMessageSendingTrait intended for use with Message/SomeRequest type of classes
  * This trait is expecting that class using it have property httpClient of type Guzzle\Http\ClientInterface
  *
  * @package Subscribo\OmnipaySubscriboShared
