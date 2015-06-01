@@ -7,6 +7,7 @@ use KlarnaFlags;
 use Omnipay\Klarna\Message\AbstractInvoiceRequest;
 use Omnipay\Klarna\Message\InvoiceCaptureResponse;
 use Omnipay\Klarna\Traits\InvoiceGatewayDefaultParametersGettersAndSettersTrait;
+use Omnipay\Klarna\Traits\OrderIdOneAndTwoGettersAndSettersTrait;
 
 /**
  * Class InvoiceCaptureRequest
@@ -18,6 +19,7 @@ use Omnipay\Klarna\Traits\InvoiceGatewayDefaultParametersGettersAndSettersTrait;
 class InvoiceCaptureRequest extends AbstractInvoiceRequest
 {
     use InvoiceGatewayDefaultParametersGettersAndSettersTrait;
+    use OrderIdOneAndTwoGettersAndSettersTrait;
 
     /**
      * @return string|int
@@ -82,31 +84,43 @@ class InvoiceCaptureRequest extends AbstractInvoiceRequest
     }
 
     /**
-     * @param array $data
-     * @return InvoiceCaptureResponse
+     * @param $data
+     * @return Klarna
      */
-    public function sendData($data)
+    protected function prepareConnector($data)
     {
-        $k = $this->createKlarnaConnector($data);
+        $connector = $this->createKlarnaConnector($data);
+
         if (isset($data['articles'])) {
             foreach ($data['articles'] as $article) {
-                $k->addArtNo($article['quantity'], $article['artNo']);
+                $connector->addArtNo($article['quantity'], $article['artNo']);
             }
         }
+        if (isset($data['orderId1'])) {
+            $connector->setActivateInfo('orderid1', strval($data['orderId1']));
+        }
+        if (isset($data['orderId2'])) {
+            $connector->setActivateInfo('orderid2', strval($data['orderId2']));
+        }
+
+        return $connector;
+    }
+
+
+    protected function sendRequestViaConnector(Klarna $connector, array $data)
+    {
         $rno = $data['reservationNumber'];
         $ocr = array_key_exists('OCRNumber', $data) ? $data['OCRNumber'] : null;
         $flags = array_key_exists('flags', $data) ? $data['flags'] : null;
-        $result = $k->activate($rno, $ocr, $flags);
-        $this->response = $this->createResponse($result);
 
-        return $this->response;
+        return $connector->activate($rno, $ocr, $flags);
     }
 
     /**
-     * @param array $data
+     * @param array|\KlarnaException $data
      * @return InvoiceCaptureResponse
      */
-    protected function createResponse(array $data)
+    protected function createResponse($data)
     {
         return new InvoiceCaptureResponse($this, $data);
     }

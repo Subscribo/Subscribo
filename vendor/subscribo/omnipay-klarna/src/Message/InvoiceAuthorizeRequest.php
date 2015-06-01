@@ -11,6 +11,8 @@ use KlarnaLanguage;
 use Omnipay\Klarna\Message\AbstractInvoiceRequest;
 use Omnipay\Klarna\Message\InvoiceAuthorizeResponse;
 use Omnipay\Klarna\Traits\InvoiceGatewayDefaultParametersGettersAndSettersTrait;
+use Omnipay\Klarna\Traits\OrderIdOneAndTwoGettersAndSettersTrait;
+use Omnipay\Klarna\Widget\InvoiceWidget;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Subscribo\Omnipay\Shared\CreditCard;
 use Subscribo\Omnipay\Shared\Helpers\AddressParser;
@@ -25,6 +27,7 @@ use Subscribo\Omnipay\Shared\Helpers\AddressParser;
 class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
 {
     use InvoiceGatewayDefaultParametersGettersAndSettersTrait;
+    use OrderIdOneAndTwoGettersAndSettersTrait;
 
     public function getData()
     {
@@ -46,7 +49,7 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
                     throw new InvalidRequestException('Birthday is a required parameter for AT/DE/NL');
                 }
                 $data['gender'] = strtolower(substr($gender, 0, 1));
-            break;
+                break;
             default:
                 $pno = $card->getSocialSecurityNumber();
                 if (empty($pno)) {
@@ -56,24 +59,40 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
         }
         $data['pno'] = $pno;
         $data['articles'] = $this->extractArticles($this->getItems());
+        $data['orderId1'] = $this->getOrderId1();
+        $data['orderId2'] = $this->getOrderId2();
+
         return $data;
     }
 
-
-    public function sendData($data)
+    /**
+     * @param array $parameters
+     * @return InvoiceWidget
+     */
+    public function getWidget(array $parameters = [])
     {
-        $k = $this->createKlarnaConnector($data);
-
-        /** @var \Subscribo\Omnipay\Shared\CreditCard $card */
-        $card = $data['card'];
-        $billingAddress = $this->createKlarnaAddr($card);
-        if ($card->getShippingContactDifferences()) {
-            $shippingAddress = $this->createKlarnaAddr($card, true);
-        } else {
-            $shippingAddress = $billingAddress;
+        $parameters = array_replace($this->getParameters(), $parameters);
+        if (empty($parameters['price'])) {
+            $amount = $this->getAmountInteger();
+            if ($amount <= 0) {
+                $amount = $this->calculateAmount();
+            }
+            $parameters['price'] = $amount;
         }
-        $k->setAddress(KlarnaFlags::IS_BILLING, $billingAddress);
-        $k->setAddress(KlarnaFlags::IS_SHIPPING, $shippingAddress);
+        $widget = new InvoiceWidget($parameters);
+
+        return $widget;
+    }
+
+    /**
+     * @return string
+     */
+    public function calculateAmount()
+    {
+        $this->validate('merchantId', 'sharedSecret', 'country', 'language', 'currency');
+        $data = $this->getParameters();
+        $data['articles'] = $this->extractArticles($this->getItems());
+        $k = $this->createKlarnaConnector($data);
         foreach ($data['articles'] as $article) {
             $flags = isset($article['flags']) ? $article['flags'] : KlarnaFlags::INC_VAT;
             $k->addArticle(
@@ -86,19 +105,68 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
                 $flags
             );
         }
-        $result = $k->reserveAmount($data['pno'], $data['gender'], $data['amount']);
+        $summarized = $k->summarizeGoodsList();
+        $amount = bcdiv(strval($summarized), '100', 2);
 
-        $this->response = $this->createResponse($result);
-        return $this->response;
+        return $amount;
     }
 
+    /**
+     * @param $data
+     * @return Klarna
+     */
+    protected function prepareConnector($data)
+    {
+        $connector = $this->createKlarnaConnector($data);
 
-    protected function createResponse(array $data)
+        /** @var \Subscribo\Omnipay\Shared\CreditCard $card */
+        $card = $data['card'];
+        $billingAddress = $this->createKlarnaAddr($card);
+        if ($card->getShippingContactDifferences()) {
+            $shippingAddress = $this->createKlarnaAddr($card, true);
+        } else {
+            $shippingAddress = $billingAddress;
+        }
+        $connector->setAddress(KlarnaFlags::IS_BILLING, $billingAddress);
+        $connector->setAddress(KlarnaFlags::IS_SHIPPING, $shippingAddress);
+        foreach ($data['articles'] as $article) {
+            $flags = isset($article['flags']) ? $article['flags'] : KlarnaFlags::INC_VAT;
+            $connector->addArticle(
+                $article['quantity'],
+                $article['artNo'],
+                $article['title'],
+                $article['price'],
+                $article['vat'],
+                $article['discount'],
+                $flags
+            );
+        }
+        if (isset($data['orderId1']) or isset($data['orderId2'])) {
+            $connector->setEstoreInfo($data['orderId1'], $data['orderId2']);
+        }
+
+        return $connector;
+    }
+
+    protected function sendRequestViaConnector(Klarna $connector, array $data)
+    {
+        return $connector->reserveAmount($data['pno'], $data['gender'], $data['amount']);
+    }
+
+    /**
+     * @param array|\KlarnaException $data
+     * @return InvoiceAuthorizeResponse
+     */
+    protected function createResponse($data)
     {
         return new InvoiceAuthorizeResponse($this, $data);
     }
 
-
+    /**
+     * @param CreditCard $card
+     * @param bool $isShipping
+     * @return KlarnaAddr
+     */
     protected function createKlarnaAddr(CreditCard $card, $isShipping = false)
     {
         $phone = $isShipping ? $card->getShippingPhone() : $card->getPhone();
@@ -110,6 +178,7 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
         $country = strtoupper($isShipping ? $card->getShippingCountry() : $card->getCountry());
         $address1 = $isShipping ? $card->getShippingAddress1() : $card->getAddress1();
         $address2 = $isShipping ? $card->getShippingAddress2() : $card->getAddress2();
+        $company = $isShipping ? $card->getShippingCompany() : $card->getCompany();
 
         $careof = '';
         $street = $address1;
@@ -140,6 +209,10 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
             $houseNo,
             $houseExt
         );
+        if ($company) {
+            $result->setCompanyName($company);
+            $result->isCompany = true;
+        }
         return $result;
     }
 }

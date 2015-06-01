@@ -6,6 +6,7 @@ use Klarna;
 use KlarnaCountry;
 use KlarnaCurrency;
 use KlarnaLanguage;
+use KlarnaException;
 use InvalidArgumentException;
 use Subscribo\Omnipay\Shared\Message\AbstractRequest;
 use Subscribo\Omnipay\Shared\ItemBag;
@@ -17,8 +18,53 @@ use Subscribo\Omnipay\Shared\ItemBag;
  */
 abstract class AbstractInvoiceRequest extends AbstractRequest
 {
+    public function sendData($data)
+    {
+        $connector = $this->prepareConnector($data);
+
+        try {
+            $result = $this->sendRequestViaConnector($connector, $data);
+
+            $this->response = $this->createResponse($result);
+
+        } catch (KlarnaException $e) {
+            $code = $e->getCode();
+            if (($code < 0) or ($code > 1100)) {
+                $this->response = $this->createResponse($e);
+            } else {
+                throw $e;
+            }
+        }
+
+        return $this->response;
+    }
+
+    /**
+     * @param Klarna $connector
+     * @param array $data
+     * @return array
+     * @throws KlarnaException
+     */
+    abstract protected function sendRequestViaConnector(Klarna $connector, array $data);
+
+    /**
+     * @param array|KlarnaException $data
+     * @return \Omnipay\Klarna\Message\AbstractInvoiceResponse
+     */
+    abstract protected function createResponse($data);
+
+    /**
+     * @param $data
+     * @return Klarna
+     */
+    protected function prepareConnector($data)
+    {
+        return $this->createKlarnaConnector($data);
+    }
+
     /**
      * Creates an instance of Klarna, an also check, whether provided data are an array (common functionality)
+     *
      * @param array $data
      * @return Klarna
      * @throws \InvalidArgumentException
@@ -32,7 +78,7 @@ abstract class AbstractInvoiceRequest extends AbstractRequest
         $country = KlarnaCountry::fromCode($data['country']);
         $language = KlarnaLanguage::fromCode($data['language']);
         $currency = KlarnaCurrency::fromCode($data['currency']);
-        $mode = $data['testMode'] ? Klarna::BETA : Klarna::LIVE;
+        $mode = empty($data['testMode']) ? Klarna::LIVE : Klarna::BETA;
         $klarnaConnector->config(
             $data['merchantId'],
             $data['sharedSecret'],
@@ -41,6 +87,9 @@ abstract class AbstractInvoiceRequest extends AbstractRequest
             $currency,
             $mode
         );
+        if (( ! empty($data['clientIp']))) {
+            $klarnaConnector->setClientIP($data['clientIp']);
+        }
         return $klarnaConnector;
     }
 
@@ -70,5 +119,4 @@ abstract class AbstractInvoiceRequest extends AbstractRequest
         }
         return $articles;
     }
-
 }
