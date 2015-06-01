@@ -1,0 +1,48 @@
+{
+    "name": "subscribo/psr-http-message-tools",
+    "description": "Tools which could be used with PSR-7: Request factory, Uri factory, Response parser",
+    "license": "MIT",
+    "keywords": [
+        "PSR-7",
+        "factory",
+        "parser",
+        "request",
+        "response",
+        "uri"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner",
+            "homepage": "http://kochabo.com"
+        }
+    ],
+    "support": {
+        "email": "packages@subscribo.io",
+        "issues": "https://github.com/Subscribo/psr-http-message-tools/issues",
+        "source": "https://github.com/Subscribo/psr-http-message-tools"
+    },
+    "require": {
+        "php": ">=5.5",
+        "psr/http-message": "^1.0",
+        "zendframework/zend-diactoros": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "<5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\PsrHttpMessageTools\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.4.x-dev"
+        }
+    }
+}
