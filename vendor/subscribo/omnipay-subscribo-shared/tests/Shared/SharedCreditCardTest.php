@@ -221,10 +221,27 @@ class SharedCreditCardTest extends CreditCardTest
     {
         $card = new CreditCard();
         $this->assertEmpty($card->getSocialSecurityNumber());
+        $this->assertNull($card->getNationalIdentificationNumber());
         $value = uniqid();
         $this->assertSame($card, $card->setSocialSecurityNumber($value));
         $this->assertSame($value, $card->getSocialSecurityNumber());
+        $this->assertSame($value, $card->getNationalIdentificationNumber());
         $this->assertSame($card, $card->setSocialSecurityNumber(null));
+        $this->assertNull($card->getSocialSecurityNumber());
+        $this->assertNull($card->getNationalIdentificationNumber());
+    }
+
+    public function testSetNationalIdentificationNumber()
+    {
+        $card = new CreditCard();
+        $this->assertNull($card->getNationalIdentificationNumber());
+        $this->assertNull($card->getSocialSecurityNumber());
+        $value = uniqid();
+        $this->assertSame($card, $card->setNationalIdentificationNumber($value));
+        $this->assertSame($value, $card->getNationalIdentificationNumber());
+        $this->assertSame($value, $card->getSocialSecurityNumber());
+        $this->assertSame($card, $card->setNationalIdentificationNumber(null));
+        $this->assertNull($card->getNationalIdentificationNumber());
         $this->assertNull($card->getSocialSecurityNumber());
     }
 }

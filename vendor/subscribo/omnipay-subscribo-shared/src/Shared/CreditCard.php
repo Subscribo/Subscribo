@@ -10,14 +10,15 @@ use Omnipay\Common\CreditCard as Base;
  *
  * * identificationDocumentNumber
  * * identificationDocumentType
- * * socialSecurityNumber
+ * * socialSecurityNumber - deprecated - use nationalIdentificationNumber instead (now only an alias for nationalIdentificationNumber)
+ * * nationalIdentificationNumber - country-specific identifier of a person or a company,
  * * mobile
  * * salutation
  * * billingMobile
  * * billingSalutation
  * * shippingMobile
  * * shippingSalutation
- * 
+ *
  * @package Subscribo\OmnipaySubscriboShared
  */
 class CreditCard extends Base
@@ -91,20 +92,43 @@ class CreditCard extends Base
     }
 
     /**
+     * @return int|string|null
+     */
+    public function getNationalIdentificationNumber()
+    {
+        return $this->getParameter('nationalIdentificationNumber');
+    }
+
+    /**
+     * @param int|string $value
+     * @return $this
+     */
+    public function setNationalIdentificationNumber($value)
+    {
+        return $this->setParameter('nationalIdentificationNumber', $value);
+    }
+
+    /**
+     * Alias for getNationalIdentificationNumber()
+     *
+     * @deprecated use getNationalIdentificationNumber() instead
      * @return int|string
      */
     public function getSocialSecurityNumber()
     {
-        return $this->getParameter('socialSecurityNumber');
+        return $this->getNationalIdentificationNumber();
     }
     
     /**
+     * Alias for setNationalIdentificationNumber()
+     *
+     * @deprecated use setNationalIdentificationNumber() instead
      * @param int|string $value
      * @return $this
      */
     public function setSocialSecurityNumber($value)
     {
-        return $this->setParameter('socialSecurityNumber', $value);
+        return $this->setNationalIdentificationNumber($value);
     }
 
     /**

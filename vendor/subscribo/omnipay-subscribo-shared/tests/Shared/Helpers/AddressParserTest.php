@@ -22,5 +22,16 @@ class AddressParserTest extends PHPUnit_Framework_TestCase
         $this->assertSame(['Square of the Day of the 1st Vi.', 'VI. - III.'], AddressParser::parseFirstLine('Square of the Day of the 1st Vi. VI. - III. '));
         $this->assertSame(['Square of the Day of the', '1st VI. VI. - III.'], AddressParser::parseFirstLine('Square of the Day of the 1st VI. VI. - III. '));
         $this->assertSame(['Square of the Day of the', '1st vi. vi. - iii.'], AddressParser::parseFirstLine('Square of the Day of the 1st vi. vi. - iii. '));
+
+        $this->assertSame(['Meierskamp','31b'], AddressParser::parseFirstLine('Meierskamp 31b'));
+        $this->assertSame(['Meierskamp','31b'], AddressParser::parseFirstLine('Meierskamp31b'));
+        $this->assertSame(['Meierskamp','31b'], AddressParser::parseFirstLine('Meierskamp,31b'));
+        $this->assertSame(['Meierskamp','315XI'], AddressParser::parseFirstLine('Meierskamp315XI'));
+
+        $this->assertSame(['Hauptstraße', '12'], AddressParser::parseFirstLine('Hauptstraße,12'));
+        $this->assertSame(['Hauptstraße', ''], AddressParser::parseFirstLine('Hauptstraße,'));
+        $this->assertSame(['Hauptstraße', null], AddressParser::parseFirstLine('Hauptstraße'));
+        $this->assertSame(['Hauptstraße', '12'], AddressParser::parseFirstLine('Hauptstraße,,,12'));
+        $this->assertSame(['Hauptstraße', '12'], AddressParser::parseFirstLine('Hauptstraße12'));
     }
 }

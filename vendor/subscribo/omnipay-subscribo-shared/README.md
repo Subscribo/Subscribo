@@ -4,11 +4,12 @@
 
 [![Build Status](https://travis-ci.org/Subscribo/omnipay-subscribo-shared.svg?branch=master)](https://travis-ci.org/Subscribo/omnipay-subscribo-shared)
 
-- PSR-7 Message sending using Guzzle client currently (May 2015) used by Omnipay Common
-- Widget base functionality and interface
-- Added support for widget-based workflow
-- Extended CreditCard class
-- Extended Item and ItemBag classes
+- PSR-7 Message sending using Guzzle client currently (June 2015) used by Omnipay Common
+- Widget interface and basic functionality
+- Support for widget-based workflow (for APIs providing at some point displayable widget or parameter(s) to create it)
+- Extended CreditCard class (additional attributes)
+- Extended Item (additional attributes) and ItemBag classes
+- Address parser helper
 
 ## Important note:
 
