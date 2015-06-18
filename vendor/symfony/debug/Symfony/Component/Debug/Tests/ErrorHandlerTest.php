@@ -318,6 +318,40 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function testErrorStacking()
+    {
+        try {
+            $handler = ErrorHandler::register();
+            $handler->screamAt(E_USER_WARNING);
+
+            $logger = $this->getMock('Psr\Log\LoggerInterface');
+
+            $logger
+                ->expects($this->exactly(2))
+                ->method('log')
+                ->withConsecutive(
+                    array($this->equalTo(LogLevel::WARNING), $this->equalTo('Dummy log')),
+                    array($this->equalTo(LogLevel::DEBUG), $this->equalTo('Silenced warning'))
+                )
+            ;
+
+            $handler->setDefaultLogger($logger, array(E_USER_WARNING => LogLevel::WARNING));
+
+            ErrorHandler::stackErrors();
+            @trigger_error('Silenced warning', E_USER_WARNING);
+            $logger->log(LogLevel::WARNING, 'Dummy log');
+            ErrorHandler::unstackErrors();
+
+            restore_error_handler();
+            restore_exception_handler();
+        } catch (\Exception $e) {
+            restore_error_handler();
+            restore_exception_handler();
+
+            throw $e;
+        }
+    }
+
     public function testHandleFatalError()
     {
         try {
@@ -336,7 +370,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
             $logArgCheck = function ($level, $message, $context) use ($that) {
                 $that->assertEquals('Fatal Parse Error: foo', $message);
                 $that->assertArrayHasKey('type', $context);
-                $that->assertEquals($context['type'], E_ERROR);
+                $that->assertEquals($context['type'], E_PARSE);
             };
 
             $logger
@@ -345,7 +379,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
                 ->will($this->returnCallback($logArgCheck))
             ;
 
-            $handler->setDefaultLogger($logger, E_ERROR);
+            $handler->setDefaultLogger($logger, E_PARSE);
 
             $handler->handleFatalError($error);
 

@@ -262,7 +262,7 @@ class FinderTest extends Iterator\RealIteratorTestCase
     public function testSort($adapter)
     {
         $finder = $this->buildFinder($adapter);
-        $this->assertSame($finder, $finder->sort(function (\SplFileInfo $a, \SplFileInfo $b) { return strcmp($a->getRealpath(), $b->getRealpath()); }));
+        $this->assertSame($finder, $finder->sort(function (\SplFileInfo $a, \SplFileInfo $b) { return strcmp($a->getRealPath(), $b->getRealPath()); }));
         $this->assertIterator($this->toAbsolute(array('foo', 'foo bar', 'foo/bar.tmp', 'test.php', 'test.py', 'toto')), $finder->in(self::$tmpDir)->getIterator());
     }
 
@@ -475,7 +475,7 @@ class FinderTest extends Iterator\RealIteratorTestCase
         $i = 0;
 
         foreach ($directory as $dir) {
-            $i++;
+            ++$i;
         }
 
         $this->assertCount($i, $directory);
@@ -487,7 +487,7 @@ class FinderTest extends Iterator\RealIteratorTestCase
         $i = 0;
 
         foreach ($files as $file) {
-            $i++;
+            ++$i;
         }
 
         $this->assertCount($i, $files);

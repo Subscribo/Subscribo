@@ -15,6 +15,7 @@ use Psr\Log\LogLevel;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 use Symfony\Component\Debug\Exception\FatalErrorException;
+use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Symfony\Component\Debug\Exception\OutOfMemoryException;
 use Symfony\Component\Debug\FatalErrorHandler\UndefinedFunctionFatalErrorHandler;
 use Symfony\Component\Debug\FatalErrorHandler\UndefinedMethodFatalErrorHandler;
@@ -101,7 +102,7 @@ class ErrorHandler
     private static $stackedErrorLevels = array();
 
     /**
-     * Same init value as thrownErrors
+     * Same init value as thrownErrors.
      *
      * @deprecated since 2.6, to be removed in 3.0.
      */
@@ -411,11 +412,11 @@ class ErrorHandler
         if ($this->isRecursive) {
             $log = 0;
         } elseif (self::$stackedErrorLevels) {
-            self::$stackedErrors[] = array($this->loggers[$type], $message, $e);
+            self::$stackedErrors[] = array($this->loggers[$type][0], ($type & $level) ? $this->loggers[$type][1] : LogLevel::DEBUG, $message, $e);
         } else {
             try {
                 $this->isRecursive = true;
-                $this->loggers[$type][0]->log($this->loggers[$type][1], $message, $e);
+                $this->loggers[$type][0]->log(($type & $level) ? $this->loggers[$type][1] : LogLevel::DEBUG, $message, $e);
                 $this->isRecursive = false;
             } catch (\Exception $e) {
                 $this->isRecursive = false;
@@ -430,24 +431,37 @@ class ErrorHandler
     /**
      * Handles an exception by logging then forwarding it to an other handler.
      *
-     * @param \Exception $exception An exception to handle
-     * @param array      $error     An array as returned by error_get_last()
+     * @param \Exception|\Throwable $exception An exception to handle
+     * @param array                 $error     An array as returned by error_get_last()
      *
      * @internal
      */
-    public function handleException(\Exception $exception, array $error = null)
+    public function handleException($exception, array $error = null)
     {
-        $level = error_reporting();
-        if ($this->loggedErrors & E_ERROR & ($level | $this->screamedErrors)) {
+        if (!$exception instanceof \Exception) {
+            $exception = new FatalThrowableError($exception);
+        }
+        $type = $exception instanceof FatalErrorException ? $exception->getSeverity() : E_ERROR;
+
+        if ($this->loggedErrors & $type) {
             $e = array(
-                'type' => E_ERROR,
+                'type' => $type,
                 'file' => $exception->getFile(),
                 'line' => $exception->getLine(),
-                'level' => $level,
+                'level' => error_reporting(),
                 'stack' => $exception->getTrace(),
             );
             if ($exception instanceof FatalErrorException) {
-                $message = 'Fatal '.$exception->getMessage();
+                if ($exception instanceof FatalThrowableError) {
+                    $error = array(
+                        'type' => $type,
+                        'message' => $message = $exception->getMessage(),
+                        'file' => $e['file'],
+                        'line' => $e['line'],
+                    );
+                } else {
+                    $message = 'Fatal '.$exception->getMessage();
+                }
             } elseif ($exception instanceof \ErrorException) {
                 $message = 'Uncaught '.$exception->getMessage();
                 if ($exception instanceof ContextErrorException) {
@@ -474,6 +488,9 @@ class ErrorHandler
         try {
             call_user_func($this->exceptionHandler, $exception);
         } catch (\Exception $handlerException) {
+        } catch (\Throwable $handlerException) {
+        }
+        if (isset($handlerException)) {
             $this->exceptionHandler = null;
             $this->handleException($handlerException);
         }
@@ -547,7 +564,7 @@ class ErrorHandler
     }
 
     /**
-     * Unstacks stacked errors and forwards to the logger
+     * Unstacks stacked errors and forwards to the logger.
      */
     public static function unstackErrors()
     {
@@ -566,7 +583,7 @@ class ErrorHandler
             self::$stackedErrors = array();
 
             foreach ($errors as $e) {
-                $e[0][0]->log($e[0][1], $e[1], $e[2]);
+                $e[0]->log($e[1], $e[2], $e[3]);
             }
         }
     }
@@ -666,7 +683,7 @@ class ErrorHandler
 }
 
 /**
- * Private class used to work around https://bugs.php.net/54275
+ * Private class used to work around https://bugs.php.net/54275.
  *
  * @author Nicolas Grekas <p@tchwork.com>
  *
