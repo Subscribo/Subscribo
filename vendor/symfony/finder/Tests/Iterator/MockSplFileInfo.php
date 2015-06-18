@@ -51,7 +51,7 @@ class MockSplFileInfo extends \SplFileInfo
     public function isFile()
     {
         if (null === $this->type) {
-            return false !== strpos($this->getFilename(), 'file');
+            return preg_match('/file/', $this->getFilename());
         };
 
         return self::TYPE_FILE === $this->type;
@@ -60,7 +60,7 @@ class MockSplFileInfo extends \SplFileInfo
     public function isDir()
     {
         if (null === $this->type) {
-            return false !== strpos($this->getFilename(), 'directory');
+            return preg_match('/directory/', $this->getFilename());
         }
 
         return self::TYPE_DIRECTORY === $this->type;
