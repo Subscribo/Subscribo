@@ -21,11 +21,17 @@ class LocalePossibilities extends StaticLocaleSettingsManager implements LocaleS
 
     public function getAvailableUriStubs()
     {
+        if (empty($this->data['uriStubs'])) {
+            return [];
+        }
         return array_keys($this->data['uriStubs']);
     }
 
     public function getAvailableLocalesWithUriStub()
     {
+        if (empty($this->data['uriStubs'])) {
+            return [];
+        }
         return $this->data['uriStubs'];
     }
 
