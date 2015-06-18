@@ -27,6 +27,13 @@ class FacebookProvider extends AbstractProvider implements ProviderInterface
     protected $scopes = ['email'];
 
     /**
+     * Display the dialog in a popup view.
+     *
+     * @var bool
+     */
+    protected $popup = false;
+
+    /**
      * {@inheritdoc}
      */
     protected function getAuthUrl($state)
@@ -90,5 +97,31 @@ class FacebookProvider extends AbstractProvider implements ProviderInterface
             'id' => $user['id'], 'nickname' => null, 'name' => $user['first_name'].' '.$user['last_name'],
             'email' => isset($user['email']) ? $user['email'] : null, 'avatar' => $this->graphUrl.'/'.$this->version.'/'.$user['id'].'/picture?type=normal',
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCodeFields($state = null)
+    {
+        $fields = parent::getCodeFields($state);
+
+        if ($this->popup) {
+            $fields['display'] = 'popup';
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Set the dialog to be displayed as a popup.
+     *
+     * @return $this
+     */
+    public function asPopup()
+    {
+        $this->popup = true;
+
+        return $this;
     }
 }
