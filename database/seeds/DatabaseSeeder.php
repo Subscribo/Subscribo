@@ -18,5 +18,7 @@ class DatabaseSeeder extends Seeder
         Model::unguard();
 
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\BasicSeeder');
+
+        Model::reguard();
     }
 }
