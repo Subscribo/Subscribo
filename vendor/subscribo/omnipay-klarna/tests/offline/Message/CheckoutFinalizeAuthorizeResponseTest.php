@@ -6,11 +6,11 @@ use Omnipay\Tests\TestCase;
 use Omnipay\Klarna\Message\CheckoutAuthorizeResponse;
 use Omnipay\Klarna\Message\CheckoutAuthorizeRequest;
 
-class CheckoutAuthorizeResponseTest extends TestCase
+class CheckoutFinalizeAuthorizeResponseTest extends TestCase
 {
     public function setUp()
     {
-        $this->request = new CheckoutAuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->request = new CheckoutFinalizeAuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
         $this->request->setTestMode(true);
     }
 
@@ -33,7 +33,7 @@ class CheckoutAuthorizeResponseTest extends TestCase
 
     public function testEmptyResponse()
     {
-        $response = new CheckoutAuthorizeResponse($this->request, []);
+        $response = new CheckoutFinalizeAuthorizeResponse($this->request, []);
         $this->assertNull($response->getCode());
         $this->assertNull($response->getMessage());
         $this->assertNull($response->getWidget());
@@ -57,29 +57,32 @@ class CheckoutAuthorizeResponseTest extends TestCase
 
     public function testSuccessfulResponse()
     {
+        $reservationNumber = uniqid();
         $data = [
-            'status' => 'checkout_incomplete',
+            'status' => 'created',
             'gui'   => ['snippet' => 'SomeWidget'],
+            'reservation' => $reservationNumber,
         ];
         $order = $this->getMockOrder($data);
-        $response = new CheckoutAuthorizeResponse($this->request, ['order' => $order]);
+        $response = new CheckoutFinalizeAuthorizeResponse($this->request, ['order' => $order]);
         $this->assertSame('SomeLocation', $response->getCheckoutOrderUri());
-        $this->assertSame('checkout_incomplete', $response->getOrderStatus());
+        $this->assertSame('created', $response->getOrderStatus());
+        $this->assertSame($reservationNumber, $response->getReservationNumber());
         $this->assertTrue($response->isSuccessful());
+
         $this->assertNull($response->getCode());
         $this->assertNull($response->getMessage());
         $this->assertNull($response->getTransactionToken());
         $this->assertNull($response->getTransactionReference());
-        $this->assertNull($response->getReservationNumber());
         $this->assertFalse($response->isWaiting());
         $this->assertFalse($response->isTransactionToken());
         $this->assertFalse($response->isCancelled());
         $this->assertFalse($response->isRedirect());
         $this->assertFalse($response->isTransparentRedirect());
-        $this->assertTrue($response->haveWidget());
-        $this->assertTrue($response->isStatusCheckoutIncomplete());
+        $this->assertFalse($response->isStatusCheckoutIncomplete());
         $this->assertFalse($response->isStatusCheckoutComplete());
-        $this->assertFalse($response->isStatusCreated());
+        $this->assertTrue($response->isStatusCreated());
+        $this->assertTrue($response->haveWidget());
         $this->assertInternalType('array', $response->getData());
         $this->assertArrayHasKey('order', $response->getData());
         $widget = $response->getWidget();

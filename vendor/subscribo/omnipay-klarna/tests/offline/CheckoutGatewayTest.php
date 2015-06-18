@@ -22,6 +22,39 @@ class CheckoutGatewayTest extends GatewayTestCase
         }
     }
 
+    public function testFinalizeAuthorizeParameters()
+    {
+        foreach ($this->gateway->getDefaultParameters() as $key => $parameter) {
+            $setter = 'set'.ucfirst($key);
+            $getter = 'get'.ucfirst($key);
+            $value = uniqid();
+            $this->gateway->$setter($value);
+            $request = $this->gateway->finalizeAuthorize();
+            $this->assertSame($value, $request->$getter($value));
+        }
+    }
+
+
+    public function testAuthorize()
+    {
+        $request = $this->gateway->authorize();
+        $this->assertInstanceOf('Omnipay\\Klarna\\Message\\CheckoutAuthorizeRequest', $request);
+    }
+
+
+    public function testCompleteAuthorize()
+    {
+        $request = $this->gateway->completeAuthorize();
+        $this->assertInstanceOf('Omnipay\\Klarna\\Message\\CheckoutCompleteAuthorizeRequest', $request);
+    }
+
+
+    public function testFinalizeAuthorize()
+    {
+        $request = $this->gateway->finalizeAuthorize();
+        $this->assertInstanceOf('Omnipay\\Klarna\\Message\\CheckoutFinalizeAuthorizeRequest', $request);
+    }
+
 
     public function testGetWidget()
     {

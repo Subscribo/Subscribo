@@ -16,6 +16,8 @@ class CheckoutAuthorizeRequestTest extends TestCase
 
     public function testGetData()
     {
+        $this->markTestSkipped("Skipped until implementation of Session handling callbacks");
+
         $urlBase = 'https://your.web.site.example';
         $request = new CheckoutAuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
         $this->assertSame($request, $request->setTestMode(true));
@@ -55,5 +57,29 @@ class CheckoutAuthorizeRequestTest extends TestCase
         $request = new CheckoutAuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
         $request->setTestMode(true);
         $request->sendData(null);
+    }
+
+    public function testSetters()
+    {
+        $urlBase = 'https://your.web.site.example';
+
+        $request = new CheckoutAuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->assertEmpty($request->getTestMode());
+        $this->assertSame($request, $request->setTestMode(true));
+        $this->assertTrue($request->getTestMode());
+
+        $this->assertSame([], $request->getAdditionalQueryParameters());
+        $this->assertNull($request->getAuthorizeUrl());
+        $this->assertNull($request->getPushUrl());
+        $this->assertNull($request->getTermsUrl());
+
+        $this->assertSame($request, $request->setAdditionalQueryParameters(['some' => 'value']));
+        $this->assertSame(['some' => 'value'], $request->getAdditionalQueryParameters());
+        $this->assertSame($request, $request->setAuthorizeUrl($urlBase.'/path/to/example/checkout/authorize'));
+        $this->assertSame($urlBase.'/path/to/example/checkout/authorize', $request->getAuthorizeUrl());
+        $this->assertSame($request, $request->setPushUrl($urlBase.'/scripts/checkout/push'));
+        $this->assertSame($urlBase.'/scripts/checkout/push', $request->getPushUrl());
+        $this->assertSame($request, $request->setTermsUrl($urlBase.'/about/terms'));
+        $this->assertSame($urlBase.'/about/terms', $request->getTermsUrl());
     }
 }

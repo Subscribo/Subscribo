@@ -89,6 +89,7 @@ class CheckoutGatewayOnlineTest extends GatewayTestCase
 
     public function testFetchingAuthorizationWidget()
     {
+        $this->markTestSkipped("Skipped until implementation of Session handling callbacks");
         $orderId1 = uniqid();
         $orderId2 = uniqid();
         $data = [

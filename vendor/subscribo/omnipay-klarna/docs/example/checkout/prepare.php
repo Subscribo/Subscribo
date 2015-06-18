@@ -38,5 +38,5 @@ $widget = $gateway->getWidget(['color' => 'blue-black', 'charge' => '0.95']);
             <button type="submit" name="workflow" value="denied">Denied</button>
         </form>
         <img src="<?php echo $widget->renderBadgeUrl(['design' => 'short']); ?>">
-</body>
+    </body>
 </html>

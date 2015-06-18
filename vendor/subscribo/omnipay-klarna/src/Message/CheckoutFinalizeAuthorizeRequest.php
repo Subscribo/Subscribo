@@ -52,9 +52,7 @@ class CheckoutFinalizeAuthorizeRequest extends AbstractCheckoutRequest
             $toProcess = false;
         }
         if ($toProcess) {
-            $update = array();
-
-            $update['status'] = 'created';
+            $update = ['status' => 'created'];
             $order->update($update);
         }
         $this->response = $this->createResponse(['order' => $order]);

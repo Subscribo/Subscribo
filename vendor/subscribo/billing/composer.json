@@ -22,12 +22,11 @@
     ],
     "require": {
         "php": "~5.4",
-        "omnipay/omnipay": "~2.0",
         "subscribo/support": "@dev",
-        "subscribo/omnipay-klarna": "^0.1.0@dev",
-        "subscribo/omnipay-payunity": "^0.2.1@stable",
-        "subscribo/omnipay-subscribo-shared": "^0.2.1@stable",
-        "subscribo/psr-http-tools": "^0.2.0@stable"
+        "subscribo/omnipay-payunity": "^0.2.2@dev",
+        "subscribo/omnipay-klarna": "dev-feature/checkout",
+        "klarna/checkout": "1.2",
+        "subscribo/psr-http-message-tools": ">=0.3.1 <0.5"
     },
     "suggest": {
         "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
