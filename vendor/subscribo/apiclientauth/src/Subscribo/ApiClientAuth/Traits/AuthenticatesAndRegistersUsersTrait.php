@@ -1,5 +1,6 @@
 <?php namespace Subscribo\ApiClientAuth\Traits;
 
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Session\Store;
@@ -25,12 +26,12 @@ trait AuthenticatesAndRegistersUsersTrait
     use AuthenticatesAndRegistersUsers;
     use HandleServerRequestExceptionTrait;
 
-    public function getRegister(Registrar $registrar, Store $session, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit)
+    public function getRegister(Guard $auth, Registrar $registrar, Store $session, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit)
     {
         $resultInSession = $session->pull($this->sessionKeyServerRequestHandledResult);
         $account = $resultInSession ? $registrar->resumeAttempt($resultInSession) : null;
         if ($account) {
-            $this->auth->login($account);
+            $auth->login($account);
             LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);
             return redirect($this->redirectPath());
         }
@@ -38,7 +39,7 @@ trait AuthenticatesAndRegistersUsersTrait
     }
 
 
-    public function postRegister(Registrar $registrar, Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LocalizerInterface $localizer)
+    public function postRegister(Guard $auth, Registrar $registrar, Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LocalizerInterface $localizer)
     {
         $rules = $registrar->getValidationRules();
         $this->validate($request, $rules);
@@ -64,19 +65,19 @@ trait AuthenticatesAndRegistersUsersTrait
                 ->withInput($request->only('email', 'name'))
                 ->withErrors($errorMessage);
         }
-        $this->auth->login($account);
+        $auth->login($account);
         LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);
         return redirect($this->redirectPath());
     }
 
-    public function postLogin(Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LocalizerInterface $localizer)
+    public function postLogin(Guard $auth, Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LocalizerInterface $localizer)
     {
         $this->validate($request, ['email' => 'required', 'password' => 'required']);
 
         $credentials = $request->only(['email', 'password']);
 
         try {
-            $authenticated = $this->auth->attempt($credentials, $request->has('remember'), true);
+            $authenticated = $auth->attempt($credentials, $request->has('remember'), true);
         } catch (ValidationErrorsException $e) {
             return redirect()
                 ->refresh()
@@ -89,7 +90,7 @@ trait AuthenticatesAndRegistersUsersTrait
                 ->withErrors($errorMessage);
         }
         if ($authenticated) {
-            LocaleUtils::rememberLocaleForUser($this->auth->user(), $sessionDeposit, $cookieDeposit);
+            LocaleUtils::rememberLocaleForUser($auth->user(), $sessionDeposit, $cookieDeposit);
             return redirect()->intended($this->redirectPath());
         }
         $errorMessage = $localizer->trans('errors.wrongCredentials', [], 'apiclientauth::messages');
