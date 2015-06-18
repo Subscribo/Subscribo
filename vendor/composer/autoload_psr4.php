@@ -66,6 +66,7 @@ return array(
     'GuzzleHttp\\Ring\\' => array($vendorDir . '/guzzlehttp/ringphp/src'),
     'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
     'Fuel\\Core\\' => array($vendorDir . '/subscribo/schemabuilder/src/lib/fuel/core/src/Fuel/Core'),
+    'Faker\\' => array($vendorDir . '/fzaninotto/faker/src/Faker'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
     'Dimsav\\Translatable\\' => array($vendorDir . '/dimsav/laravel-translatable/src/Translatable'),
     'ClassPreloader\\' => array($vendorDir . '/classpreloader/classpreloader/src'),

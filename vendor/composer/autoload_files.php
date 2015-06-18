@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     $vendorDir . '/symfony/var-dumper/Resources/functions/dump.php',
+    $vendorDir . '/hamcrest/hamcrest-php/hamcrest/Hamcrest.php',
     $vendorDir . '/react/promise/src/functions_include.php',
     $vendorDir . '/swiftmailer/swiftmailer/lib/swift_required.php',
     $vendorDir . '/nikic/php-parser/lib/bootstrap.php',
