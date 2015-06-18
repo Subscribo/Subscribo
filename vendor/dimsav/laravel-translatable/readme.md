@@ -14,8 +14,9 @@ If you want to store translations of your models into the database, this package
 
 * [Demo](#what-is-this-package-doing)
 * [Installation](#installation-in-4-steps)
-* [Support](#support)
-* [FAQ](#faq)
+* [Configuration](#configuration)
+* [Documentation](#documentation)
+* [Support](#faq)
 
 ## Laravel compatibility
 
@@ -29,44 +30,44 @@ If you want to store translations of your models into the database, this package
 
 ## Demo
 
-Getting translated attributes
+**Getting translated attributes**
 
 ```php
-  $country = Country::where('code', '=', 'gr')->first();
-  echo $country->translate('en')->name; // Greece
+  $greece = Country::where('code', 'gr')->first();
+  echo $greece->translate('en')->name; // Greece
   
   App::setLocale('en');
-  echo $country->name;     // Greece
+  echo $greece->name;     // Greece
 
   App::setLocale('de');
-  echo $country->name;     // Griechenland
+  echo $greece->name;     // Griechenland
 ```
 
-Saving translated attributes
+**Saving translated attributes**
 
 ```php
-  $country = Country::where('code', '=', 'gr')->first();
-  echo $country->translate('en')->name; // Greece
+  $greece = Country::where('code', 'gr')->first();
+  echo $greece->translate('en')->name; // Greece
   
-  $country->translate('en')->name = 'abc';
-  $country->save();
+  $greece->translate('en')->name = 'abc';
+  $greece->save();
   
-  $country = Country::where('code', '=', 'gr')->first();
-  echo $country->translate('en')->name; // abc
+  $greece = Country::where('code', 'gr')->first();
+  echo $greece->translate('en')->name; // abc
 ```
 
-Filling multiple translations
+**Filling multiple translations**
 
 ```php
-  $data = array(
+  $data = [
     'code' => 'gr',
-    'en'  => array('name' => 'Greece'),
-    'fr'  => array('name' => 'Grèce'),
-  );
+    'en'  => ['name' => 'Greece'],
+    'fr'  => ['name' => 'Grèce'],
+  ];
 
-  $country = Country::create($data);
+  $greece = Country::create($data);
   
-  echo $country->translate('fr')->name; // Grèce
+  echo $greece->translate('fr')->name; // Grèce
 ```
 
 ## Installation in 4 steps
@@ -121,7 +122,7 @@ class Country extends Eloquent {
     
     use \Dimsav\Translatable\Translatable;
     
-    public $translatedAttributes = array('name');
+    public $translatedAttributes = ['name'];
     protected $fillable = ['code', 'name'];
 
 }
@@ -153,8 +154,146 @@ With this command, initialize the configuration and modify the created file, loc
 
 *Note: There isn't any restriction for the format of the locales. Feel free to use whatever suits you better, like "eng" instead of "en", or "el" instead of "gr".  The important is to define your locales and stick to them.*
 
+## Configuration
+
+### The translation model
+
+The convention used to define the class of the translation model is to append the keyword `Translation`.
+
+So if your model is `\MyApp\Models\Country`, the default translation would be `\MyApp\Models\CountryTranslation`.
+
+To use a custom class as translation model, define the translation class (including the namespace) as parameter. For example:
+
+```php
+<?php 
+
+namespace MyApp\Models;
+
+use Dimsav\Translatable\Translatable;
+use Illuminate\Database\Eloquent\Model as Eloquent;
+
+class Country extends Eloquent
+{
+    use Translatable;
+
+    public $translationModel = 'MyApp\Models\CountryAwesomeTranslation';
+}
+
+```
+
+## Documentation
+
+**Please read the installation steps first, to understand what classes need to be created.**
+
+### Available methods 
+
+```php
+// This is how we determine the current locale.
+// It is set by laravel or other packages.
+App::getLocale(); // 'fr' 
+
+// To use this package, first we need an instance of our model
+$germany = Country::where('code', 'de')->first();
+
+// This returns an instance of CountryTranslation of using the current locale.
+// So in this case, french. If no french translation is found, it returns null.
+$translation = $germany->translate();
+
+// If an german translation exists, it returns an instance of 
+// CountryTranslation. Otherwise it returns null.
+$translation = $germany->translate('de');
+
+// If a german translation doesn't exist, it attempts to get a translation  
+// of the fallback language (see fallback locale section below).
+$translation = $germany->translate('de', true);
+
+// Alias of the above.
+$translation = $germany->translateOrDefault('de');
+
+// Returns instance of CountryTranslation of using the current locale.
+// If no translation is found, it returns a fallback translation
+// if enabled in the configuration.
+$translation = $germany->getTranslation();
+
+// If an german translation exists, it returns an instance of 
+// CountryTranslation. Otherwise it returns null.
+// Same as $germany->translate('de');
+$translation = $germany->getTranslation('de', true);
+
+// Returns true/false if the model has translation about the current locale. 
+$germany->hasTranslation();
+
+// Returns true/false if the model has translation in french. 
+$germany->hasTranslation('fr');
+
+// If a german translation doesn't exist, it returns
+// a new instance of CountryTranslation.
+$translation = $germany->translateOrNew('de');
+
+// Returns a new CountryTranslation instance for the selected
+// language, and binds it to $germany
+$translation = $germany->getNewTranslation('it');
+
+// The eloquent model relationship. Do what you want with it ;) 
+$germany->translations();
+```
+
+### Magic properties
+
+To use the magic properties, you have to define the property `$translatedAttributes` in your
+ main model:
+
+ ```php
+ class Country extends Eloquent {
+
+     use \Dimsav\Translatable\Translatable;
+
+     public $translatedAttributes = ['name'];
+ }
+ ```
+
+```php
+// Again we start by having a country instance
+$germany = Country::where('code', 'de')->first();
+
+// We can reference properties of the translation object directly from our main model.
+// This uses the default locale and is the equivalent of $germany->translate()->name
+$germany->name; // 'Germany'
+
+// We can also quick access a translation with a custom locale
+$germany->{'name:de'} // 'Deutschland'
+```
+
+### Fallback locales
+
+If you want to fallback to a default translation when a translation has not been found, enable this in the configuration
+using the `use_fallback` key. And to select the default locale, use the `fallback_locale` key.
+
+Example:
+
+```php
+return [
+    'use_fallback' => true,
+
+    'fallback_locale' => 'en',    
+];
+```
+
+You can also define *per-model* the default for "if fallback should be used", by setting the `$useTranslationFallback` property:
+
+```php
+class Country {
+
+    public $useTranslationFallback = true;
+
+}
+```
 
 ## FAQ
+
+#### I need some example code!
+
+Examples for all the package features can be found [in the code](https://github.com/dimsav/laravel-translatable/tree/master/tests/models) used for the [tests](https://github.com/dimsav/laravel-translatable/tree/master/tests).
 
 #### I need help!
 
@@ -164,7 +303,7 @@ Got any question or suggestion? Feel free to open an [Issue](https://github.com/
 
 You are awesome! Watched the repo and reply to the issues. You will help offering a great experience to the users of the package. `#communityWorks`
 
-#### Is this compatible with Ardent?
+#### I am getting collisions with other trait methods!
 
 Translatable is fully compatible with all kinds of Eloquent extensions, including Ardent. If you need help to implement Translatable with these extensions, see this [example](https://gist.github.com/dimsav/9659552).
 
@@ -209,47 +348,3 @@ Schema::create('language_translations', function(Blueprint $table){
 ```
 
 The best solution though would be to update your mysql version. And **always make sure you have the same version both in development and production environment!**
-
-#### Can I use translation fallbacks?
-
-If you want to fallback to a default translation if a translation has not been found, you can specify that on the model using `$model->useTranslationFallback = true`.
-
-```php
-App::make('config')->set('translatable.fallback_locale', 'en');
-
-$country = Country::create(['code' => 'gr']);
-$country->translate('en')->name = 'Greece';
-$country->useTranslationFallback = true;
-
-$country->translate('de')->locale; // en
-$country->translate('de')->name; // Greece
-```
-
-You can also overwrite `useTranslationFallback` with a second parameter on `translate()`, so new translations can be created or existing ones used. Without the second parameter, `translate('de')` would return the fallback translation.
-
-```php
-App::make('config')->set('translatable.fallback_locale', 'en');
-
-$country = Country::create(['code' => 'gr']);
-$country->useTranslationFallback = true;
-$country->translate('en', false)->name = 'Greece';
-$country->translate('de', false)->name = 'Griechenland';
-
-$country->translate('de')->locale; // de
-$country->translate('de')->name; // Griechenland
-```
-
-When using `fill`, this is done automatically for you:
-
-```php
-$country = new Country;
-$country->useTranslationFallback = true;
-$country->fill([
-  'code' => 'gr',
-  'en' => ['name' => 'Greece'],
-  'de' => ['name' => 'Griechenland'],
-]);
-
-$country->translate('de')->locale; // de
-$country->translate('de')->name; // Griechenland
-```

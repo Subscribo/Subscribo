@@ -1,3 +1,24 @@
+Upcoming
+========
+
+* Adds `duringInstantiation()` to more easily test constructor exceptions
+* Adds `%paths.config%` placeholder to allow config paths to be relative to config file
+* Adds `beConstructedThrough*()` and `beConstructed*()` shortcuts for named constructors
+* Shows a warning when a class is generated in a location that is not autoloadable
+* Offers to make constructors private after generating a named constructor
+* Fixed invalid JUnit output in some non-EN locales
+
+2.2.1 / 2015-05-30
+==================
+
+* Fix false positives in `shouldHaveKeyWithValue` matcher
+* Fix fatal error in edge case when method call parameters don't match expectations
+
+2.2.0 / 2015-04-18
+==================
+
+* No changes from rc1
+
 2.2.0-rc1 / 2015-04-13
 ======================
 

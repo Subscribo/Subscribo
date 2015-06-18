@@ -114,7 +114,15 @@ class Tag implements \Reflector
         DocBlock $docblock = null,
         Location $location = null
     ) {
-        $matches = self::extractTagParts($tag_line);
+        if (!preg_match(
+            '/^@(' . self::REGEX_TAGNAME . ')(?:\s*([^\s].*)|$)?/us',
+            $tag_line,
+            $matches
+        )) {
+            throw new \InvalidArgumentException(
+                'Invalid tag_line detected: ' . $tag_line
+            );
+        }
 
         $handler = __CLASS__;
         if (isset(self::$tagHandlerMappings[$matches[1]])) {
@@ -209,13 +217,16 @@ class Tag implements \Reflector
      * 
      * @param string $name The new name of this tag.
      * 
-     * @throws \InvalidArgumentException When an invalid tag name is provided.
-     *
      * @return $this
+     * @throws \InvalidArgumentException When an invalid tag name is provided.
      */
     public function setName($name)
     {
-        $this->validateTagName($name);
+        if (!preg_match('/^' . self::REGEX_TAGNAME . '$/u', $name)) {
+            throw new \InvalidArgumentException(
+                'Invalid tag name supplied: ' . $name
+            );
+        }
 
         $this->tag = $name;
 
@@ -362,41 +373,5 @@ class Tag implements \Reflector
     public function __toString()
     {
         return "@{$this->getName()} {$this->getContent()}";
-    }
-
-    /**
-     * Extracts all components for a tag.
-     *
-     * @param string $tagLine
-     *
-     * @return string[]
-     */
-    private static function extractTagParts($tagLine)
-    {
-        $matches = array();
-        if (! preg_match('/^@(' . self::REGEX_TAGNAME . ')(?:\s*([^\s].*)|$)?/us', $tagLine, $matches)) {
-            throw new \InvalidArgumentException(
-                'The tag "' . $tagLine . '" does not seem to be wellformed, please check it for errors'
-            );
-        }
-
-        return $matches;
-    }
-
-    /**
-     * Validates if the tag name matches the expected format, otherwise throws an exception.
-     *
-     * @param string $name
-     *
-     * @return void
-     */
-    private function validateTagName($name)
-    {
-        if (!preg_match('/^' . self::REGEX_TAGNAME . '$/u', $name)) {
-            throw new \InvalidArgumentException(
-                'The tag name "' . $name . '" is not wellformed. Tags may only consist of letters, underscores, '
-                . 'hyphens and backslashes.'
-            );
-        }
     }
 }

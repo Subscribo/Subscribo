@@ -23,6 +23,7 @@ use phpDocumentor\Reflection\DocBlock;
  */
 class Serializer
 {
+
     /** @var string The string to indent the comment with. */
     protected $indentString = ' ';
 
@@ -60,14 +61,13 @@ class Serializer
     /**
      * Sets the string to indent comments with.
      * 
-     * @param string $indentString The string to indent comments with.
+     * @param string $indentationString The string to indent comments with.
      * 
      * @return $this This serializer object.
      */
     public function setIndentationString($indentString)
     {
         $this->indentString = (string)$indentString;
-
         return $this;
     }
 
@@ -170,7 +170,6 @@ class Serializer
         $indent = str_repeat($this->indentString, $this->indent);
         $firstIndent = $this->isFirstLineIndented ? $indent : '';
 
-        $wrapLength = 80;
         $text = $docblock->getText();
         if ($this->lineLength) {
             //3 === strlen(' * ')

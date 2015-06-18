@@ -16,8 +16,7 @@
     },
     "suggest": {
         "dflydev/markdown": "~1.0",
-        "erusev/parsedown": "~1.0",
-        "league/commonmark": "*"
+        "erusev/parsedown": "~1.0"
     },
     "extra": {
         "branch-alias": {
