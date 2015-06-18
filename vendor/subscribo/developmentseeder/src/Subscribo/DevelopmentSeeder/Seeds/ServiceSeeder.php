@@ -27,14 +27,16 @@ class ServiceSeeder extends Seeder {
         $frontendService->availableLocales()->attach($frontendSlovak);
         ServiceModule::enableModule($frontendService, ServiceModule::MODULE_ACCOUNT_MERGING);
 
-        $oAuthConfiguration = new OAuthConfiguration();
-        $oAuthConfiguration->serviceId = $frontendService->id;
-        $oAuthConfiguration->provider = 'facebook';
-        $oAuthConfiguration->identifier = env('FACEBOOK_APP_CLIENT_ID');
-        $oAuthConfiguration->secret = env('FACEBOOK_APP_CLIENT_SECRET');
-        $oAuthConfiguration->scopes = json_encode('email');
-        $oAuthConfiguration->redirect = null;
-        $oAuthConfiguration->save();
+        if (env('FACEBOOK_APP_CLIENT_ID')) {
+            $oAuthConfiguration = new OAuthConfiguration();
+            $oAuthConfiguration->serviceId = $frontendService->id;
+            $oAuthConfiguration->provider = 'facebook';
+            $oAuthConfiguration->identifier = env('FACEBOOK_APP_CLIENT_ID');
+            $oAuthConfiguration->secret = env('FACEBOOK_APP_CLIENT_SECRET');
+            $oAuthConfiguration->scopes = json_encode('email');
+            $oAuthConfiguration->redirect = null;
+            $oAuthConfiguration->save();
+        }
         if (env('TWITTER_APP_CLIENT_ID')) {
             $oAuthConfiguration2 = new OAuthConfiguration();
             $oAuthConfiguration2->serviceId = $frontendService->id;

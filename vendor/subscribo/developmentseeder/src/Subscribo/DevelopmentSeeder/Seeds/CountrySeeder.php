@@ -8,8 +8,8 @@ class CountrySeeder extends Seeder {
     public function run()
     {
         $austria = Country::firstOrNew(['identifier' => 'AT']);
-        $austria->save();
         $austria->officialName = 'Österreich';
+        $austria->save();
         $austria->translateOrNew('en')->name = 'Austria';
         $austria->translateOrNew('de')->name = 'Österreich';
         $austria->countryUnion = 'EU';
