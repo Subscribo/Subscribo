@@ -44,6 +44,11 @@ if (!defined('T_YIELD')) {
 class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report_HTML_Renderer
 {
     /**
+     * @var integer
+     */
+    private $htmlspecialcharsFlags;
+
+    /**
      * Constructor.
      *
      * @param string  $templatePath
@@ -61,6 +66,12 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
             $lowUpperBound,
             $highLowerBound
         );
+
+        $this->htmlspecialcharsFlags = ENT_COMPAT;
+
+        if (PHP_VERSION_ID >= 50400 && defined('ENT_SUBSTITUTE')) {
+            $this->htmlspecialcharsFlags = $this->htmlspecialcharsFlags | ENT_HTML401 | ENT_SUBSTITUTE;
+        }
     }
 
     /**
@@ -252,10 +263,11 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
             $template,
             array(
                 'name'                         => sprintf(
-                    '%s<a href="#%d">%s</a>',
+                    '%s<a href="#%d"><abbr title="%s">%s</abbr></a>',
                     $indent,
                     $item['startLine'],
-                    htmlspecialchars($item['signature'])
+                    htmlspecialchars($item['signature']),
+                    isset($item['functionName']) ? $item['functionName'] : $item['methodName']
                 ),
                 'numMethods'                   => 1,
                 'numTestedMethods'             => $numTestedItems,
@@ -338,7 +350,7 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
                                         $testCSS = ' class="covered-by-medium-tests"';
                                         break;
 
-                                    case 'large':
+                                    default:
                                         $testCSS = ' class="covered-by-large-tests"';
                                         break;
                                 }
@@ -438,7 +450,7 @@ class PHP_CodeCoverage_Report_HTML_Renderer_File extends PHP_CodeCoverage_Report
             $value = str_replace(
                 array("\t", ' '),
                 array('&nbsp;&nbsp;&nbsp;&nbsp;', '&nbsp;'),
-                htmlspecialchars($value)
+                htmlspecialchars($value, $this->htmlspecialcharsFlags)
             );
 
             if ($value === "\n") {
