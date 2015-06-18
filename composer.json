@@ -5,7 +5,7 @@
 	"license": "proprietary",
 	"type": "project",
 	"require": {
-		"laravel/framework": "5.0.*",
+		"laravel/framework": "5.1.*",
         "subscribo/apiserver": "@dev",
         "subscribo/apiclient": "@dev",
         "subscribo/modifier": "@dev",

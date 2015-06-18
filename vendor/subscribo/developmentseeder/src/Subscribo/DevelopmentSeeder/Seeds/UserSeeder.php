@@ -35,13 +35,13 @@ class UserSeeder extends Seeder
         $administrator->service()->associate($service);
         $administrator->save();
 
-        $service2 = Service::firstByAttributes(['identifier' => 'MAIN']);
+        $service2 = Service::where(['identifier' => 'MAIN'])->first();
         $developer = $this->generateUser('developer');
         $developer->service()->associate($service2);
         $userFactory->addTokens($developer);
         $developer->save();
 
-        $anotherService = Service::firstByAttributes(['identifier' => 'ANOTHER']);
+        $anotherService = Service::where(['identifier' => 'ANOTHER'])->first();
         $anotherDeveloper = $this->generateUser('developer5');
         $anotherDeveloper->service()->associate($anotherService);
         $userFactory->addTokens($anotherDeveloper);
