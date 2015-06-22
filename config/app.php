@@ -137,10 +137,11 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-
-
+        /*
+         * IDE Helper Service provider
+         * (conditional registration results in error, so we are listing it here)
+         */
         '\\Barryvdh\\LaravelIdeHelper\\IdeHelperServiceProvider',
-        '\\Subscribo\\DevelopmentSeeder\\Integration\\Laravel\\DevelopmentSeederServiceProvider',
 
         /*
          * Application Service Providers...

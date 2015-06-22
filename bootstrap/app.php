@@ -38,6 +38,10 @@ if (class_exists('\\Subscribo\\ApiClient\\Integration\\Laravel\\ApiClientService
     $app->register('\\Subscribo\\ApiClient\\Integration\\Laravel\\ApiClientServiceProvider');
 }
 
+if (class_exists('\\Subscribo\\DevelopmentSeeder\\Integration\\Laravel\\DevelopmentSeederServiceProvider')) {
+    $app->register('\\Subscribo\\DevelopmentSeeder\\Integration\\Laravel\\DevelopmentSeederServiceProvider');
+}
+
 $app->singleton(
     Illuminate\Contracts\Http\Kernel::class,
     App\Http\Kernel::class
