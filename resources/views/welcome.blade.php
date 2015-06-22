@@ -12,11 +12,15 @@ $localizer = \Subscribo\Localization::localizer('app', 'main');
 <!DOCTYPE html>
 <html lang="{{ $localizer->getBCPLocale() }}">
     <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>
             @section('pageTitle')
             {{ $localizer->trans('page.title') }}
             @show
         </title>
+
         <link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
 
         <style>
