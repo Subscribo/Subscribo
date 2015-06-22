@@ -1,7 +1,7 @@
 <?php
 /**
- * An helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.0.6 on 2015-02-16.
+ * A helper file for Laravel 5, to provide autocomplete information to your IDE
+ * Generated for Laravel 5.1.2 (LTS) on 2015-06-22.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -199,7 +199,7 @@ namespace Subscribo{
          *
          * @param \Subscribo\Exception\Handlers\Request|null $request
          * @param \Subscribo\Exception\Handlers\Exception $e
-         * @return \Subscribo\Exception\Handlers\LaravelResponse|\Subscribo\Exception\Handlers\Response 
+         * @return \Subscribo\Exception\Handlers\Response 
          * @static 
          */
         public static function render($request, $e){
@@ -229,11 +229,23 @@ namespace Subscribo{
          *
          * @param \Subscribo\Exception\Handlers\Exception $e
          * @param \Subscribo\Exception\Handlers\Request $request
-         * @return \Subscribo\Exception\Handlers\LaravelResponse|mixed|\Subscribo\Exception\Handlers\Response 
+         * @return \Subscribo\Exception\Handlers\Response 
          * @static 
          */
         public static function handle($e, $request = null){
             return \Subscribo\Exception\Handlers\ApiExceptionHandler::handle($e, $request);
+        }
+        
+        /**
+         * Determine if the exception should be reported.
+         *
+         * @param \Exception $e
+         * @return bool 
+         * @static 
+         */
+        public static function shouldReport($e){
+            //Method inherited from \Illuminate\Foundation\Exceptions\Handler            
+            return \Subscribo\Exception\Handlers\ApiExceptionHandler::shouldReport($e);
         }
         
         /**
@@ -286,14 +298,15 @@ namespace Subscribo{
          *
          * @param \Subscribo\RestClient\Request $request
          * @param string $uriStub
-         * @param array|null $signatureOptions
+         * @param \Subscribo\RestClient\SignatureOptions|array|null $signatureOptions
          * @param bool $errorToException
          * @return \Subscribo\RestClient\Response 
-         * @throws \GuzzleHttp\Exception\TransferException
-         * @throws Exceptions\ConnectionToRemoteServerHttpException
          * @throws Exceptions\ClientErrorHttpException
+         * @throws Exceptions\ConnectionToRemoteServerHttpException
+         * @throws Exceptions\InvalidRemoteServerResponseHttpException
          * @throws Exceptions\RemoteServerErrorHttpException
          * @throws Exceptions\TokenConfigurationHttpException
+         * @throws Exceptions\RedirectionHttpException
          * @static 
          */
         public static function forward($request, $uriStub, $signatureOptions = null, $errorToException = true){
@@ -308,16 +321,16 @@ namespace Subscribo{
          * @param string|null|array|mixed $content
          * @param array|null $query
          * @param array|null $headers
-         * @param array|null $signatureOptions
+         * @param \Subscribo\RestClient\SignatureOptions|array|null $signatureOptions
          * @param bool $nullOnClientError
          * @return array|null 
-         * @throws \Subscribo\Exception\Exceptions\HttpException
-         * @throws \GuzzleHttp\Exception\TransferException
-         * @throws Exceptions\ConnectionToRemoteServerHttpException
-         * @throws Exceptions\ClientErrorHttpException
-         * @throws Exceptions\RemoteServerErrorHttpException
-         * @throws Exceptions\TokenConfigurationHttpException
-         * @throws \Exception
+         * @throws Exceptions\ConnectionException
+         * @throws Exceptions\ResponseException
+         * @throws Exceptions\ServerErrorException
+         * @throws Exceptions\ClientErrorException
+         * @throws Exceptions\ValidationErrorsException
+         * @throws Exceptions\TokenConfigurationException
+         * @throws Exceptions\ServerRequestException
          * @static 
          */
         public static function process($uriStub, $method = 'GET', $content = null, $query = null, $headers = null, $signatureOptions = null, $nullOnClientError = false){
@@ -332,10 +345,15 @@ namespace Subscribo{
          * @param string|null|array|mixed $content
          * @param array|null $query
          * @param array|null $headers
-         * @param array|null $signatureOptions
+         * @param \Subscribo\RestClient\SignatureOptions|array|null $signatureOptions
          * @param bool $errorResponseToException
          * @return \GuzzleHttp\Message\FutureResponse|\Subscribo\RestClient\ResponseInterface|\GuzzleHttp\Ring\Future\FutureInterface|mixed|null 
-         * @throws Exceptions\ConnectionToRemoteServerHttpException
+         * @throws Exceptions\ConnectionException
+         * @throws Exceptions\ServerErrorException
+         * @throws Exceptions\ClientErrorException
+         * @throws Exceptions\ValidationErrorsException
+         * @throws Exceptions\TokenConfigurationException
+         * @throws Exceptions\ServerRequestException
          * @static 
          */
         public static function call($uriStub, $method = 'GET', $content = null, $query = null, $headers = null, $signatureOptions = null, $errorResponseToException = true){
@@ -347,7 +365,20 @@ namespace Subscribo{
          *
          * @param \Subscribo\RestClient\ResponseInterface $response
          * @param int|null $statusCode
-         * @throws Exceptions\TokenConfigurationHttpException
+         * @throws Exceptions\InvalidResponseException
+         * @throws Exceptions\ServerRequestException
+         * @static 
+         */
+        public static function filterServerRequests($response, $statusCode = null){
+            return \Subscribo\RestClient\RestClient::filterServerRequests($response, $statusCode);
+        }
+        
+        /**
+         * 
+         *
+         * @param \Subscribo\RestClient\ResponseInterface $response
+         * @param int|null $statusCode
+         * @throws Exceptions\TokenConfigurationException
          * @static 
          */
         public static function checkForTokenErrors($response, $statusCode = null){
@@ -359,8 +390,9 @@ namespace Subscribo{
          *
          * @param \Subscribo\RestClient\ResponseInterface $response
          * @param int|null $statusCode
-         * @throws Exceptions\ClientErrorHttpException
-         * @throws Exceptions\RemoteServerErrorHttpException
+         * @throws Exceptions\ServerErrorException
+         * @throws Exceptions\ClientErrorException
+         * @throws Exceptions\ValidationErrorsException
          * @static 
          */
         public static function filterErrorResponses($response, $statusCode = null){
@@ -429,6 +461,17 @@ namespace Subscribo{
          */
         public static function extractResponseHeaders($response){
             return \Subscribo\RestClient\RestClient::extractResponseHeaders($response);
+        }
+        
+        /**
+         * 
+         *
+         * @param \Subscribo\RestClient\Exception|\Subscribo\RestClient\ClientErrorException|\Subscribo\RestClient\ServerErrorException|\Subscribo\RestClient\TokenConfigurationException|\Subscribo\RestClient\ConnectionException|\Subscribo\RestClient\InvalidResponseException $originalException
+         * @return \Subscribo\RestClient\Exception|\Subscribo\RestClient\ClientErrorHttpException|\Subscribo\RestClient\ConnectionToRemoteServerHttpException|\Subscribo\RestClient\InvalidRemoteServerResponseHttpException|\Subscribo\RestClient\RedirectionHttpException|\Subscribo\RestClient\RemoteServerErrorHttpException|\Subscribo\RestClient\TokenConfigurationHttpException 
+         * @static 
+         */
+        public static function transformExceptions($originalException){
+            return \Subscribo\RestClient\RestClient::transformExceptions($originalException);
         }
         
     }
@@ -547,27 +590,240 @@ namespace Subscribo{
     }
 
 
-    class ModelFactory extends \Subscribo\ModelBase\Integration\Laravel\Facades\ModelFactory{
+    class Localizer extends \Subscribo\Localization\Integration\Laravel\Facades\Localizer{
         
         /**
-         * Return an instance of a model based on URI Stub string
+         * 
          *
-         * @param string $modelUriStub
-         * @return null|\Subscribo\ModelBase\AbstractModel 
+         * @param string|null $subdomain
+         * @param string|null $namespace
+         * @param string|bool|null $locale
+         * @return static 
          * @static 
          */
-        public static function resolveModelFromUriStub($modelUriStub){
-            return \Subscribo\ModelBase\ModelFactory::resolveModelFromUriStub($modelUriStub);
+        public static function duplicate($subdomain = null, $namespace = null, $locale = null){
+            return \Subscribo\Localization\Localizers\Localizer::duplicate($subdomain, $namespace, $locale);
         }
         
         /**
-         * Lists available Model Uri Stubs
+         * Creates new TemplateLocalizer
          *
-         * @return array 
+         * @param string|null $subdomain
+         * @param string|null $namespace
+         * @param string|bool|null $locale
+         * @return \Subscribo\Localization\Localizers\TemplateLocalizer 
          * @static 
          */
-        public static function listUriStubs(){
-            return \Subscribo\ModelBase\ModelFactory::listUriStubs();
+        public static function template($subdomain = null, $namespace = null, $locale = null){
+            return \Subscribo\Localization\Localizers\Localizer::template($subdomain, $namespace, $locale);
+        }
+        
+        /**
+         * Setting locale for localizer
+         * 
+         * It is advised to be careful when using this method on objects not created within current scope
+         * If you want to change application main locale, you might want to use object implementing ApplicationLocaleManagerInterface
+         *
+         * @param string|bool $locale True for transparent locale - pointing to current (global) locale
+         * @return $this 
+         * @static 
+         */
+        public static function setLocale($locale = true){
+            return \Subscribo\Localization\Localizers\Localizer::setLocale($locale);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function getLocale(){
+            return \Subscribo\Localization\Localizers\Localizer::getLocale();
+        }
+        
+        /**
+         * Whether this localizer have transparent locale - pointing to current (global) locale
+         *
+         * @return bool 
+         * @static 
+         */
+        public static function haveTransparentLocale(){
+            return \Subscribo\Localization\Localizers\Localizer::haveTransparentLocale();
+        }
+        
+        /**
+         * 
+         *
+         * @param string $id
+         * @param array $parameters
+         * @param string|null $domain
+         * @param string|null $locale
+         * @return string 
+         * @throws \RuntimeException
+         * @static 
+         */
+        public static function trans($id, $parameters = array(), $domain = null, $locale = null){
+            return \Subscribo\Localization\Localizers\Localizer::trans($id, $parameters, $domain, $locale);
+        }
+        
+        /**
+         * 
+         *
+         * @param string $id
+         * @param int $number
+         * @param array $parameters
+         * @param string|null $domain
+         * @param string|null $locale
+         * @return string 
+         * @throws \RuntimeException
+         * @static 
+         */
+        public static function transChoice($id, $number, $parameters = array(), $domain = null, $locale = null){
+            return \Subscribo\Localization\Localizers\Localizer::transChoice($id, $number, $parameters, $domain, $locale);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function canTranslate($id, $domain = null, $locale = null, $mode = 'CAN_TRANSLATE_MODE_SAME_LANGUAGE'){
+            return \Subscribo\Localization\Localizers\Localizer::canTranslate($id, $domain, $locale, $mode);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function transOrDefault($id, $parameters = array(), $domain = null, $locale = null, $default = null, $mode = null){
+            return \Subscribo\Localization\Localizers\Localizer::transOrDefault($id, $parameters, $domain, $locale, $default, $mode);
+        }
+        
+        /**
+         * 
+         *
+         * @param string $value
+         * @return string 
+         * @static 
+         */
+        public static function simplify($value){
+            return \Subscribo\Localization\Localizers\Localizer::simplify($value);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function getStandardLocale(){
+            return \Subscribo\Localization\Localizers\Localizer::getStandardLocale();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function getBCPLocale(){
+            return \Subscribo\Localization\Localizers\Localizer::getBCPLocale();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function getFallbackLocales($locale = null){
+            return \Subscribo\Localization\Localizers\Localizer::getFallbackLocales($locale);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function getAvailableLocales(){
+            return \Subscribo\Localization\Localizers\Localizer::getAvailableLocales();
+        }
+        
+    }
+
+
+    class Localization extends \Subscribo\Localization\Integration\Laravel\Facades\Localization{
+        
+        /**
+         * 
+         *
+         * @param string $id
+         * @param array $parameters
+         * @param string $domain
+         * @param string|null $locale
+         * @return string 
+         * @static 
+         */
+        public static function trans($id, $parameters, $domain, $locale = null){
+            return \Subscribo\Localization\Managers\LocalizationManager::trans($id, $parameters, $domain, $locale);
+        }
+        
+        /**
+         * 
+         *
+         * @param string $id
+         * @param int $number
+         * @param array $parameters
+         * @param string $domain
+         * @param string|null $locale
+         * @return string 
+         * @static 
+         */
+        public static function transChoice($id, $number, $parameters, $domain, $locale = null){
+            return \Subscribo\Localization\Managers\LocalizationManager::transChoice($id, $number, $parameters, $domain, $locale);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function canTranslate($id, $domain = null, $locale = null, $mode = 'CAN_TRANSLATE_MODE_SAME_LANGUAGE'){
+            return \Subscribo\Localization\Managers\LocalizationManager::canTranslate($id, $domain, $locale, $mode);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function getCurrentLocale(){
+            return \Subscribo\Localization\Managers\LocalizationManager::getCurrentLocale();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function localizer($namespace = null, $subdomain = null){
+            return \Subscribo\Localization\Managers\LocalizationManager::localizer($namespace, $subdomain);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function fallbackLocales($locale){
+            return \Subscribo\Localization\Managers\LocalizationManager::fallbackLocales($locale);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */
+        public static function availableLocales(){
+            return \Subscribo\Localization\Managers\LocalizationManager::availableLocales();
         }
         
     }
@@ -599,6 +855,41 @@ namespace {
          */
         public static function bootstrapWith($bootstrappers){
             \Illuminate\Foundation\Application::bootstrapWith($bootstrappers);
+        }
+        
+        /**
+         * Register a callback to run after loading the environment.
+         *
+         * @param \Closure $callback
+         * @return void 
+         * @static 
+         */
+        public static function afterLoadingEnvironment($callback){
+            \Illuminate\Foundation\Application::afterLoadingEnvironment($callback);
+        }
+        
+        /**
+         * Register a callback to run before a bootstrapper.
+         *
+         * @param string $bootstrapper
+         * @param \Closure $callback
+         * @return void 
+         * @static 
+         */
+        public static function beforeBootstrapping($bootstrapper, $callback){
+            \Illuminate\Foundation\Application::beforeBootstrapping($bootstrapper, $callback);
+        }
+        
+        /**
+         * Register a callback to run after a bootstrapper.
+         *
+         * @param string $bootstrapper
+         * @param \Closure $callback
+         * @return void 
+         * @static 
+         */
+        public static function afterBootstrapping($bootstrapper, $callback){
+            \Illuminate\Foundation\Application::afterBootstrapping($bootstrapper, $callback);
         }
         
         /**
@@ -663,6 +954,17 @@ namespace {
         }
         
         /**
+         * Set the database directory.
+         *
+         * @param string $path
+         * @return $this 
+         * @static 
+         */
+        public static function useDatabasePath($path){
+            return \Illuminate\Foundation\Application::useDatabasePath($path);
+        }
+        
+        /**
          * Get the path to the language files.
          *
          * @return string 
@@ -701,6 +1003,27 @@ namespace {
          */
         public static function useStoragePath($path){
             return \Illuminate\Foundation\Application::useStoragePath($path);
+        }
+        
+        /**
+         * Get the path to the environment file directory.
+         *
+         * @return string 
+         * @static 
+         */
+        public static function environmentPath(){
+            return \Illuminate\Foundation\Application::environmentPath();
+        }
+        
+        /**
+         * Set the directory for the environment file.
+         *
+         * @param string $path
+         * @return $this 
+         * @static 
+         */
+        public static function useEnvironmentPath($path){
+            return \Illuminate\Foundation\Application::useEnvironmentPath($path);
         }
         
         /**
@@ -973,6 +1296,26 @@ namespace {
         }
         
         /**
+         * Get the path to the cached "compiled.php" file.
+         *
+         * @return string 
+         * @static 
+         */
+        public static function getCachedCompilePath(){
+            return \Illuminate\Foundation\Application::getCachedCompilePath();
+        }
+        
+        /**
+         * Get the path to the cached services.json file.
+         *
+         * @return string 
+         * @static 
+         */
+        public static function getCachedServicesPath(){
+            return \Illuminate\Foundation\Application::getCachedServicesPath();
+        }
+        
+        /**
          * Determine if the application is currently down for maintenance.
          *
          * @return bool 
@@ -980,17 +1323,6 @@ namespace {
          */
         public static function isDownForMaintenance(){
             return \Illuminate\Foundation\Application::isDownForMaintenance();
-        }
-        
-        /**
-         * Register a maintenance mode event listener.
-         *
-         * @param \Closure $callback
-         * @return void 
-         * @static 
-         */
-        public static function down($callback){
-            \Illuminate\Foundation\Application::down($callback);
         }
         
         /**
@@ -1039,6 +1371,16 @@ namespace {
         }
         
         /**
+         * Get the application's deferred services.
+         *
+         * @return array 
+         * @static 
+         */
+        public static function getDeferredServices(){
+            return \Illuminate\Foundation\Application::getDeferredServices();
+        }
+        
+        /**
          * Set the application's deferred services.
          *
          * @param array $services
@@ -1050,6 +1392,17 @@ namespace {
         }
         
         /**
+         * Add an array of services to the application's deferred services.
+         *
+         * @param array $services
+         * @return void 
+         * @static 
+         */
+        public static function addDeferredServices($services){
+            \Illuminate\Foundation\Application::addDeferredServices($services);
+        }
+        
+        /**
          * Determine if the given service is a deferred service.
          *
          * @param string $service
@@ -1058,6 +1411,37 @@ namespace {
          */
         public static function isDeferredService($service){
             return \Illuminate\Foundation\Application::isDeferredService($service);
+        }
+        
+        /**
+         * Define a callback to be used to configure Monolog.
+         *
+         * @param callable $callback
+         * @return $this 
+         * @static 
+         */
+        public static function configureMonologUsing($callback){
+            return \Illuminate\Foundation\Application::configureMonologUsing($callback);
+        }
+        
+        /**
+         * Determine if the application has a custom Monolog configurator.
+         *
+         * @return bool 
+         * @static 
+         */
+        public static function hasMonologConfigurator(){
+            return \Illuminate\Foundation\Application::hasMonologConfigurator();
+        }
+        
+        /**
+         * Get the custom Monolog configurator for the application.
+         *
+         * @return callable 
+         * @static 
+         */
+        public static function getMonologConfigurator(){
+            return \Illuminate\Foundation\Application::getMonologConfigurator();
         }
         
         /**
@@ -1099,6 +1483,17 @@ namespace {
          */
         public static function flush(){
             \Illuminate\Foundation\Application::flush();
+        }
+        
+        /**
+         * Get the application namespace.
+         *
+         * @return string 
+         * @throws \RuntimeException
+         * @static 
+         */
+        public static function getNamespace(){
+            return \Illuminate\Foundation\Application::getNamespace();
         }
         
         /**
@@ -1209,6 +1604,7 @@ namespace {
          * @param string $abstract
          * @param \Closure $closure
          * @return void 
+         * @deprecated since version 5.1. Use singleton instead.
          * @static 
          */
         public static function bindShared($abstract, $closure){
@@ -1341,7 +1737,7 @@ namespace {
          * @param string $concrete
          * @param array $parameters
          * @return mixed 
-         * @throws BindingResolutionException
+         * @throws \Illuminate\Contracts\Container\BindingResolutionException
          * @static 
          */
         public static function build($concrete, $parameters = array()){
@@ -1353,7 +1749,7 @@ namespace {
          * Register a new resolving callback.
          *
          * @param string $abstract
-         * @param \Closure $callback
+         * @param \Closure|null $callback
          * @return void 
          * @static 
          */
@@ -1366,7 +1762,7 @@ namespace {
          * Register a new after resolving callback for all types.
          *
          * @param string $abstract
-         * @param \Closure $callback
+         * @param \Closure|null $callback
          * @return void 
          * @static 
          */
@@ -1688,7 +2084,7 @@ namespace {
         /**
          * Get the currently authenticated user.
          *
-         * @return \Illuminate\Contracts\Auth\Authenticatable|null 
+         * @return \App\User|null 
          * @static 
          */
         public static function user(){
@@ -1790,7 +2186,7 @@ namespace {
          *
          * @param mixed $id
          * @param bool $remember
-         * @return \Illuminate\Contracts\Auth\Authenticatable 
+         * @return \App\User 
          * @static 
          */
         public static function loginUsingId($id, $remember = false){
@@ -1853,7 +2249,7 @@ namespace {
         /**
          * Set the event dispatcher instance.
          *
-         * @param \Illuminate\Contracts\Events\Dispatcher
+         * @param \Illuminate\Contracts\Events\Dispatcher $events
          * @return void 
          * @static 
          */
@@ -1893,9 +2289,9 @@ namespace {
         }
         
         /**
-         * Return the currently cached user of the application.
+         * Return the currently cached user.
          *
-         * @return \Illuminate\Contracts\Auth\Authenticatable|null 
+         * @return \App\User|null 
          * @static 
          */
         public static function getUser(){
@@ -1903,7 +2299,7 @@ namespace {
         }
         
         /**
-         * Set the current user of the application.
+         * Set the current user.
          *
          * @param \Illuminate\Contracts\Auth\Authenticatable $user
          * @return void 
@@ -1926,7 +2322,7 @@ namespace {
         /**
          * Set the current request instance.
          *
-         * @param \Symfony\Component\HttpFoundation\Request
+         * @param \Symfony\Component\HttpFoundation\Request $request
          * @return $this 
          * @static 
          */
@@ -1937,7 +2333,7 @@ namespace {
         /**
          * Get the last user we attempted to authenticate.
          *
-         * @return \Illuminate\Contracts\Auth\Authenticatable 
+         * @return \App\User 
          * @static 
          */
         public static function getLastAttempted(){
@@ -2034,9 +2430,19 @@ namespace {
         }
         
         /**
+         * Get the extensions used by the compiler.
+         *
+         * @return array 
+         * @static 
+         */
+        public static function getExtensions(){
+            return \Illuminate\View\Compilers\BladeCompiler::getExtensions();
+        }
+        
+        /**
          * Register a custom Blade compiler.
          *
-         * @param \Closure $compiler
+         * @param callable $compiler
          * @return void 
          * @static 
          */
@@ -2045,36 +2451,25 @@ namespace {
         }
         
         /**
-         * Get the regular expression for a generic Blade function.
+         * Register a handler for custom directives.
          *
-         * @param string $function
-         * @return string 
+         * @param string $name
+         * @param callable $handler
+         * @return void 
          * @static 
          */
-        public static function createMatcher($function){
-            return \Illuminate\View\Compilers\BladeCompiler::createMatcher($function);
+        public static function directive($name, $handler){
+            \Illuminate\View\Compilers\BladeCompiler::directive($name, $handler);
         }
         
         /**
-         * Get the regular expression for a generic Blade function.
+         * Gets the raw tags used by the compiler.
          *
-         * @param string $function
-         * @return string 
+         * @return array 
          * @static 
          */
-        public static function createOpenMatcher($function){
-            return \Illuminate\View\Compilers\BladeCompiler::createOpenMatcher($function);
-        }
-        
-        /**
-         * Create a plain Blade matcher.
-         *
-         * @param string $function
-         * @return string 
-         * @static 
-         */
-        public static function createPlainMatcher($function){
-            return \Illuminate\View\Compilers\BladeCompiler::createPlainMatcher($function);
+        public static function getRawTags(){
+            return \Illuminate\View\Compilers\BladeCompiler::getRawTags();
         }
         
         /**
@@ -2269,7 +2664,7 @@ namespace {
         }
         
         /**
-         * Register command to handler mappings.
+         * Register command-to-handler mappings.
          *
          * @param array $commands
          * @return void 
@@ -2304,7 +2699,7 @@ namespace {
         }
         
         /**
-         * Set the pipes commands should be piped through before dispatching.
+         * Set the pipes through which commands should be piped before dispatching.
          *
          * @param array $pipes
          * @return $this 
@@ -2388,7 +2783,7 @@ namespace {
         /**
          * Set the event dispatcher instance.
          *
-         * @param \Illuminate\Contracts\Events\Dispatcher
+         * @param \Illuminate\Contracts\Events\Dispatcher $events
          * @return void 
          * @static 
          */
@@ -2606,7 +3001,7 @@ namespace {
         }
         
         /**
-         * Checks if macro is registered
+         * Checks if macro is registered.
          *
          * @param string $name
          * @return bool 
@@ -2920,7 +3315,7 @@ namespace {
         }
         
         /**
-         * Get the cookies which have been queued for the next request
+         * Get the cookies which have been queued for the next request.
          *
          * @return array 
          * @static 
@@ -2933,6 +3328,18 @@ namespace {
 
 
     class Crypt extends \Illuminate\Support\Facades\Crypt{
+        
+        /**
+         * Determine if the given key and cipher combination is valid.
+         *
+         * @param string $key
+         * @param string $cipher
+         * @return bool 
+         * @static 
+         */
+        public static function supported($key, $cipher){
+            return \Illuminate\Encryption\Encrypter::supported($key, $cipher);
+        }
         
         /**
          * Encrypt the given value.
@@ -2954,39 +3361,6 @@ namespace {
          */
         public static function decrypt($payload){
             return \Illuminate\Encryption\Encrypter::decrypt($payload);
-        }
-        
-        /**
-         * Set the encryption key.
-         *
-         * @param string $key
-         * @return void 
-         * @static 
-         */
-        public static function setKey($key){
-            \Illuminate\Encryption\Encrypter::setKey($key);
-        }
-        
-        /**
-         * Set the encryption cipher.
-         *
-         * @param string $cipher
-         * @return void 
-         * @static 
-         */
-        public static function setCipher($cipher){
-            \Illuminate\Encryption\Encrypter::setCipher($cipher);
-        }
-        
-        /**
-         * Set the encryption mode.
-         *
-         * @param string $mode
-         * @return void 
-         * @static 
-         */
-        public static function setMode($mode){
-            \Illuminate\Encryption\Encrypter::setMode($mode);
         }
         
     }
@@ -3089,13 +3463,25 @@ namespace {
         /**
          * Find a model by its primary key.
          *
-         * @param array $id
+         * @param mixed $id
          * @param array $columns
-         * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|static 
+         * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|null 
          * @static 
          */
-        public static function findMany($id, $columns = array()){
-            return \Illuminate\Database\Eloquent\Builder::findMany($id, $columns);
+        public static function find($id, $columns = array()){
+            return \Illuminate\Database\Eloquent\Builder::find($id, $columns);
+        }
+        
+        /**
+         * Find a model by its primary key.
+         *
+         * @param array $ids
+         * @param array $columns
+         * @return \Illuminate\Database\Eloquent\Collection 
+         * @static 
+         */
+        public static function findMany($ids, $columns = array()){
+            return \Illuminate\Database\Eloquent\Builder::findMany($ids, $columns);
         }
         
         /**
@@ -3146,10 +3532,24 @@ namespace {
         }
         
         /**
-         * Pluck a single column from the database.
+         * Get a single column's value from the first result of a query.
          *
          * @param string $column
          * @return mixed 
+         * @static 
+         */
+        public static function value($column){
+            return \Illuminate\Database\Eloquent\Builder::value($column);
+        }
+        
+        /**
+         * Get a single column's value from the first result of a query.
+         * 
+         * This is an alias for the "value" method.
+         *
+         * @param string $column
+         * @return mixed 
+         * @deprecated since version 5.1.
          * @static 
          */
         public static function pluck($column){
@@ -3173,7 +3573,7 @@ namespace {
          *
          * @param string $column
          * @param string $key
-         * @return array 
+         * @return \Illuminate\Support\Collection 
          * @static 
          */
         public static function lists($column, $key = null){
@@ -3185,11 +3585,12 @@ namespace {
          *
          * @param int $perPage
          * @param array $columns
+         * @param string $pageName
          * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator 
          * @static 
          */
-        public static function paginate($perPage = 15, $columns = array()){
-            return \Illuminate\Database\Eloquent\Builder::paginate($perPage, $columns);
+        public static function paginate($perPage = null, $columns = array(), $pageName = 'page'){
+            return \Illuminate\Database\Eloquent\Builder::paginate($perPage, $columns, $pageName);
         }
         
         /**
@@ -3197,11 +3598,12 @@ namespace {
          *
          * @param int $perPage
          * @param array $columns
+         * @param string $pageName
          * @return \Illuminate\Contracts\Pagination\Paginator 
          * @static 
          */
-        public static function simplePaginate($perPage = null, $columns = array()){
-            return \Illuminate\Database\Eloquent\Builder::simplePaginate($perPage, $columns);
+        public static function simplePaginate($perPage = null, $columns = array(), $pageName = 'page'){
+            return \Illuminate\Database\Eloquent\Builder::simplePaginate($perPage, $columns, $pageName);
         }
         
         /**
@@ -4142,11 +4544,12 @@ namespace {
         /**
          * Get the count of the total records for the paginator.
          *
+         * @param array $columns
          * @return int 
          * @static 
          */
-        public static function getCountForPagination(){
-            return \Illuminate\Database\Query\Builder::getCountForPagination();
+        public static function getCountForPagination($columns = array()){
+            return \Illuminate\Database\Query\Builder::getCountForPagination($columns);
         }
         
         /**
@@ -4186,7 +4589,7 @@ namespace {
          * Retrieve the minimum value of a given column.
          *
          * @param string $column
-         * @return mixed 
+         * @return float|int 
          * @static 
          */
         public static function min($column){
@@ -4197,7 +4600,7 @@ namespace {
          * Retrieve the maximum value of a given column.
          *
          * @param string $column
-         * @return mixed 
+         * @return float|int 
          * @static 
          */
         public static function max($column){
@@ -4208,7 +4611,7 @@ namespace {
          * Retrieve the sum of the values of a given column.
          *
          * @param string $column
-         * @return mixed 
+         * @return float|int 
          * @static 
          */
         public static function sum($column){
@@ -4219,7 +4622,7 @@ namespace {
          * Retrieve the average of the values of a given column.
          *
          * @param string $column
-         * @return mixed 
+         * @return float|int 
          * @static 
          */
         public static function avg($column){
@@ -4231,7 +4634,7 @@ namespace {
          *
          * @param string $function
          * @param array $columns
-         * @return mixed 
+         * @return float|int 
          * @static 
          */
         public static function aggregate($function, $columns = array()){
@@ -4364,7 +4767,7 @@ namespace {
         /**
          * Get the query grammar instance.
          *
-         * @return \Illuminate\Database\Grammar 
+         * @return \Illuminate\Database\Query\Grammars\Grammar 
          * @static 
          */
         public static function getGrammar(){
@@ -4425,7 +4828,7 @@ namespace {
         /**
          * Register an event subscriber with the dispatcher.
          *
-         * @param string $subscriber
+         * @param object|string $subscriber
          * @return void 
          * @static 
          */
@@ -4436,7 +4839,7 @@ namespace {
         /**
          * Fire an event until the first non-null response is returned.
          *
-         * @param string $event
+         * @param string|object $event
          * @param array $payload
          * @return mixed 
          * @static 
@@ -4701,6 +5104,17 @@ namespace {
         }
         
         /**
+         * Get the mime-type of a given file.
+         *
+         * @param string $path
+         * @return string|false 
+         * @static 
+         */
+        public static function mimeType($path){
+            return \Illuminate\Filesystem\Filesystem::mimeType($path);
+        }
+        
+        /**
          * Get the file size of a given file.
          *
          * @param string $path
@@ -4865,7 +5279,7 @@ namespace {
         }
         
         /**
-         * Checks if macro is registered
+         * Checks if macro is registered.
          *
          * @param string $name
          * @return bool 
@@ -5017,7 +5431,7 @@ namespace {
         /**
          * Get a segment from the URI (1 based index).
          *
-         * @param string $index
+         * @param int $index
          * @param mixed $default
          * @return string 
          * @static 
@@ -5134,7 +5548,7 @@ namespace {
          *
          * @param string $key
          * @param mixed $default
-         * @return string 
+         * @return string|array 
          * @static 
          */
         public static function input($key = null, $default = null){
@@ -5168,7 +5582,7 @@ namespace {
          *
          * @param string $key
          * @param mixed $default
-         * @return string 
+         * @return string|array 
          * @static 
          */
         public static function query($key = null, $default = null){
@@ -5191,7 +5605,7 @@ namespace {
          *
          * @param string $key
          * @param mixed $default
-         * @return string 
+         * @return string|array 
          * @static 
          */
         public static function cookie($key = null, $default = null){
@@ -5226,7 +5640,7 @@ namespace {
          *
          * @param string $key
          * @param mixed $default
-         * @return string 
+         * @return string|array 
          * @static 
          */
         public static function header($key = null, $default = null){
@@ -5238,7 +5652,7 @@ namespace {
          *
          * @param string $key
          * @param mixed $default
-         * @return string 
+         * @return string|array 
          * @static 
          */
         public static function server($key = null, $default = null){
@@ -5353,6 +5767,37 @@ namespace {
          */
         public static function wantsJson(){
             return \Illuminate\Http\Request::wantsJson();
+        }
+        
+        /**
+         * Determines whether the current requests accepts a given content type.
+         *
+         * @param string|array $contentTypes
+         * @return bool 
+         * @static 
+         */
+        public static function accepts($contentTypes){
+            return \Illuminate\Http\Request::accepts($contentTypes);
+        }
+        
+        /**
+         * Determines whether a request accepts JSON.
+         *
+         * @return bool 
+         * @static 
+         */
+        public static function acceptsJson(){
+            return \Illuminate\Http\Request::acceptsJson();
+        }
+        
+        /**
+         * Determines whether a request accepts HTML.
+         *
+         * @return bool 
+         * @static 
+         */
+        public static function acceptsHtml(){
+            return \Illuminate\Http\Request::acceptsHtml();
         }
         
         /**
@@ -5650,8 +6095,8 @@ namespace {
          * The following header keys are supported:
          * 
          *  * Request::HEADER_CLIENT_IP:    defaults to X-Forwarded-For   (see getClientIp())
-         *  * Request::HEADER_CLIENT_HOST:  defaults to X-Forwarded-Host  (see getClientHost())
-         *  * Request::HEADER_CLIENT_PORT:  defaults to X-Forwarded-Port  (see getClientPort())
+         *  * Request::HEADER_CLIENT_HOST:  defaults to X-Forwarded-Host  (see getHost())
+         *  * Request::HEADER_CLIENT_PORT:  defaults to X-Forwarded-Port  (see getPort())
          *  * Request::HEADER_CLIENT_PROTO: defaults to X-Forwarded-Proto (see getScheme() and isSecure())
          * 
          * Setting an empty value allows to disable the trusted header for the given key.
@@ -6042,6 +6487,30 @@ namespace {
         public static function getUriForPath($path){
             //Method inherited from \Symfony\Component\HttpFoundation\Request            
             return \Illuminate\Http\Request::getUriForPath($path);
+        }
+        
+        /**
+         * Returns the path as relative reference from the current Request path.
+         * 
+         * Only the URIs path component (no schema, host etc.) is relevant and must be given.
+         * Both paths must be absolute and not contain relative parts.
+         * Relative URLs from one resource to another are useful when generating self-contained downloadable document archives.
+         * Furthermore, they can be used to reduce the link size in documents.
+         * 
+         * Example target paths, given a base path of "/a/b/c/d":
+         * - "/a/b/c/d"     -> ""
+         * - "/a/b/c/"      -> "./"
+         * - "/a/b/"        -> "../"
+         * - "/a/b/c/other" -> "other"
+         * - "/a/x/y"       -> "../../x/y"
+         *
+         * @param string $path The target path
+         * @return string The relative target path
+         * @static 
+         */
+        public static function getRelativeUriForPath($path){
+            //Method inherited from \Symfony\Component\HttpFoundation\Request            
+            return \Illuminate\Http\Request::getRelativeUriForPath($path);
         }
         
         /**
@@ -6787,7 +7256,7 @@ namespace {
          * Register an error_log handler.
          *
          * @param string $level
-         * @param integer $messageType
+         * @param int $messageType
          * @return void 
          * @static 
          */
@@ -6796,8 +7265,7 @@ namespace {
         }
         
         /**
-         * Register a new callback handler for when
-         * a log event is triggered.
+         * Register a new callback handler for when a log event is triggered.
          *
          * @param \Closure $callback
          * @return void 
@@ -6831,7 +7299,7 @@ namespace {
         /**
          * Set the event dispatcher instance.
          *
-         * @param \Illuminate\Contracts\Events\Dispatcher
+         * @param \Illuminate\Contracts\Events\Dispatcher $dispatcher
          * @return void 
          * @static 
          */
@@ -6848,12 +7316,24 @@ namespace {
          * Set the global from address and name.
          *
          * @param string $address
-         * @param string $name
+         * @param string|null $name
          * @return void 
          * @static 
          */
         public static function alwaysFrom($address, $name = null){
             \Illuminate\Mail\Mailer::alwaysFrom($address, $name);
+        }
+        
+        /**
+         * Set the global to address and name.
+         *
+         * @param string $address
+         * @param string|null $name
+         * @return void 
+         * @static 
+         */
+        public static function alwaysTo($address, $name = null){
+            \Illuminate\Mail\Mailer::alwaysTo($address, $name);
         }
         
         /**
@@ -6900,7 +7380,7 @@ namespace {
          * @param string|array $view
          * @param array $data
          * @param \Closure|string $callback
-         * @param string $queue
+         * @param string|null $queue
          * @return mixed 
          * @static 
          */
@@ -6929,7 +7409,7 @@ namespace {
          * @param string|array $view
          * @param array $data
          * @param \Closure|string $callback
-         * @param string $queue
+         * @param string|null $queue
          * @return mixed 
          * @static 
          */
@@ -7192,6 +7672,7 @@ namespace {
          * @param mixed $data
          * @param string $queue
          * @return mixed 
+         * @throws \Exception
          * @static 
          */
         public static function push($job, $data = '', $queue = null){
@@ -7269,6 +7750,7 @@ namespace {
          * Marshal a push queue request and fire the job.
          *
          * @throws \RuntimeException
+         * @deprecated since version 5.1.
          * @static 
          */
         public static function marshal(){
@@ -7288,17 +7770,6 @@ namespace {
         public static function bulk($jobs, $data = '', $queue = null){
             //Method inherited from \Illuminate\Queue\Queue            
             return \Illuminate\Queue\SyncQueue::bulk($jobs, $data, $queue);
-        }
-        
-        /**
-         * Get the current UNIX timestamp.
-         *
-         * @return int 
-         * @static 
-         */
-        public static function getTime(){
-            //Method inherited from \Illuminate\Queue\Queue            
-            return \Illuminate\Queue\SyncQueue::getTime();
         }
         
         /**
@@ -7570,7 +8041,7 @@ namespace {
         /**
          * Get a segment from the URI (1 based index).
          *
-         * @param string $index
+         * @param int $index
          * @param mixed $default
          * @return string 
          * @static 
@@ -7687,7 +8158,7 @@ namespace {
          *
          * @param string $key
          * @param mixed $default
-         * @return string 
+         * @return string|array 
          * @static 
          */
         public static function input($key = null, $default = null){
@@ -7721,7 +8192,7 @@ namespace {
          *
          * @param string $key
          * @param mixed $default
-         * @return string 
+         * @return string|array 
          * @static 
          */
         public static function query($key = null, $default = null){
@@ -7744,7 +8215,7 @@ namespace {
          *
          * @param string $key
          * @param mixed $default
-         * @return string 
+         * @return string|array 
          * @static 
          */
         public static function cookie($key = null, $default = null){
@@ -7779,7 +8250,7 @@ namespace {
          *
          * @param string $key
          * @param mixed $default
-         * @return string 
+         * @return string|array 
          * @static 
          */
         public static function header($key = null, $default = null){
@@ -7791,7 +8262,7 @@ namespace {
          *
          * @param string $key
          * @param mixed $default
-         * @return string 
+         * @return string|array 
          * @static 
          */
         public static function server($key = null, $default = null){
@@ -7906,6 +8377,37 @@ namespace {
          */
         public static function wantsJson(){
             return \Illuminate\Http\Request::wantsJson();
+        }
+        
+        /**
+         * Determines whether the current requests accepts a given content type.
+         *
+         * @param string|array $contentTypes
+         * @return bool 
+         * @static 
+         */
+        public static function accepts($contentTypes){
+            return \Illuminate\Http\Request::accepts($contentTypes);
+        }
+        
+        /**
+         * Determines whether a request accepts JSON.
+         *
+         * @return bool 
+         * @static 
+         */
+        public static function acceptsJson(){
+            return \Illuminate\Http\Request::acceptsJson();
+        }
+        
+        /**
+         * Determines whether a request accepts HTML.
+         *
+         * @return bool 
+         * @static 
+         */
+        public static function acceptsHtml(){
+            return \Illuminate\Http\Request::acceptsHtml();
         }
         
         /**
@@ -8203,8 +8705,8 @@ namespace {
          * The following header keys are supported:
          * 
          *  * Request::HEADER_CLIENT_IP:    defaults to X-Forwarded-For   (see getClientIp())
-         *  * Request::HEADER_CLIENT_HOST:  defaults to X-Forwarded-Host  (see getClientHost())
-         *  * Request::HEADER_CLIENT_PORT:  defaults to X-Forwarded-Port  (see getClientPort())
+         *  * Request::HEADER_CLIENT_HOST:  defaults to X-Forwarded-Host  (see getHost())
+         *  * Request::HEADER_CLIENT_PORT:  defaults to X-Forwarded-Port  (see getPort())
          *  * Request::HEADER_CLIENT_PROTO: defaults to X-Forwarded-Proto (see getScheme() and isSecure())
          * 
          * Setting an empty value allows to disable the trusted header for the given key.
@@ -8598,6 +9100,30 @@ namespace {
         }
         
         /**
+         * Returns the path as relative reference from the current Request path.
+         * 
+         * Only the URIs path component (no schema, host etc.) is relevant and must be given.
+         * Both paths must be absolute and not contain relative parts.
+         * Relative URLs from one resource to another are useful when generating self-contained downloadable document archives.
+         * Furthermore, they can be used to reduce the link size in documents.
+         * 
+         * Example target paths, given a base path of "/a/b/c/d":
+         * - "/a/b/c/d"     -> ""
+         * - "/a/b/c/"      -> "./"
+         * - "/a/b/"        -> "../"
+         * - "/a/b/c/other" -> "other"
+         * - "/a/x/y"       -> "../../x/y"
+         *
+         * @param string $path The target path
+         * @return string The relative target path
+         * @static 
+         */
+        public static function getRelativeUriForPath($path){
+            //Method inherited from \Symfony\Component\HttpFoundation\Request            
+            return \Illuminate\Http\Request::getRelativeUriForPath($path);
+        }
+        
+        /**
          * Generates the normalized query string for the Request.
          * 
          * It builds a normalized query string, where keys/value pairs are alphabetized
@@ -8973,7 +9499,7 @@ namespace {
          * @param string $content
          * @param int $status
          * @param array $headers
-         * @return \Symfony\Component\HttpFoundation\Response 
+         * @return \Illuminate\Http\Response 
          * @static 
          */
         public static function make($content = '', $status = 200, $headers = array()){
@@ -8987,7 +9513,7 @@ namespace {
          * @param array $data
          * @param int $status
          * @param array $headers
-         * @return \Symfony\Component\HttpFoundation\Response 
+         * @return \Illuminate\Http\Response 
          * @static 
          */
         public static function view($view, $data = array(), $status = 200, $headers = array()){
@@ -9001,7 +9527,7 @@ namespace {
          * @param int $status
          * @param array $headers
          * @param int $options
-         * @return \Symfony\Component\HttpFoundation\Response 
+         * @return \Illuminate\Http\JsonResponse 
          * @static 
          */
         public static function json($data = array(), $status = 200, $headers = array(), $options = 0){
@@ -9016,7 +9542,7 @@ namespace {
          * @param int $status
          * @param array $headers
          * @param int $options
-         * @return \Symfony\Component\HttpFoundation\Response 
+         * @return \Illuminate\Http\JsonResponse 
          * @static 
          */
         public static function jsonp($callback, $data = array(), $status = 200, $headers = array(), $options = 0){
@@ -9042,7 +9568,7 @@ namespace {
          * @param \SplFileInfo|string $file
          * @param string $name
          * @param array $headers
-         * @param null|string $disposition
+         * @param string|null $disposition
          * @return \Symfony\Component\HttpFoundation\BinaryFileResponse 
          * @static 
          */
@@ -9056,8 +9582,8 @@ namespace {
          * @param string $path
          * @param int $status
          * @param array $headers
-         * @param bool $secure
-         * @return \Symfony\Component\HttpFoundation\Response 
+         * @param bool|null $secure
+         * @return \Illuminate\Http\RedirectResponse 
          * @static 
          */
         public static function redirectTo($path, $status = 302, $headers = array(), $secure = null){
@@ -9071,7 +9597,7 @@ namespace {
          * @param array $parameters
          * @param int $status
          * @param array $headers
-         * @return \Symfony\Component\HttpFoundation\Response 
+         * @return \Illuminate\Http\RedirectResponse 
          * @static 
          */
         public static function redirectToRoute($route, $parameters = array(), $status = 302, $headers = array()){
@@ -9085,7 +9611,7 @@ namespace {
          * @param array $parameters
          * @param int $status
          * @param array $headers
-         * @return \Symfony\Component\HttpFoundation\Response 
+         * @return \Illuminate\Http\RedirectResponse 
          * @static 
          */
         public static function redirectToAction($action, $parameters = array(), $status = 302, $headers = array()){
@@ -9098,8 +9624,8 @@ namespace {
          * @param string $path
          * @param int $status
          * @param array $headers
-         * @param bool $secure
-         * @return \Symfony\Component\HttpFoundation\Response 
+         * @param bool|null $secure
+         * @return \Illuminate\Http\RedirectResponse 
          * @static 
          */
         public static function redirectGuest($path, $status = 302, $headers = array(), $secure = null){
@@ -9112,8 +9638,8 @@ namespace {
          * @param string $default
          * @param int $status
          * @param array $headers
-         * @param bool $secure
-         * @return \Symfony\Component\HttpFoundation\Response 
+         * @param bool|null $secure
+         * @return \Illuminate\Http\RedirectResponse 
          * @static 
          */
         public static function redirectToIntended($default = '/', $status = 302, $headers = array(), $secure = null){
@@ -9133,7 +9659,7 @@ namespace {
         }
         
         /**
-         * Checks if macro is registered
+         * Checks if macro is registered.
          *
          * @param string $name
          * @return bool 
@@ -9361,6 +9887,28 @@ namespace {
         }
         
         /**
+         * Gather the middleware for the given route.
+         *
+         * @param \Illuminate\Routing\Route $route
+         * @return array 
+         * @static 
+         */
+        public static function gatherRouteMiddlewares($route){
+            return \Illuminate\Routing\Router::gatherRouteMiddlewares($route);
+        }
+        
+        /**
+         * Resolve the middleware name to a class name preserving passed parameters.
+         *
+         * @param $name
+         * @return string 
+         * @static 
+         */
+        public static function resolveMiddlewareClassName($name){
+            return \Illuminate\Routing\Router::resolveMiddlewareClassName($name);
+        }
+        
+        /**
          * Register a route matched event listener.
          *
          * @param string|callable $callback
@@ -9376,6 +9924,7 @@ namespace {
          *
          * @param string|callable $callback
          * @return void 
+         * @deprecated since version 5.1.
          * @static 
          */
         public static function before($callback){
@@ -9387,6 +9936,7 @@ namespace {
          *
          * @param string|callable $callback
          * @return void 
+         * @deprecated since version 5.1.
          * @static 
          */
         public static function after($callback){
@@ -9421,6 +9971,7 @@ namespace {
          * @param string $name
          * @param string|callable $callback
          * @return void 
+         * @deprecated since version 5.1.
          * @static 
          */
         public static function filter($name, $callback){
@@ -9434,6 +9985,7 @@ namespace {
          * @param string $name
          * @param array|null $methods
          * @return void 
+         * @deprecated since version 5.1.
          * @static 
          */
         public static function when($pattern, $name, $methods = null){
@@ -9447,6 +9999,7 @@ namespace {
          * @param string $name
          * @param array|null $methods
          * @return void 
+         * @deprecated since version 5.1.
          * @static 
          */
         public static function whenRegex($pattern, $name, $methods = null){
@@ -9491,7 +10044,7 @@ namespace {
         }
         
         /**
-         * Set a global where pattern on all routes
+         * Set a global where pattern on all routes.
          *
          * @param string $key
          * @param string $pattern
@@ -9503,7 +10056,7 @@ namespace {
         }
         
         /**
-         * Set a group of global where patterns on all routes
+         * Set a group of global where patterns on all routes.
          *
          * @param array $patterns
          * @return void 
@@ -9530,6 +10083,7 @@ namespace {
          *
          * @param \Illuminate\Http\Request $request
          * @return array 
+         * @deprecated since version 5.1.
          * @static 
          */
         public static function findPatternFilters($request){
@@ -9543,6 +10097,7 @@ namespace {
          * @param \Illuminate\Http\Request $request
          * @param \Illuminate\Http\Response $response
          * @return mixed 
+         * @deprecated since version 5.1.
          * @static 
          */
         public static function callRouteAfter($route, $request, $response){
@@ -9558,10 +10113,23 @@ namespace {
          * @param \Illuminate\Http\Request $request
          * @param \Illuminate\Http\Response|null $response
          * @return mixed 
+         * @deprecated since version 5.1.
          * @static 
          */
         public static function callRouteFilter($filter, $parameters, $route, $request, $response = null){
             return \Illuminate\Routing\Router::callRouteFilter($filter, $parameters, $route, $request, $response);
+        }
+        
+        /**
+         * Create a response instance from the given value.
+         *
+         * @param \Symfony\Component\HttpFoundation\Request $request
+         * @param mixed $response
+         * @return \Illuminate\Http\Response 
+         * @static 
+         */
+        public static function prepareResponse($request, $response){
+            return \Illuminate\Routing\Router::prepareResponse($request, $response);
         }
         
         /**
@@ -9745,7 +10313,7 @@ namespace {
         }
         
         /**
-         * Checks if macro is registered
+         * Checks if macro is registered.
          *
          * @param string $name
          * @return bool 
@@ -10348,6 +10916,17 @@ namespace {
          */
         public static function createLocalDriver($config){
             return \Illuminate\Filesystem\FilesystemManager::createLocalDriver($config);
+        }
+        
+        /**
+         * Create an instance of the ftp driver.
+         *
+         * @param array $config
+         * @return \Illuminate\Contracts\Filesystem\Filesystem 
+         * @static 
+         */
+        public static function createFtpDriver($config){
+            return \Illuminate\Filesystem\FilesystemManager::createFtpDriver($config);
         }
         
         /**
@@ -11084,7 +11663,7 @@ namespace {
         /**
          * Set the event dispatcher instance.
          *
-         * @param \Illuminate\Contracts\Events\Dispatcher
+         * @param \Illuminate\Contracts\Events\Dispatcher $events
          * @return void 
          * @static 
          */
@@ -11133,6 +11712,17 @@ namespace {
          */
         public static function getShared(){
             return \Illuminate\View\Factory::getShared();
+        }
+        
+        /**
+         * Check if section exists.
+         *
+         * @param string $name
+         * @return bool 
+         * @static 
+         */
+        public static function hasSection($name){
+            return \Illuminate\View\Factory::hasSection($name);
         }
         
         /**
