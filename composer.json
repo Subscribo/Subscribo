@@ -10,7 +10,8 @@
         "subscribo/apiserver": "@dev",
         "subscribo/apiclient": "@dev",
         "subscribo/modifier": "@dev",
-        "subscribo/developmentseeder": "@dev"
+        "subscribo/developmentseeder": "@dev",
+        "twbs/bootstrap": "^3.3.5"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
