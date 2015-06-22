@@ -1,5 +1,15 @@
 # Changes in PHPUnit 4.7
 
+* Fixed [#1681](https://github.com/sebastianbergmann/phpunit/issues/1681): Code Coverage filter configuration is not passed to child processes
+* Fixed [#1692](https://github.com/sebastianbergmann/phpunit/issues/1692): Clean up `PHPUnit_Extensions_RepeatedTest` after refactoring
+
+## PHPUnit 4.7.5
+
+* Fixed [#490](https://github.com/sebastianbergmann/phpunit/issues/490): Ensure that a test can only be one of `@small`, `@medium`, or `@large`.
+* Fixed [#1704](https://github.com/sebastianbergmann/phpunit/issues/1704): Output printed during test missing when using TAP
+
+## PHPUnit 4.7.4
+
 * Fixed [#1749](https://github.com/sebastianbergmann/phpunit/issues/1749): `stopOnError` configuration setting does not work
 * The `PHPUnit_Framework_Constraint_IsType` constraint now knows about the `real` type (which is an alias for `float`)
 * Various work on compatibility with PHP 7
