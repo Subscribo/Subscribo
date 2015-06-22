@@ -77,8 +77,7 @@ Set driver configuration to 'remote' in config/auth.php:
 exchange in app/Http/Controllers/Auth/AuthController.php original trait AuthenticatesAndRegistersUsers
 for trait \Subscribo\ApiClientAuth\Traits\AuthenticatesAndRegistersUsersTrait
 
-### 1.7 Set up [authentication and registration routes](http://laravel.com/docs/5.1/authentication#included-routing)
-and [home route](http://laravel.com/docs/5.1/authentication#protecting-routes):
+### 1.7 Set up [authentication and registration routes](http://laravel.com/docs/5.1/authentication#included-routing) and [home route](http://laravel.com/docs/5.1/authentication#protecting-routes):
 
 E.g. insert into `app/Http/Routes.php` :
 ```php
