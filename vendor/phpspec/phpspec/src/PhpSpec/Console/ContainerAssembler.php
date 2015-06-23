@@ -13,6 +13,9 @@
 
 namespace PhpSpec\Console;
 
+use PhpSpec\CodeAnalysis\MagicAwareAccessInspector;
+use PhpSpec\CodeAnalysis\VisibilityAccessInspector;
+use PhpSpec\Process\Prerequisites\SuitePrerequisites;
 use SebastianBergmann\Exporter\Exporter;
 use PhpSpec\Process\ReRunner;
 use PhpSpec\Util\MethodAnalyser;
@@ -171,7 +174,13 @@ class ContainerAssembler
         });
         $container->setShared('event_dispatcher.listeners.rerun', function (ServiceContainer $c) {
             return new Listener\RerunListener(
-                $c->get('process.rerunner')
+                $c->get('process.rerunner'),
+                $c->get('process.prerequisites')
+            );
+        });
+        $container->setShared('process.prerequisites', function (ServiceContainer $c) {
+            return new SuitePrerequisites(
+                $c->get('process.executioncontext')
             );
         });
         $container->setShared('event_dispatcher.listeners.method_returned_null', function (ServiceContainer $c) {
@@ -217,13 +226,17 @@ class ContainerAssembler
         $container->set('code_generator.generators.class', function (ServiceContainer $c) {
             return new CodeGenerator\Generator\ClassGenerator(
                 $c->get('console.io'),
-                $c->get('code_generator.templates')
+                $c->get('code_generator.templates'),
+                null,
+                $c->get('process.executioncontext')
             );
         });
         $container->set('code_generator.generators.interface', function (ServiceContainer $c) {
             return new CodeGenerator\Generator\InterfaceGenerator(
                 $c->get('console.io'),
-                $c->get('code_generator.templates')
+                $c->get('code_generator.templates'),
+                null,
+                $c->get('process.executioncontext')
             );
         });
         $container->set('code_generator.generators.method', function (ServiceContainer $c) {
@@ -247,6 +260,13 @@ class ContainerAssembler
 
         $container->set('code_generator.generators.named_constructor', function (ServiceContainer $c) {
             return new CodeGenerator\Generator\NamedConstructorGenerator(
+                $c->get('console.io'),
+                $c->get('code_generator.templates')
+            );
+        });
+
+        $container->set('code_generator.generators.private_constructor', function (ServiceContainer $c) {
+            return new CodeGenerator\Generator\PrivateConstructorGenerator(
                 $c->get('console.io'),
                 $c->get('code_generator.templates')
             );
@@ -523,12 +543,25 @@ class ContainerAssembler
             return new Runner\Maintainer\SubjectMaintainer(
                 $c->get('formatter.presenter'),
                 $c->get('unwrapper'),
-                $c->get('event_dispatcher')
+                $c->get('event_dispatcher'),
+                $c->get('access_inspector')
             );
         });
 
         $container->setShared('unwrapper', function () {
             return new Wrapper\Unwrapper();
+        });
+
+        $container->setShared('access_inspector', function($c) {
+            return $c->get('access_inspector.magic');
+        });
+
+        $container->setShared('access_inspector.magic', function($c) {
+            return new MagicAwareAccessInspector($c->get('access_inspector.visibility'));
+        });
+
+        $container->setShared('access_inspector.visibility', function() {
+            return new VisibilityAccessInspector();
         });
     }
 
@@ -600,10 +633,16 @@ class ContainerAssembler
             );
         });
         $container->setShared('process.rerunner.platformspecific.pcntl', function (ServiceContainer $c) {
-            return new ReRunner\PcntlReRunner($c->get('process.phpexecutablefinder'));
+            return ReRunner\PcntlReRunner::withExecutionContext(
+                $c->get('process.phpexecutablefinder'),
+                $c->get('process.executioncontext')
+            );
         });
         $container->setShared('process.rerunner.platformspecific.passthru', function (ServiceContainer $c) {
-            return new ReRunner\PassthruReRunner($c->get('process.phpexecutablefinder'));
+            return ReRunner\PassthruReRunner::withExecutionContext(
+                $c->get('process.phpexecutablefinder'),
+                $c->get('process.executioncontext')
+            );
         });
         $container->setShared('process.phpexecutablefinder', function () {
             return new PhpExecutableFinder();

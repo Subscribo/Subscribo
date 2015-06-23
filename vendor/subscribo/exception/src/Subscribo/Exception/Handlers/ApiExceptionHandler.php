@@ -125,48 +125,56 @@ class ApiExceptionHandler extends Handler implements ExceptionHandlerInterface {
 
     protected function addSuggestions(array $data)
     {
-        $localizer = $this->localizer;
-        $mode = $localizer::CAN_TRANSLATE_MODE_ANY_LOCALE;
-        $originalLocale = $this->originalLocale;
-        $statusCode = isset($data['metaData']['statusCode']) ? $data['metaData']['statusCode'] : null;
-        $exceptionCode = isset($data['metaData']['exceptionCode']) ? $data['metaData']['exceptionCode'] : null;
-        $exceptionHash = isset($data['metaData']['exceptionHash']) ? $data['metaData']['exceptionHash'] : null;
-        $suggestion = '';
-        $originalSuggestion = '';
-        if (isset($statusCode) and isset($exceptionCode)) {
-            $id = 'suggestions.specific.'.$statusCode.'.'.$exceptionCode;
-            $suggestion = $localizer->transOrDefault($id, [], null, null, '', $mode);
-            $originalSuggestion = $localizer->transOrDefault($id, [], null, $originalLocale, '', $mode);
-        }
-        if (isset($statusCode)) {
-            $id = 'suggestions.fallback.'.$statusCode;
-            if (empty($suggestion)) {
+        try {
+            $localizer = $this->localizer;
+            $mode = $localizer::CAN_TRANSLATE_MODE_ANY_LOCALE;
+            $originalLocale = $this->originalLocale;
+            $statusCode = isset($data['metaData']['statusCode']) ? $data['metaData']['statusCode'] : null;
+            $exceptionCode = isset($data['metaData']['exceptionCode']) ? $data['metaData']['exceptionCode'] : null;
+            $exceptionHash = isset($data['metaData']['exceptionHash']) ? $data['metaData']['exceptionHash'] : null;
+            $suggestion = '';
+            $originalSuggestion = '';
+            if (isset($statusCode) and isset($exceptionCode)) {
+                $id = 'suggestions.specific.'.$statusCode.'.'.$exceptionCode;
                 $suggestion = $localizer->transOrDefault($id, [], null, null, '', $mode);
-            }
-            if (empty($originalSuggestion)) {
                 $originalSuggestion = $localizer->transOrDefault($id, [], null, $originalLocale, '', $mode);
             }
-        }
-        if ($exceptionHash) {
-            $id = 'suggestions.marked';
-            $parameters = ['%mark%' => $exceptionHash];
-            $suggestion .= ' '.$localizer->transOrDefault($id, $parameters, null, null, '', $mode);
-            $originalSuggestion .= ' '.$localizer->transOrDefault($id, $parameters, null, $originalLocale, '', $mode);
-        }
-        $suggestion = trim($suggestion);
-        $originalSuggestion = trim($originalSuggestion);
-        if ($suggestion === $originalSuggestion) {
-            $originalSuggestion = null;
-        }
-        if ($suggestion) {
-            $data['metaData']['suggestion'] = isset($data['metaData']['suggestion'])
-                ? ($data['metaData']['suggestion'].' '.$suggestion)
-                : $suggestion;
-        }
-        if ($originalSuggestion) {
-            $data['metaData']['originalSuggestion'] = isset($data['metaData']['originalSuggestion'])
-                ? ($data['metaData']['originalSuggestion'].' '.$originalSuggestion)
-                : $originalSuggestion;
+            if (isset($statusCode)) {
+                $id = 'suggestions.fallback.'.$statusCode;
+                if (empty($suggestion)) {
+                    $suggestion = $localizer->transOrDefault($id, [], null, null, '', $mode);
+                }
+                if (empty($originalSuggestion)) {
+                    $originalSuggestion = $localizer->transOrDefault($id, [], null, $originalLocale, '', $mode);
+                }
+            }
+            if ($exceptionHash) {
+                $id = 'suggestions.marked';
+                $parameters = ['%mark%' => $exceptionHash];
+                $suggestion .= ' '.$localizer->transOrDefault($id, $parameters, null, null, '', $mode);
+                $originalSuggestion .= ' '.$localizer->transOrDefault($id, $parameters, null, $originalLocale, '', $mode);
+            }
+            $suggestion = trim($suggestion);
+            $originalSuggestion = trim($originalSuggestion);
+            if ($suggestion === $originalSuggestion) {
+                $originalSuggestion = null;
+            }
+            if ($suggestion) {
+                $data['metaData']['suggestion'] = isset($data['metaData']['suggestion'])
+                    ? ($data['metaData']['suggestion'].' '.$suggestion)
+                    : $suggestion;
+            }
+            if ($originalSuggestion) {
+                $data['metaData']['originalSuggestion'] = isset($data['metaData']['originalSuggestion'])
+                    ? ($data['metaData']['originalSuggestion'].' '.$originalSuggestion)
+                    : $originalSuggestion;
+            }
+        } catch (Exception $anotherException) {
+            $this->log->error(sprintf(
+                "Another exception thrown during exception handling: '%s' [%s:%s]",
+                $anotherException->getMessage(),
+                get_class($anotherException),
+                $anotherException->getCode()));
         }
         return $data;
     }

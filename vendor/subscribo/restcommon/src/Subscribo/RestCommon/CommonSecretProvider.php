@@ -60,7 +60,7 @@ class CommonSecretProvider implements CommonSecretProviderInterface
     public function wrapWithEncrypter($key)
     {
         $encrypterClass = $this->encrypterClassName;
-        $result = new $encrypterClass($key);
+        $result = new $encrypterClass($key, 'AES-256-CBC');
         return $result;
     }
 

@@ -26,7 +26,7 @@ class Description implements \Reflector
     /** @var string */
     protected $contents = '';
 
-    /** @var array|null The contents, as an array of strings and Tag objects or null if it is not parsed yet. */
+    /** @var array The contents, as an array of strings and Tag objects. */
     protected $parsedContents = null;
 
     /** @var DocBlock The DocBlock which this description belongs to. */
@@ -35,7 +35,7 @@ class Description implements \Reflector
     /**
      * Populates the fields of a description.
      *
-     * @param string   $content  The description's content.
+     * @param string   $content  The description's conetnts.
      * @param DocBlock $docblock The DocBlock which this description belongs to.
      */
     public function __construct($content, DocBlock $docblock = null)
@@ -167,9 +167,6 @@ class Description implements \Reflector
         } elseif (class_exists('dflydev\markdown\MarkdownExtraParser')) {
             $markdown = new \dflydev\markdown\MarkdownExtraParser();
             $result = $markdown->transformMarkdown($result);
-        } elseif (class_exists('League\CommonMark\CommonMarkConverter')) {
-            $markdown = new \League\CommonMark\CommonMarkConverter();
-            $result = $markdown->convertToHtml($result);
         }
 
         return trim($result);

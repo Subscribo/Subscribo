@@ -103,12 +103,18 @@ trait Translatable
 
     public function getAttribute($key)
     {
+        if (str_contains($key, ':')) {
+            list($key, $locale) = explode(':', $key);
+        } else {
+            $locale = App::getLocale();
+        }
+
         if ($this->isTranslationAttribute($key)) {
             if ($this->getTranslation() === null) {
                 return;
             }
 
-            return $this->getTranslation()->$key;
+            return $this->getTranslation($locale)->$key;
         }
 
         return parent::getAttribute($key);
@@ -116,8 +122,14 @@ trait Translatable
 
     public function setAttribute($key, $value)
     {
+        if (str_contains($key, ':')) {
+            list($key, $locale) = explode(':', $key);
+        } else {
+            $locale = App::getLocale();
+        }
+
         if (in_array($key, $this->translatedAttributes)) {
-            $this->getTranslationOrNew(App::getLocale())->$key = $value;
+            $this->getTranslationOrNew($locale)->$key = $value;
         } else {
             parent::setAttribute($key, $value);
         }
@@ -301,7 +313,7 @@ trait Translatable
         $query
             ->select($this->getTable().'.'.$this->getKeyName(), $this->getTranslationsTable().'.'.$translationField)
             ->leftJoin($this->getTranslationsTable(), $this->getTranslationsTable().'.'.$this->getRelationKey(), '=', $this->getTable().'.'.$this->getKeyName())
-            ->where('locale', App::getLocale())
+            ->where($this->getTranslationsTable().'.'.$this->getLocaleKey(), App::getLocale())
         ;
         if ($withFallback) {
             $query->orWhere(function (Builder $q) {

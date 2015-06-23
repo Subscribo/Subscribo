@@ -19,7 +19,7 @@ class Signer
         }
         $this->tokenRing =  TokenRing::make($tokenRing);
         if ($this->tokenRing->commonSecret) {
-            $this->encrypter = new Encrypter($this->tokenRing->commonSecret);
+            $this->encrypter = new Encrypter($this->tokenRing->commonSecret, 'AES-256-CBC');
         }
     }
 
