@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>POST recurring purchase example page</title>
+        <title>POST void example page</title>
     </head>
     <body>
-        <h1>POST recurring purchase example page</h1>
+        <h1>POST void purchase example page</h1>
 <?php
-
-$amount = '1.05';
 
 try {
     $cardReference = isset($_POST['reference']) ? $_POST['reference'] : '';
+    $transactionReference = isset($_POST['transaction']) ? $_POST['transaction'] : '';
 
     /** @var \Omnipay\PayUnity\PostGateway $gateway */
     $gateway = \Omnipay\Omnipay::create('PayUnity\\Post');
@@ -21,10 +20,9 @@ try {
     $gateway->setUserPwd('demo');
 
 
-    $request = $gateway->purchase();
+    $request = $gateway->void();
     $request->setCardReference($cardReference);
-    $request->setAmount($amount);
-    $request->setCurrency('EUR');
+    $request->setTransactionReference($transactionReference);
 
     $response = $request->send();
 

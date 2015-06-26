@@ -19,4 +19,13 @@ class PostGateway extends AbstractGateway
     {
         return $this->createRequest('Omnipay\\PayUnity\\Message\\PostPurchaseRequest', $parameters);
     }
+
+    /**
+     * @param array $parameters
+     * @return \Omnipay\PayUnity\Message\PostVoidRequest
+     */
+    public function void(array $parameters = [])
+    {
+        return $this->createRequest('Omnipay\\PayUnity\\Message\\PostVoidRequest', $parameters);
+    }
 }
