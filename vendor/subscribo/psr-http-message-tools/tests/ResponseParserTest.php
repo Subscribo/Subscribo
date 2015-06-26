@@ -14,6 +14,8 @@ class ResponseParserTest extends PHPUnit_Framework_TestCase
         $response = $this->responseFactory($content, $headers);
         $expected = ['a' => ['b' => 'c'], 'd' => 'e'];
         $this->assertSame($expected, ResponseParser::extractDataFromResponse($response));
+        $parser = new ResponseParser($response);
+        $this->assertSame($expected, $parser->extractData());
     }
 
     public function testFormParsing()
@@ -24,6 +26,17 @@ class ResponseParserTest extends PHPUnit_Framework_TestCase
         $expected = ['a' => ['b' => 'c'], 'd' => 'e'];
         $parser = new ResponseParser($response);
         $this->assertSame($expected, $parser->extractData());
+        $this->assertSame($expected, ResponseParser::extractDataFromResponse($response));
+    }
+
+    public function testEmptyStringParsing()
+    {
+        $content = '';
+        $headers = [];
+        $response = $this->responseFactory($content, $headers);
+        $expected = [];
+        $this->assertSame($expected, ResponseParser::extractDataFromResponse($response));
+        $parser = new ResponseParser($response);
         $this->assertSame($expected, $parser->extractData());
     }
 

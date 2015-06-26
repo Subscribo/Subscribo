@@ -60,6 +60,9 @@ class ResponseParser implements DealingWithContentTypeInterface
      */
     protected static function parseStringByFormat($value, $format)
     {
+        if ('' === $value) {
+            return [];
+        }
         $format = strtolower($format);
         switch ($format) {
             case static::CONTENT_TYPE_FORM:
