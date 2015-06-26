@@ -1,4 +1,6 @@
-<?php namespace Subscribo\Omnipay\Shared\Message;
+<?php
+
+namespace Subscribo\Omnipay\Shared\Message;
 
 use Omnipay\Common\Message\AbstractRequest as Base;
 use Omnipay\Common\CreditCard;

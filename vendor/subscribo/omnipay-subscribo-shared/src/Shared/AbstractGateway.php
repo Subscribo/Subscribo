@@ -1,4 +1,6 @@
-<?php namespace Subscribo\Omnipay\Shared;
+<?php
+
+namespace Subscribo\Omnipay\Shared;
 
 use Psr\Log\LoggerInterface;
 use Omnipay\Common\AbstractGateway as Base;

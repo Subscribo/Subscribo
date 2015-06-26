@@ -1,6 +1,6 @@
 {
     "name": "subscribo/omnipay-subscribo-shared",
-    "description": "Package with shared functionality for some Omnipay drivers",
+    "description": "Package with shared functionality for some Omnipay payment processing library drivers",
     "keywords": [
         "Omnipay",
         "driver",
@@ -35,11 +35,11 @@
         "psr/http-message": "^1.0",
         "psr/log": "^1.0",
         "symfony/http-foundation": "<=3.0",
-        "subscribo/psr-http-message-tools": ">=0.3.1 <0.5",
+        "subscribo/psr-http-message-tools": ">=0.3.2 <0.5",
         "phly/http": ">=0.13.3 <0.15.0"
     },
     "suggest": {
-        "subscribo/psr-http-message-tools": "(>=0.3.1 <0.5) For PSR-7 compliant Request object factory",
+        "subscribo/psr-http-message-tools": "(>=0.3.2 <0.5) For PSR-7 compliant Request object factory, e.g. when SimpleRestfulRequestTrait, AbstractRestfulResponse or SimpleRestfulResponse is used",
         "psr/log": "(^1.0) When GuzzleClientHelper or AbstractGateway::attachPsrLogger() is used",
         "egeloen/http-adapter": "(^0.8@dev) when HttpMessageSendingTrait is used",
         "psr/http-message": "(^1.0) when HttpMessageSendingTrait is used"

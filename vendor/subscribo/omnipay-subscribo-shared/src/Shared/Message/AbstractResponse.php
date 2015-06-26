@@ -1,4 +1,6 @@
-<?php namespace Subscribo\Omnipay\Shared\Message;
+<?php
+
+namespace Subscribo\Omnipay\Shared\Message;
 
 use Omnipay\Common\Message\AbstractResponse as Base;
 use Subscribo\Omnipay\Shared\Interfaces\ResponseCanHaveWidgetInterface;

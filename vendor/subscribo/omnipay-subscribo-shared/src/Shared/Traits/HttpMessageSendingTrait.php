@@ -1,4 +1,6 @@
-<?php namespace Subscribo\Omnipay\Shared\Traits;
+<?php
+
+namespace Subscribo\Omnipay\Shared\Traits;
 
 use Exception;
 use Subscribo\Omnipay\Shared\Exception\TransportErrorHttpMessageSendingException;

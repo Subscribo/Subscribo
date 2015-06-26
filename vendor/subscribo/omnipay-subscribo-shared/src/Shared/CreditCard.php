@@ -1,4 +1,6 @@
-<?php namespace Subscribo\Omnipay\Shared;
+<?php
+
+namespace Subscribo\Omnipay\Shared;
 
 
 use Omnipay\Common\CreditCard as Base;
