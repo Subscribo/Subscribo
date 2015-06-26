@@ -19,10 +19,11 @@ use Subscribo\PsrHttpMessageTools\Parsers\ResponseParser;
  */
 class CopyAndPayCompletePurchaseRequest extends AbstractRequest
 {
-    protected $liveEndpointUrl = 'https://ctpe.net/frontend/GetStatus';
+    protected $endpointUrlBaseTest = 'https://test.ctpe.net';
 
-    protected $testEndpointUrl = 'https://test.ctpe.net/frontend/GetStatus';
+    protected $endpointUrlBaseLive = 'https://ctpe.net';
 
+    protected $endpointUrlPath = '/frontend/GetStatus';
 
     /**
      * @param string $value
@@ -51,20 +52,35 @@ class CopyAndPayCompletePurchaseRequest extends AbstractRequest
     }
 
     /**
+     * @param $data
      * @return string
      */
-    protected function getEndpointUrl()
+    protected function getEndpointUrl($data)
     {
-        return $this->getTestMode() ? $this->testEndpointUrl : $this->liveEndpointUrl;
+        $urlBase = $this->getTestMode() ? $this->endpointUrlBaseTest : $this->endpointUrlBaseLive;
+        $urlPath = $this->endpointUrlPath;
+        $urlSuffix = ';jsessionid='.urlencode($data['transactionToken']);
+
+        return $urlBase.$urlPath.$urlSuffix;
+    }
+
+    /**
+     * @param $data
+     * @return null
+     */
+    protected function getHttpRequestData($data)
+    {
+        return null;
     }
 
     /**
      * @param array $data
+     * @param int $httpResponseStatusCode
      * @return CopyAndPayCompletePurchaseResponse
      */
-    protected function createResponse($data)
+    protected function createResponse(array $data, $httpResponseStatusCode)
     {
-        return new CopyAndPayCompletePurchaseResponse($this, $data);
+        return new CopyAndPayCompletePurchaseResponse($this, $data, $httpResponseStatusCode);
     }
 
     /**
@@ -93,12 +109,7 @@ class CopyAndPayCompletePurchaseRequest extends AbstractRequest
         if (( ! is_array($data)) or empty($data['transactionToken'])) {
             throw new InvalidArgumentException('Provided data should be an array containing transactionToken key');
         }
-        $uriSuffix = ';jsessionid='.urlencode($data['transactionToken']);
-        $url = $this->getEndpointUrl().$uriSuffix;
-        $request = RequestFactory::make($url);
-        $response = $this->sendHttpMessage($request, true);
-        $responseData = ResponseParser::extractDataFromResponse($response);
-        $this->response = $this->createResponse($responseData);
-        return $this->response;
+
+        return parent::sendData($data);
     }
 }
