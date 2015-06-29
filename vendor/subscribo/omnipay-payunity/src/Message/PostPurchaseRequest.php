@@ -13,6 +13,8 @@ class PostPurchaseRequest extends GenericPostRequest
 {
     protected $defaultPaymentType = 'DB';
 
+    protected $addCardReferenceMode = 'full';
+
     public function getData()
     {
         $this->validate('amount', 'currency');

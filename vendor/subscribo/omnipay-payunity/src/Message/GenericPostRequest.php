@@ -3,11 +3,15 @@
 namespace Omnipay\PayUnity\Message;
 
 use Omnipay\PayUnity\Message\AbstractPostRequest;
+use Omnipay\PayUnity\AccountRegistrationReference;
 
 /**
  * Class GenericPostRequest
  *
  * @package Omnipay\PayUnity
+ *
+ * @method \Omnipay\PayUnity\Message\GenericPostResponse send() send()
+ * @method \Omnipay\PayUnity\Message\GenericPostResponse sendData() sendData($data)
  */
 class GenericPostRequest extends AbstractPostRequest
 {
@@ -19,6 +23,8 @@ class GenericPostRequest extends AbstractPostRequest
     protected $defaultPaymentType = 'DB';
 
     protected $defaultPaymentMethod = 'CC';
+
+    protected $addCardReferenceMode = 'paymentMethodOnly'; //other values: 'full', null
 
     public function getData()
     {
@@ -60,20 +66,55 @@ class GenericPostRequest extends AbstractPostRequest
     }
 
     /**
+     * Changes payment type part in payment code
+     *
+     * @param string $paymentCode
+     * @param string $paymentType
+     * @return string
+     */
+    protected function changePaymentTypeInCode($paymentCode, $paymentType)
+    {
+        $parts = explode('.', $paymentCode);
+        $paymentMethod = reset($parts);
+
+        return $paymentMethod.'.'.$paymentType;
+    }
+
+    /**
      * @param array $data
      * @return array
      */
     protected function addCardReference(array $data)
     {
-        $cardReference = $this->getCardReference();
+        if (empty($this->addCardReferenceMode)) {
+            return $data;
+        }
+        $reference = AccountRegistrationReference::rebuild($this->getCardReference());
 
-        if ($cardReference) {
-            $decoded = base64_decode($cardReference, true);
-            $parsed = json_decode($decoded, true, 2, JSON_BIGINT_AS_STRING);
-            $data['ACCOUNT.REGISTRATION'] = $parsed['registration'];
-            $data['PAYMENT.CODE'] = $parsed['code'];
+        if (empty($reference)) {
+            return $data;
+        }
+
+        switch($this->addCardReferenceMode) {
+            case 'paymentMethodOnly':
+                $paymentType = $this->getPaymentType() ?: $this->defaultPaymentType;
+                $data['PAYMENT.CODE'] = $this->changePaymentTypeInCode($reference->paymentCode, $paymentType);
+                break;
+            case 'full':
+                $data['ACCOUNT.REGISTRATION'] = $reference->accountRegistration;
+                $data['PAYMENT.CODE'] = $reference->paymentCode;
         }
 
         return $data;
+    }
+
+    /**
+     * @param array $data
+     * @param int $httpStatusCode
+     * @return \Omnipay\Common\Message\ResponseInterface|GenericPostResponse
+     */
+    protected function createResponse(array $data, $httpStatusCode)
+    {
+        return new GenericPostResponse($this, $data, $httpStatusCode);
     }
 }

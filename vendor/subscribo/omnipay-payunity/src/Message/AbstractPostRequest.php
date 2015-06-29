@@ -160,16 +160,6 @@ abstract class AbstractPostRequest extends AbstractRequest
     }
 
     /**
-     * @param array $data
-     * @param int $httpStatusCode
-     * @return \Omnipay\Common\Message\ResponseInterface|GenericPostResponse
-     */
-    protected function createResponse(array $data, $httpStatusCode)
-    {
-        return new GenericPostResponse($this, $data, $httpStatusCode);
-    }
-
-    /**
      * @return array
      */
     protected function prepareData()
