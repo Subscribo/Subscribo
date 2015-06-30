@@ -22,6 +22,58 @@ class ResponseParser implements DealingWithContentTypeInterface
     }
 
     /**
+     * Parses data of Content-Type application/x-www-form-urlencoded into an array
+     * @param string $data
+     * @return array
+     */
+    public static function parseContentTypeApplicationXWwwFormUrlencoded($data)
+    {
+        $result = [];
+        $parts = explode('&', $data);
+        foreach ($parts as $part) {
+            $elements = explode('=', $part, 2);
+            $key = urldecode($elements[0]);
+            if (empty($key)) {
+                continue;
+            }
+            $value = isset($elements[1]) ? urldecode($elements[1]) : null;
+            if (isset($result[$key])) {
+                $result[$key] = (array) ($result[$key]);
+                $result[$key][] = $value;
+            } else {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Manually process that kind of transformation of one-dimensional array into multidimensional
+     * which PHP's parse_str() does
+     *
+     * @param array $source
+     * @return array
+     */
+    public static function transformBracketedArrayIntoMultidimensional(array $source)
+    {
+        $result = [];
+        foreach ($source as $key => $value) {
+            $keyParts = explode('[', $key);
+            $keyPartsReversed = array_reverse($keyParts);
+            $toAdd = $value;
+            foreach ($keyPartsReversed as $keyPart) {
+                $keyCleared = trim($keyPart, '[]');
+                if ($keyCleared) {
+                    $toAdd = [$keyCleared => $toAdd];
+                }
+            }
+            $toAdd = (array) $toAdd;
+            $result = array_replace_recursive($result, $toAdd);
+        }
+        return $result;
+    }
+
+    /**
      * @param ResponseInterface $response
      * @return array
      */
@@ -66,9 +118,7 @@ class ResponseParser implements DealingWithContentTypeInterface
         $format = strtolower($format);
         switch ($format) {
             case static::CONTENT_TYPE_FORM:
-                $data = [];
-                parse_str($value, $data);
-                return $data;
+                return static::parseContentTypeApplicationXWwwFormUrlencoded($value);
             case static::CONTENT_TYPE_JSON:
                 $data = json_decode($value, true, 512, JSON_BIGINT_AS_STRING);
                 $data = is_array($data) ? $data : [];
