@@ -14,14 +14,17 @@ class GenericPostResponse extends AbstractResponse
 {
     public function isSuccessful()
     {
-        return (($this->getHttpResponseStatusCode() === 200) and ($this->getProcessingResult() === 'ACK'));
+        return (
+            ($this->getHttpResponseStatusCode() === 200)
+            and ($this->getProcessingResult() === 'ACK')
+            and ($this->getTransactionResponse() === 'SYNC')
+        );
     }
 
 
     public function getCode()
     {
-        return (($this->getProcessingStatusCode() ?: $this->getExtractedProcessingStatusCode())
-                    ?: $this->getPostValidationErrorCode());
+        return $this->acquireProcessingStatusCode() ?: $this->getPostValidationErrorCode();
     }
 
     public function getMessage()
@@ -53,6 +56,14 @@ class GenericPostResponse extends AbstractResponse
     public function getTransactionId()
     {
         return $this->getIdentificationTransactionId();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTransactionResponse()
+    {
+        return $this->getTransactionData('transaction.response');
     }
 
     /**
@@ -98,6 +109,30 @@ class GenericPostResponse extends AbstractResponse
     /**
      * @return string|null
      */
+    public function getPresentationAmount()
+    {
+        return $this->getTransactionData('presentation.amount');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPresentationCurrency()
+    {
+        return $this->getTransactionData('presentation.currency');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPresentationUsage()
+    {
+        return $this->getTransactionData('presentation.usage');
+    }
+
+    /**
+     * @return string|null
+     */
     public function getProcessingReason()
     {
         return $this->getTransactionData('processing.reason');
@@ -130,14 +165,6 @@ class GenericPostResponse extends AbstractResponse
     /**
      * @return string|null
      */
-    public function getProcessingResultCode()
-    {
-        return $this->getTransactionData('processing.result.code');
-    }
-
-    /**
-     * @return string|null
-     */
     public function getProcessingReasonCode()
     {
         return $this->getTransactionData('processing.reason.code');
@@ -149,19 +176,6 @@ class GenericPostResponse extends AbstractResponse
     public function getProcessingStatusCode()
     {
         return $this->getTransactionData('processing.status.code');
-    }
-
-    public function getExtractedProcessingStatusCode()
-    {
-        $processingCode = $this->getProcessingCode();
-
-        if (empty($processingCode)) {
-            return null;
-        }
-
-        $parts = explode('.', $processingCode);
-
-        return empty($parts[2]) ? null : $parts[2];
     }
 
     /**
@@ -186,6 +200,32 @@ class GenericPostResponse extends AbstractResponse
     public function getPostValidationErrorCode()
     {
         return $this->getTransactionData('post.validation');
+    }
+
+    /**
+     * Tries to get Processing Status Code, either directly or extract it from Processing Code
+     *
+     * @return string|null
+     */
+    public function acquireProcessingStatusCode()
+    {
+        return $this->getProcessingStatusCode() ?: $this->getExtractedProcessingStatusCode();
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getExtractedProcessingStatusCode()
+    {
+        $processingCode = $this->getProcessingCode();
+
+        if (empty($processingCode)) {
+            return null;
+        }
+
+        $parts = explode('.', $processingCode);
+
+        return empty($parts[2]) ? null : $parts[2];
     }
 
     /**

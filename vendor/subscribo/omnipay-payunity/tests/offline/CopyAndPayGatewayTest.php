@@ -42,7 +42,6 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->card['gender'] = 'M';
         $this->card['birthday'] = '1970-01-01';
         $this->card['company'] = 'Company name Inc.';
-
     }
 
     /**
@@ -86,6 +85,7 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->assertEmpty($response->getMessage());
         $this->assertEmpty($response->getCode());
         $this->assertEmpty($response->getTransactionReference());
+
         return $response;
     }
 
@@ -275,5 +275,9 @@ class CopyAndPayGatewayTest extends GatewayTestCase
         $this->assertSame($response->getIdentificationTransactionId(), $response->getTransactionId());
         $expectedCardReference = 'eyJhciI6IjhhODI5NDRhNGNmZmY2MmQwMTRkMDE1MjJjNTQxMTExIiwicGMiOiJDQy5EQiJ9';
         $this->assertSame($expectedCardReference, $response->getCardReference());
+        $this->assertSame('SYNC', $response->getTransactionResponse());
+        $this->assertNull($response->getPresentationAmount());
+        $this->assertNull($response->getPresentationCurrency());
+        $this->assertNull($response->getPresentationUsage());;
     }
 }

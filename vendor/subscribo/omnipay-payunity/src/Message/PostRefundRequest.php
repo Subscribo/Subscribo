@@ -2,8 +2,7 @@
 
 namespace Omnipay\PayUnity\Message;
 
-use Omnipay\PayUnity\Message\GenericPostRequest;
-
+use Omnipay\PayUnity\Message\RequiringAmountPostRequest;
 
 /**
  * Class PostRefundRequest
@@ -12,7 +11,7 @@ use Omnipay\PayUnity\Message\GenericPostRequest;
  *
  * @package Omnipay\PayUnity
  */
-class PostRefundRequest extends GenericPostRequest
+class PostRefundRequest extends RequiringAmountPostRequest
 {
     protected $defaultPaymentType = 'RF';
 }
