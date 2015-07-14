@@ -1,0 +1,18 @@
+# English translations resource file for package Subscribo Webshop - for templates
+# Translation work in progress: (70%)
+template.product:
+# Template resources/views/webshop/product/list.blade.php
+    list:
+        heading: Produktliste
+        grossPrice: 'Preis netto:'
+        netPrice: 'Preis brutto:'
+        tax: 'Steuer:'
+        buyLink: Kaufen
+# Template resources/views/webshop/product/buy.blade.php
+    buy:
+        heading: Möchten Sie {productName} kaufen?
+        grossPrice: 'Preis netto:'
+        netPrice: 'Preis brutto:'
+        tax: 'Steuer:'
+        buyLink: Kaufen
+        backToListLink: Zurück nach Produktliste

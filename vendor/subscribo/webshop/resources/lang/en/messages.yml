@@ -1,0 +1,26 @@
+# English translations resource file for package Subscribo Webshop - for templates
+# Translation work in progress: (100%)
+template.product:
+# Template resources/views/webshop/product/list.blade.php
+    list:
+        heading: Product list
+        grossPrice: 'Price:'
+        netPrice: 'Price without tax:'
+        tax: 'Tax:'
+        buyLink: Buy
+# Template resources/views/webshop/product/buy.blade.php
+    buy:
+        heading: Do you want to buy {productName}?
+        grossPrice: 'Price:'
+        netPrice: 'Price without tax:'
+        tax: 'Tax:'
+        backToListLink: Back to product list
+forms:
+    buy:
+# Template resources/views/webshop/forms/buy/forguest.blade.php
+        forguest:
+            submitButton: Buy
+#Template resources/views/webshop/forms/buy/paymentmethod.blade.php
+        paymentmethod:
+            selectTitle: 'Select payment method:'
+

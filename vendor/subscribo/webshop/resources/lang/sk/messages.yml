@@ -1,0 +1,26 @@
+# Slovak translations resource file for package Subscribo Webshop - for templates
+# Translation work in progress: (100%)
+template.product:
+# Template resources/views/webshop/product/list.blade.php
+    list:
+        heading: Zoznam produktov
+        grossPrice: 'Cena:'
+        netPrice: 'Cena bez dane:'
+        tax: 'Daň:'
+        buyLink: Kúpiť
+# Template resources/views/webshop/product/buy.blade.php
+    buy:
+        heading: Chcete kúpiť {productName}?
+        grossPrice: 'Cena:'
+        netPrice: 'Cena bez dane:'
+        tax: 'Daň:'
+        backToListLink: Späť na zoznam produktov
+forms:
+    buy:
+# Template resources/views/webshop/forms/buy/forguest.blade.php
+        forguest:
+            submitButton: Kúpiť
+#Template resources/views/webshop/forms/buy/paymentmethod.blade.php
+        paymentmethod:
+            selectTitle: 'Vyberte spôsob platby:'
+
