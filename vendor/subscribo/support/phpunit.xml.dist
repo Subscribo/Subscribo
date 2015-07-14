@@ -1,0 +1,5 @@
+<phpunit bootstrap="vendor/autoload.php">
+    <testsuite name="Subscribo Support">
+        <directory>tests</directory>
+    </testsuite>
+</phpunit>
