@@ -1,6 +1,6 @@
 {
     "name": "subscribo/billing",
-    "description": "Package Billing an umbrella package for billing, charging, invoicing and payment functionality",
+    "description": "Package Billing is an umbrella package for billing, charging, invoicing and payment functionality",
     "keywords": [
         "laravel",
         "subscribo",
@@ -16,14 +16,14 @@
             "role": "developer"
         },
         {
-            "name": "Kochabo",
+            "name": "Kochabo GmbH",
             "role": "owner"
         }
     ],
     "require": {
         "php": "~5.4",
         "subscribo/support": "@dev",
-        "subscribo/omnipay-payunity": "^0.2.2@dev",
+        "subscribo/omnipay-payunity": "^0.4.0",
         "subscribo/omnipay-klarna": "dev-feature/checkout",
         "klarna/checkout": "1.2",
         "subscribo/psr-http-message-tools": ">=0.3.1 <0.5"
