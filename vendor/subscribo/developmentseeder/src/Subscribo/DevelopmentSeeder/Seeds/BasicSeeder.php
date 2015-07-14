@@ -2,8 +2,13 @@
 
 use Illuminate\Database\Seeder;
 
-class BasicSeeder extends Seeder {
-
+/**
+ * Class BasicSeeder
+ *
+ * @package Subscribo\DevelopmentSeeder
+ */
+class BasicSeeder extends Seeder
+{
     public function run()
     {
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\LocaleSeeder');
@@ -12,6 +17,6 @@ class BasicSeeder extends Seeder {
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\TagSeeder');
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\UserSeeder');
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\CustomerAccountSeeder');
-
+        $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\BusinessSeeder');
     }
 }

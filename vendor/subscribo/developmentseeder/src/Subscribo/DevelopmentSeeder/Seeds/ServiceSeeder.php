@@ -5,12 +5,23 @@ use Subscribo\ModelCore\Models\Service;
 use Subscribo\ModelCore\Models\ServiceModule;
 use Subscribo\ModelCore\Models\ServicePool;
 use Subscribo\ModelCore\Models\Locale;
+use Subscribo\ModelCore\Models\Currency;
+use Subscribo\ModelCore\Models\Country;
 use Subscribo\ModelCore\Models\OAuthConfiguration;
 
 class ServiceSeeder extends Seeder {
 
     public function run()
     {
+        $euro = Currency::firstOrCreate(['identifier' => 'EUR']);
+        $dollar = Currency::firstOrCreate(['identifier' => 'USD']);
+        $pound = Currency::firstOrCreate(['identifier' => 'GBP']);
+
+
+        $austria = Country::firstOrCreate(['identifier' => 'AT']);
+        $germany = Country::firstOrCreate(['identifier' => 'DE']);
+        $slovakia = Country::firstOrCreate(['identifier' => 'SK']);
+
         $frontendEnglish = Locale::firstOrCreate(['identifier' => 'en_US-FRONTEND']);
         $frontendGerman = Locale::firstOrCreate(['identifier' => 'de_AT-FRONTEND']);
         $frontendSlovak = Locale::firstOrCreate(['identifier' => 'sk_SK-FRONTEND']);
@@ -18,6 +29,7 @@ class ServiceSeeder extends Seeder {
         $frontendService->url = 'http://frontend.sio.kochabo.at';
         $frontendService->name = 'Frontend';
         $frontendService->defaultLocale()->associate($frontendGerman);
+        $frontendService->addCountries([$austria, $germany, $slovakia], [$euro, $dollar]);
         $frontendService->save();
         $frontendService->translateOrNew('de')->name = 'Frontend zum testen';
         $frontendService->translateOrNew('sk')->name = 'Testovací Frontend';
@@ -56,11 +68,11 @@ class ServiceSeeder extends Seeder {
         $test2Service->name = 'Main';
         $test2Service->defaultLocale()->associate($american);
         $test2Service->translateOrNew('de')->name = 'Haupt';
+        $test2Service->addCountries([$austria, $germany, $slovakia], $euro);
         $test2Service->save();
         $test2Service->availableLocales()->attach($american);
         $test2Service->availableLocales()->attach($british);
         $test2Service->availableLocales()->attach($german);
-        
 
         ServiceModule::enableModule($test2Service, ServiceModule::MODULE_ACCOUNT_MERGING);
 
@@ -68,18 +80,22 @@ class ServiceSeeder extends Seeder {
         $test3Service = Service::firstOrNew(['identifier' => 'TEST3']);
         $test3Service->name = 'Test3 in Pool3';
         $test3Service->defaultLocale()->associate($american);
+        $test3Service->addCountries([$austria, $germany, $slovakia], $euro);
         $test3Service->save();
         $test3Service->availableLocales()->attach($american);
         $test3Service->availableLocales()->attach($british);
+
         ServiceModule::enableModule($test3Service, ServiceModule::MODULE_ACCOUNT_MERGING);
 
 
         $anotherService = Service::firstOrNew(['identifier' => 'ANOTHER']);
         $anotherService->name = 'Another Service';
         $anotherService->defaultLocale()->associate($american);
+        $anotherService->addCountries([$austria, $germany, $slovakia], $euro);
         $anotherService->save();
         $anotherService->availableLocales()->attach($american);
         $anotherService->availableLocales()->attach($british);
+
         ServiceModule::enableModule($anotherService, ServiceModule::MODULE_ACCOUNT_MERGING);
 
         $servicePool2 = ServicePool::firstOrCreate(['identifier' => 'POOL2']);

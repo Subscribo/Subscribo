@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Subscribo\ModelCore\Models\Locale;
+use Subscribo\ModelCore\Models\Currency;
 
 class LocaleSeeder extends Seeder {
 
@@ -185,5 +186,22 @@ class LocaleSeeder extends Seeder {
         $frontendSlovak->fallbackLocales()->attach($english, ['ordering' => 100]);
         $frontendSlovak->fallbackLocales()->attach($frontendGerman, ['ordering' => 201]);
 
+        $euro = Currency::firstOrCreate(['identifier' => 'EUR']);
+        $euro->symbol = '€';
+        $euro->translateOrNew('en')->name = 'Euro';
+        $euro->code = 'EUR';
+        $euro->save();
+
+        $dollar = Currency::firstOrCreate(['identifier' => 'USD']);
+        $dollar->symbol = '$';
+        $dollar->translateOrNew('en')->name = 'U.S. Dollar';
+        $dollar->code = 'USD';
+        $dollar->save();
+
+        $pound = Currency::firstOrCreate(['identifier' => 'GBP']);
+        $pound->symbol = '£';
+        $pound->translateOrNew('en')->name = 'Pound';
+        $pound->code = 'GBP';
+        $pound->save();
     }
 }
