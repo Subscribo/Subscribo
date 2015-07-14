@@ -1,6 +1,17 @@
 ## Changelog
 
-**Note: development version may contain changes not reflected in this CHANGELOG.**
+**Note: development version and not mentioned releases may contain changes not reflected in this CHANGELOG.**
+
+### Version 1.0.3
+
+* 2015-06-01 Slavo removed previous changes (private method Klarna::_fixMessageEncoding() and its use)
+  and modified protected method Klarna::xmlrpc_call()
+  - setting XML RPC Client global variables specifying encoding before the call
+
+### Version 1.0.2
+
+* 2015-05-20 Slavo changed and renamed private method Klarna::fixMessageEncoding() to Klarna::_fixMessageEncoding().
+
 
 ### Version 1.0.1
 
