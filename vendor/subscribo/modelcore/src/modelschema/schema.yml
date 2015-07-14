@@ -121,6 +121,7 @@ model_options:
                 - service_pools
                 - apis
                 - locales (method_name_for services availableLocales)
+                - countries (method_name_for services availableCountries)
             has_many:
                 - users
                 - accounts
@@ -216,6 +217,12 @@ model_options:
 
     products:
        administrator_menu: Delivery
+
+    prices:
+      administrator_menu: Delivery
+      relations:
+          many_to_many:
+              - countries
 
     deliveries:
        administrator_menu: Delivery
@@ -315,6 +322,7 @@ model_fields:
         - comment null // some technical comment to particular row, such as “do not use now, just for testing”
         - url null
         - default_locale_id → locales (hide to)
+        - default_country_id → countries (hide to)
         - remember_locale (int) default 10080
         - operator_id default 1 → operators (type none) //operators table does not exist in current version of the schema, so the relation type is no_relation
 
@@ -513,7 +521,34 @@ model_fields:
     - service_id → services
     - standalone (bool) default false
     - name translate
+    - description translate null
+    - tax_category_id -> tax_categories
 
+    prices:
+    - service_id → services
+    - product_id -> products
+    - amount (currency)
+    - price_type (enum from net gross) default word net
+    - currency_id
+    - everywhere (bool) default false
+
+    tax_categories:
+    - identifier (identifier) unique representative // unique string used in API
+    - service_id null → services
+    - parent_id null -> tax_categories
+    - is_default (bool) default false
+    - name translate
+    - short_name translate
+    - description null
+    - note null
+
+    tax_groups:
+    - service_id null → services
+    - parent_id null -> tax_groups
+    - country_id null -> countries
+    - tax_category_id -> tax_categories
+    - tax_percent
+    - tax_type (enum from none vat sales excise expenditure) default word vat
 
     deliveries:
     - id #to emphasize the importance of id of this table
@@ -591,6 +626,26 @@ model_fields:
     - name translate
     - code
     - symbol
+    - precision (int) default 2
+
+    currency_possibilities_per_countries:
+    - service_id
+    - currency_id
+    - country_id null
+    - is_default (bool) default false
+
+    payment_methods:
+    - identifier (identifier) unique representative
+    - name translate
+    - description translate
+
+    payment_configurations:
+    - service_id
+    - payment_method_id
+    - country_id null
+    - currency_id null
+    - is_default (bool) default false
+    - configuration (text)
 
     pictures:
     - comment null

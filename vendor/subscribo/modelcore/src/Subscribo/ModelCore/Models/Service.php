@@ -1,5 +1,8 @@
-<?php namespace Subscribo\ModelCore\Models;
+<?php
 
+namespace Subscribo\ModelCore\Models;
+
+use Subscribo\ModelCore\Models\CurrencyPossibilitiesPerCountry;
 
 /**
  * Model Service - list of websites or other entities using the system
@@ -64,4 +67,36 @@ class Service extends \Subscribo\ModelCore\Bases\Service
         return $result;
     }
 
+    public function addCountries($countries, $currencies)
+    {
+        $countries = is_array($countries) ? $countries : [$countries];
+        $currencies = is_array($currencies) ? $currencies : [$currencies];
+        foreach ($countries as $country) {
+            if (is_null($this->defaultCountryId)) {
+                $this->defaultCountry()->associate($country);
+                $this->save();
+            }
+            $this->availableCountries()->attach($country);
+            $defaultCurrency = true;
+            foreach ($currencies as $currency) {
+                $possibility =  new CurrencyPossibilitiesPerCountry();
+                $possibility->serviceId = $this->id;
+                $possibility->currencyId = $currency->id;
+                $possibility->countryId = $country->id;
+                $possibility->isDefault = $defaultCurrency;
+                $possibility->save();
+                $defaultCurrency = false;
+            }
+        }
+    }
+
+    public function provideAvailableCurrencyIds($countryId = null)
+    {
+        return CurrencyPossibilitiesPerCountry::provideCurrencyIdsForServiceIdAndCountryId($this->id, $countryId);
+    }
+
+    public function provideDefaultCurrencyId($countryId = null)
+    {
+        return CurrencyPossibilitiesPerCountry::provideDefaultCurrencyIdForServiceIdAndCountryId($this->id, $countryId);
+    }
 }

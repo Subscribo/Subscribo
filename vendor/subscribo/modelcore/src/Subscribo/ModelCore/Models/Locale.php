@@ -12,6 +12,18 @@ class Locale extends \Subscribo\ModelCore\Bases\Locale
     const TYPE_GENERIC = 'generic';
     const TYPE_CUSTOMIZED = 'customized';
 
+
+    /**
+     * @return string
+     */
+    public function extractCountry()
+    {
+        $standardPart = $this->extractStandardPart();
+        $country = trim(strstr($standardPart, '_', false), '_');
+        $result = strtoupper($country);
+        return $result;
+    }
+
     /**
      * @return string
      */
