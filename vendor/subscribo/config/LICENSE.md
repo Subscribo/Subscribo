@@ -6,4 +6,4 @@ of parts of Symfony/Config or Symfony documentation - http://symfony.com )
 
 No claim is made here regarding third party code or its parts
 
-Specific code not covered by other licenses is proprietary: Copyright (c) 2014 KochAbo Betriebs GmbH, Wien, Austria, www.kochabo.at
+Specific code not covered by other licenses is proprietary: Copyright (c) 2014-2015 KochAbo GmbH, Wien, Austria
