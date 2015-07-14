@@ -1,0 +1,54 @@
+{
+    "name": "subscribo/apiclient",
+    "description": "Package API Client is an umbrella package for API Client functionality",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "api",
+        "client"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "subscribo/apiclientlocalization": "@dev",
+        "subscribo/apiclientauth": "@dev",
+        "subscribo/apiclientoauth": "@dev",
+        "subscribo/apiclientcommon": "@dev",
+        "subscribo/restproxy": "@dev",
+        "subscribo/restcommon": "@dev",
+        "subscribo/exception": "@dev",
+        "subscribo/config": "@dev",
+        "subscribo/support": "@dev",
+        "illuminate/foundation": "~5.0",
+        "illuminate/exception": "~5.0",
+        "illuminate/http": "~5.0",
+        "illuminate/session": "~5.0",
+        "illuminate/routing": "~5.0",
+        "illuminate/support": "~5.0",
+        "symfony/http-foundation": "~2.6"
+    },
+    "suggest": {
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\ApiClient\\": "src/Subscribo/ApiClient/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}

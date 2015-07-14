@@ -1,0 +1,46 @@
+{
+    "name": "subscribo/auth",
+    "description": "Subscribo Authentication package",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "auth",
+        "authentication"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "illuminate/contracts":"~5.0",
+        "illuminate/http": "~5.0",
+        "illuminate/support": "~5.0",
+        "symfony/http-foundation": "~2.6",
+        "subscribo/exception": "@dev",
+        "subscribo/restcommon": "@dev",
+        "subscribo/modelcore": "@dev"
+    },
+    "suggest": {
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+        "illuminate/hashing": "Hashing functionality needed by UserFactory (already contained in laravel/framework)"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\Auth\\": "src/Subscribo/Auth/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}

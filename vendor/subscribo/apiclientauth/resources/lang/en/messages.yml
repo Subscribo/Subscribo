@@ -1,0 +1,6 @@
+# English translation resources file for packages Subscribo ApiClientAuth
+# Translations for AuthenticatesAndRegistersUsersTrait
+errors:
+    registrationFailed: Registration attempt failed. Please try again later or contact an administrator.
+    loginFailed: Login attempt failed. Please try again later or contact an administrator.
+    wrongCredentials: These credentials do not match our records

@@ -1,0 +1,46 @@
+{
+    "name": "subscribo/exception",
+    "description": "Package Exception contain shared functionality connected to exceptions and their handling",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "exception"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "symfony/http-kernel": "~2.6"
+    },
+    "suggest": {
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+        "illuminate/contracts": "If ExceptionHandlerInterface is being used. Suggested version ~5.0",
+        "illuminate/foundation": "If ApiExceptionHandlerServiceProvider is being used. Suggested version ~5.0",
+        "illuminate/support": "If ApiExceptionHandler Facade is being used. Suggested version ~5.0",
+        "illuminate/exception": "If exception handler functionality is used. Suggested version ~5.0",
+        "illuminate/http": "If exception handler functionality is used. Suggested version ~5.0",
+        "psr/log" : "If exception handler functionality is used.",
+        "subscribo/localization": "If exception handler functionality (ApiExceptionHandler, ApiExceptionHandlerServiceProvider, ExceptionHandlerInterface) is being used",
+        "subscribo/support": "If ApiExceptionHandlerServiceProvider is being used"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\Exception\\": "src/Subscribo/Exception/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}

@@ -1,0 +1,19 @@
+# German translation resource file for main template, welcome template and home content template
+# Translation work in progress ( approx. 10% )
+# Main template  (app.blade.php)
+page:
+    title: Subscribo
+navigation:
+    toggle: Navigation EIN/AUS
+    brand: Subscribo
+    home: Startseite
+    login: Anmelden
+    register: Registrieren
+    logout: Abmelden
+# welcome template (welcome.blade.php)
+welcome:
+    title: Subscribo: Willkommen
+# Home content template (home.blade.php)
+home:
+    heading: Home
+    content: Du bist jetzt angemeldet!

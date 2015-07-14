@@ -1,0 +1,24 @@
+# English translation resource file for Api1 Controllers and Traits
+# AccountController
+account.errors:
+        postRegistration:
+            emailUsed: Email already used for this service
+            oAuthInvalid: OAuth data empty or invalid
+        getRemembered.accountNotFound: Account with given ID and token not found for this service
+        resumeRegistration.serviceInvalid: Selected service not valid
+        resumeConfirmMergeAnswer:
+            wrongPassword: Provided password does not fit with account with email %email% by {service}
+            rejected: Account merge rejected
+            confirmed: Account merge confirmed // Comment: Not actually an error, but it was simpler to have resumeConfirmMergeAnswer responses together (comments does not need to be translated)
+        resumeOAuthMissingEmail.unacceptableEmail: Please, provide another email
+        resumeOAuthExistingEmail.invalidPassword: Given password does not agree with email %email% for this service
+        resumeMergeConfirmation.redirectBackMissing: redirect_back is required in query
+        accountMergeConfirmed:
+            resultMissing: Result is missing
+            notConfirmed: Account merge not confirmed
+# AnswerController
+answer.errors:
+        getQuestion.wrongType: Unrecognized type
+        getRedirection.wrongType: Unrecognized type
+# ContextRequestValidationTrait
+contextRequestValidationTrait.errors.wrongIdentifier: Identifier have to be a positive integer

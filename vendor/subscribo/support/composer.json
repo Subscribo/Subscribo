@@ -1,0 +1,41 @@
+{
+    "name": "subscribo/support",
+    "description": "Support package with common shared functionality (Str, Arr, ServiceProvider) extending Laravel classes",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "support"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "illuminate/support": "~5.0"
+    },
+    "suggest": {
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+        "subscribo/localization": "If localization-connected functionality in ServiceProvider is used",
+        "illuminate/routing": "If routing-connected functionality in ServiceProvider is used",
+        "illuminate/view": "If view/template-connected functionality in ServiceProvider is used"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\Support\\": "src/Subscribo/Support/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}

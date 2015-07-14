@@ -1,0 +1,47 @@
+{
+    "name": "subscribo/api1",
+    "description": "API version 1",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "api",
+        "v1"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Slavo",
+            "role": "developer"
+        },
+        {
+            "name": "Kochabo",
+            "role": "owner"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "illuminate/routing": "~5.0",
+        "subscribo/auth": "@dev",
+        "subscribo/restcommon": "@dev",
+        "subscribo/modelcore": "@dev",
+        "subscribo/oauthcommon": "@dev",
+        "subscribo/support": "@dev",
+        "subscribo/localization": "@dev",
+        "subscribo/validationlocalization": "@dev"
+    },
+    "suggest": {
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
+        "psr/log" : "Usually automatically required by monolog/monolog, required by laravel/framework. (suggested version ~1.0)"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\Api1\\": "src/Subscribo/Api1/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
