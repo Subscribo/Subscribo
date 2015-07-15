@@ -8,15 +8,22 @@ use Illuminate\Routing\Router;
 class WebshopServiceProvider extends ServiceProvider
 {
     protected $routesRegistered = false;
+
+    /**
+     * @var \Subscribo\ApiClient\Integration\Laravel\ApiClientServiceProvider|null
+     */
+    protected $apiClientServiceProvider;
+
     public function register()
     {
-
+        $apiClientServiceProviderClassName = '\\Subscribo\\ApiClient\\Integration\\Laravel\\ApiClientServiceProvider';
+        $this->apiClientServiceProvider = $this->registerServiceProvider($apiClientServiceProviderClassName);
     }
 
 
     public function boot()
     {
-        $this->registerRoutes([]);
+        $this->registerRoutes($this->apiClientServiceProvider->provideMiddleware());
         $this->registerViews();
         $this->registerTranslationResources('messages');
     }

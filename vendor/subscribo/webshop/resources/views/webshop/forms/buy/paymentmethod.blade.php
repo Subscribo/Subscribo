@@ -4,7 +4,7 @@
     <label>
         <input type="radio" name="payment_method" value="{{$paymentMethod['id']}}"
                id="payment_method_{{$paymentMethod['id']}}" >
-        <strong>{{ $paymentMethod['title'] }}</strong>
+        <strong>{{ $paymentMethod['name'] }}</strong>
         {{$paymentMethod['description']}}
 
     </label>
