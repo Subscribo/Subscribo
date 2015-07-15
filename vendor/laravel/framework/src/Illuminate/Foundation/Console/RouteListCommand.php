@@ -3,6 +3,7 @@
 namespace Illuminate\Foundation\Console;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
@@ -86,6 +87,16 @@ class RouteListCommand extends Command
 
         foreach ($this->routes as $route) {
             $results[] = $this->getRouteInformation($route);
+        }
+
+        if ($sort = $this->option('sort')) {
+            $results = array_sort($results, function ($value) use ($sort) {
+                return $value[$sort];
+            });
+        }
+
+        if ($this->option('reverse')) {
+            $results = array_reverse($results);
         }
 
         return array_filter($results);
@@ -239,8 +250,8 @@ class RouteListCommand extends Command
      */
     protected function filterRoute(array $route)
     {
-        if (($this->option('name') && !str_contains($route['name'], $this->option('name'))) ||
-             $this->option('path') && !str_contains($route['uri'], $this->option('path'))) {
+        if (($this->option('name') && !Str::contains($route['name'], $this->option('name'))) ||
+             $this->option('path') && !Str::contains($route['uri'], $this->option('path'))) {
             return;
         }
 
@@ -258,6 +269,10 @@ class RouteListCommand extends Command
             ['name', null, InputOption::VALUE_OPTIONAL, 'Filter the routes by name.'],
 
             ['path', null, InputOption::VALUE_OPTIONAL, 'Filter the routes by path.'],
+
+            ['reverse', 'r', InputOption::VALUE_NONE, 'Reverse the ordering of the routes.'],
+
+            ['sort', null, InputOption::VALUE_OPTIONAL, 'The column (host, method, uri, name, action, middleware) to sort by.', 'uri'],
         ];
     }
 }

@@ -2,7 +2,6 @@
 
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Session\Store;
 use Illuminate\Http\Request;
 use Exception;
@@ -18,11 +17,12 @@ use Subscribo\Localization\Interfaces\LocalizerInterface;
 /**
  * Class AuthenticatesAndRegistersUsersTrait
  *
+ * expects class using this trait use also Illuminate\Foundation\Validation\ValidatesRequests;
+ *
  * @package Subscribo\ApiClientAuth
  */
 trait AuthenticatesAndRegistersUsersTrait
 {
-    use ValidatesRequests;
     use AuthenticatesAndRegistersUsers;
     use HandleServerRequestExceptionTrait;
 
