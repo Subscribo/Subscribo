@@ -142,7 +142,7 @@ class Util
      */
     public static function contentSize($contents)
     {
-        return mb_strlen($contents, '8bit');
+        return defined('MB_OVERLOAD_STRING') ? mb_strlen($contents, '8bit') : strlen($contents);
     }
 
     /**
@@ -269,7 +269,7 @@ class Util
 
         $parent = $object['dirname'];
 
-        while (! empty($parent) && ! in_array($parent, $directories)) {
+        while (!empty($parent) && !in_array($parent, $directories)) {
             $directories[] = $parent;
             $parent = static::dirname($parent);
         }

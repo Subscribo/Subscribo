@@ -47,3 +47,13 @@ or (for conditional registration) you can add following to bootstrap/app.php:
         $app->register('\\Subscribo\\Localization\\Integration\\Laravel\\LocalizationServiceProvider');
     }
 ```
+
+## 2. Usage
+
+### 2.1 Placeholder recommendation:
+
+For replacing values set by administrator in database preferably use braces surrounding {placeholder}.
+
+For replacing user provided values preferably use percent signs surrounding %placeholder%.
+
+(Note: just using percent sign does not automatically sanitize values.)

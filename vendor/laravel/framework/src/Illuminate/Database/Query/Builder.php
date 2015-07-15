@@ -5,6 +5,7 @@ namespace Illuminate\Database\Query;
 use Closure;
 use BadMethodCallException;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
@@ -1008,7 +1009,7 @@ class Builder
         // clause on the query. Then we'll increment the parameter index values.
         $bool = strtolower($connector);
 
-        $this->where(snake_case($segment), '=', $parameters[$index], $bool);
+        $this->where(Str::snake($segment), '=', $parameters[$index], $bool);
     }
 
     /**
@@ -1643,6 +1644,13 @@ class Builder
 
         $previousColumns = $this->columns;
 
+        // We will also back up the select bindings since the select clause will be
+        // removed when performing the aggregate function. Once the query is run
+        // we will add the bindings back onto this query so they can get used.
+        $previousSelectBindings = $this->bindings['select'];
+
+        $this->bindings['select'] = [];
+
         $results = $this->get($columns);
 
         // Once we have executed the query, we will reset the aggregate property so
@@ -1651,6 +1659,8 @@ class Builder
         $this->aggregate = null;
 
         $this->columns = $previousColumns;
+
+        $this->bindings['select'] = $previousSelectBindings;
 
         if (isset($results[0])) {
             $result = array_change_key_case((array) $results[0]);
@@ -1984,7 +1994,7 @@ class Builder
      */
     public function __call($method, $parameters)
     {
-        if (starts_with($method, 'where')) {
+        if (Str::startsWith($method, 'where')) {
             return $this->dynamicWhere($method, $parameters);
         }
 

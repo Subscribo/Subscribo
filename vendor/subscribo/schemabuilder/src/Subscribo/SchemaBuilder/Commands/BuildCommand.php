@@ -39,7 +39,7 @@ class BuildCommand extends BuildCommandAbstract {
 	public function fire()
 	{
         if ($this->option('publish')) {
-            $this->call('vendor:publish', array('--tag' => 'modelschema', '--force' => true));
+            $this->call('vendor:publish', array('--tag' => ['modelschema'], '--force' => true));
         }
 
         $inputFile = $this->argument('input_file');

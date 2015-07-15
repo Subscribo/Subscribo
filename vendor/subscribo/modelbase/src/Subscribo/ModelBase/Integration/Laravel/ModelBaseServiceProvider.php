@@ -1,4 +1,6 @@
-<?php namespace Subscribo\Modelbase\Integration\Laravel;
+<?php
+
+namespace Subscribo\ModelBase\Integration\Laravel;
 
 use Illuminate\Support\ServiceProvider;
 
