@@ -8,6 +8,40 @@ Faker requires PHP >= 5.3.3.
 
 [![Monthly Downloads](https://poser.pugx.org/fzaninotto/faker/d/monthly.png)](https://packagist.org/packages/fzaninotto/faker) [![Build Status](https://secure.travis-ci.org/fzaninotto/Faker.png)](http://travis-ci.org/fzaninotto/Faker) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/eceb78a9-38d4-4ad5-8b6b-b52f323e3549/mini.png)](https://insight.sensiolabs.com/projects/eceb78a9-38d4-4ad5-8b6b-b52f323e3549)
 
+# Table of Contents
+
+- [Installation](#installation)
+- [Basic Usage](#basic-usage)
+- [Formatters](#formatters)
+	- [Base](#fakerproviderbase)
+	- [Lorem Ipsum Text](#fakerproviderlorem)
+	- [Person](#fakerprovideren_usperson)
+	- [Address](#fakerprovideren_usaddress)
+	- [Phone Number](#fakerprovideren_usphonenumber)
+	- [Company](#fakerprovideren_uscompany)
+	- [Real Text](#fakerprovideren_ustext)
+	- [Date and Time](#fakerproviderdatetime)
+	- [Internet](#fakerproviderinternet)
+	- [User Agent](#fakerprovideruseragent)
+	- [Payment](#fakerproviderpayment)
+	- [Color](#fakerprovidercolor)
+	- [File](#fakerproviderfile)
+	- [Image](#fakerproviderimage)
+	- [Uuid](#fakerprovideruuid)
+	- [Barcode](#fakerproviderbarcode)
+	- [Miscellaneous](#fakerprovidermiscellaneous)
+	- [Biased](#fakerproviderbiased)
+- [Unique and Optional modifiers](#unique-and-optional-modifiers)
+- [Localization](#localization)
+- [Populating Entities Using an ORM or an ODM](#populating-entities-using-an-orm-or-an-odm)
+- [Seeding the Generator](#seeding-the-generator)
+- [Faker Internals: Understanding Providers](#faker-internals-understanding-providers)
+- [Real Life Usage](#real-life-usage)
+- [Language specific formatters](#language-specific-formatters)
+- [Third-Party Libraries Extending/Based On Faker](#third-party-libraries-extendingbased-on-faker)
+- [License](#license)
+
+
 ## Installation
 
 ```sh
@@ -152,6 +186,7 @@ Each of the generator properties (like `name`, `address`, and `lorem`) are calle
     date($format = 'Y-m-d', $max = 'now') // '1979-06-09'
     time($format = 'H:i:s', $max = 'now') // '20:49:42'
     dateTimeBetween($startDate = '-30 years', $endDate = 'now') // DateTime('2003-03-15 02:00:49')
+    dateTimeInInterval($startDate = '-30 years', $interval = '+ 5 days') // DateTime('2003-03-15 02:00:49')
     dateTimeThisCentury($max = 'now')     // DateTime('1915-05-30 19:28:21')
     dateTimeThisDecade($max = 'now')      // DateTime('2007-05-29 22:30:48')
     dateTimeThisYear($max = 'now')        // DateTime('2011-02-27 20:52:14')
@@ -1039,10 +1074,11 @@ echo $faker->cityName;
 
 ## Third-Party Libraries Extending/Based On Faker
 
-* [BazingaFakerBundle](https://github.com/willdurand/BazingaFakerBundle): Put the awesome Faker library into the Symfony2 DIC and populate your database with fake data.
+* Symfony2 bundles:
+  * [BazingaFakerBundle](https://github.com/willdurand/BazingaFakerBundle): Put the awesome Faker library into the Symfony2 DIC and populate your database with fake data.
+  * [AliceBundle](https://github.com/hautelook/AliceBundle), [AliceFixturesBundle](https://github.com/h4cc/AliceFixturesBundle): Bbundles for using Alice and Faker with data fixtures. Able to use Doctrine ORM as well as Doctrine MongoDB ODM.
 * [FakerServiceProvider](https://github.com/EmanueleMinotto/FakerServiceProvider): Faker Service Provider for Silex
 * [faker-cli](https://github.com/bit3/faker-cli): Command Line Tool for the Faker PHP library
-* [AliceFixturesBundle](https://github.com/h4cc/AliceFixturesBundle): A Symfony2 bundle for using Alice and Faker with data fixtures. Abled to use Doctrine ORM as well as Doctrine MongoDB ODM.
 * [Factory Muffin](https://github.com/thephpleague/factory-muffin): enable the rapid creation of objects (PHP port of factory-girl)
 * [CompanyNameGenerator](https://github.com/fzaninotto/CompanyNameGenerator): Generate names for English tech companies with class
 * [datalea](https://github.com/spyrit/datalea) A highly customizable random test data generator web app

@@ -20,6 +20,16 @@
 
 -
   browser: >
+    Internet Explorer 11 & Microsoft Edge
+  summary: >
+    CSS `border-radius` sometimes causes lines of bleed-through of the `background-color` of the parent element.
+  upstream_bug: >
+    IE#1463734
+  origin: >
+    Bootstrap#16671
+
+-
+  browser: >
     Firefox
   summary: >
     `.table-bordered` with an empty `<tbody>` is missing borders.
@@ -279,3 +289,13 @@
     WebKit#139848, Safari#19434878
   origin: >
     Bootstrap#11266, Bootstrap#13098
+
+-
+  browser: >
+    Safari (iOS)
+  summary: >
+    Tapping below `<input>`s can focus them in some cases
+  upstream_bug: >
+    WebKit#146244, Safari#21509310
+  origin: >
+    Bootstrap#15968
