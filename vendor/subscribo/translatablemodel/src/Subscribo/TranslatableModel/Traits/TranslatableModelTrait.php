@@ -23,7 +23,7 @@ trait TranslatableModelTrait
     /**
      * @return LocaleConfigurationInterface
      */
-    protected function getLocaleConfiguration()
+    protected static function getLocaleConfiguration()
     {
         return App::make('Subscribo\\TranslatableModel\\Interfaces\\LocaleConfigurationInterface');
     }
@@ -115,4 +115,8 @@ trait TranslatableModelTrait
         return $this->getLocaleConfiguration()->getAvailableLocales();
     }
 
+    public function scopeWithTranslations(Builder $query)
+    {
+        return $query->with('translations');
+    }
 }

@@ -1,4 +1,6 @@
-<?php namespace Subscribo\ModelBase;
+<?php
+
+namespace Subscribo\ModelBase;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
@@ -142,5 +144,4 @@ abstract class AbstractModel extends Eloquent {
         }
         parent::__unset($key);
     }
-
 }

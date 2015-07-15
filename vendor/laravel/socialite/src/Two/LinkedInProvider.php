@@ -1,7 +1,5 @@
 <?php namespace Laravel\Socialite\Two;
 
-use GuzzleHttp\ClientInterface;
-
 class LinkedInProvider extends AbstractProvider implements ProviderInterface
 {
 
@@ -11,6 +9,17 @@ class LinkedInProvider extends AbstractProvider implements ProviderInterface
      * @var array
      */
     protected $scopes = ['r_basicprofile', 'r_emailaddress'];
+
+    /**
+     * The fields that are included in the profile.
+     *
+     * @var array
+     */
+    protected $fields = [
+        'id', 'first-name', 'last-name', 'formatted-name',
+        'email-address', 'headline', 'location', 'industry',
+        'public-profile-url', 'picture-url', 'picture-urls::(original)',
+    ];
 
     /**
      * {@inheritdoc}
@@ -25,7 +34,18 @@ class LinkedInProvider extends AbstractProvider implements ProviderInterface
      */
     protected function getTokenUrl()
     {
-        return 'https://www.linkedin.com/uas/oauth2/accessToken?grant_type=authorization_code';
+        return 'https://www.linkedin.com/uas/oauth2/accessToken';
+    }
+
+    /**
+     * Get the POST fields for the token request.
+     *
+     * @param  string  $code
+     * @return array
+     */
+    protected function getTokenFields($code)
+    {
+        return parent::getTokenFields($code) + ['grant_type' => 'authorization_code'];
     }
 
     /**
@@ -33,13 +53,15 @@ class LinkedInProvider extends AbstractProvider implements ProviderInterface
      */
     protected function getUserByToken($token)
     {
-        $fields = 'id,email-address,first-name,last-name,formatted-name,headline,picture-url,public-profile-url,location';
+        $fields = implode(',', $this->fields);
 
-        $response = $this->getHttpClient()->get("https://api.linkedin.com/v1/people/~:({$fields})", [
-          'headers' => [
-            'x-li-format' => 'json',
-            'Authorization' => 'Bearer ' . $token,
-          ],
+        $url = 'https://api.linkedin.com/v1/people/~:('.$fields.')';
+
+        $response = $this->getHttpClient()->get($url, [
+            'headers' => [
+                'x-li-format' => 'json',
+                'Authorization' => 'Bearer ' . $token,
+            ],
         ]);
 
         return json_decode($response->getBody(), true);
@@ -52,7 +74,8 @@ class LinkedInProvider extends AbstractProvider implements ProviderInterface
     {
         return (new User)->setRaw($user)->map([
             'id' => $user['id'], 'nickname' => null, 'name' => array_get($user, 'formattedName'),
-            'email' => array_get($user, 'emailAddress'), 'avatar' => $user['pictureUrl'],
+            'email' => array_get($user, 'emailAddress'), 'avatar' => array_get($user, 'pictureUrl'),
+            'avatar_original' => array_get($user, 'pictureUrls.values.0'),
         ]);
     }
 }

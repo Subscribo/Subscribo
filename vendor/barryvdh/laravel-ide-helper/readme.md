@@ -25,6 +25,9 @@ It's possible to generate a PhpStorm meta file, to [add support for factory desi
 
     /** @var \Illuminate\Foundation\Application $app */
     $app->make('events')->fire();
+    
+    // When the key is not found, it uses the argument as class name
+    app('App\SomeClass');
 
 Pre-generated example: https://gist.github.com/barryvdh/bb6ffc5d11e0a75dba67
 
@@ -59,7 +62,7 @@ You can configure your composer.json to do this after each commit:
 
 You can also publish the config file to change implementations (ie. interface to specific class) or set defaults for `--helpers` or `--sublime`.
 
-    php artisan vendor:publish --provider=barryvdh/laravel-ide-helper --tag=config
+    php artisan vendor:publish --provider="Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider" --tag=config
 
 The generator tries to identify the real class, but if it cannot be found, you can define it in the config file.
 
