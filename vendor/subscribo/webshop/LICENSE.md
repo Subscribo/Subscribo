@@ -3,4 +3,4 @@ Might contain third party code or parts of third party code or (parts of) docume
 
 No claim is made here regarding third party code or its parts.
 
-Specific code is proprietary. Copyright: (c) 2015 Kochabo GmbH, Wien, Austria
+Specific code is proprietary. Copyright: (c) 2015 KochAbo GmbH, Wien, Austria
