@@ -3,6 +3,7 @@
 namespace Illuminate\View\Compilers;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class BladeCompiler extends Compiler implements CompilerInterface
 {
@@ -325,12 +326,12 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function compileEscapedEchos($value)
     {
-        $pattern = sprintf('/%s\s*(.+?)\s*%s(\r?\n)?/s', $this->escapedTags[0], $this->escapedTags[1]);
+        $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->escapedTags[0], $this->escapedTags[1]);
 
         $callback = function ($matches) {
-            $whitespace = empty($matches[2]) ? '' : $matches[2].$matches[2];
+            $whitespace = empty($matches[3]) ? '' : $matches[3].$matches[3];
 
-            return '<?php echo e('.$this->compileEchoDefaults($matches[1]).'); ?>'.$whitespace;
+            return $matches[1] ? $matches[0] : '<?php echo e('.$this->compileEchoDefaults($matches[2]).'); ?>'.$whitespace;
         };
 
         return preg_replace_callback($pattern, $callback, $value);
@@ -478,7 +479,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function compileLang($expression)
     {
-        return "<?php echo \\Illuminate\\Support\\Facades\\Lang::get$expression; ?>";
+        return "<?php echo app('translator')->get$expression; ?>";
     }
 
     /**
@@ -489,7 +490,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function compileChoice($expression)
     {
-        return "<?php echo \\Illuminate\\Support\\Facades\\Lang::choice$expression; ?>";
+        return "<?php echo app('translator')->choice$expression; ?>";
     }
 
     /**
@@ -647,7 +648,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function compileExtends($expression)
     {
-        if (starts_with($expression, '(')) {
+        if (Str::startsWith($expression, '(')) {
             $expression = substr($expression, 1, -1);
         }
 
@@ -666,7 +667,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function compileInclude($expression)
     {
-        if (starts_with($expression, '(')) {
+        if (Str::startsWith($expression, '(')) {
             $expression = substr($expression, 1, -1);
         }
 

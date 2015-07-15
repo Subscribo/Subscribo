@@ -2,6 +2,7 @@
 
 namespace Illuminate\Foundation\Testing;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
 use Symfony\Component\DomCrawler\Form;
@@ -58,7 +59,9 @@ trait CrawlerTrait
      */
     public function get($uri, array $headers = [])
     {
-        $this->call('GET', $uri, [], [], [], $headers);
+        $server = $this->transformHeadersToServerVars($headers);
+
+        $this->call('GET', $uri, [], [], [], $server);
 
         return $this;
     }
@@ -73,7 +76,9 @@ trait CrawlerTrait
      */
     public function post($uri, array $data = [], array $headers = [])
     {
-        $this->call('POST', $uri, $data, [], [], $headers);
+        $server = $this->transformHeadersToServerVars($headers);
+
+        $this->call('POST', $uri, $data, [], [], $server);
 
         return $this;
     }
@@ -88,7 +93,9 @@ trait CrawlerTrait
      */
     public function put($uri, array $data = [], array $headers = [])
     {
-        $this->call('PUT', $uri, $data, [], [], $headers);
+        $server = $this->transformHeadersToServerVars($headers);
+
+        $this->call('PUT', $uri, $data, [], [], $server);
 
         return $this;
     }
@@ -103,7 +110,9 @@ trait CrawlerTrait
      */
     public function patch($uri, array $data = [], array $headers = [])
     {
-        $this->call('PATCH', $uri, $data, [], [], $headers);
+        $server = $this->transformHeadersToServerVars($headers);
+
+        $this->call('PATCH', $uri, $data, [], [], $server);
 
         return $this;
     }
@@ -118,7 +127,9 @@ trait CrawlerTrait
      */
     public function delete($uri, array $data = [], array $headers = [])
     {
-        $this->call('DELETE', $uri, $data, [], [], $headers);
+        $server = $this->transformHeadersToServerVars($headers);
+
+        $this->call('DELETE', $uri, $data, [], [], $server);
 
         return $this;
     }
@@ -325,7 +336,7 @@ trait CrawlerTrait
             $expected = $this->formatToExpectedJson($key, $value);
 
             $this->assertTrue(
-                str_contains($actual, $this->formatToExpectedJson($key, $value)),
+                Str::contains($actual, $this->formatToExpectedJson($key, $value)),
                 "Unable to find JSON fragment [{$expected}] within [{$actual}]."
             );
         }
@@ -344,11 +355,11 @@ trait CrawlerTrait
     {
         $expected = json_encode([$key => $value]);
 
-        if (starts_with($expected, '{')) {
+        if (Str::startsWith($expected, '{')) {
             $expected = substr($expected, 1);
         }
 
-        if (ends_with($expected, '}')) {
+        if (Str::endsWith($expected, '}')) {
             $expected = substr($expected, 0, -1);
         }
 
@@ -738,15 +749,36 @@ trait CrawlerTrait
      */
     protected function prepareUrlForRequest($uri)
     {
-        if (starts_with($uri, '/')) {
+        if (Str::startsWith($uri, '/')) {
             $uri = substr($uri, 1);
         }
 
-        if (!starts_with($uri, 'http')) {
+        if (!Str::startsWith($uri, 'http')) {
             $uri = $this->baseUrl.'/'.$uri;
         }
 
         return trim($uri, '/');
+    }
+
+    /**
+     * Transform headers array to array of $_SERVER vars with HTTP_* format.
+     *
+     * @param  array  $headers
+     * @return array
+     */
+    protected function transformHeadersToServerVars(array $headers)
+    {
+        $server = [];
+
+        foreach ($headers as $name => $value) {
+            if (!starts_with($name, 'HTTP_')) {
+                $name = 'HTTP_'.strtr(strtoupper($name), '-', '_');
+            }
+
+            $server[$name] = $value;
+        }
+
+        return $server;
     }
 
     /**
