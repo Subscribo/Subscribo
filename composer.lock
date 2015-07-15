@@ -4,8 +4,46 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "00223f2ad780607e7e337205f831e9ce",
+    "hash": "0a1947e0144fc7bc76d793888631e151",
     "packages": [
+        {
+            "name": "Subscribo/webshop",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "/Users/slavo/Projects/packages/workbench/subscribo/webshop",
+                "reference": "e0025537d2d9d52190c48125a58283e5c26876f1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://satis.localhost/downloads/subscribo-webshop-dev-master-4fbbf1.zip",
+                "reference": "e0025537d2d9d52190c48125a58283e5c26876f1",
+                "shasum": "8b2ef173278da21f4297177b860078a8eea59a5f"
+            },
+            "require": {
+                "illuminate/routing": "^5.1",
+                "php": "~5.4",
+                "subscribo/billing": "@dev",
+                "subscribo/support": "@dev"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Subscribo\\Webshop\\": "src/Subscribo/Webshop"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "A simple webshop using Subscribo system",
+            "homepage": "http://www.subscribo.io",
+            "keywords": [
+                "shop",
+                "subscribo",
+                "webshop"
+            ],
+            "time": "2015-07-15 13:09:01"
+        },
         {
             "name": "classpreloader/classpreloader",
             "version": "dev-master",
@@ -266,6 +304,85 @@
                 "string"
             ],
             "time": "2015-07-07 15:32:45"
+        },
+        {
+            "name": "egeloen/http-adapter",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/egeloen/ivory-http-adapter.git",
+                "reference": "aa9c449493bd8da51559d526261dcea48a98c767"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/egeloen/ivory-http-adapter/zipball/aa9c449493bd8da51559d526261dcea48a98c767",
+                "reference": "aa9c449493bd8da51559d526261dcea48a98c767",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.8",
+                "zendframework/zend-diactoros": "^1.1"
+            },
+            "require-dev": {
+                "cakephp/cakephp": "^3.0.3",
+                "ext-curl": "*",
+                "guzzle/guzzle": "^3.9.4@dev",
+                "guzzlehttp/guzzle": "^4.1.4|^5.0",
+                "guzzlehttp/streams": "^1.5|^2.0|^3.0",
+                "kriswallsmith/buzz": "^0.13",
+                "nategood/httpful": "^0.2.17",
+                "phpunit/phpunit": "^4.0",
+                "phpunit/phpunit-mock-objects": "dev-matcher-verify as 2.3.x-dev",
+                "psr/log": "^1.0",
+                "react/dns": "^0.4.1",
+                "react/http-client": "^0.4",
+                "satooshi/php-coveralls": "^0.6",
+                "symfony/event-dispatcher": "^2.0",
+                "zendframework/zend-http": "^2.3.4",
+                "zendframework/zendframework1": "^1.12.9"
+            },
+            "suggest": {
+                "ext-curl": "Allows you to use the cURL adapter",
+                "ext-http": "Allows you to use the PECL adapter",
+                "guzzle/guzzle": "Allows you to use the Guzzle 3 adapter",
+                "guzzlehttp/guzzle": "Allows you to use the Guzzle 4 adapter",
+                "kriswallsmith/buzz": "Allows you to use the Buzz adapter",
+                "nategood/httpful": "Allows you to use the httpful adapter",
+                "psr/log": "Allows you to use the logger event subscriber",
+                "symfony/event-dispatcher": "Allows you to use the event lifecycle",
+                "symfony/stopwatch": "Allows you to use the stopwatch http adapter and event subscriber",
+                "zendframework/zend-http": "Allows you to use the Zend 2 adapter",
+                "zendframework/zendframework1": "Allows you to use the Zend 1 adapter"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.8-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ivory\\HttpAdapter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Eric GELOEN",
+                    "email": "geloen.eric@gmail.com"
+                }
+            ],
+            "description": "Issue HTTP request for PHP 5.3+.",
+            "keywords": [
+                "http",
+                "http-adapter",
+                "http-client",
+                "psr-7"
+            ],
+            "time": "2015-07-12 20:19:48"
         },
         {
             "name": "guzzle/guzzle",
@@ -659,6 +776,42 @@
                 "tokenizer"
             ],
             "time": "2015-06-09 19:13:35"
+        },
+        {
+            "name": "klarna/checkout",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/klarna/kco_php.git",
+                "reference": "bbfcee7f368f302159791a56dba0419ecb975146"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/klarna/kco_php/zipball/bbfcee7f368f302159791a56dba0419ecb975146",
+                "reference": "bbfcee7f368f302159791a56dba0419ecb975146",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.16"
+            },
+            "require-dev": {
+                "phpmd/phpmd": "~1.5",
+                "phpunit/phpunit": "~3.7",
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Klarna": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Wrapper for the Klarna Checkout API",
+            "homepage": "http://developers.klarna.com",
+            "time": "2014-03-27 13:35:56"
         },
         {
             "name": "laravel/framework",
@@ -1199,6 +1352,207 @@
             "time": "2015-07-14 17:31:05"
         },
         {
+            "name": "omnipay/common",
+            "version": "v2.3.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/omnipay-common.git",
+                "reference": "fcd5a606713d11536c89315a5ae02d965a737c21"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/omnipay-common/zipball/fcd5a606713d11536c89315a5ae02d965a737c21",
+                "reference": "fcd5a606713d11536c89315a5ae02d965a737c21",
+                "shasum": ""
+            },
+            "require": {
+                "guzzle/guzzle": "~3.9",
+                "php": ">=5.3.2",
+                "symfony/http-foundation": "~2.1"
+            },
+            "require-dev": {
+                "omnipay/tests": "~2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                },
+                "gateways": [
+                    "AuthorizeNet_AIM",
+                    "AuthorizeNet_SIM",
+                    "Buckaroo",
+                    "Buckaroo_Ideal",
+                    "Buckaroo_PayPal",
+                    "CardSave",
+                    "Coinbase",
+                    "Dummy",
+                    "Eway_Rapid",
+                    "FirstData_Connect",
+                    "GoCardless",
+                    "Manual",
+                    "Migs_ThreeParty",
+                    "Migs_TwoParty",
+                    "Mollie",
+                    "MultiSafepay",
+                    "Netaxept",
+                    "NetBanx",
+                    "PayFast",
+                    "Payflow_Pro",
+                    "PaymentExpress_PxPay",
+                    "PaymentExpress_PxPost",
+                    "PayPal_Express",
+                    "PayPal_Pro",
+                    "Pin",
+                    "SagePay_Direct",
+                    "SagePay_Server",
+                    "SecurePay_DirectPost",
+                    "Stripe",
+                    "TargetPay_Directebanking",
+                    "TargetPay_Ideal",
+                    "TargetPay_Mrcash",
+                    "TwoCheckout",
+                    "WorldPay",
+                    "Alipay Bank",
+                    "AliPay Dual Func",
+                    "Alipay Express",
+                    "Alipay Mobile Express",
+                    "Alipay Secured",
+                    "Alipay Wap Express",
+                    "Cybersource",
+                    "DataCash",
+                    "Ecopayz",
+                    "Neteller",
+                    "Pacnet",
+                    "PaymentSense",
+                    "Realex Remote",
+                    "SecPay (PayPoint.net)",
+                    "Sisow",
+                    "Skrill",
+                    "YandexMoney",
+                    "YandexMoneyIndividual"
+                ]
+            },
+            "autoload": {
+                "psr-0": {
+                    "Omnipay\\Common\\": "src/"
+                },
+                "classmap": [
+                    "src/Omnipay/Omnipay.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Adrian Macneil",
+                    "email": "adrian@adrianmacneil.com"
+                },
+                {
+                    "name": "Omnipay Contributors",
+                    "homepage": "https://github.com/thephpleague/omnipay-common/contributors"
+                }
+            ],
+            "description": "Common components for Omnipay payment processing library",
+            "homepage": "https://github.com/thephpleague/omnipay-common",
+            "keywords": [
+                "gateway",
+                "merchant",
+                "omnipay",
+                "pay",
+                "payment",
+                "purchase"
+            ],
+            "time": "2015-03-30 14:34:46"
+        },
+        {
+            "name": "phpxmlrpc/phpxmlrpc",
+            "version": "3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gggeek/phpxmlrpc.git",
+                "reference": "490862c33009397151ac39c811b6ee8e24689692"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gggeek/phpxmlrpc/zipball/490862c33009397151ac39c811b6ee8e24689692",
+                "reference": "490862c33009397151ac39c811b6ee8e24689692",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "lib/xmlrpc.inc",
+                    "lib/xmlrpcs.inc"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "A php library for building xmlrpc clients and servers",
+            "homepage": "http://gggeek.github.io/phpxmlrpc/",
+            "keywords": [
+                "webservices",
+                "xmlrpc"
+            ],
+            "time": "2015-04-19 00:17:47"
+        },
+        {
+            "name": "psr/http-message",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-message.git",
+                "reference": "85d63699f0dbedb190bbd4b0d2b9dc707ea4c298"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/85d63699f0dbedb190bbd4b0d2b9dc707ea4c298",
+                "reference": "85d63699f0dbedb190bbd4b0d2b9dc707ea4c298",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP messages",
+            "keywords": [
+                "http",
+                "http-message",
+                "psr",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "time": "2015-05-04 20:22:00"
+        },
+        {
             "name": "psr/log",
             "version": "dev-master",
             "source": {
@@ -1366,13 +1720,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/api1",
-                "reference": "b5e50296a89de9898a7396e0da48a84194fe267a"
+                "reference": "30624b90fb7cea024404926e702225095c6a806f"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-api1-dev-master-91e856.zip",
-                "reference": "b5e50296a89de9898a7396e0da48a84194fe267a",
-                "shasum": "a7fd9187d3aa0778bbf3c15a4a56bfb6c0613e98"
+                "url": "http://satis.localhost/downloads/subscribo-api1-dev-master-870830.zip",
+                "reference": "30624b90fb7cea024404926e702225095c6a806f",
+                "shasum": "ff3ec6b24c5743476cb43cef8394c4e82ebf79e8"
             },
             "require": {
                 "illuminate/routing": "~5.0",
@@ -1421,7 +1775,7 @@
                 "subscribo",
                 "v1"
             ],
-            "time": "2015-07-15 11:10:59"
+            "time": "2015-07-15 13:14:07"
         },
         {
             "name": "subscribo/apiclient",
@@ -1879,6 +2233,66 @@
             "time": "2015-07-15 11:10:57"
         },
         {
+            "name": "subscribo/billing",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "/Users/slavo/Projects/packages/workbench/subscribo/billing",
+                "reference": "db25982391a9b0123a5bd1be97bc98155ff07739"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://satis.localhost/downloads/subscribo-billing-dev-master-2451f5.zip",
+                "reference": "db25982391a9b0123a5bd1be97bc98155ff07739",
+                "shasum": "841636aa0bb9ce42053be1ededa556835fb568df"
+            },
+            "require": {
+                "klarna/checkout": "1.2",
+                "php": "~5.4",
+                "subscribo/omnipay-klarna": "dev-feature/checkout",
+                "subscribo/omnipay-payunity": "^0.4.0",
+                "subscribo/psr-http-message-tools": ">=0.3.1 <0.5",
+                "subscribo/support": "@dev"
+            },
+            "suggest": {
+                "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Subscribo\\Billing\\": "src/Subscribo/Billing/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Slavo",
+                    "role": "developer"
+                },
+                {
+                    "name": "KochAbo GmbH",
+                    "role": "owner"
+                }
+            ],
+            "description": "Package Billing is an umbrella package for billing, charging, invoicing and payment functionality",
+            "homepage": "http://www.subscribo.io",
+            "keywords": [
+                "billing",
+                "charging",
+                "laravel",
+                "payment",
+                "subscribo"
+            ],
+            "time": "2015-07-15 13:04:06"
+        },
+        {
             "name": "subscribo/config",
             "version": "dev-master",
             "source": {
@@ -2109,6 +2523,82 @@
                 "subscribo"
             ],
             "time": "2015-07-15 11:10:59"
+        },
+        {
+            "name": "subscribo/klarna-invoice-sdk-wrapped",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Subscribo/klarna-invoice-sdk-wrapped.git",
+                "reference": "31dd51af2102a814380c5a8aae941383270c4669"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Subscribo/klarna-invoice-sdk-wrapped/zipball/31dd51af2102a814380c5a8aae941383270c4669",
+                "reference": "31dd51af2102a814380c5a8aae941383270c4669",
+                "shasum": ""
+            },
+            "require": {
+                "phpxmlrpc/phpxmlrpc": "^3.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/Klarna.php",
+                    "src/Exceptions.php",
+                    "src/Flags.php",
+                    "src/Country.php",
+                    "src/Currency.php",
+                    "src/Encoding.php",
+                    "src/Language.php",
+                    "src/klarnaaddr.php",
+                    "src/klarnacalc.php",
+                    "src/klarnaconfig.php",
+                    "src/klarnapclass.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Klarna AB",
+                    "email": "opensource@klarna.com",
+                    "homepage": "https://developers.klarna.com",
+                    "role": "Original SDK developing company"
+                },
+                {
+                    "name": "MS Dev",
+                    "email": "ms.modules@klarna.com",
+                    "homepage": "https://developers.klarna.com/en/at+php/kpm/download",
+                    "role": "Original SDK development team"
+                },
+                {
+                    "name": "Slavo",
+                    "role": "Package developer"
+                },
+                {
+                    "name": "Subscribo",
+                    "email": "packages@subscribo.io",
+                    "homepage": "http://subscribo.io",
+                    "role": "Packager"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/Subscribo/klarna-invoice-sdk-wrapped/graphs/contributors",
+                    "role": "Package developers and contributors"
+                }
+            ],
+            "description": "Klarna Invoice and Part payment SDK modified and wrapped for use with Composer",
+            "homepage": "https://github.com/Subscribo/klarna-invoice-sdk-wrapped",
+            "keywords": [
+                "Part payment",
+                "invoice",
+                "klarna",
+                "sdk"
+            ],
+            "time": "2015-06-02 08:22:57"
         },
         {
             "name": "subscribo/localization",
@@ -2403,6 +2893,286 @@
                 "subscribo"
             ],
             "time": "2015-07-15 11:10:58"
+        },
+        {
+            "name": "subscribo/omnipay-klarna",
+            "version": "dev-feature/checkout",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Subscribo/omnipay-klarna.git",
+                "reference": "da19dcab6b3069ebb3162580a28357b072b10022"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Subscribo/omnipay-klarna/zipball/da19dcab6b3069ebb3162580a28357b072b10022",
+                "reference": "da19dcab6b3069ebb3162580a28357b072b10022",
+                "shasum": ""
+            },
+            "require": {
+                "omnipay/common": "^2.3.4",
+                "php": "^5.4 || 7.0@dev",
+                "subscribo/klarna-invoice-sdk-wrapped": "^1.0.1",
+                "subscribo/omnipay-subscribo-shared": "^0.3.0"
+            },
+            "require-dev": {
+                "klarna/checkout": "1.2",
+                "omnipay/tests": "^2.0",
+                "subscribo/psr-http-message-tools": ">=0.3.1 <0.5"
+            },
+            "suggest": {
+                "klarna/checkout": "(1.2) For Klarna Checkout",
+                "subscribo/psr-http-message-tools": "(>=0.3.1 <0.5) For Klarna Checkout"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Omnipay\\Klarna\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Adrian Macneil",
+                    "email": "adrian@adrianmacneil.com"
+                },
+                {
+                    "name": "Omnipay Contributors",
+                    "homepage": "https://github.com/thephpleague/omnipay-dummy/contributors"
+                },
+                {
+                    "name": "Slavo"
+                },
+                {
+                    "name": "Omnipay Klarna driver contributors",
+                    "homepage": "https://github.com/Subscribo/omnipay-klarna/contributors"
+                },
+                {
+                    "name": "Kochabo"
+                }
+            ],
+            "description": "Klarna driver for the Omnipay payment processing library",
+            "homepage": "http://www.subscribo.io",
+            "keywords": [
+                "Part payment",
+                "gateway",
+                "invoice",
+                "klarna",
+                "merchant",
+                "omnipay",
+                "pay",
+                "payment"
+            ],
+            "time": "2015-07-14 16:29:49"
+        },
+        {
+            "name": "subscribo/omnipay-payunity",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Subscribo/omnipay-payunity.git",
+                "reference": "9061a1f30f8217b445740623df5301c0430348f8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Subscribo/omnipay-payunity/zipball/9061a1f30f8217b445740623df5301c0430348f8",
+                "reference": "9061a1f30f8217b445740623df5301c0430348f8",
+                "shasum": ""
+            },
+            "require": {
+                "egeloen/http-adapter": "^0.8@dev",
+                "omnipay/common": "^2.3.4",
+                "php": "^5.4 || 7.0@dev",
+                "psr/http-message": "^1.0",
+                "subscribo/omnipay-subscribo-shared": "^0.3.4",
+                "subscribo/psr-http-message-tools": ">=0.3.2 <0.5"
+            },
+            "require-dev": {
+                "monolog/monolog": "^1.13.1",
+                "omnipay/tests": "^2.0",
+                "symfony/http-foundation": "~2.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Omnipay\\PayUnity\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Adrian Macneil",
+                    "email": "adrian@adrianmacneil.com"
+                },
+                {
+                    "name": "Omnipay Contributors",
+                    "homepage": "https://github.com/thephpleague/omnipay-dummy/contributors"
+                },
+                {
+                    "name": "Slavo"
+                },
+                {
+                    "name": "Subscribo",
+                    "email": "packages@subscribo.io",
+                    "homepage": "http://www.subscribo.io"
+                },
+                {
+                    "name": "Kochabo"
+                }
+            ],
+            "description": "PayUnity driver for the Omnipay payment processing library",
+            "homepage": "http://www.subscribo.io",
+            "keywords": [
+                "PayUnity",
+                "gateway",
+                "merchant",
+                "omnipay",
+                "pay",
+                "payment"
+            ],
+            "time": "2015-07-14 16:11:28"
+        },
+        {
+            "name": "subscribo/omnipay-subscribo-shared",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Subscribo/omnipay-subscribo-shared.git",
+                "reference": "77fa2c3a1639c3ae64a8ea42b21276d2d04ba15d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Subscribo/omnipay-subscribo-shared/zipball/77fa2c3a1639c3ae64a8ea42b21276d2d04ba15d",
+                "reference": "77fa2c3a1639c3ae64a8ea42b21276d2d04ba15d",
+                "shasum": ""
+            },
+            "require": {
+                "omnipay/common": "^2.3.2",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "egeloen/http-adapter": "^0.8@dev",
+                "omnipay/tests": "^2.0",
+                "phly/http": ">=0.13.3 <0.15.0",
+                "phpunit/phpunit": "<5.0",
+                "psr/http-message": "^1.0",
+                "psr/log": "^1.0",
+                "subscribo/psr-http-message-tools": ">=0.3.2 <0.5",
+                "symfony/http-foundation": "<=3.0"
+            },
+            "suggest": {
+                "egeloen/http-adapter": "(^0.8@dev) when HttpMessageSendingTrait is used",
+                "psr/http-message": "(^1.0) when HttpMessageSendingTrait is used",
+                "psr/log": "(^1.0) When GuzzleClientHelper or AbstractGateway::attachPsrLogger() is used",
+                "subscribo/psr-http-message-tools": "(>=0.3.2 <0.5) For PSR-7 compliant Request object factory, e.g. when SimpleRestfulRequestTrait, AbstractRestfulResponse or SimpleRestfulResponse is used"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Subscribo\\Omnipay\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Slavo",
+                    "role": "developer"
+                },
+                {
+                    "name": "Kochabo",
+                    "role": "owner"
+                }
+            ],
+            "description": "Package with shared functionality for some Omnipay payment processing library drivers",
+            "homepage": "http://www.subscribo.io",
+            "keywords": [
+                "driver",
+                "omnipay",
+                "shared"
+            ],
+            "time": "2015-07-14 16:12:19"
+        },
+        {
+            "name": "subscribo/psr-http-message-tools",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Subscribo/psr-http-message-tools.git",
+                "reference": "7c10da5a9cbae6d32071e983072d6f620c18cedb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Subscribo/psr-http-message-tools/zipball/7c10da5a9cbae6d32071e983072d6f620c18cedb",
+                "reference": "7c10da5a9cbae6d32071e983072d6f620c18cedb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5",
+                "psr/http-message": "^1.0",
+                "zendframework/zend-diactoros": "^1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "<5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Subscribo\\PsrHttpMessageTools\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Slavo",
+                    "role": "developer"
+                },
+                {
+                    "name": "Kochabo",
+                    "role": "owner"
+                }
+            ],
+            "description": "Tools which could be used with PSR-7: Request factory, Uri factory, Response parser",
+            "homepage": "http://www.subscribo.io",
+            "keywords": [
+                "factory",
+                "parser",
+                "psr-7",
+                "request",
+                "response",
+                "uri"
+            ],
+            "time": "2015-07-14 16:23:39"
         },
         {
             "name": "subscribo/restclient",
@@ -3770,6 +4540,56 @@
                 "environment"
             ],
             "time": "2015-05-30 15:59:26"
+        },
+        {
+            "name": "zendframework/zend-diactoros",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/zend-diactoros.git",
+                "reference": "8174b7237baaac98b26caa63aa38671bd275d291"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/8174b7237baaac98b26caa63aa38671bd275d291",
+                "reference": "8174b7237baaac98b26caa63aa38671bd275d291",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "psr/http-message": "~1.0"
+            },
+            "provide": {
+                "psr/http-message-implementation": "~1.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.6",
+                "squizlabs/php_codesniffer": "^2.3.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev",
+                    "dev-develop": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zend\\Diactoros\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "description": "PSR HTTP Message implementations",
+            "homepage": "https://github.com/zendframework/zend-diactoros",
+            "keywords": [
+                "http",
+                "psr",
+                "psr-7"
+            ],
+            "time": "2015-07-12 18:02:57"
         }
     ],
     "packages-dev": [
@@ -5355,6 +6175,7 @@
         "subscribo/apiclient": 20,
         "subscribo/modifier": 20,
         "subscribo/developmentseeder": 20,
+        "subscribo/webshop": 20,
         "subscribo/schemabuilder": 20,
         "subscribo/apichecker": 20,
         "subscribo/clientchecker": 20,
