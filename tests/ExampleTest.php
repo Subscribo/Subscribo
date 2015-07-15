@@ -14,6 +14,7 @@ class ExampleTest extends TestCase
      */
     public function testBasicExample()
     {
+        ini_set('xdebug.max_nesting_level', 200);
         $this->visit('/')
              ->see('Subscribo: Welcome');
     }
