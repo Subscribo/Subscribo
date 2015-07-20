@@ -63,6 +63,9 @@ class CustomerRegistrationFactory
         if ( ! empty($data['phone'])) {
             $customerRegistration->phone = $data['phone'];
         }
+        if ( ! empty($data['delivery_information'])) {
+            $customerRegistration->deliveryInformation = $data['delivery_information'];
+        }
         if ( ! empty($data['oauth'])) {
             $token = AccountToken::generate($data['oauth'], null);
             $customerRegistration->accountTokenId = $token->id;

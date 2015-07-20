@@ -49,11 +49,12 @@ class AccountController extends AbstractController
         'oauth' => 'array',
         'gender' => 'in:man,woman',
         'first_name' => 'max:100',
-        'last_name' => 'max:100',
-        'street' => 'max:255',
+        'last_name' => 'required_with:city|max:100',
+        'street' => 'required_with:city|max:255',
         'post_code' => 'max:30',
         'city' => 'max:100',
-        'country' => 'max:100',
+        'country' => 'required_with:city|max:100',
+        'delivery_information' => 'max:500',
     ];
 
     public function actionPostRegistration()
