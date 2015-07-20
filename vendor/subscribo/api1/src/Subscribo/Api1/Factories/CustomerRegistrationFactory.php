@@ -39,6 +39,30 @@ class CustomerRegistrationFactory
         if ( ! empty($data['email'])) {
             $customerRegistration->email = $data['email'];
         }
+        if ( ! empty($data['gender'])) {
+            $customerRegistration->gender = $data['gender'];
+        }
+        if ( ! empty($data['first_name'])) {
+            $customerRegistration->firstName = $data['first_name'];
+        }
+        if ( ! empty($data['last_name'])) {
+            $customerRegistration->lastName = $data['last_name'];
+        }
+        if ( ! empty($data['street'])) {
+            $customerRegistration->street = $data['street'];
+        }
+        if ( ! empty($data['post_code'])) {
+            $customerRegistration->postCode = $data['post_code'];
+        }
+        if ( ! empty($data['city'])) {
+            $customerRegistration->city = $data['city'];
+        }
+        if ( ! empty($data['country'])) {
+            $customerRegistration->country = $data['country'];
+        }
+        if ( ! empty($data['phone'])) {
+            $customerRegistration->phone = $data['phone'];
+        }
         if ( ! empty($data['oauth'])) {
             $token = AccountToken::generate($data['oauth'], null);
             $customerRegistration->accountTokenId = $token->id;

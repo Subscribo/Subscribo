@@ -61,8 +61,7 @@ class AccountFactory
             /** @var Service $service */
             $service = Service::with('availableLocales', 'defaultLocale')->find($serviceId);
             $locale = $service->chooseLocale($registrationLocaleIdentifier);
-            $name = trim(Arr::get($data, 'name')) ?: $data['email'];
-            $person = Person::generate($name, Arr::get($data, 'gender'));
+            $person = Person::generate($data);
             $customer = $this->create($data);
             $customer->person()->associate($person);
             $customer->preferredLocale()->associate($locale->uncustomize());
@@ -88,6 +87,7 @@ class AccountFactory
      */
     public function registerFromCustomerRegistration(CustomerRegistration $customerRegistration, $serviceId, $registrationLocaleIdentifier)
     {
+        $data = $customerRegistration->export();
         $account = Account::findByEmailAndServiceId($customerRegistration->email, $serviceId);
         if ($account) {
             $status = $customerRegistration::STATUS_EXISTING_ACCOUNT_USED;
@@ -106,8 +106,7 @@ class AccountFactory
             } else {
                 $locale = $service->chooseLocale($registrationLocaleIdentifier);
                 $status = $customerRegistration::STATUS_NEW_ACCOUNT_GENERATED;
-                $name = trim($customerRegistration->name) ?: $customerRegistration->email;
-                $person = Person::generate($name);//todo add gender if implemented
+                $person = Person::generate($data);
                 $customer = new Customer();
                 $customer->email = $customerRegistration->email;
                 $customer->password = $customerRegistration->password;

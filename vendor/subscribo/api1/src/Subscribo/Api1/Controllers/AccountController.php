@@ -47,6 +47,13 @@ class AccountController extends AbstractController
         'email' => 'required_without:oauth|email|max:255',
         'password' => 'required_without:oauth|min:5',
         'oauth' => 'array',
+        'gender' => 'in:man,woman',
+        'first_name' => 'max:100',
+        'last_name' => 'max:100',
+        'street' => 'max:255',
+        'post_code' => 'max:30',
+        'city' => 'max:100',
+        'country' => 'max:100',
     ];
 
     public function actionPostRegistration()
