@@ -22,19 +22,34 @@ class Person extends \Subscribo\ModelCore\Bases\Person
     protected static $prefixes = ['Herr', 'Frau', 'Dr.', 'Dipl.-Ing.', 'Ing.', 'Bc.', 'Mag.', 'LAbg.', 'HR', 'Abg.z.NR',  'Prof.', 'Univ.Prof.', 'doc.', 'Mgr.', 'et.' ];
 
     /**
-     * @param string $name
-     * @param string|null $gender
-     * @return Person|static
+     * @param array $data
+     * @return Person
      */
-    public static function generate($name, $gender = null)
+    public static function generate(array $data)
     {
-        if (filter_var($name, FILTER_VALIDATE_EMAIL)) {
-            $name = static::deriveNameFromEmail($name);
+        $instance = new self();
+        if ( ! empty($data['gender'])) {
+            $instance->gender = $data['gender'];
         }
-        $instance = new static();
-        $instance->gender = $gender;
-        $instance->assignName($name);
+        if (( ! empty($data['first_name'])) or ( ! empty($data['last_name']))) {
+            $instance->firstName = isset($data['first_name']) ? $data['first_name'] : null;
+            $instance->lastName = isset($data['last_name']) ? $data['last_name'] : null;
+        } else {
+            if ( ! empty($data['name'])) {
+                $name = $data['name'];
+            } elseif (( ! empty($data['email'])) and filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                $name = static::deriveNameFromEmail($data['email']);
+            } elseif ( ! empty($data['username'])) {
+                $name = static::deriveNameFromUsername($data['username']);
+            } else {
+                $name = null;
+            }
+            if ($name) {
+                $instance->assignName($name);
+            }
+        }
         $instance->save();
+
         return $instance;
     }
 
@@ -104,6 +119,16 @@ class Person extends \Subscribo\ModelCore\Bases\Person
     private static function deriveNameFromEmail($email)
     {
         $username = strstr($email, '@', true);
+
+        return static::deriveNameFromUsername($username);
+    }
+
+    /**
+     * @param string $username
+     * @return string
+     */
+    private static function deriveNameFromUsername($username)
+    {
         $normalized = preg_replace('/[^a-zA-Z]+/', ' ', $username);
         $parts = explode(' ', $normalized);
         $result = '';

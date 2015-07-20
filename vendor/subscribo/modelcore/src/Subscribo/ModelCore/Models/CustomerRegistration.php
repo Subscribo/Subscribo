@@ -92,4 +92,23 @@ class CustomerRegistration extends \Subscribo\ModelCore\Bases\CustomerRegistrati
         $this->save();
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function export()
+    {
+        return [
+            'name' => $this->name,
+            'first_name' => $this->firstName,
+            'last_name' => $this->lastName,
+            'gender' => $this->gender,
+            'street' => $this->street,
+            'city' => $this->city,
+            'post_code' => $this->postCode,
+            'country' => $this->country,
+            'phone' => $this->phone,
+            'email' => $this->email,
+        ];
+    }
 }

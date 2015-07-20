@@ -3,28 +3,27 @@
 namespace Subscribo\ModelCore\Models;
 
 use Subscribo\ModelBase\Traits\SearchableByIdentifierTrait;
-use Subscribo\ModelCore\Models\PaymentConfiguration;
+use Subscribo\ModelCore\Models\TransactionGatewayConfiguration;
 
 /**
- * Model PaymentMethod
+ * Model TransactionGateway
  *
  * Model class for being changed and used in the application
  */
-class PaymentMethod extends \Subscribo\ModelCore\Bases\PaymentMethod
+class TransactionGateway extends \Subscribo\ModelCore\Bases\TransactionGateway
 {
     use SearchableByIdentifierTrait;
 
     public static function findAvailable($serviceId, $countryId = null, $currencyId = null)
     {
-        $configurations = PaymentConfiguration::findByAttributes($serviceId, $countryId, $currencyId, true);
+        $configurations = TransactionGatewayConfiguration::findByAttributes($serviceId, $countryId, $currencyId, true, true);
         $result = [];
         foreach ($configurations as $configuration) {
-            $item = $configuration->paymentMethod->toArray();
+            $item = $configuration->transactionGateway->toArray();
             $item['is_default'] = $configuration->isDefault;
             $result[] = $item;
         }
 
         return $result;
     }
-
 }

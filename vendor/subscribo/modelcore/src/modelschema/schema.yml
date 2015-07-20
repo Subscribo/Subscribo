@@ -415,6 +415,14 @@ model_fields:
         - email null
         - password (password) null hidden
         - account_token_id null
+        - first_name null
+        - last_name null
+        - street null
+        - city null
+        - post_code null
+        - country null
+        - phone null
+        - gender (enum from man woman) null
 
     account_tokens:
         - account_id null
@@ -424,7 +432,11 @@ model_fields:
         - secret null
         - comment null
 
-
+    account_transaction_gateway_tokens:
+        - account_id
+        - transaction_gateway_configuration_id
+        - token
+        - is_default (bool) default false
 
     persons:
     - salutation null
@@ -517,12 +529,13 @@ model_fields:
     - name translate
 
     products:
-    - identifier (identifier) unique representative // unique string used in API
+    - identifier (identifier) representative // unique per service string used in API
     - service_id → services
     - standalone (bool) default false
     - name translate
     - description translate null
     - tax_category_id -> tax_categories
+    - flags (int) default 0
 
     prices:
     - service_id → services
@@ -533,7 +546,7 @@ model_fields:
     - everywhere (bool) default false
 
     tax_categories:
-    - identifier (identifier) unique representative // unique string used in API
+    - identifier (identifier) representative // unique per service string used in API
     - service_id null → services
     - parent_id null -> tax_categories
     - is_default (bool) default false
@@ -569,7 +582,8 @@ model_fields:
 
 
     realizations: #Model denoting a particular product realization for particular delivery
-    - identifier (identifier) unique representative // unique string used in API
+    - identifier (identifier) representative // unique per service string used in API
+    - service_id
     - comment null
     - product_id → products
     - delivery_id → deliveries
@@ -599,7 +613,7 @@ model_fields:
     orders:
     - type (enum from automatic manual)
     - status (unsigned tiny int) //1 - ordering / 2 - ordered / 3 - prepared / 4 - send / 5 - delivered / 6 - returned, 7 -  cancelled...)
-    - payment_id null → payments
+    - transaction_id null → transactions
     - delivery_id null → deliveries
     - delivery_window_id null → delivery_windows
     - anticipated_delivery_start (datetime) null
@@ -613,13 +627,34 @@ model_fields:
     - realization_id → realizations
     - amount (unsigned int)
 
-    payments:
-    - type (unsigned tiny int)  // 1 - send_from_account / 2 - credit_card / 3 - direct_debit ...)
-    - status (unsigned tiny int) // 1 - planned / 2 - requested / 3 - paid / 4 - rejected / 5 - canceled / 6 - requested_back …)
+    transactions:
+    - service_id
+    - direction (enum from receive send) default word receive
+    - type (enum from standard refund) default word standard
+    - origin (enum from system user customer guest outside)
+    - parent_id null -> transactions
+    - user_id
+    - account_id
+    - transaction_gateway_id
+    - hash unique
+    - reference null
+    - message null
+    - code null
+    - payment_method (unsigned tiny int) null // 1 - used_inner_credit / 2 - send_from_account / 3 - send_from_account_using_special_service (SOFORT) / 4 - credit_card / 5 - debit_card / 6 - direct_debit / 7 - invoice...)
+    - stage (unsigned tiny int) default 1 // 1 - planned / 2 - prepared / 3 - authorization_requested / 4 - authorization_response_received / 5 - capture_requested / 6 - capture_response_received / 7 - charge_requested / 8 - charge_response_received / 9 - waiting_for_async_resolution / 10 - async_resolution_received  / 11 - finished / 12 - cancelled / 13 - reversion_requested / 14 - reversion_request_answered / 15 - reverted
+    - status (unsigned tiny int) default 1 // 1 - no_response_yet / 2 - accepted / 3 - waiting / 4 - client_error / 5 - server_error (or connection error) / 6 - denied / 7 - widget_provided / 8 - redirected / 9 - redirected_back
     - amount (currency)
-    - vat (currency)
+    - vat (currency) null
     - currency_id (int)
+    - country_id null
     - billing_detail_id null → billing_details
+    - first_request_sent_on (datetime) null
+    - first_response_received_on (datetime) null
+    - last_request_sent_on (datetime) null
+    - last_response_received_on (datetime) null
+    - finalized_on (datetime) null
+    - revisited_on (datetime) null
+    - note null
 
     currencies: #    (possibly a “virtual” table)
     - identifier (identifier) unique representative
@@ -634,17 +669,20 @@ model_fields:
     - country_id null
     - is_default (bool) default false
 
-    payment_methods:
+    transaction_gateways:
     - identifier (identifier) unique representative
+    - gateway
     - name translate
     - description translate
 
-    payment_configurations:
+    transaction_gateway_configurations:
     - service_id
-    - payment_method_id
+    - transaction_gateway_id
+    - for_receiving_payments (bool) default true
     - country_id null
     - currency_id null
     - is_default (bool) default false
+    - ordering (int) null
     - configuration (text)
 
     pictures:
@@ -661,14 +699,15 @@ model_fields:
 
 
     tags:
-    - identifier (identifier) unique representative // unique string used in API
+    - identifier (identifier) representative // unique per service string used in API
+    - service_id null
     - name translate
     - tag_group_id
 
     tag_groups:
-    - identifier (identifier) unique representative // unique string used in API
-    - name translate
+    - identifier (identifier) representative // unique string used in API
     - service_id null
+    - name translate
 
 
     kochabo_recipes:
