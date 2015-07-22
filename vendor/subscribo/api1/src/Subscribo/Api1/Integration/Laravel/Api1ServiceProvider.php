@@ -51,7 +51,6 @@ class Api1ServiceProvider extends ServiceProvider
             'Subscribo\\Api1\\Controllers\\OAuthController',
             'Subscribo\\Api1\\Controllers\\AnswerController',
             'Subscribo\\Api1\\Controllers\\BusinessController',
-            'Subscribo\\Api1\\Controllers\\PaymentController',
         ];
         $controllerRegistrar->registerControllers($controllers);
         $controllerRegistrar->addInfoRoute(['version' => 1]);

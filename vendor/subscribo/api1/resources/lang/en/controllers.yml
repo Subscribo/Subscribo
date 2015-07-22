@@ -20,5 +20,16 @@ account.errors:
 answer.errors:
         getQuestion.wrongType: Unrecognized type
         getRedirection.wrongType: Unrecognized type
+#BusinessController
+business.errors.prepareOrder:
+        priceNotFound: Specified price not found
+        invalidCurrency: Specified price has different currency
+        invalidCountry: Specified price is not for specified country
+        invalidService: Specified price is for different service
+        productNotFound: Product not found for this price
+        amountInvalid: Specified amount (%amount%) of product is invalid
+        noRealization: No realization found for specified product and delivery
+        deliveryNotFound: Specified delivery not found
+
 # ContextRequestValidationTrait
 contextRequestValidationTrait.errors.wrongIdentifier: Identifier have to be a positive integer
