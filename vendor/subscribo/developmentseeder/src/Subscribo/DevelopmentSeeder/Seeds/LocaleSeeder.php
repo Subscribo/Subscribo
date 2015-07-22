@@ -27,7 +27,7 @@ class LocaleSeeder extends Seeder {
         $americanEnglish->save();
 
         $britishEnglish = Locale::firstOrCreate([
-            'identifier' => 'en_UK',
+            'identifier' => 'en_GB',
             'type'          => Locale::TYPE_STANDARD,
             'native_name'  => 'British English',
         ]);

@@ -3,14 +3,14 @@
 namespace Subscribo\DevelopmentSeeder\Seeds;
 
 use Illuminate\Database\Seeder;
-use Subscribo\ModelCore\Models\PaymentMethod;
+use Subscribo\ModelCore\Models\TransactionGateway;
 
-class PaymentMethodSeeder extends Seeder
+class TransactionGatewaySeeder extends Seeder
 {
     public function run()
     {
-        $payUnityCopyAndPay = PaymentMethod::firstOrCreate(['identifier' => 'PAY_UNITY-COPY_AND_PAY']);
-        $klarnaInvoice = PaymentMethod::firstOrCreate(['identifier' => 'KLARNA-INVOICE']);
+        $payUnityCopyAndPay = TransactionGateway::firstOrCreate(['identifier' => 'PAY_UNITY-COPY_AND_PAY']);
+        $klarnaInvoice = TransactionGateway::firstOrCreate(['identifier' => 'KLARNA-INVOICE']);
 
         $payUnityCopyAndPay->name = 'PayUnity';
         $payUnityCopyAndPay->description = 'For Credit / Debit card payments, SOFORT UEBERWEISUNG...';

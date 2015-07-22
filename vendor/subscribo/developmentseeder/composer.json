@@ -21,12 +21,14 @@
     ],
     "require": {
         "php": "~5.4",
+        "lib-iconv": "*",
         "subscribo/auth": "@dev",
         "subscribo/modelcore": "@dev",
         "subscribo/restcommon": "@dev",
         "subscribo/api1": "@dev",
         "illuminate/support": "~5.0",
-        "illuminate/database": "~5.0"
+        "illuminate/database": "~5.0",
+        "fzaninotto/faker": "^1.5"
     },
     "suggest": {
         "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"

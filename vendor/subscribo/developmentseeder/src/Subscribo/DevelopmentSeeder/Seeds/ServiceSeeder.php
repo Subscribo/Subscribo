@@ -21,6 +21,9 @@ class ServiceSeeder extends Seeder {
         $austria = Country::firstOrCreate(['identifier' => 'AT']);
         $germany = Country::firstOrCreate(['identifier' => 'DE']);
         $slovakia = Country::firstOrCreate(['identifier' => 'SK']);
+        $czechRepublic = Country::firstOrCreate(['identifier' => 'CZ']);
+        $unitedKingdom = Country::firstOrCreate(['identifier' => 'GB']);
+        $unitedStates = Country::firstOrCreate(['identifier' => 'US']);
 
         $frontendEnglish = Locale::firstOrCreate(['identifier' => 'en_US-FRONTEND']);
         $frontendGerman = Locale::firstOrCreate(['identifier' => 'de_AT-FRONTEND']);
@@ -29,7 +32,9 @@ class ServiceSeeder extends Seeder {
         $frontendService->url = 'http://frontend.sio.kochabo.at';
         $frontendService->name = 'Frontend';
         $frontendService->defaultLocale()->associate($frontendGerman);
-        $frontendService->addCountries([$austria, $germany, $slovakia], [$euro, $dollar]);
+        $frontendService->addCountries([$austria, $germany, $slovakia, $czechRepublic], [$euro, $dollar]);
+        $frontendService->addCountries($unitedKingdom, [$pound, $euro]);
+        $frontendService->addCountries($unitedStates, $dollar);
         $frontendService->save();
         $frontendService->translateOrNew('de')->name = 'Frontend zum testen';
         $frontendService->translateOrNew('sk')->name = 'Testovací Frontend';
@@ -61,14 +66,15 @@ class ServiceSeeder extends Seeder {
         }
 
         $american = Locale::firstOrNew(['identifier' => 'en_US']);
-        $british = Locale::firstOrNew(['identifier' => 'en_UK']);
+        $british = Locale::firstOrNew(['identifier' => 'en_GB']);
         $german = Locale::firstOrNew(['identifier' => 'de']);
         $test2Service = Service::firstOrNew(['identifier' => 'MAIN']);
         $test2Service->url = 'http://subscribo.localhost';
         $test2Service->name = 'Main';
         $test2Service->defaultLocale()->associate($american);
         $test2Service->translateOrNew('de')->name = 'Haupt';
-        $test2Service->addCountries([$austria, $germany, $slovakia], $euro);
+        $test2Service->addCountries([$austria, $germany, $slovakia, $czechRepublic], $euro);
+        $test2Service->addCountries($unitedKingdom, [$pound, $euro]);
         $test2Service->save();
         $test2Service->availableLocales()->attach($american);
         $test2Service->availableLocales()->attach($british);
