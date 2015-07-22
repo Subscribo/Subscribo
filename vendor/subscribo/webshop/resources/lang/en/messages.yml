@@ -20,7 +20,26 @@ forms:
 # Template resources/views/webshop/forms/buy/forguest.blade.php
         forguest:
             submitButton: Buy
-#Template resources/views/webshop/forms/buy/paymentmethod.blade.php
-        paymentmethod:
-            selectTitle: 'Select payment method:'
+#Template resources/views/webshop/forms/buy/transactiongatewayselect.blade.php
+        transactiongatewayselect:
+            title: 'Select payment method:'
+        address:
+            gender.title: Gender:
+            gender.man: Man
+            gender.woman: Woman
+            firstName: First Name:
+            lastName: Last Name:
+            street: Street
+            city: City:
+            postCode: Post Code:
+            country: Country:
+            phone: Phone:
+            deliveryInformation: Delivery information:
+        register:
+            email: E-mail:
+            password: Password:
+            confirmPassword: Confirm Password:
+        options:
+            start: Start from:
+            period: Period:
 
