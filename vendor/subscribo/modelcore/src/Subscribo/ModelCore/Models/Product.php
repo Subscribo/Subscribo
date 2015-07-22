@@ -4,14 +4,18 @@ namespace Subscribo\ModelCore\Models;
 
 use Subscribo\ModelCore\Models\TaxGroup;
 use InvalidArgumentException;
+use Subscribo\ModelBase\Traits\SearchableByIdentifierAndServiceIdTrait;
 
 /**
  * Model Product
  *
  * Model class for being changed and used in the application
+ * @method \Subscribo\ModelCore\Models\Product findByIdentifierAndServiceId() static findByIdentifierAndServiceId(int|string $identifier, int|null $serviceId, bool $alsoCommon)
  */
 class Product extends \Subscribo\ModelCore\Bases\Product
 {
+    use SearchableByIdentifierAndServiceIdTrait;
+
     /**
      * @param int $serviceId
      * @param int|null $countryId
@@ -87,6 +91,7 @@ class Product extends \Subscribo\ModelCore\Bases\Product
         $taxPercent = $taxGroup->taxPercent ?: '0';
         /** @var \Subscribo\ModelCore\Models\Price $selectedPrice */
         $selectedPrice = reset($selectedPrices);
+        $result['price_id'] = $selectedPrice->id;
         $result['price_currency_id'] = $selectedPrice->currency->id;
         $result['price_currency_code'] = $selectedPrice->currency->code;
         $result['price_currency_symbol'] = $selectedPrice->currency->symbol;
@@ -98,4 +103,13 @@ class Product extends \Subscribo\ModelCore\Bases\Product
 
         return $result;
     }
+
+    public function checkAmount($amount) {
+        if (is_int($amount)) {
+            return true;
+        }
+        return ctype_digit($amount);
+    }
+
+
 }

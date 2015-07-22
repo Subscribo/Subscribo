@@ -68,7 +68,7 @@ class ServiceModule extends \Subscribo\ModelCore\Bases\ServiceModule
     public static function disableModule($service, $module)
     {
         $serviceId = ($service instanceof Service) ? $service->id : $service;
-        $instance = static::firstByAttributes(['service_id' => $serviceId, 'module' => $module]);
+        $instance = static::query()->where(['service_id' => $serviceId, 'module' => $module])->first();
         if (empty($instance)) {
             return null;
         }
@@ -85,7 +85,11 @@ class ServiceModule extends \Subscribo\ModelCore\Bases\ServiceModule
     public static function findEnabledModule($service, $module)
     {
         $serviceId = ($service instanceof Service) ? $service->id : $service;
-        $instance = static::firstByAttributes(['service_id' => $serviceId, 'module' => $module, 'status' => static::STATUS_ENABLED]);
+        $instance = static::query()->where([
+            'service_id' => $serviceId,
+            'module' => $module,
+            'status' => static::STATUS_ENABLED
+        ])->first();
         return $instance;
     }
 

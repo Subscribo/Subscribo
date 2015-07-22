@@ -12,11 +12,12 @@ class TransactionGatewayConfiguration extends \Subscribo\ModelCore\Bases\Transac
      * @param int $serviceId
      * @param int|null $countryId
      * @param int|null $currencyId
+     * @param int|null $transactionGatewayId
      * @param bool|null $forReceivingPayments
      * @param bool $withTransactionGateway
      * @return \Illuminate\Database\Eloquent\Collection|static|TransactionGatewayConfiguration[]
      */
-    public static function findByAttributes($serviceId, $countryId = null, $currencyId = null, $forReceivingPayments = null, $withTransactionGateway = false)
+    public static function findByAttributes($serviceId, $countryId = null, $currencyId = null, $transactionGatewayId = null, $forReceivingPayments = null, $withTransactionGateway = false)
     {
         $mainQuery = static::query();
         if ($withTransactionGateway) {
@@ -24,6 +25,9 @@ class TransactionGatewayConfiguration extends \Subscribo\ModelCore\Bases\Transac
             $mainQuery->with('transactionGateway.translations');
         }
         $mainQuery->where('service_id', $serviceId);
+        if ($transactionGatewayId) {
+            $mainQuery->where('transaction_gateway_id', $transactionGatewayId);
+        }
         if ($countryId) {
             $mainQuery->where(function ($query) use ($countryId) {
                 $query->whereNull('country_id');
