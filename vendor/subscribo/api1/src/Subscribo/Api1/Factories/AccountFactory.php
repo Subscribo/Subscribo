@@ -6,6 +6,7 @@ use Subscribo\ModelCore\Models\Customer;
 use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\AccountToken;
 use Subscribo\ModelCore\Models\Address;
+use Subscribo\ModelCore\Models\CustomerConfiguration;
 use Subscribo\ModelCore\Models\Person;
 use Subscribo\ModelCore\Models\CustomerRegistration;
 use Subscribo\ModelCore\Models\Service;
@@ -27,22 +28,34 @@ class AccountFactory
 
     /**
      * @param CustomerRegistration|array $data
+     * @param Address|null $address
      * @return Customer
      */
-    public function makeCustomer($data = array())
+    public function generateCustomer($data = array(), Address $address = null)
     {
         if ($data instanceof CustomerRegistration) {
             $customer = new Customer();
             $customer->email = $data->email;
             $customer->password = $data->password;
-
-            return $customer;
+            $person = $data->person;
+        } else {
+            if (array_key_exists('password', $data)) {
+                $hashedPassword = $this->hasher->make($data['password']);
+                $data['password'] = $hashedPassword;
+            }
+            $customer = new Customer(Arr::only($data, ['email', 'password']));
+            $person = Person::generate($data);
         }
-        if (array_key_exists('password', $data)) {
-            $hashedPassword = $this->hasher->make($data['password']);
-            $data['password'] = $hashedPassword;
+        $customer->person()->associate($person);
+        $customer->save();
+        $configuration = new CustomerConfiguration();
+        $configuration->customerId = $customer->id;
+        if ($address) {
+            $address->customerId = $customer->id;
+            $address->save();
+            $configuration->defaultDeliveryAddressId = $address->id;
         }
-        $customer = new Customer(Arr::only($data, ['email', 'password', 'username']));
+        $configuration->save();
 
         return $customer;
     }
@@ -60,17 +73,20 @@ class AccountFactory
         $existingCustomerId = null;
         if ($data instanceof CustomerRegistration) {
             $customerRegistration = $data;
-            $data = $customerRegistration->export();
+            $email = $customerRegistration->email;
             $existingCustomerId = $customerRegistration->customerId;
-        }
-        if ( ! is_array($data)) {
+            $dataPossiblyWithAddress = $customerRegistration->address;
+        } elseif (is_array($data)) {
+            $email = $data['email'];
+            $dataPossiblyWithAddress = $data;
+        } else {
             throw new InvalidArgumentException('AccountFactory::register() data have to be either array or instance of CustomerRegistration');
         }
-        $account = Account::findByEmailAndServiceId($data['email'], $serviceId);
-        $address = Address::dataContainsAddress($data) ? Address::generate($data) : null;
+        $account = Account::findByEmailAndServiceId($email, $serviceId);
         if ($account) {
             $status = CustomerRegistration::STATUS_EXISTING_ACCOUNT_USED;
             $customer = $account->customer;
+            $address = Address::ifDataContainsAddressFindSimilarOrGenerate($dataPossiblyWithAddress, $customer);
         } else {
             if ($existingCustomerId) {
                 $status = CustomerRegistration::STATUS_MERGED;
@@ -79,32 +95,29 @@ class AccountFactory
                 $preferredLocale = $customer->preferredLocale->identifier;
             } else {
                 $status = CustomerRegistration::STATUS_NEW_ACCOUNT_GENERATED;
+                $customer = null;
                 $preferredLocale = $registrationLocaleIdentifier;
             }
             /** @var Service $service */
             $service = Service::with('availableLocales', 'defaultLocale')->find($serviceId);
             $locale = $service->chooseLocale($preferredLocale);
+            $address = Address::ifDataContainsAddressFindSimilarOrGenerate($dataPossiblyWithAddress, $customer);
             if (empty($customer)) {
-                $person = Person::generate($data);
-                $customer = $this->makeCustomer($data);
-                $customer->person()->associate($person);
-                $customer->defaultDeliveryAddress()->associate($address);
+                $customer = $this->generateCustomer($data, $address);
                 $customer->preferredLocale()->associate($locale->uncustomize());
                 $customer->save();
             }
             $account = Account::generate($customer, $service, $locale);
         }
-        if ($customerRegistration and $customerRegistration->accountTokenId) {
-            $accountToken = AccountToken::find($customerRegistration->accountTokenId);
+        if ($customerRegistration) {
+            $accountToken = $customerRegistration->accountToken;
             if ($accountToken) {
                 $accountToken->accountId = $account->id;
                 $accountToken->save();
             }
+            $customerRegistration->finalize($account, $status);
         } elseif ( ! empty($data['oauth'])) {
             AccountToken::generate($data['oauth'], $account->id);
-        }
-        if ($customerRegistration) {
-            $customerRegistration->finalize($account, $status);
         }
         $result = [
             'customer' => $customer,

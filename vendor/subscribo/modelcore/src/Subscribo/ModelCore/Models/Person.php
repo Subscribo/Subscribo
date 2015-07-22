@@ -27,6 +27,18 @@ class Person extends \Subscribo\ModelCore\Bases\Person
      */
     public static function generate(array $data)
     {
+        $instance = static::make($data);
+        $instance->save();
+
+        return $instance;
+    }
+
+    /**
+     * @param array $data
+     * @return Person
+     */
+    public static function make(array $data)
+    {
         $instance = new self();
         if ( ! empty($data['gender'])) {
             $instance->gender = $data['gender'];
@@ -48,7 +60,6 @@ class Person extends \Subscribo\ModelCore\Bases\Person
                 $instance->assignName($name);
             }
         }
-        $instance->save();
 
         return $instance;
     }

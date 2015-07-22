@@ -55,6 +55,8 @@ class AccountController extends AbstractController
         'city' => 'max:100',
         'country' => 'required_with:city|max:100',
         'delivery_information' => 'max:500',
+        'phone' => 'max:30',
+        'mobile' => 'max:30',
     ];
 
     public function actionPostRegistration()

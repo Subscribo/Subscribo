@@ -252,7 +252,16 @@ model_options:
     realizations_in_orders:
        administrator_menu: Delivery
 
-    payments:
+    discounts:
+        administrator_menu: Delivery
+        relations:
+            many_to_many:
+                - orders
+                - subscriptions
+                - accounts
+
+
+    transactions:
        administrator_menu: Billing
 
     currencies: #    (possibly a “virtual” table)
@@ -394,14 +403,17 @@ model_fields:
 
 
     customers:
-        - username null
         - email null
         - password (password) null hidden
         - person_id null → persons
-        - default_delivery_address_id null → addresses
-        - default_billing_details_id null → billing_details
         - preferred_locale_id null -> locales
         - remember_locale (int) default 43200
+
+    customer_configurations:
+        - customer_id
+        - default_contact_id null -> contacts
+        - default_delivery_address_id null → addresses
+        - default_billing_details_id null → billing_details
 
     customer_registrations:
         - hash null
@@ -411,18 +423,11 @@ model_fields:
         - hash unique null
         - account_id null
         - customer_id null
-        - name null
         - email null
         - password (password) null hidden
         - account_token_id null
-        - first_name null
-        - last_name null
-        - street null
-        - city null
-        - post_code null
-        - country null
-        - phone null
-        - gender (enum from man woman) null
+        - address_id null
+        - person_id null -> persons
 
     account_tokens:
         - account_id null
@@ -448,23 +453,29 @@ model_fields:
     - suffix null
     - gender (enum from man woman) null
     - date_of_birth (date) null
-    - contact_id null → contacts
 
     contacts:
-    - mobile_phone_number (unsigned big integer) null // Phone number in international format without leading + or 00 (another possibility would be to save it as string
-    - landline_phone_number (unsigned big integer) null
-    - home_address_id null → addresses
-    - work_address_id null → addresses
+    - phone (string) null
+    - mobile (string) null
 
     addresses:
+    - customer_id null //customer owning the address
+    - person_id null -> persons //person whose name is part of address
+    - organisation_id null //organisation whose name is part of address
     - type (unsigned tiny int) default 1 # (different countries has different address compilation customs)
-    - first_line null // //usually compiled from gender, prefix and suffix
-    - second_line null // //usually compiled from names
+    - descriptor //Title of address
+    - salutation null // //usually compiled from gender, prefix and suffix
+    - person_name null // //usually compiled from names
+    - care_of null
+    - company_name null
+    - company_departement null
     - street null
     - house (string) null
+    - gate (string) null
     - stairway (string) null
     - floor (string) null
     - apartment (string) null
+    - p_o_box (string) null
     - post_code (string) null
     - city //Settlement name //It may be also a name of a town, village, if they are generally recognized by post company // If address has only one string term, it should be put here
     - district (string) null // district of a city
@@ -474,8 +485,10 @@ model_fields:
     - country_union (enum from EU) null
     - gps_longitude (string) null
     - gps_latitude (string) null
-    - contact_phone (unsigned big integer) null // Phone number in international format without leading + or 00 (another possibility would be to save it as string
-    - delivery_information (text)
+    - delivery_information (text) null
+    - phone (string) null
+    - mobile (string) null
+    - flags (int) default 0
 
     billing_details:
     - type (unsigned tiny int) default 1
@@ -608,9 +621,12 @@ model_fields:
     products_in_subscriptions:
     - subscription_id → subscriptions
     - product_id → products
+    - price_id -> prices
     - amount (int)
 
     orders:
+    - service_id -> services
+    - account_id → accounts
     - type (enum from automatic manual)
     - status (unsigned tiny int) //1 - ordering / 2 - ordered / 3 - prepared / 4 - send / 5 - delivered / 6 - returned, 7 -  cancelled...)
     - transaction_id null → transactions
@@ -619,13 +635,28 @@ model_fields:
     - anticipated_delivery_start (datetime) null
     - anticipated_delivery_end (datetime) null
     - subscription_id null → subscriptions #(null for manual)
-    - account_id null → accounts #(possibly null for automatic)
     - shipping_address_id null → addresses #(null if default)
 
     realizations_in_orders:
     - order_id → orders
     - realization_id → realizations
+    - price_id -> prices
     - amount (unsigned int)
+
+    discounts:
+    - service_id
+    - available (bool) default true
+    - identifier
+    - code null
+    - type (enum from once multiple period subscription limited) default word once //Discounts could be one-time only / multiple times / limited period / unlimited period //limited by both period and count
+    - reuse (enum from exclusive account order) default word account //whether this discount might be reused by the same customer (order) or different customer (account) or nobody at all (exclusive)
+    - combinable (bool) default false //whether this discount can be combined with other discounts
+    - discount_percent (int) null
+    - discount_amount (currency) null
+    - discount_currency null
+    - period (period) null //For how long it is used, when type is period
+    - multiple_count (int) null //How many times it may be used, when type is multiple
+    - flags (int) default 0
 
     transactions:
     - service_id

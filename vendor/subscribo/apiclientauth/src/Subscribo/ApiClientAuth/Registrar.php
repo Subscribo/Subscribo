@@ -20,7 +20,17 @@ class Registrar
         return [
             'name'  => 'max:255',
             'email' => 'required|email|max:255',
-            'password' => 'required|confirmed|min:6'
+            'password' => 'required|confirmed|min:6',
+            'gender' => 'in:man,woman',
+            'first_name' => 'max:100',
+            'last_name' => 'required_with:city|max:100',
+            'street' => 'required_with:city|max:255',
+            'post_code' => 'max:30',
+            'city' => 'max:100',
+            'country' => 'required_with:city|max:100',
+            'delivery_information' => 'max:500',
+            'phone' => 'max:30',
+            'mobile' => 'max:30',
         ];
     }
 
@@ -48,7 +58,7 @@ class Registrar
      * @param array $data
      * @return null|\Subscribo\ApiClientAuth\Account
      */
-    protected function assembleModel(array $data = null)
+    public function assembleModel(array $data = null)
     {
         if (empty($data)) {
             return null;
