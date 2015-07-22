@@ -103,7 +103,7 @@ class AccountConnector
      * @return array|null
      * @throws \Subscribo\RestClient\Exceptions\InvalidResponseException
      */
-    protected function assembleResult($source, $keyToCheck = array())
+    public static function assembleResult($source, $keyToCheck = array())
     {
         if (empty($source)) {
             return null;
