@@ -102,8 +102,8 @@ default_field_options:
     rules: []
     modification_rules_before_validation: []
     modification_rules_after_validation: []
-    fillable: true
-    guarded: false
+    fillable: null
+    guarded: null
     administrator:
         list: true
         edit: true
@@ -384,10 +384,10 @@ model_fields:
         - username
         - email null #guest superadmin does not have to have email address; moreover email addresses are not necessarily unique - to know which user is requested, we need service_id
         - password (password) null hidden #guest does not have to have password
-        - type (enum from guest server administrator superadmin) // (we should have here the basic separation between administrators and customers)
+        - type (enum from guest server administrator superadmin) // (we should have here the basic separation between administrators and clients)
         - remember_token null hidden // (and other possible technical fields allowing logging in)
         - email_confirmed (bool) null
-        - person_id null → persons
+        - person_id null hidden → persons (show_from)
 
     user_tokens:
         - user_id -> users
@@ -403,17 +403,19 @@ model_fields:
 
 
     customers:
+        - id hidden
         - email null
         - password (password) null hidden
-        - person_id null → persons
+        - person_id null hidden → persons (show_from)
         - preferred_locale_id null -> locales
         - remember_locale (int) default 43200
 
     customer_configurations:
-        - customer_id
-        - default_contact_id null -> contacts
+        - id hidden
+        - customer_id hidden -> customers (show_from show_to)
+        - default_contact_id null hidden -> contacts (show_from)
         - default_delivery_address_id null → addresses
-        - default_billing_details_id null → billing_details
+        - default_billing_details_id null hidden → billing_details (show_from)
 
     customer_registrations:
         - hash null
@@ -422,12 +424,12 @@ model_fields:
         - status null
         - hash unique null
         - account_id null
-        - customer_id null
+        - customer_id null hidden -> customers
         - email null
         - password (password) null hidden
         - account_token_id null
         - address_id null
-        - person_id null -> persons
+        - person_id null hidden -> persons (show_to)
 
     account_tokens:
         - account_id null
@@ -444,6 +446,7 @@ model_fields:
         - is_default (bool) default false
 
     persons:
+    - id hidden
     - salutation null
     - prefix null
     - first_name null
@@ -459,11 +462,11 @@ model_fields:
     - mobile (string) null
 
     addresses:
-    - customer_id null //customer owning the address
-    - person_id null -> persons //person whose name is part of address
+    - customer_id null hidden -> customers (show_to) //customer owning the address
+    - person_id null hidden -> persons (show_from) //person whose name is part of address
     - organisation_id null //organisation whose name is part of address
-    - type (unsigned tiny int) default 1 # (different countries has different address compilation customs)
-    - descriptor //Title of address
+    - type (unsigned tiny int) guarded default 1 # (different countries has different address compilation customs)
+    - descriptor guarded //Title of address
     - salutation null // //usually compiled from gender, prefix and suffix
     - person_name null // //usually compiled from names
     - care_of null
@@ -482,15 +485,16 @@ model_fields:
     - province (string) null // state/country subdivision
     - state_id null → states //e.g. US state
     - country_id → countries
-    - country_union (enum from EU) null
+    - country_union (enum from EU) null guarded
     - gps_longitude (string) null
     - gps_latitude (string) null
     - delivery_information (text) null
     - phone (string) null
     - mobile (string) null
-    - flags (int) default 0
+    - flags (int) guarded default 0
 
     billing_details:
+    - id hidden
     - type (unsigned tiny int) default 1
     - address_id null → addresses
     - account_no null
@@ -533,6 +537,7 @@ model_fields:
     - remember_token null hidden
     - locale
     - remember_locale (int) default 0
+    - customer_id hidden -> customers (show_from)
 
 
     locales:
@@ -678,7 +683,7 @@ model_fields:
     - vat (currency) null
     - currency_id (int)
     - country_id null
-    - billing_detail_id null → billing_details
+    - billing_detail_id null hidden → billing_details (show_from show_to)
     - first_request_sent_on (datetime) null
     - first_response_received_on (datetime) null
     - last_request_sent_on (datetime) null
