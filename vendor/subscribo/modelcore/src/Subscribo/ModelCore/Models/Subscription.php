@@ -16,24 +16,20 @@ class Subscription extends \Subscribo\ModelCore\Bases\Subscription
 {
     /**
      * @param Account $account
-     * @param bool|int $subscriptionPeriod False for not preparing subscription
-     * @param Delivery|null $delivery Null only when $subscriptionPeriod is empty
-     * @return null|Subscription
-     * @throws \InvalidArgumentException
+     * @param int $subscriptionPeriod
+     * @param int|null $start (date)
+     * @param int|null $deliveryWindowTypeId
+     * @return Subscription
      */
-    public static function generateSubscription(Account $account, $subscriptionPeriod, Delivery $delivery = null )
+    public static function generateSubscription(Account $account, $subscriptionPeriod, $start = null, $deliveryWindowTypeId = null)
     {
-        if (empty($subscriptionPeriod)) {
-            return null;
-        }
-        if (empty($delivery)) {
-            throw new InvalidArgumentException('Subscription period specified but Delivery not');
-        }
+
         $subscription = new Subscription();
         $subscription->accountId = $account->id;
         $subscription->status = 1;
         $subscription->period = $subscriptionPeriod;
-        $subscription->start = $delivery->start;
+        $subscription->deliveryWindowTypeId = $deliveryWindowTypeId;
+        $subscription->start = $start;
         $subscription->save();
 
         return $subscription;
@@ -48,10 +44,12 @@ class Subscription extends \Subscribo\ModelCore\Bases\Subscription
     {
         $result = [];
         foreach ($prices as $priceId => $price) {
-            $productInSubscription = ProductsInSubscription::firstOrCreate([
+            $productInSubscription = ProductsInSubscription::firstOrNew([
                 'subscription_id'   => $this->id,
                 'product_id'        => $price->productId,
             ]);
+            $productInSubscription->subscriptionId = $this->id;
+            $productInSubscription->productId = $price->productId;
             $productInSubscription->priceId = $price->id;
             $productInSubscription->amount = $amountsPerPriceId[$priceId];
             $productInSubscription->save();

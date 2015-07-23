@@ -611,11 +611,11 @@ model_fields:
 
     subscriptions:
     - account_id → accounts
-    - delivery_window_type_id → delivery_window_types
+    - delivery_window_type_id null → delivery_window_types
     - period (unsigned tiny int) default 1 //1 - weekly, 2 - every two weeks, 4 - monthly - other periods could be defined (possibility to use enum, but tiny int used for more flexibility)
     - status (unsigned tiny int) default 1 //1 - active, 2 - cancelled
     - start (date)
-    - end (date)
+    - end (date) null
 
 
     vetos:

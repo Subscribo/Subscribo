@@ -2,6 +2,7 @@
 
 namespace Subscribo\ModelCore\Models;
 
+use Subscribo\ModelCore\Models\Price;
 use Subscribo\ModelCore\Models\TaxGroup;
 use InvalidArgumentException;
 use Subscribo\ModelBase\Traits\SearchableByIdentifierAndServiceIdTrait;
@@ -54,8 +55,9 @@ class Product extends \Subscribo\ModelCore\Bases\Product
         $queryResult = $mainQuery->get();
 
         $result = [];
+        /** @var Product $item */
         foreach ($queryResult as $item) {
-            $itemWithPrices = $item->toArrayWithPrices($currencyId, $countryId);
+            $itemWithPrices = $item->toArrayWithAppropriatePrice($currencyId, $countryId);
             if ($itemWithPrices) {
                 $result[] = $itemWithPrices;
             }
@@ -64,8 +66,12 @@ class Product extends \Subscribo\ModelCore\Bases\Product
         return $result;
     }
 
-
-    public function toArrayWithPrices($currencyId, $countryId = null)
+    /**
+     * @param int $currencyId
+     * @param int| null $countryId
+     * @return Price|null
+     */
+    public function findAppropriatePrice($currencyId, $countryId = null)
     {
         $selectedPrices = [];
         foreach ($this->prices as $price) {
@@ -78,10 +84,17 @@ class Product extends \Subscribo\ModelCore\Bases\Product
                 $selectedPrices[] = $price;
             }
         }
-        if (empty($selectedPrices)) {
+        return $selectedPrices ? reset($selectedPrices) : null;
+    }
 
-            return null;
-        }
+    /**
+     * @param Price $price
+     * @param int|null $countryId
+     * @return array|null
+     * @throws \InvalidArgumentException
+     */
+    public function toArrayWithPrice(Price $price, $countryId = null)
+    {
         $result = parent::toArray();
         $taxGroup = $taxGroup = TaxGroup::findByCategoryIdAndCountryId($this->taxCategoryId, $countryId);
         if (empty($taxGroup)) {
@@ -89,19 +102,30 @@ class Product extends \Subscribo\ModelCore\Bases\Product
             throw new InvalidArgumentException('TaxGroup not found for given categoryId and countryId');
         }
         $taxPercent = $taxGroup->taxPercent ?: '0';
-        /** @var \Subscribo\ModelCore\Models\Price $selectedPrice */
-        $selectedPrice = reset($selectedPrices);
-        $result['price_id'] = $selectedPrice->id;
-        $result['price_currency_id'] = $selectedPrice->currency->id;
-        $result['price_currency_code'] = $selectedPrice->currency->code;
-        $result['price_currency_symbol'] = $selectedPrice->currency->symbol;
-        $result['price_net'] = $selectedPrice->calculateNetAmount($taxPercent);
-        $result['price_gross'] = $selectedPrice->calculateGrossAmount($taxPercent);
+        $result['price_id'] = $price->id;
+        $result['price_currency_id'] = $price->currency->id;
+        $result['price_currency_code'] = $price->currency->code;
+        $result['price_currency_symbol'] = $price->currency->symbol;
+        $result['price_net'] = $price->calculateNetAmount($taxPercent);
+        $result['price_gross'] = $price->calculateGrossAmount($taxPercent);
         $result['tax_percent'] = $taxPercent;
         $result['tax_category_name'] = $this->taxCategory->name;
         $result['tax_category_short_name'] = $this->taxCategory->short_name;
 
         return $result;
+    }
+
+    /**
+     * @param int $currencyId
+     * @param int|null $countryId
+     * @return array|null
+     * @throws \InvalidArgumentException
+     */
+    public function toArrayWithAppropriatePrice($currencyId, $countryId = null)
+    {
+        $price = $this->findAppropriatePrice($currencyId, $countryId);
+
+        return $price ? $this->toArrayWithPrice($price, $countryId) : null;
     }
 
     public function checkAmount($amount) {
@@ -110,6 +134,4 @@ class Product extends \Subscribo\ModelCore\Bases\Product
         }
         return ctype_digit($amount);
     }
-
-
 }
