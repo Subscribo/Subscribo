@@ -35,54 +35,60 @@ class BuildSchemaCommand extends BuildCommandAbstract {
      */
     public function fire()
     {
-        $inputFileName = $this->argument('input_file');
-        $outputFileName = $this->argument('output_file');
-        $this->info('Schema build starting. Using input file: '. $inputFileName.' output file: '.$outputFileName);
-        $this->info('Environment: '. App::environment());
-        Config::loadFileForPackage('schemabuilder', $inputFileName, 'schema', true, null);
-        $input = Config::getForPackage('schemabuilder', 'schema');
-        $doctype = $input['doctype'];
-        if (false === in_array($doctype, array('MODEL_SCHEMA-v1.0', 'PARSED_MODEL_SCHEMA-v1.0'))) {
-            throw new \Exception ("Unsupported doctype. You can use for example: 'MODEL_SCHEMA-v1.0'");
+        try {
+            $inputFileName = $this->argument('input_file');
+            $outputFileName = $this->argument('output_file');
+            $this->info('Schema build starting. Using input file: '. $inputFileName.' output file: '.$outputFileName);
+            $this->info('Environment: '. App::environment());
+            Config::loadFileForPackage('schemabuilder', $inputFileName, 'schema', true, null);
+            $input = Config::getForPackage('schemabuilder', 'schema');
+            $doctype = $input['doctype'];
+            if (false === in_array($doctype, array('MODEL_SCHEMA-v1.0', 'PARSED_MODEL_SCHEMA-v1.0'))) {
+                throw new \Exception ("Unsupported doctype. You can use for example: 'MODEL_SCHEMA-v1.0'");
+            }
+            $modelFields = $this->_parseModelFields($input['model_fields']);
+            $defaultModelOptions = $input['default_model_options'] ?: array();
+            $defaultTranslationModelOptions = $input['default_translation_model_options'] ?: array();
+            $translationModelDefaults = Arr::merge($defaultModelOptions, $defaultTranslationModelOptions);
+            $defaultFieldOptions = $input['default_field_options'] ?: array();
+
+            $modelOptions = $this->_parseModelOptions($input['model_options'] ?: array(), $modelFields, $defaultModelOptions);
+            $modelFields = $this->_addPrimaryKeys($modelFields, $modelOptions);
+            $modelFields = $this->_addFieldsFromOptions($modelFields, $modelOptions);
+            $modelOptions = $this->_addOptionsFromTranslatableFields($modelFields, $modelOptions);
+            $translationModels = $this->_assembleTranslationModels($modelFields, $modelOptions, $translationModelDefaults);
+            $modelOptions = Arr::merge($translationModels['model_options'], $modelOptions);
+            $modelFields = $this->_addProcessedFields($modelFields, $modelOptions);
+            $modelFields = $this->_addProcessedFields($translationModels['model_fields'], $modelOptions, $modelFields);
+
+            $relations = $this->_collectRelations($modelFields, $modelOptions);
+            $modelFields = $this->_addRelationsToModelFields($modelFields, $modelOptions, $relations);
+            $modelFields = $this->_addRulesToModelFields($modelFields, $modelOptions);
+
+            $modelFields = $this->_addDefaultFieldOptions($modelFields, $defaultFieldOptions);
+            $modelOptions = $this->_addForeignObjects($modelFields, $modelOptions, $relations);
+            $modelOptions = $this->_addOptionsFromFields($modelFields, $modelOptions);
+            $this->_checkConsistency($modelFields, $modelOptions);
+            $modelFields = $this->_addTimestamps($modelFields, $modelOptions);
+            $modelOptions = $this->_collectRules($modelFields, $modelOptions);
+            $pivotTables = $this->_assemblePivotTables($modelFields, $modelOptions, $relations);
+
+            $data = array(
+                'doctype'       => 'PARSED_MODEL_SCHEMA-v1.0',
+                'model_options' => $modelOptions,
+                'model_fields'  => $modelFields,
+                'model_relations' => $relations,
+                'pivot_tables' => $pivotTables,
+            );
+            $content = Yaml::dump($data, 3, 4, true, false);
+            $this->_createFile($outputFileName, $content, 'overwrite');
+
+            $this->info('Schema build finished.');
+        } catch (Exception $e) {
+            $this->error($e->getMessage());
+            $this->error($e);
+            exit(1);
         }
-        $modelFields = $this->_parseModelFields($input['model_fields']);
-        $defaultModelOptions = $input['default_model_options'] ?: array();
-        $defaultTranslationModelOptions = $input['default_translation_model_options'] ?: array();
-        $translationModelDefaults = Arr::merge($defaultModelOptions, $defaultTranslationModelOptions);
-        $defaultFieldOptions = $input['default_field_options'] ?: array();
-
-        $modelOptions = $this->_parseModelOptions($input['model_options'] ?: array(), $modelFields, $defaultModelOptions);
-        $modelFields = $this->_addPrimaryKeys($modelFields, $modelOptions);
-        $modelFields = $this->_addFieldsFromOptions($modelFields, $modelOptions);
-        $modelOptions = $this->_addOptionsFromTranslatableFields($modelFields, $modelOptions);
-        $translationModels = $this->_assembleTranslationModels($modelFields, $modelOptions, $translationModelDefaults);
-        $modelOptions = Arr::merge($translationModels['model_options'], $modelOptions);
-        $modelFields = $this->_addProcessedFields($modelFields, $modelOptions);
-        $modelFields = $this->_addProcessedFields($translationModels['model_fields'], $modelOptions, $modelFields);
-
-        $relations = $this->_collectRelations($modelFields, $modelOptions);
-        $modelFields = $this->_addRelationsToModelFields($modelFields, $modelOptions, $relations);
-        $modelFields = $this->_addRulesToModelFields($modelFields, $modelOptions);
-
-        $modelFields = $this->_addDefaultFieldOptions($modelFields, $defaultFieldOptions);
-        $modelOptions = $this->_addForeignObjects($modelFields, $modelOptions, $relations);
-        $modelOptions = $this->_addOptionsFromFields($modelFields, $modelOptions);
-        $this->_checkConsistency($modelFields, $modelOptions);
-        $modelFields = $this->_addTimestamps($modelFields, $modelOptions);
-        $modelOptions = $this->_collectRules($modelFields, $modelOptions);
-        $pivotTables = $this->_assemblePivotTables($modelFields, $modelOptions, $relations);
-
-        $data = array(
-            'doctype'       => 'PARSED_MODEL_SCHEMA-v1.0',
-            'model_options' => $modelOptions,
-            'model_fields'  => $modelFields,
-            'model_relations' => $relations,
-            'pivot_tables' => $pivotTables,
-        );
-        $content = Yaml::dump($data, 3, 4, true, false);
-        $this->_createFile($outputFileName, $content, 'overwrite');
-
-        $this->info('Schema build finished.');
     }
 
     private function _assembleTranslationModels(array $modelFields, array $modelOptions, array $defaultModelOptions)
@@ -904,8 +910,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             $result = $this->_parseRelationAttributes($field['relation_attributes'], $result);
         }
         if ( ! empty($field['hidden'])) {
-            $result['hidden_from'] = Arr::get('hidden_from', $result, true);
-            $result['hidden_to'] = Arr::get('hidden_to', $result, true);
+            $result['hidden_from'] = Arr::get($result, 'hidden_from', true);
+            $result['hidden_to'] = Arr::get($result, 'hidden_to', true);
         }
         $result = $this->_addRelationDefaults($result);
         return $result;
