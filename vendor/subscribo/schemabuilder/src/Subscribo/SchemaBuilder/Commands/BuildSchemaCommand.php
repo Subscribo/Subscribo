@@ -1424,8 +1424,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             if ($isHidden) {
                 $hiddenFields[] = $fieldName;
             }
-            $isFillable = Arr::get($field, 'fillable', true);
-            if ($isFillable) {
+            if ($this->_isFieldFillable($field)) {
                 $fillableFields[] = $fieldName;
             }
         }
@@ -1447,6 +1446,29 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             $result['representative'] = $representativeField ? $representativeField['name'] : null;
         }
         return $result;
+    }
+
+    /**
+     * Do some heuristics, whether field should be fillable via mass assignement
+     * @param array $field
+     * @return bool
+     */
+    private function _isFieldFillable(array $field)
+    {
+        if (isset($field['fillable'])) {
+            return $field['fillable'];
+        }
+        if (preg_match('#id$#', $field['name'])) {
+            return false;
+        }
+        if (( ! empty($field['related_to'])) or ( ! empty($field['relation_attributes']))) {
+            return false;
+        }
+        $typeSpecial = Arr::get($field, 'type_special');
+        if ($typeSpecial === 'identifier') {
+            return false;
+        }
+        return true;
     }
 
     private function _findRepresentative(array $fields, $default = null)
