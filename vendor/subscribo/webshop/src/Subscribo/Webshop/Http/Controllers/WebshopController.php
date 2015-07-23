@@ -70,7 +70,7 @@ class WebshopController extends Controller
 
         try {
             $result = $connector->postOrder($data);
-            $account = $registrar->assembleModel(AccountConnector::assembleResult($result, 'result'));
+            $account = $registrar->assembleModel(AccountConnector::assembleResult(['result' => $result], 'result'));
             if (empty($account)) {
                 throw new Exception('Empty account.');
             }
