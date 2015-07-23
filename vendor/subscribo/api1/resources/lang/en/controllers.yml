@@ -30,6 +30,7 @@ business.errors.prepareOrder:
         amountInvalid: Specified amount (%amount%) of product is invalid
         noRealization: No realization found for specified product and delivery
         deliveryNotFound: Specified delivery not found
+        deliveryWindowNotFound: Specified delivery window not found
 
 # ContextRequestValidationTrait
 contextRequestValidationTrait.errors.wrongIdentifier: Identifier have to be a positive integer

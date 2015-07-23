@@ -10,6 +10,7 @@ use Subscribo\ModelCore\Models\Person;
 use Subscribo\ModelCore\Models\Address;
 use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\Delivery;
+use Subscribo\ModelCore\Models\DeliveryWindow;
 use Subscribo\ModelCore\Models\Product;
 use Subscribo\ModelCore\Models\Order;
 use Subscribo\ModelCore\Models\TransactionGateway;
@@ -49,8 +50,8 @@ class BusinessController extends AbstractBusinessController
         if ($product->serviceId !== $serviceId) {
             throw new WrongServiceHttpException();
         }
-
-        return ['result' => $product->toArrayWithPrices($currencyId, $countryId)];
+        /** @var Product $product */
+        return ['result' => $product->toArrayWithAppropriatePrice($currencyId, $countryId)];
     }
 
 
@@ -80,16 +81,14 @@ class BusinessController extends AbstractBusinessController
             'prices' => 'required|array',
             'discount_codes' => 'array',
             'delivery_id' => 'required|integer',
+            'delivery_window_id' => 'integer',
             'subscription_period' => 'integer',
         ];
         $validated = $this->validateRequestBody($validationRules);
         $serviceId = $this->context->getServiceId();
-        $countryId = $this->acquireCountryId();
-        $currencyId = $this->acquireCurrencyId($countryId);
-
-        $transactionGateway = TransactionGateway::findByIdentifier($validated['transaction_gateway']);
-        $transactionGatewayConfiguration = TransactionGatewayConfiguration::findByAttributes($serviceId, $countryId, $currencyId, $transactionGateway->id, true, false);
-
+        $discountIds = []; //todo implement
+        $delivery = $this->retrieveDelivery($validated['delivery_id']);
+        $deliveryWindow = $this->retrieveDeliveryWindow($validated);
         $account = $this->context->getAccount();
         if (empty($account)) {
             $accountController = new AccountController($this->context);
@@ -103,24 +102,26 @@ class BusinessController extends AbstractBusinessController
             $address = $customer->defaultDeliveryAddress;
             $person = $customer->person;
         }
-
-        $discountIds = [];
-        $delivery = $this->retrieveDelivery($validated['delivery_id']);
+        $countryId = $address ? $address->countryId : $this->acquireCountryId();
         $subscriptionPeriod = isset($validated['subscription_period']) ? $validated['subscription_period'] : false;
-        $result = $this->prepareOrder($account, $validated['prices'], $discountIds, $currencyId, $countryId, $delivery, $subscriptionPeriod);
+        $result = $this->prepareOrder($account, $validated['prices'], $discountIds, $delivery, $deliveryWindow, $subscriptionPeriod, $address, null, $countryId);
         $result['account'] = $account;
         $result['address'] = $address;
         $result['customer'] = $customer;
-        $result['person'] = $customer->person;
+        $result['person'] = $person;
+
         return ['result' => $result];
+
+        $transactionGateway = TransactionGateway::findByIdentifier($validated['transaction_gateway']);
+        $transactionGatewayConfiguration = TransactionGatewayConfiguration::findByAttributes($serviceId, $countryId, $currencyId, $transactionGateway->id, true, false);
 
         return static::preparePayment($transactionGateway, $transactionGatewayConfiguration, $account, $address, $person);
     }
 
-    private function prepareOrder(Account $account, array $priceIds, array $discountIds, $currencyId, $countryId, Delivery $delivery, $subscriptionPeriod = false)
+    private function prepareOrder(Account $account, array $amountsPerPriceId, array $discountIds, Delivery $delivery, DeliveryWindow $deliveryWindow = null, $subscriptionPeriod = false, Address $shippingAddress = null, $currencyId = null, $countryId = true)
     {
         try {
-            return Order::prepareOrder($account, $priceIds, $discountIds, $currencyId, $countryId, $delivery, $subscriptionPeriod);
+            return Order::prepareOrder($account, $amountsPerPriceId, $discountIds, $delivery, $deliveryWindow, $subscriptionPeriod, $shippingAddress, $currencyId, $countryId, Order::TYPE_MANUAL);
         } catch (ArgumentValidationException $e) {
             throw $this->makeInvalidPriceException($e);
         }
@@ -197,5 +198,25 @@ class BusinessController extends AbstractBusinessController
         }
 
         return $delivery;
+    }
+
+    /**
+     * @param array $input
+     * @return DeliveryWindow|null
+     * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException
+     */
+    private function retrieveDeliveryWindow(array $input)
+    {
+        if (empty($input['delivery_window_id'])) {
+            return null;
+        }
+        $deliveryWindow = DeliveryWindow::find($input['delivery_window_id']);
+        if (empty($deliveryWindow)) {
+            $messageId = 'business.errors.prepareOrder.deliveryWindowNotFound';
+            $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+            throw new InvalidInputHttpException(['delivery_window_id' => $message]);
+        }
+
+        return $deliveryWindow;
     }
 }
