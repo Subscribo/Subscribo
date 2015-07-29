@@ -9,18 +9,19 @@ use Illuminate\Contracts\Auth\Guard;
 use Subscribo\ApiClientAuth\Registrar;
 use Subscribo\Localization\Deposits\SessionDeposit;
 use Subscribo\Localization\Deposits\CookieDeposit;
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\Controller;
 use Subscribo\Webshop\Connectors\BusinessConnector;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Illuminate\Contracts\View;
 use Illuminate\Http\Request;
-use Subscribo\Localization\LocaleUtils;
+use Subscribo\ApiClientAuth\Traits\HandleUserRegistrationTrait;
 use Subscribo\ApiClientCommon\Traits\HandleServerRequestExceptionTrait;
-use Subscribo\ApiClientAuth\Connectors\AccountConnector;
+use Psr\Log\LoggerInterface;
 
 
 class WebshopController extends Controller
 {
+    use HandleUserRegistrationTrait;
     use HandleServerRequestExceptionTrait;
 
     public function listProducts(BusinessConnector $connector, LocalizerInterface $localizer)
@@ -57,45 +58,54 @@ class WebshopController extends Controller
 
 
 
-    public function postBuyProduct($id, BusinessConnector $connector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit)
+    public function postBuyProduct($id, BusinessConnector $connector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger)
     {
-        // $rules = $registrar->getValidationRules();
-        // $this->validate($request, $rules);
+        $orderRules = [
+            'transaction_gateway' => 'required|integer',
+            'delivery_id' => 'integer',
+            'delivery_window_id' => 'integer',
+            'subscription_period' => 'max:10',
+        ];
+        $rules = $orderRules + Registrar::getAddressValidationRules();
+        $this->validate($request, $rules);
 
-        $data = $request->except('item_identifier');
+        if ($auth->guest()) {
+            $registrationResult = $this->handleUserRegistration($auth, $registrar, $request, $sessionDeposit, $cookieDeposit, $localizer, $logger, []);
+            if (isset($registrationResult['redirect'])) {
+                return $registrationResult['redirect'];
+            }
+        }
+
+
+        $data = array_intersect_key($request->request->all(), $rules);
         $priceId = $request->request->get('item_identifier');
-        $data['prices'][$priceId] = 1;
+        $data['prices'] = [
+                $priceId => 1,
+            ];
+        $data['subscription_period'] = 1;
 
-
+        $exceptInput = ['password', 'password_confirmation', '_token'];
 
         try {
             $result = $connector->postOrder($data);
-            $account = $registrar->assembleModel(AccountConnector::assembleResult(['result' => $result], 'result'));
-            if (empty($account)) {
-                throw new Exception('Empty account.');
-            }
-        } catch (ServerRequestException $e) {
-            return $this->handleServerRequestException($e, $request->url());
 
-        } catch (ValidationErrorsException $e) {
-            return redirect()
-                ->refresh()
-                ->withInput($request->only('email', 'name'))
-                ->withErrors($e->getValidationErrors());
-        } catch (Exception $e) {
-            $this->logException($e);
-            $errorMessage = $localizer->trans('errors.registrationFailed', [], 'apiclientauth::messages');
-            return redirect()
-                ->refresh()
-                ->withInput($request->only('email', 'name'))
-                ->withErrors($errorMessage);
+        } catch(ServerRequestException $serverRequestException) {
+
+            return $this->handleServerRequestException($serverRequestException, $request->url());
+        } catch (ValidationErrorsException $validationErrorsException) {
+            $errors = $validationErrorsException->getValidationErrors();
+            $inputForRedirect = $request->except($exceptInput);
+
+            return redirect($request->url())->withInput($inputForRedirect)->withErrors($errors);
+        } catch (Exception $genericException) {
+            $this->logException($genericException, $logger);
+            $errorMessage = $localizer->trans('errors.orderFailed', [], 'webshop::messages');
+            $inputForRedirect = $request->except($exceptInput);
+
+            return redirect($request->url())->withInput($inputForRedirect)->withErrors($errorMessage);
         }
-        $auth->login($account);
-        LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);
 
-        return 'Buying...'.var_export($result);
-
-        return redirect($this->redirectPath());
+        return 'Buying...'.var_export($result, true);
     }
 
     public function getPay()

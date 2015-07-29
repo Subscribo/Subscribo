@@ -38,8 +38,10 @@ forms:
         register:
             email: E-mail:
             password: Password:
-            confirmPassword: Confirm Password:
+            passwordConfirmation: Confirm Password:
         options:
             start: Start from:
             period: Period:
+errors:
+    orderFailed: Ordering has failed
 

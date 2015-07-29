@@ -6,7 +6,8 @@
     <div class="radio">
         <label>
             <input type="radio" name="transaction_gateway" value="{{$transactionGateway['id']}}"
-                   id="transaction_gateway_{{$transactionGateway['id']}}" {{ $transactionGateway['is_default'] ? 'selected' : '' }} >
+                    id="transaction_gateway_{{$transactionGateway['id']}}"
+                    {{ (old('transaction_gateway') == $transactionGateway['id']) ? 'checked="checked"' : '' }} >
             <strong>{{ $transactionGateway['name'] }}</strong>
             {{$transactionGateway['description']}}
 
