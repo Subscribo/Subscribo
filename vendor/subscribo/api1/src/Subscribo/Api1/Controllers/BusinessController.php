@@ -2,17 +2,21 @@
 
 namespace Subscribo\Api1\Controllers;
 
+use Subscribo\Api1\Factories\AddressFactory;
+use Subscribo\Api1\Factories\AccountFactory;
 use Subscribo\Api1\AbstractBusinessController;
-use Subscribo\Api1\Controllers\AccountController;
 use Subscribo\Exception\Exceptions\InvalidArgumentException;
 use Subscribo\Exception\Exceptions\InvalidInputHttpException;
+use Subscribo\Exception\Exceptions\NoAccountHttpException;
 use Subscribo\ModelCore\Models\Person;
 use Subscribo\ModelCore\Models\Address;
+use Subscribo\ModelCore\Models\Customer;
 use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\Delivery;
 use Subscribo\ModelCore\Models\DeliveryWindow;
 use Subscribo\ModelCore\Models\Product;
 use Subscribo\ModelCore\Models\Order;
+use Subscribo\ModelCore\Models\Service;
 use Subscribo\ModelCore\Models\TransactionGateway;
 use Subscribo\ModelCore\Models\TransactionGatewayConfiguration;
 use Subscribo\ModelCore\Exceptions\ArgumentValidationException;
@@ -76,39 +80,39 @@ class BusinessController extends AbstractBusinessController
 
     public function actionPostOrder()
     {
-        $validationRules = [
+        $orderValidationRules = [
             'transaction_gateway' => 'required|max:100',
             'prices' => 'required|array',
             'discount_codes' => 'array',
             'delivery_id' => 'required|integer',
             'delivery_window_id' => 'integer',
             'subscription_period' => 'integer',
+            'address_id' => 'integer',
+            'billing_address_id' => 'integer',
+            'shipping_address_id' => 'integer,'
         ];
+        $validationRules = $orderValidationRules + AddressFactory::getValidationRules()
+            + AddressFactory::getValidationRules('shipping_') + AddressFactory::getValidationRules('billing_');
         $validated = $this->validateRequestBody($validationRules);
-        $serviceId = $this->context->getServiceId();
+        $service = $this->context->getService();
         $discountIds = []; //todo implement
         $delivery = $this->retrieveDelivery($validated['delivery_id']);
         $deliveryWindow = $this->retrieveDeliveryWindow($validated);
         $account = $this->context->getAccount();
         if (empty($account)) {
-            $accountController = new AccountController($this->context);
-            $registrationResult = $accountController->actionPostRegistration()['result'];
-            $customer = $registrationResult['customer'];
-            $address = $registrationResult['address'] ?: $customer->customerConfiguration->defaultDeliveryAddress;
-            $person = $registrationResult['person'];
-            $account = $registrationResult['account'];
-        } else {
-            $customer = $account->customer;
-            $address = $customer->defaultDeliveryAddress;
-            $person = $customer->person;
+            throw new NoAccountHttpException();
         }
-        $countryId = $address ? $address->countryId : $this->acquireCountryId();
+        $customer = $account->customer;
+        $shippingAddress = $this->retrieveShippingAddress($validated, $customer);
+        $billingAddress = $this->retrieveBillingAddress($validated, $customer);
+        $this->checkAddresses($validated, $service, $shippingAddress, $billingAddress);
+        AccountFactory::addAddressesIfNotPresent($customer, $shippingAddress, $billingAddress);
+
         $subscriptionPeriod = isset($validated['subscription_period']) ? $validated['subscription_period'] : false;
-        $result = $this->prepareOrder($account, $validated['prices'], $discountIds, $delivery, $deliveryWindow, $subscriptionPeriod, $address, null, $countryId);
-        $result['account'] = $account;
-        $result['address'] = $address;
-        $result['customer'] = $customer;
-        $result['person'] = $person;
+        $result = $this->prepareOrder($account, $validated['prices'], $discountIds, $delivery, $deliveryWindow, $subscriptionPeriod, $shippingAddress);
+
+        $result['shipping_address'] = $shippingAddress;
+        $result['billing_address'] = $billingAddress;
 
         return ['result' => $result];
 
@@ -218,5 +222,96 @@ class BusinessController extends AbstractBusinessController
         }
 
         return $deliveryWindow;
+    }
+
+    /**
+     * @param array $input
+     * @param array $prefixes
+     * @param Customer $customer
+     * @param string $messageKeySwitch 'billing' or 'shipping'
+     * @return \Illuminate\Database\Eloquent\Model|null|Address|static
+     * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException
+     */
+    private function tryToRetrieveAddress(array $input, array $prefixes, Customer $customer, $messageKeySwitch)
+    {
+        foreach ($prefixes as $prefix) {
+            try {
+                $address = AddressFactory::findOrGenerate($input, $prefix, $customer);
+                if ($address) {
+
+                    return $address;
+                }
+            } catch (\InvalidArgumentException $e) {
+                $messageId = 'business.errors.prepareOrder.'.$messageKeySwitch.'CountryNotFound';
+                $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+                $key = $prefix.'country';
+                throw new InvalidInputHttpException([$key => $message]);
+            }
+        }
+        foreach ($prefixes as $prefix) {
+            $key = $prefix.'address_id';
+            if (empty($input[$key])) {
+                continue;
+            }
+            /** @var Address $address */
+            $address = Address::find($input[$key]);
+            if (empty($address)) {
+                $messageId = 'business.errors.prepareOrder.'.$messageKeySwitch.'AddressNotFound';
+                $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+                throw new InvalidInputHttpException([$key => $message]);
+            }
+            if ($address->customerId !== $customer->id) {
+                $messageId = 'business.errors.prepareOrder.'.$messageKeySwitch.'AddressCustomerMismatch';
+                $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+                throw new InvalidInputHttpException([$key => $message]);
+            }
+
+            return $address;
+        }
+
+        return null;
+    }
+
+
+    private function retrieveShippingAddress(array $input, Customer $customer)
+    {
+        $address = $this->tryToRetrieveAddress($input, ['shipping_', ''], $customer, 'shipping');
+        if ($address) {
+
+            return $address;
+        }
+
+        return $customer->customerConfiguration->defaultDeliveryAddress;
+    }
+
+
+    private function retrieveBillingAddress(array $input, Customer $customer)
+    {
+        $address = $this->tryToRetrieveAddress($input, ['billing_', ''], $customer, 'billing');
+        if ($address) {
+
+            return $address;
+        }
+
+        $billingDetail = $customer->customerConfiguration->defaultBillingDetail;
+
+        return $billingDetail ? $billingDetail->address : null;
+    }
+
+
+    private function checkAddresses(array $input, Service $service, Address $shippingAddress, Address $billingAddress)
+    {
+        if ($shippingAddress->countryId !== $billingAddress->countryId) {
+            $key = isset($input['billing_country']) ? 'billing_country' : 'country';
+            $messageId = 'business.errors.prepareOrder.billingCountryInvalid';
+            $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+            throw new InvalidInputHttpException([$key => $message]);
+        }
+        if (( ! $service->isOperatingInCountry($shippingAddress->countryId))) {
+            $key = isset($input['shipping_country']) ? 'shipping_country' : 'country';
+            $messageId = 'business.errors.prepareOrder.shippingCountryInvalid';
+            $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+            throw new InvalidInputHttpException([$key => $message]);
+        }
     }
 }

@@ -3,6 +3,7 @@
 use Illuminate\Contracts\Hashing\Hasher;
 use Subscribo\Api1\Exceptions\InvalidArgumentException;
 use Subscribo\ModelCore\Models\Customer;
+use Subscribo\ModelCore\Models\BillingDetail;
 use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\AccountToken;
 use Subscribo\ModelCore\Models\Address;
@@ -28,10 +29,11 @@ class AccountFactory
 
     /**
      * @param CustomerRegistration|array $data
-     * @param Address|null $address
+     * @param Address|null $shippingAddress
+     * @param Address|null $billingAddress
      * @return Customer
      */
-    public function generateCustomer($data = array(), Address $address = null)
+    public function generateCustomer($data = array(), Address $shippingAddress = null, Address $billingAddress = null)
     {
         if ($data instanceof CustomerRegistration) {
             $customer = new Customer();
@@ -50,10 +52,19 @@ class AccountFactory
         $customer->save();
         $configuration = new CustomerConfiguration();
         $configuration->customerId = $customer->id;
-        if ($address) {
-            $address->customerId = $customer->id;
-            $address->save();
-            $configuration->defaultDeliveryAddressId = $address->id;
+        if ($shippingAddress) {
+            $shippingAddress->customerId = $customer->id;
+            $shippingAddress->save();
+            $configuration->defaultDeliveryAddress()->associate($shippingAddress);
+        }
+        if (is_null($billingAddress)) {
+            $billingAddress = $shippingAddress;
+        }
+        if ($billingAddress) {
+            $billingAddress->customerId = $customer->id;
+            $billingAddress->save();
+            $billingDetail = BillingDetail::generate($billingAddress);
+            $configuration->defaultBillingDetail()->associate($billingDetail);
         }
         $configuration->save();
 
@@ -170,5 +181,42 @@ class AccountFactory
             return false;
         }
         return $this->hasher->check($passwordToCheck, $customer->password);
+    }
+
+    /**
+     * @param Customer $customer
+     * @param Address $shippingAddress
+     * @param Address|null $billingAddress
+     * @throws \Subscribo\Api1\Exceptions\InvalidArgumentException
+     */
+    public static function addAddressesIfNotPresent(Customer $customer, Address $shippingAddress, Address $billingAddress = null)
+    {
+        if (is_null($billingAddress)) {
+            $billingAddress = $shippingAddress;
+        }
+        if ($shippingAddress->customerId !== $customer->id) {
+            throw new InvalidArgumentException('Provided shipping address does not have appropriate customer_id set');
+        }
+        if ($billingAddress->customerId !== $customer->id) {
+            throw new InvalidArgumentException('Provided billing address does not have appropriate customer_id set');
+        }
+        if (empty($shippingAddress->id)) {
+            throw new InvalidArgumentException('Provided shipping address has not been saved before');
+        }
+        if (empty($billingAddress->id)) {
+            throw new InvalidArgumentException('Provided billing address has not been saved before');
+        }
+        if (empty($customer->customerConfiguration->defaultDeliveryAddressId)) {
+            $customer->customerConfiguration->defaultDeliveryAddressId = $shippingAddress->id;
+            $customer->customerConfiguration->save();
+        }
+        if (empty($customer->customerConfiguration->defaultBillingDetail->addressId)) {
+            $billingDetail = BillingDetail::addAddressOrGenerate(
+                $billingAddress,
+                $customer->customerConfiguration->defaultBillingDetail
+            );
+            $customer->customerConfiguration->defaultBillingDetail()->associate($billingDetail);
+            $customer->customerConfiguration->save();
+        }
     }
 }

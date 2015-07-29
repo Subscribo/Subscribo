@@ -23,6 +23,7 @@ answer.errors:
 #BusinessController
 business.errors.prepareOrder:
         priceNotFound: Specified price not found
+        taxGroupNotFound: Tax group not found for given country and category (Specified price is not for specified country)
         invalidCurrency: Specified price has different currency
         invalidCountry: Specified price is not for specified country
         invalidService: Specified price is for different service
@@ -31,6 +32,14 @@ business.errors.prepareOrder:
         noRealization: No realization found for specified product and delivery
         deliveryNotFound: Specified delivery not found
         deliveryWindowNotFound: Specified delivery window not found
+        shippingCountryNotFound: Unrecognized shipping country
+        billingCountryNotFound: Unrecognized billing country
+        billingCountryInvalid: Billing country does not agree with shipping country
+        shippingCountryInvalid: Service is not operating in selected shipping country
+        shippingAddressNotFound: Selected shipping address not found
+        billingAddressNotFound: Selected billing address not found
+        shippingAddressCustomerMismatch: Selected shipping address is not connected to your account
+        billingAddressCustomerMismatch: Selected billing address is not connected to your account
 
 # ContextRequestValidationTrait
 contextRequestValidationTrait.errors.wrongIdentifier: Identifier have to be a positive integer

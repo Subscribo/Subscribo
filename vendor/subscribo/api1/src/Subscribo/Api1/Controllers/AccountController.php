@@ -2,6 +2,7 @@
 
 use Subscribo\Api1\AbstractController;
 use Subscribo\Api1\Factories\AccountFactory;
+use Subscribo\Api1\Factories\AddressFactory;
 use Subscribo\Api1\Factories\CustomerRegistrationFactory;
 use Subscribo\Api1\Factories\ClientRedirectionFactory;
 use Subscribo\Api1\Exceptions\RuntimeException;
@@ -36,8 +37,7 @@ use Subscribo\Support\Arr;
  */
 class AccountController extends AbstractController
 {
-
-    private $commonValidationRules = [
+    private $loginValidationRules = [
         'email' => 'required|email|max:255',
         'password' => 'required|min:5',
     ];
@@ -47,22 +47,14 @@ class AccountController extends AbstractController
         'email' => 'required_without:oauth|email|max:255',
         'password' => 'required_without:oauth|min:5',
         'oauth' => 'array',
-        'gender' => 'in:man,woman',
-        'first_name' => 'max:100',
-        'last_name' => 'required_with:city|max:100',
-        'street' => 'required_with:city|max:255',
-        'post_code' => 'max:30',
-        'city' => 'max:100',
-        'country' => 'required_with:city|max:100',
-        'delivery_information' => 'max:500',
-        'phone' => 'max:30',
-        'mobile' => 'max:30',
     ];
+
 
     public function actionPostRegistration()
     {
+        $rules = $this->registrationValidationRules + AddressFactory::getValidationRules();
+        $validated = $this->validateRequestBody($rules);
         $serviceId = $this->context->getServiceId();
-        $validated = $this->validateRequestBody($this->registrationValidationRules);
         if ( ! empty($validated['oauth'])) {
             return $this->oAuthRegistration($validated, $serviceId);
         }
@@ -81,7 +73,7 @@ class AccountController extends AbstractController
      */
     public function actionGetValidation()
     {
-        $validated = $this->validateRequestQuery($this->commonValidationRules);
+        $validated = $this->validateRequestQuery($this->loginValidationRules);
         return $this->processValidation($validated, $this->context->getServiceId());
     }
 
@@ -93,7 +85,7 @@ class AccountController extends AbstractController
      */
     public function actionPostValidation()
     {
-        $validated = $this->validateRequestBody($this->commonValidationRules);
+        $validated = $this->validateRequestBody($this->loginValidationRules);
         return $this->processValidation($validated, $this->context->getServiceId());
     }
 
