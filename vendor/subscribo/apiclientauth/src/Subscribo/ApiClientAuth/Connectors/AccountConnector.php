@@ -84,14 +84,26 @@ class AccountConnector
      */
     public function postRegistration(array $data, $signatureOptions = true)
     {
-        $signatureOptions = $this->processSignatureOptions($signatureOptions);
-
-        $responseData = $this->restClient->process('account/registration', 'POST', $data, null, null, $signatureOptions, false);
-
-        return $this->assembleResult($responseData, 'registered');
+        return $this->processPostRegistrationRawResponse($this->postRegistrationRaw($data, $signatureOptions));
     }
 
-    public function resumePostRegistration(array $responseData)
+    /**
+     * @param array $data
+     * @param SignatureOptions|array|bool $signatureOptions
+     * @return array|null
+     */
+    public function postRegistrationRaw(array $data, $signatureOptions = true)
+    {
+        $signatureOptions = $this->processSignatureOptions($signatureOptions);
+
+        return $this->restClient->process('account/registration', 'POST', $data, null, null, $signatureOptions, false);
+    }
+
+    /**
+     * @param array $responseData
+     * @return array|null
+     */
+    public function processPostRegistrationRawResponse(array $responseData)
     {
         return $this->assembleResult($responseData, 'registered');
     }

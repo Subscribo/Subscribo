@@ -15,12 +15,24 @@ class Registrar
         $this->model = $model;
     }
 
-    public function getValidationRules()
+    public static function getValidationRules()
+    {
+        return static::getRegistrationValidationRules() + static::getAddressValidationRules();
+    }
+
+    public static function getRegistrationValidationRules()
     {
         return [
             'name'  => 'max:255',
             'email' => 'required|email|max:255',
             'password' => 'required|confirmed|min:6',
+            'remember_me' => 'boolean',
+        ];
+    }
+
+    public static function getAddressValidationRules()
+    {
+        return [
             'gender' => 'in:man,woman',
             'first_name' => 'max:100',
             'last_name' => 'required_with:city|max:100',
@@ -34,29 +46,47 @@ class Registrar
         ];
     }
 
+
     /**
      * @param array $data
-     * @return null|Account
+     * @return \Illuminate\Contracts\Auth\Authenticatable|Account|null
      */
     public function attempt(array $data)
     {
         $response = $this->accountConnector->postRegistration($data);
+
         return $this->assembleModel($response);
     }
 
     /**
      * @param array $data
-     * @return null|Account
+     * @return \Illuminate\Contracts\Auth\Authenticatable|Account|null
      */
     public function resumeAttempt(array $data)
     {
-        $response = $this->accountConnector->resumePostRegistration($data);
+        return $this->makeAuthenticatableModelFromRawRegistrationResponse($data);
+    }
+
+
+    public function getRawRegistrationResponse(array $data)
+    {
+        return $this->accountConnector->postRegistrationRaw($data);
+    }
+
+    /**
+     * @param array $responseData
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null|Account
+     */
+    public function makeAuthenticatableModelFromRawRegistrationResponse(array $responseData)
+    {
+        $response = $this->accountConnector->processPostRegistrationRawResponse($responseData);
+
         return $this->assembleModel($response);
     }
 
     /**
      * @param array $data
-     * @return null|\Subscribo\ApiClientAuth\Account
+     * @return null|\Subscribo\ApiClientAuth\Account|\Illuminate\Contracts\Auth\Authenticatable
      */
     public function assembleModel(array $data = null)
     {
