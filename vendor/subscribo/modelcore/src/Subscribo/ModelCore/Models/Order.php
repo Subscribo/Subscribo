@@ -84,7 +84,7 @@ class Order extends \Subscribo\ModelCore\Bases\Order
         $anticipatedDeliveryEnd = true
     ) {
         if (true === $countryId) {
-            $countryId = $shippingAddress ? $shippingAddress->id : null;
+            $countryId = $shippingAddress ? $shippingAddress->countryId : null;
         }
         $serviceId = $account->serviceId;
         $deliveryId = $delivery ? $delivery->id : null;
@@ -248,6 +248,7 @@ class Order extends \Subscribo\ModelCore\Bases\Order
      * @param Discount[] $discountsInOrder
      * @param int|null $countryId
      * @return array
+     * @throws \Subscribo\ModelCore\Exceptions\ArgumentValidationException
      */
     protected static function calculateSums(array $amountsPerPriceId, array $prices, array $products, array $discountsInOrder = [], $countryId = null)
     {
@@ -259,7 +260,11 @@ class Order extends \Subscribo\ModelCore\Bases\Order
             $amountString = strval($amount);
             $price = $prices[$priceId];
             $product = $products[$priceId];
-            $productWithPrices = $product->toArrayWithPrice($price, $countryId);
+            try {
+                $productWithPrices = $product->toArrayWithPrice($price, $countryId);
+            } catch (InvalidArgumentException $e) {
+                throw new ArgumentValidationException('taxGroupNotFound', $priceId);
+            }
             $productsWithPrices[$priceId] = $productWithPrices;
             $productNetPrice = $productWithPrices['price_net'];
             $productGrossPrice = $productWithPrices['price_gross'];

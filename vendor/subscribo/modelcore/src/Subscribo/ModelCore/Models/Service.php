@@ -99,4 +99,23 @@ class Service extends \Subscribo\ModelCore\Bases\Service
     {
         return CurrencyPossibilitiesPerCountry::provideDefaultCurrencyIdForServiceIdAndCountryId($this->id, $countryId);
     }
+
+    /**
+     * @param int|Country $countryId
+     * @return bool
+     */
+    public function isOperatingInCountry($countryId)
+    {
+        if ($countryId instanceof Country) {
+            $countryId = $countryId->id;
+        } else {
+            $countryId = intval($countryId);
+        }
+        foreach ($this->availableCountries as $availableCountry) {
+            if ($availableCountry->id === $countryId) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

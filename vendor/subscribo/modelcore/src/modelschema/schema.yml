@@ -412,10 +412,10 @@ model_fields:
 
     customer_configurations:
         - id hidden
-        - customer_id hidden -> customers (show_from show_to)
+        - customer_id hidden -> customers (type one_belongs_to_one show_from show_to)
         - default_contact_id null hidden -> contacts (show_from)
         - default_delivery_address_id null → addresses
-        - default_billing_details_id null hidden → billing_details (show_from)
+        - default_billing_detail_id null hidden → billing_details (show_from)
 
     customer_registrations:
         - hash null
