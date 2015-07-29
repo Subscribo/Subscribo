@@ -8,6 +8,7 @@ use Subscribo\Exception\Interfaces\ContainDataInterface;
 use Subscribo\Exception\Interfaces\MarkableExceptionInterface;
 use Subscribo\Exception\Factories\MarkableExceptionFactory;
 use Subscribo\Exception\Exceptions\RuntimeException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Trait HandleServerRequestExceptionTrait
@@ -77,8 +78,9 @@ trait HandleServerRequestExceptionTrait
 
     /**
      * @param Exception $e
+     * @param LoggerInterface|null $logger
      */
-    protected function logException(Exception $e)
+    protected function logException(Exception $e, LoggerInterface $logger = null)
     {
         $context = ['exception' => $e];
         if ($e instanceof MarkableExceptionInterface) {
@@ -88,6 +90,10 @@ trait HandleServerRequestExceptionTrait
         if ($e instanceof ContainDataInterface) {
             $context['exceptionData'] = $e->getData();
         }
-        \Log::error($e, $context);
+        if ($logger) {
+            $logger->error($e->__toString(), $context);
+        } else {
+            \Log::error($e, $context);
+        }
     }
 }
