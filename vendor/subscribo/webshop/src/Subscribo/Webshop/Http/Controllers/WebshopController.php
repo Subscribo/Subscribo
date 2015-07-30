@@ -10,6 +10,7 @@ use Subscribo\ApiClientAuth\Registrar;
 use Subscribo\Localization\Deposits\SessionDeposit;
 use Subscribo\Localization\Deposits\CookieDeposit;
 use App\Http\Controllers\Controller;
+use Subscribo\ApiClientAuth\Connectors\AccountConnector;
 use Subscribo\Webshop\Connectors\BusinessConnector;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Illuminate\Contracts\View;
@@ -40,17 +41,19 @@ class WebshopController extends Controller
         return view('vendor/subscribo/webshop/product/list', $data);
     }
 
-    public function getBuyProduct($id, BusinessConnector $connector, LocalizerInterface $localizer)
+    public function getBuyProduct($id, Guard $auth, AccountConnector $accountConnector, BusinessConnector $businessConnector, LocalizerInterface $localizer)
     {
-        $product = $connector->getProduct($id);
+        $product = $businessConnector->getProduct($id);
         if (empty($product['name'])) {
             $product['name'] = $product['identifier'];
         }
-        $transactionGateways = $connector->getGateway();
+        $transactionGateways = $businessConnector->getGateway();
+        $addresses = $auth->user() ? $accountConnector->getAddress() : [];
         $data = [
             'product' => $product,
             'transactionGateways' => $transactionGateways,
             'localizer' => $localizer->template('messages', 'webshop')->setPrefix('template.product.buy'),
+            'addresses' => $addresses,
         ];
 
         return view('vendor/subscribo/webshop/product/buy', $data);
@@ -60,14 +63,22 @@ class WebshopController extends Controller
 
     public function postBuyProduct($id, BusinessConnector $connector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger)
     {
-        $orderRules = [
+        $orderValidationRules = [
             'transaction_gateway' => 'required|integer',
             'delivery_id' => 'integer',
             'delivery_window_id' => 'integer',
             'subscription_period' => 'max:10',
+            'address_id' => 'integer',
+            'shipping_address_id' => 'integer',
+            'billing_is_same' => 'boolean',
         ];
-        $rules = $orderRules + Registrar::getAddressValidationRules();
-        $this->validate($request, $rules);
+        $validationRules = $orderValidationRules + Registrar::getAddressValidationRules('', 'address_id');
+        $billingValidationRules =  Registrar::getAddressValidationRules('billing_', 'billing_address_id,billing_is_same', 'required_without_all');
+        $billingValidationRules['billing_address_id'] = 'integer';
+        if (( ! $request->request->get('billing_is_same'))) {
+            $validationRules = $validationRules + $billingValidationRules;
+        }
+        $this->validate($request, $validationRules);
 
         if ($auth->guest()) {
             $registrationResult = $this->handleUserRegistration($auth, $registrar, $request, $sessionDeposit, $cookieDeposit, $localizer, $logger, []);
@@ -77,7 +88,7 @@ class WebshopController extends Controller
         }
 
 
-        $data = array_intersect_key($request->request->all(), $rules);
+        $data = array_intersect_key($request->request->all(), $validationRules);
         $priceId = $request->request->get('item_identifier');
         $data['prices'] = [
                 $priceId => 1,
@@ -104,8 +115,9 @@ class WebshopController extends Controller
 
             return redirect($request->url())->withInput($inputForRedirect)->withErrors($errorMessage);
         }
+        var_dump($result);
 
-        return 'Buying...'.var_export($result, true);
+        return 'Buying...';
     }
 
     public function getPay()

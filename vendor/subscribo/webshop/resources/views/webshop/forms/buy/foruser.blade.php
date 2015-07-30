@@ -1,12 +1,13 @@
 <div>
-    <h3>For User:</h3>
     @include('subscribo::apiclientcommon.formerrors')
 
     <form method="POST">
         {!! csrf_field() !!}
         @include('subscribo::webshop.forms.buy.product')
-        @include('subscribo::webshop.forms.buy.address')
+        @include('subscribo::webshop.forms.buy.addressselector', ['type' => ''])
+        @include('subscribo::webshop.forms.buy.address', ['type' => ''])
+        @include('subscribo::webshop.forms.buy.billing')
         @include('subscribo::webshop.forms.buy.transactiongatewayselect')
-        <button>{{ $localizer->trans('forms.buy.forguest.submitButton') }}</button>
+        <button>{{ $localizer->trans('forms.buy.foruser.submitButton') }}</button>
     </form>
 </div>

@@ -18,9 +18,44 @@ template.product:
 forms:
     buy:
 # Template resources/views/webshop/forms/buy/forguest.blade.php
-        forguest:
-            submitButton: Kúpiť
-#Template resources/views/webshop/forms/buy/paymentmethod.blade.php
-        paymentmethod:
-            selectTitle: 'Vyberte spôsob platby:'
-
+        forguest.submitButton: Kúpiť
+# Template resources/views/webshop/forms/buy/foruser.blade.php
+        foruser.submitButton: Kúpiť
+# Template resources/views/webshop/forms/buy/transactiongatewayselect.blade.php
+        transactiongatewayselect:
+            title: 'Vyberte spôsob platby:'
+        address:
+            gender.title: Pohlavie:
+            gender.man: Muž
+            gender.woman: Žena
+            firstName: Prvé meno (krstné meno / mená):
+            lastName: Posledné meno (priezvisko / priezviská):
+            street: Ulica (a číslo domu):
+            city: Mesto:
+            postCode: PSČ:
+            country: Krajina:
+            phone: Telefón:
+            deliveryInformation: Dodatočné informácie pre dodanie:
+# Template resources/views/webshop/forms/buy/addressselector.blade.php
+            select:
+                title:
+                    default: Vyberte adresu
+                    shipping: Vyberte adresu pre dodanie
+                    billing: Vyberte fakturačnú adresu
+                add:
+                    default: Zadajte novú adresu
+                    shipping: Zadajte novú adresu pre dodanie
+                    billing: Zadajte novú fakturačnú adresu
+# Template resources/views/webshop/forms/buy/billing.blade.php
+            billingIsSame: Fakturačná adresa je rovnaká
+# Template resources/views/webshop/forms/buy/register.blade.php
+        register:
+            email: E-mail:
+            password: Heslo:
+            passwordConfirmation: Potvrdenie hesla:
+        options:
+            start: Začiatok:
+            period: Opakovanie:
+# WebshopController.php
+errors:
+    orderFailed: Pokus o zadanie objednávky zlyhal

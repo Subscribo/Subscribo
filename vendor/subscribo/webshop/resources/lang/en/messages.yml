@@ -18,23 +18,38 @@ template.product:
 forms:
     buy:
 # Template resources/views/webshop/forms/buy/forguest.blade.php
-        forguest:
-            submitButton: Buy
-#Template resources/views/webshop/forms/buy/transactiongatewayselect.blade.php
+        forguest.submitButton: Buy
+# Template resources/views/webshop/forms/buy/foruser.blade.php
+        foruser.submitButton: Buy
+# Template resources/views/webshop/forms/buy/transactiongatewayselect.blade.php
         transactiongatewayselect:
             title: 'Select payment method:'
+# Template resources/views/webshop/forms/buy/address.blade.php
         address:
             gender.title: Gender:
             gender.man: Man
             gender.woman: Woman
-            firstName: First Name:
-            lastName: Last Name:
-            street: Street
+            firstName: First Name(s):
+            lastName: Last Name(s):
+            street: Street:
             city: City:
             postCode: Post Code:
             country: Country:
             phone: Phone:
             deliveryInformation: Delivery information:
+# Template resources/views/webshop/forms/buy/addressselector.blade.php
+            select:
+                title:
+                    default: Select address
+                    shipping: Select your shipping address
+                    billing: Select your billing address
+                add:
+                    default: Add new address
+                    shipping: Add new shipping address
+                    billing: Add new billing address
+# Template resources/views/webshop/forms/buy/billing.blade.php
+            billingIsSame: Billing address is the same
+# Template resources/views/webshop/forms/buy/register.blade.php
         register:
             email: E-mail:
             password: Password:
@@ -42,6 +57,7 @@ forms:
         options:
             start: Start from:
             period: Period:
+# WebshopController.php
 errors:
     orderFailed: Ordering has failed
 
