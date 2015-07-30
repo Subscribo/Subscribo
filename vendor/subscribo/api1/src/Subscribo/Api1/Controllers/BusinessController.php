@@ -235,6 +235,23 @@ class BusinessController extends AbstractBusinessController
     private function tryToRetrieveAddress(array $input, array $prefixes, Customer $customer, $messageKeySwitch)
     {
         foreach ($prefixes as $prefix) {
+            $key = $prefix.'address_id';
+            if ( ! empty($input[$key])) {
+                /** @var Address $address */
+                $address = Address::find($input[$key]);
+                if (empty($address)) {
+                    $messageId = 'business.errors.prepareOrder.'.$messageKeySwitch.'AddressNotFound';
+                    $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+                    throw new InvalidInputHttpException([$key => $message]);
+                }
+                if ($address->customerId !== $customer->id) {
+                    $messageId = 'business.errors.prepareOrder.'.$messageKeySwitch.'AddressCustomerMismatch';
+                    $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+                    throw new InvalidInputHttpException([$key => $message]);
+                }
+
+                return $address;
+            }
             try {
                 $address = AddressFactory::findOrGenerate($input, $prefix, $customer);
                 if ($address) {
@@ -244,29 +261,9 @@ class BusinessController extends AbstractBusinessController
             } catch (\InvalidArgumentException $e) {
                 $messageId = 'business.errors.prepareOrder.'.$messageKeySwitch.'CountryNotFound';
                 $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
-                $key = $prefix.'country';
-                throw new InvalidInputHttpException([$key => $message]);
+                $messageKey = $prefix.'country';
+                throw new InvalidInputHttpException([$messageKey => $message]);
             }
-        }
-        foreach ($prefixes as $prefix) {
-            $key = $prefix.'address_id';
-            if (empty($input[$key])) {
-                continue;
-            }
-            /** @var Address $address */
-            $address = Address::find($input[$key]);
-            if (empty($address)) {
-                $messageId = 'business.errors.prepareOrder.'.$messageKeySwitch.'AddressNotFound';
-                $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
-                throw new InvalidInputHttpException([$key => $message]);
-            }
-            if ($address->customerId !== $customer->id) {
-                $messageId = 'business.errors.prepareOrder.'.$messageKeySwitch.'AddressCustomerMismatch';
-                $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
-                throw new InvalidInputHttpException([$key => $message]);
-            }
-
-            return $address;
         }
 
         return null;
@@ -281,7 +278,7 @@ class BusinessController extends AbstractBusinessController
             return $address;
         }
 
-        return $customer->customerConfiguration->defaultDeliveryAddress;
+        return $customer->customerConfiguration->defaultShippingAddress;
     }
 
 

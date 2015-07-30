@@ -55,10 +55,7 @@ class AccountFactory
         if ($shippingAddress) {
             $shippingAddress->customerId = $customer->id;
             $shippingAddress->save();
-            $configuration->defaultDeliveryAddress()->associate($shippingAddress);
-        }
-        if (is_null($billingAddress)) {
-            $billingAddress = $shippingAddress;
+            $configuration->defaultShippingAddress()->associate($shippingAddress);
         }
         if ($billingAddress) {
             $billingAddress->customerId = $customer->id;
@@ -189,34 +186,35 @@ class AccountFactory
      * @param Address|null $billingAddress
      * @throws \Subscribo\Api1\Exceptions\InvalidArgumentException
      */
-    public static function addAddressesIfNotPresent(Customer $customer, Address $shippingAddress, Address $billingAddress = null)
+    public static function addAddressesIfNotPresent(Customer $customer, Address $shippingAddress = null, Address $billingAddress = null)
     {
-        if (is_null($billingAddress)) {
-            $billingAddress = $shippingAddress;
+        if ($shippingAddress) {
+            if ($shippingAddress->customerId !== $customer->id) {
+                throw new InvalidArgumentException('Provided shipping address does not have appropriate customer_id set');
+            }
+            if (empty($shippingAddress->id)) {
+                throw new InvalidArgumentException('Provided shipping address has not been saved before');
+            }
+            if ( ! $customer->getDefaultShippingAddressId()) {
+                $customer->customerConfiguration->defaultShippingAddress()->associate($shippingAddress);
+                $customer->customerConfiguration->save();
+            }
         }
-        if ($shippingAddress->customerId !== $customer->id) {
-            throw new InvalidArgumentException('Provided shipping address does not have appropriate customer_id set');
-        }
-        if ($billingAddress->customerId !== $customer->id) {
-            throw new InvalidArgumentException('Provided billing address does not have appropriate customer_id set');
-        }
-        if (empty($shippingAddress->id)) {
-            throw new InvalidArgumentException('Provided shipping address has not been saved before');
-        }
-        if (empty($billingAddress->id)) {
-            throw new InvalidArgumentException('Provided billing address has not been saved before');
-        }
-        if (empty($customer->customerConfiguration->defaultDeliveryAddressId)) {
-            $customer->customerConfiguration->defaultDeliveryAddressId = $shippingAddress->id;
-            $customer->customerConfiguration->save();
-        }
-        if (empty($customer->customerConfiguration->defaultBillingDetail->addressId)) {
-            $billingDetail = BillingDetail::addAddressOrGenerate(
-                $billingAddress,
-                $customer->customerConfiguration->defaultBillingDetail
-            );
-            $customer->customerConfiguration->defaultBillingDetail()->associate($billingDetail);
-            $customer->customerConfiguration->save();
+        if ($billingAddress) {
+            if ($billingAddress->customerId !== $customer->id) {
+                throw new InvalidArgumentException('Provided billing address does not have appropriate customer_id set');
+            }
+            if (empty($billingAddress->id)) {
+                throw new InvalidArgumentException('Provided billing address has not been saved before');
+            }
+            if ( ! $customer->getDefaultBillingAddressId()) {
+                $billingDetail = BillingDetail::addAddressOrGenerate(
+                    $billingAddress,
+                    $customer->customerConfiguration->defaultBillingDetail
+                );
+                $customer->customerConfiguration->defaultBillingDetail()->associate($billingDetail);
+                $customer->customerConfiguration->save();
+            }
         }
     }
 }

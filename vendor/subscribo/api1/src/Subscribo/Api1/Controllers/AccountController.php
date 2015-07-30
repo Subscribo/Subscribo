@@ -7,12 +7,14 @@ use Subscribo\Api1\Factories\CustomerRegistrationFactory;
 use Subscribo\Api1\Factories\ClientRedirectionFactory;
 use Subscribo\Api1\Exceptions\RuntimeException;
 use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
+use Subscribo\Exception\Exceptions\NoAccountHttpException;
 use Subscribo\Exception\Exceptions\ValidationErrorsHttpException;
 use Subscribo\Exception\Exceptions\WrongAccountHttpException;
 use Subscribo\Exception\Exceptions\InvalidInputHttpException;
 use Subscribo\Exception\Exceptions\InvalidQueryHttpException;
 use Subscribo\Exception\Exceptions\InvalidIdentifierHttpException;
 use Subscribo\ModelCore\Models\Account;
+use Subscribo\ModelCore\Models\Address;
 use Subscribo\ModelCore\Models\AccountToken;
 use Subscribo\ModelCore\Models\ActionInterruption;
 use Subscribo\ModelCore\Models\Customer;
@@ -145,6 +147,50 @@ class AccountController extends AbstractController
         $account = $this->retrieveAccount($accountId);
 
         return ['found' => true, 'result' => $this->assembleAccountResult($account)];
+    }
+
+    /**
+     * GET Action method to get address(es) for logged in customer
+     *
+     * @param int|null $addressId
+     * @return array
+     * @throws \Subscribo\Exception\Exceptions\NoAccountHttpException
+     * @throws \Subscribo\Exception\Exceptions\WrongAccountHttpException
+     * @throws \Subscribo\Exception\Exceptions\InstanceNotFoundHttpException
+     */
+    public function actionGetAddress($addressId = null)
+    {
+        $account = $this->context->getAccount();
+        if (empty($account)) {
+            throw new NoAccountHttpException();
+        }
+        $customer = $account->customer;
+        $defaultShippingAddressId = $customer->getDefaultShippingAddressId();
+        $defaultBillingAddressId = $customer->getDefaultBillingAddressId();
+
+        if ($addressId) {
+            $address = Address::find($addressId);
+            if (empty($address)) {
+                throw new InstanceNotFoundHttpException();
+            }
+            if ($address->customerId !== $customer->id) {
+                throw new WrongAccountHttpException();
+            }
+            $item = $address->toArray();
+            $item['is_default_shipping'] = ($address->id === $defaultShippingAddressId);
+            $item['is_default_billing'] = ($address->id === $defaultBillingAddressId);
+
+            return ['found' => true, 'result' => $item];
+        }
+        $result = [];
+        foreach ($customer->addresses as $address) {
+            $item = $address->toArray();
+            $item['is_default_shipping'] = ($address->id === $defaultShippingAddressId);
+            $item['is_default_billing'] = ($address->id === $defaultBillingAddressId);
+            $result[$address->id] = $item;
+        }
+
+        return ['listed' => true, 'result' => $result];
     }
 
     /**
