@@ -17,7 +17,8 @@ class Registrar
 
     public static function getValidationRules()
     {
-        return static::getRegistrationValidationRules() + static::getAddressValidationRules();
+        return static::getRegistrationValidationRules() + static::getAddressValidationRules()
+                    + static::getAddressValidationRules('shipping_') + static::getAddressValidationRules('billing_');
     }
 
     public static function getRegistrationValidationRules()
@@ -30,9 +31,9 @@ class Registrar
         ];
     }
 
-    public static function getAddressValidationRules()
+    public static function getAddressValidationRules($prefix = '', $requirement = null, $rule = 'required_without')
     {
-        return [
+        $rules = [
             'gender' => 'in:man,woman',
             'first_name' => 'max:100',
             'last_name' => 'required_with:city|max:100',
@@ -44,6 +45,22 @@ class Registrar
             'phone' => 'max:30',
             'mobile' => 'max:30',
         ];
+        if (empty($prefix) and empty($requirement)) {
+
+            return $rules;
+        }
+        $result = [];
+        $replacement = $requirement ? ($rule.':'.$requirement) : ('required_with:'.$prefix.'city');
+        foreach ($rules as $key => $value) {
+            $prefixedKey = $prefix.$key;
+            $prefixedValue = strtr($value, ['required_with:city' => $replacement]);
+            $result[$prefixedKey] = $prefixedValue;
+        }
+        if ($requirement) {
+            $result[$prefix.'city'] = $rules['city'].'|'.$rule.':'.$requirement;
+        }
+
+        return $result;
     }
 
 
