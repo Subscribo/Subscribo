@@ -19,9 +19,8 @@ class BillingDetail extends \Subscribo\ModelCore\Bases\BillingDetail
      */
     public static function generate($address)
     {
-        $addressId = ($address instanceof Address) ? $address->id : intval($address);
         $instance = new static();
-        $instance->addressId = $addressId;
+        $instance->address()->associate($address);
         $instance->type = static::TYPE_ADDRESS_ONLY;
         $instance->save();
 
@@ -44,8 +43,7 @@ class BillingDetail extends \Subscribo\ModelCore\Bases\BillingDetail
      */
     public function addAddress($address)
     {
-        $addressId = ($address instanceof Address) ? $address->id : intval($address);
-        $this->addressId = $addressId;
+        $this->address()->associate($address);
         $this->save();
 
         return $this;
