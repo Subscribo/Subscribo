@@ -1,5 +1,6 @@
 <?php echo "<?php"; ?>
- namespace <?php echo $options['model_base_namespace']; ?>;
+
+namespace <?php echo $options['model_base_namespace']; ?>;
 
 /**
  * Model <?php echo $modelName; ?>
@@ -62,10 +63,14 @@ if ( ! empty($options['base_model_extends'])) {
 ?>
 
 {
-
 <?php if ( ! empty($options['translatable'])):
-echo 'use \\Subscribo\\ModelBase\\Traits\\CustomizedTranslatableModelTrait;'."\n\n";
+echo '    use \\Subscribo\\ModelBase\\Traits\\CustomizedTranslatableModelTrait;'."\n\n";
 endif;
+
+foreach ($options['constants'] as $constantIdentifier => $constantValue) {
+    echo '    const '.$constantIdentifier.' = '.View::make('schemabuilder::helpers.php_value', array('value' => $constantValue)).";\n";
+}
+echo ($options['constants']) ? "\n" : "";
 
 if ( ! empty($options['table_name'])): ?>
     /**

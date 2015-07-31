@@ -1358,13 +1358,28 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         if (( ! empty($field['hidden'])) and ( ! isset($field['administrator']['filter']))) {
             $field['administrator']['filter'] = false;
         }
+        $automaticEnumConstantsForModel = Arr::get($modelOptions, $tableName.'.automatic_enum_constants', null);
+        $automaticEnumConstantsForField = Arr::get($field, 'automatic_enum_constants', $automaticEnumConstantsForModel);
+        if ($automaticEnumConstantsForField and ($field['db_type'] === 'enum') and ( ! empty($field['enum_list']))) {
+            $constants = Arr::get($field, 'constants', []);
+            foreach ($field['enum_list'] as $enumKey => $enumValue) {
+                if (is_numeric($enumKey)) {
+                    $constantKey = strtoupper(snake_case($field['attribute_name']).'_'.snake_case($enumValue));
+                } else {
+                    $constantKey = $enumKey;
+                }
+                $constants[$constantKey] = $enumValue;
+            }
+            $field['constants'] =  $constants;
+        }
+
         return $field;
     }
 
-    private function _addOptionsFromTranslatableFields($ModelFields, $modelOptions)
+    private function _addOptionsFromTranslatableFields($modelFields, $modelOptions)
     {
         $result = $modelOptions;
-        foreach ($ModelFields as $modelKey => $fields) {
+        foreach ($modelFields as $modelKey => $fields) {
             $options = Arr::get($modelOptions, $modelKey, array());
             $result[$modelKey] = $this->_addOptionsFromTranslatableFieldsToModel($fields, $options);
         }
@@ -1425,6 +1440,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         $result = $options;
         $hiddenFields = Arr::get($options, 'hidden', array());
         $fillableFields = Arr::get($options, 'fillable', array());
+        $modelConstants = Arr::get($options, 'constants', array());
         foreach ($fields as $fieldName => $field) {
             $isHidden = Arr::get($field, 'hidden', false);
             if ($isHidden) {
@@ -1433,6 +1449,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             if ($this->_isFieldFillable($field)) {
                 $fillableFields[] = $fieldName;
             }
+            $fieldConstants = Arr::get($field, 'constants', array());
+            $modelConstants = $modelConstants + $fieldConstants;
         }
         foreach($options['foreign_objects'] as $foreignObject) {
             if ($foreignObject['hidden']) {
@@ -1441,6 +1459,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         }
         $result['hidden'] = array_unique($hiddenFields);
         $result['fillable'] = array_unique($fillableFields);
+        $result['constants'] = $modelConstants;
         //For now we are purposefully ignoring guarded fields (keeping default array('*') )
         $hiddenWrapped = array();
         foreach ($result['hidden'] as $hiddenFieldName) {
@@ -2756,6 +2775,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         if (empty($matches)) {
             throw new \Exception('Field line in incorrect format: '.$line);
         }
+        $result = [];
         $result['name'] = array_key_exists(1, $matches) ? trim($matches[1]) : null;
         $result['type'] = array_key_exists(3, $matches) ? trim($matches[3]) : null;
         $optionsString = array_key_exists(4, $matches) ? trim($matches[4]) : '';
@@ -2804,6 +2824,16 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                     break;
                 case 'default':
                     $result['default'] = $this->_parseDefaultLine($options);
+                break;
+                case 'constants':
+                    $value = strtolower(trim(array_shift($options)));
+                    if ($value === 'on') {
+                        $result['automatic_enum_constants'] = true;
+                    } elseif ($value === 'off') {
+                        $result['automatic_enum_constants'] = false;
+                    } else {
+                        throw new \Exception("Unrecognized constants value '".$value."' in line: ".$line);
+                    }
                 break;
                 case 'migration':
                 case 'migration_setup':
