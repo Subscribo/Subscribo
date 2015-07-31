@@ -6,10 +6,10 @@ use RuntimeException;
 use Subscribo\Support\Str;
 
 /**
- * Trait HavingHashTrait Trait for models having (unique) hash
+ * Trait HasHashTrait Trait for models which has a(n) (unique) hash
  * @package Subscribo\ModelBase
  */
-trait HavingHashTrait
+trait HasHashTrait
 {
     /**
      * @param string $hash
