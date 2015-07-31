@@ -23,6 +23,7 @@
         "php": "~5.4",
         "subscribo/localization": "@dev",
         "subscribo/translatablemodel": "@dev",
+        "subscribo/support": "@dev",
         "illuminate/database" : "~5.0"
     },
     "suggest": {
