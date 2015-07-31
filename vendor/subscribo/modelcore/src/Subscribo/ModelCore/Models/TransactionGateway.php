@@ -16,7 +16,7 @@ class TransactionGateway extends \Subscribo\ModelCore\Bases\TransactionGateway
 
     public static function findAvailable($serviceId, $countryId = null, $currencyId = null)
     {
-        $configurations = TransactionGatewayConfiguration::findByAttributes($serviceId, $countryId, $currencyId, null, true, true);
+        $configurations = TransactionGatewayConfiguration::getCollectionByAttributes($serviceId, $countryId, $currencyId, null, true, true);
         $result = [];
         foreach ($configurations as $configuration) {
             $item = $configuration->transactionGateway->toArray();

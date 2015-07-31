@@ -38,8 +38,8 @@ class Address extends \Subscribo\ModelCore\Bases\Address
      */
     public static function make(array $data, Person $person = null, Customer $customer = null)
     {
-        static::reguard();
-        $instance = new Address($data);
+        $instance = new Address();
+        $instance->fill(array_intersect_key($data, array_flip($instance->getFillable())));
         $country = Country::findByIdentifier($data['country']);
         if (empty($country)) {
             throw new InvalidArgumentException('Specified country not found');

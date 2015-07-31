@@ -17,7 +17,7 @@ class TransactionGatewayConfiguration extends \Subscribo\ModelCore\Bases\Transac
      * @param bool $withTransactionGateway
      * @return \Illuminate\Database\Eloquent\Collection|static|TransactionGatewayConfiguration[]
      */
-    public static function findByAttributes($serviceId, $countryId = null, $currencyId = null, $transactionGatewayId = null, $forReceivingPayments = null, $withTransactionGateway = false)
+    public static function getCollectionByAttributes($serviceId, $countryId = null, $currencyId = null, $transactionGatewayId = null, $forReceivingPayments = null, $withTransactionGateway = false)
     {
         $mainQuery = static::query();
         if ($withTransactionGateway) {
@@ -50,5 +50,21 @@ class TransactionGatewayConfiguration extends \Subscribo\ModelCore\Bases\Transac
         $mainQuery->orderBy('ordering', 'asc');
 
         return $mainQuery->get();
+    }
+
+    /**
+     * @param int $serviceId
+     * @param int|null $countryId
+     * @param int|null $currencyId
+     * @param int|null $transactionGatewayId
+     * @param bool|null $forReceivingPayments
+     * @param bool $withTransactionGateway
+     * @return static|TransactionGatewayConfiguration|null
+     */
+    public static function findByAttributes($serviceId, $countryId = null, $currencyId = null, $transactionGatewayId = null, $forReceivingPayments = null, $withTransactionGateway = false)
+    {
+        $collection = static::getCollectionByAttributes($serviceId, $countryId, $currencyId, $transactionGatewayId, $forReceivingPayments, $withTransactionGateway);
+
+        return $collection ? $collection->first() : null;
     }
 }

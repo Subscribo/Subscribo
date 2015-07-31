@@ -35,9 +35,11 @@ default_model_options:
                 list: true
                 edit: false
     migration_timestamps: true
+    automatic_enum_constants: true
     title: null
     description: null
     comments: []
+    constants: []
     rules: []
     modification_rules_before_validation: []
     modification_rules_after_validation: []
@@ -66,6 +68,7 @@ default_model_options:
 
 default_translation_model_options:
     is_translation_model: true
+    automatic_enum_constants: false
     generate:
         model:
             draft: false
@@ -100,6 +103,8 @@ default_field_options:
     comments: []
     translate: null
     rules: []
+    constants: []
+    automatic_enum_constants: null
     modification_rules_before_validation: []
     modification_rules_after_validation: []
     fillable: null
@@ -246,17 +251,17 @@ model_options:
     products_in_subscriptions:
        administrator_menu: Delivery
 
-    orders:
+    sales_orders:
        administrator_menu: Delivery
 
-    realizations_in_orders:
+    realizations_in_sales_orders:
        administrator_menu: Delivery
 
     discounts:
         administrator_menu: Delivery
         relations:
             many_to_many:
-                - orders
+                - sales_orders
                 - subscriptions
                 - accounts
 
@@ -629,21 +634,25 @@ model_fields:
     - price_id -> prices
     - amount (int)
 
-    orders:
+    sales_orders:
     - service_id -> services
     - account_id → accounts
     - type (enum from automatic manual)
-    - status (unsigned tiny int) //1 - ordering / 2 - ordered / 3 - prepared / 4 - send / 5 - delivered / 6 - returned, 7 -  cancelled...)
-    - transaction_id null → transactions
+    - status (enum from ordering ordered prepared sent delivered returned cancelled) null
+    - hash unique
     - delivery_id null → deliveries
     - delivery_window_id null → delivery_windows
     - anticipated_delivery_start (datetime) null
     - anticipated_delivery_end (datetime) null
+    - currency_id -> currencies
+    - net_sum (currency)
+    - gross_sum (currency)
     - subscription_id null → subscriptions #(null for manual)
     - shipping_address_id null → addresses #(null if default)
+    - billing_address_id null → addresses #(null if same as shipping)
 
-    realizations_in_orders:
-    - order_id → orders
+    realizations_in_sales_orders:
+    - sales_order_id → sales_orders
     - realization_id → realizations
     - price_id -> prices
     - amount (unsigned int)
@@ -669,21 +678,21 @@ model_fields:
     - type (enum from standard refund) default word standard
     - origin (enum from system user customer guest outside)
     - parent_id null -> transactions
-    - user_id
-    - account_id
-    - transaction_gateway_id
+    - user_id null
+    - account_id null
+    - sales_order_id null
+    - transaction_gateway_configuration_id null hidden
     - hash unique
     - reference null
     - message null
     - code null
     - payment_method (unsigned tiny int) null // 1 - used_inner_credit / 2 - send_from_account / 3 - send_from_account_using_special_service (SOFORT) / 4 - credit_card / 5 - debit_card / 6 - direct_debit / 7 - invoice...)
-    - stage (unsigned tiny int) default 1 // 1 - planned / 2 - prepared / 3 - authorization_requested / 4 - authorization_response_received / 5 - capture_requested / 6 - capture_response_received / 7 - charge_requested / 8 - charge_response_received / 9 - waiting_for_async_resolution / 10 - async_resolution_received  / 11 - finished / 12 - cancelled / 13 - reversion_requested / 14 - reversion_request_answered / 15 - reverted
-    - status (unsigned tiny int) default 1 // 1 - no_response_yet / 2 - accepted / 3 - waiting / 4 - client_error / 5 - server_error (or connection error) / 6 - denied / 7 - widget_provided / 8 - redirected / 9 - redirected_back
+    - stage (enum from planned prepared authorization_requested authorization_response_received capture_requested capture_response_received charge_requested charge_response_received waiting_for_async_resolution async_resolution_received finished cancelled reversion_requested reversion_request_answered reverted) default word planned
+    - status (enum from no_response_yet accepted waiting client_error server_error connection error denied widget_provided redirected redirected_back) default word no_response_yet
     - amount (currency)
-    - vat (currency) null
+    - payment_fee (currency) null
     - currency_id (int)
-    - country_id null
-    - billing_detail_id null hidden → billing_details (show_from show_to)
+    - payment_fee_paid_by (enum from receiver sender) null
     - first_request_sent_on (datetime) null
     - first_response_received_on (datetime) null
     - last_request_sent_on (datetime) null

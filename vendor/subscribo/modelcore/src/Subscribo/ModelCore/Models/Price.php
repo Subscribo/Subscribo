@@ -3,6 +3,7 @@
 namespace Subscribo\ModelCore\Models;
 
 use Subscribo\Support\Math;
+use Subscribo\ModelCore\Models\Currency;
 
 
 /**
@@ -31,14 +32,7 @@ class Price extends \Subscribo\ModelCore\Bases\Price
      */
     public function isGratis()
     {
-        if (empty($this->amount)) {
-            return true;
-        }
-        $stringAmount = strval($this->amount);
-        $precision  = strlen($stringAmount);
-        $negative = bcsub('0', $stringAmount, $precision);
-
-        return (bccomp('0', $negative, $precision) === 0);
+        return Currency::amountIsEmpty($this->amount);
     }
 
     /**
