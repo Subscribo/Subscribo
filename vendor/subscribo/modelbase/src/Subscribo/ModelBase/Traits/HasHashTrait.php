@@ -4,9 +4,11 @@ namespace Subscribo\ModelBase\Traits;
 
 use RuntimeException;
 use Subscribo\Support\Str;
+use Webpatser\Uuid\Uuid;
 
 /**
  * Trait HasHashTrait Trait for models which has a(n) (unique) hash
+ *
  * @package Subscribo\ModelBase
  */
 trait HasHashTrait
@@ -23,13 +25,13 @@ trait HasHashTrait
     }
 
     /**
-     * @param int|bool $length
+     * @param int|bool $length false for UUID, true for getting it from getDefaultHashLength()
      * @param int|bool $attempts
      * @param bool $throwExceptionOnFailure Whether to throw exception on failure to find unused hash
      * @return string|null
      * @throws \RuntimeException
      */
-    public static function getUnusedHash($length = true, $attempts = true, $throwExceptionOnFailure = true)
+    public static function getUnusedHash($length = false, $attempts = true, $throwExceptionOnFailure = true)
     {
         if (true === $length) {
             $length = static::getDefaultHashLength();
@@ -37,8 +39,11 @@ trait HasHashTrait
         if (true === $attempts) {
             $attempts = static::getDefaultHashTryingAttempts();
         }
-        $hash = Str::random($length);
-
+        if (is_int($length)) {
+            $hash = Str::random($length);
+        } else {
+            $hash = (string) Uuid::generate(4);
+        }
         for ($i = 0; $i < $attempts; $i++) {
             $found = static::findByHash($hash);
             if (empty($found)) {
@@ -56,11 +61,11 @@ trait HasHashTrait
 
     /**
      * @param array $attributes
-     * @param int|bool $hashLength
+     * @param int|bool $hashLength false for UUID, true for getting it from getDefaultHashLength()
      * @param bool $throwExceptionOnFailureToFindHash Whether to throw exception on failure to find unused hash
      * @return static
      */
-    public static function makeWithHash(array $attributes = [], $hashLength = true, $throwExceptionOnFailureToFindHash = true)
+    public static function makeWithHash(array $attributes = [], $hashLength = false, $throwExceptionOnFailureToFindHash = true)
     {
         $instance = new static($attributes);
         $instance->addHash($hashLength, true, $throwExceptionOnFailureToFindHash);
@@ -70,10 +75,10 @@ trait HasHashTrait
 
     /**
      * @param array $attributes
-     * @param int|bool $hashLength
+     * @param int|bool $hashLength false for UUID, true for getting it from getDefaultHashLength()
      * @return static
      */
-    public static function generateWithHash(array $attributes = [], $hashLength = true)
+    public static function generateWithHash(array $attributes = [], $hashLength = false)
     {
         $instance = static::makeWithHash($attributes, $hashLength, true);
         $instance->save();
@@ -82,12 +87,12 @@ trait HasHashTrait
     }
 
     /**
-     * @param bool int|bool $length
-     * @param bool int|bool $attempts
+     * @param int|bool $length false for UUID, true for getting it from getDefaultHashLength()
+     * @param int|bool $attempts
      * @param bool $throwExceptionOnFailure
      * @return $this
      */
-    public function addHash($length = true, $attempts = true, $throwExceptionOnFailure = true)
+    public function addHash($length = false, $attempts = true, $throwExceptionOnFailure = true)
     {
         $this->hash = static::getUnusedHash($length, $attempts, $throwExceptionOnFailure);
 

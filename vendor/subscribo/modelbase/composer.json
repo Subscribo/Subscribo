@@ -24,6 +24,7 @@
         "subscribo/localization": "@dev",
         "subscribo/translatablemodel": "@dev",
         "subscribo/support": "@dev",
+        "webpatser/laravel-uuid": "^2.0",
         "illuminate/database" : "~5.0"
     },
     "suggest": {
