@@ -5,7 +5,6 @@ namespace Subscribo\Api1\Controllers;
 use Subscribo\Api1\Factories\AddressFactory;
 use Subscribo\Api1\Factories\AccountFactory;
 use Subscribo\Api1\AbstractBusinessController;
-use Subscribo\Exception\Exceptions\InvalidArgumentException;
 use Subscribo\Exception\Exceptions\InvalidInputHttpException;
 use Subscribo\Exception\Exceptions\NoAccountHttpException;
 use Subscribo\ModelCore\Models\Person;
@@ -15,10 +14,8 @@ use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\Delivery;
 use Subscribo\ModelCore\Models\DeliveryWindow;
 use Subscribo\ModelCore\Models\Product;
-use Subscribo\ModelCore\Models\Order;
+use Subscribo\ModelCore\Models\SalesOrder;
 use Subscribo\ModelCore\Models\Service;
-use Subscribo\ModelCore\Models\TransactionGateway;
-use Subscribo\ModelCore\Models\TransactionGatewayConfiguration;
 use Subscribo\ModelCore\Exceptions\ArgumentValidationException;
 use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
@@ -59,29 +56,9 @@ class BusinessController extends AbstractBusinessController
     }
 
 
-    public function actionGetGateway($id = null)
-    {
-        $serviceId = $this->context->getServiceId();
-        $countryId = $this->acquireCountryId();
-        $currencyId = $this->acquireCurrencyId($countryId);
-
-        if (is_null($id)) {
-
-            return ['result' => TransactionGateway::findAvailable($serviceId, $countryId, $currencyId)];
-        }
-        $transactionGateway = TransactionGateway::findByIdentifier($id);
-
-        if (empty($transactionGateway)) {
-            throw new InstanceNotFoundHttpException();
-        }
-
-        return ['result' => $transactionGateway];
-    }
-
     public function actionPostOrder()
     {
         $orderValidationRules = [
-            'transaction_gateway' => 'required|max:100',
             'prices' => 'required|array',
             'discount_codes' => 'array',
             'delivery_id' => 'required|integer',
@@ -109,66 +86,18 @@ class BusinessController extends AbstractBusinessController
         AccountFactory::addAddressesIfNotPresent($customer, $shippingAddress, $billingAddress);
 
         $subscriptionPeriod = isset($validated['subscription_period']) ? $validated['subscription_period'] : false;
-        $result = $this->prepareOrder($account, $validated['prices'], $discountIds, $delivery, $deliveryWindow, $subscriptionPeriod, $shippingAddress);
-
-        $result['shipping_address'] = $shippingAddress;
-        $result['billing_address'] = $billingAddress;
+        $result = $this->prepareOrder($account, $validated['prices'], $discountIds, $delivery, $deliveryWindow, $subscriptionPeriod, $shippingAddress, $billingAddress);
 
         return ['result' => $result];
-
-        $transactionGateway = TransactionGateway::findByIdentifier($validated['transaction_gateway']);
-        $transactionGatewayConfiguration = TransactionGatewayConfiguration::findByAttributes($serviceId, $countryId, $currencyId, $transactionGateway->id, true, false);
-
-        return static::preparePayment($transactionGateway, $transactionGatewayConfiguration, $account, $address, $person);
     }
 
-    private function prepareOrder(Account $account, array $amountsPerPriceId, array $discountIds, Delivery $delivery, DeliveryWindow $deliveryWindow = null, $subscriptionPeriod = false, Address $shippingAddress = null, $currencyId = null, $countryId = true)
+    private function prepareOrder(Account $account, array $amountsPerPriceId, array $discountIds, Delivery $delivery, DeliveryWindow $deliveryWindow = null, $subscriptionPeriod = false, Address $shippingAddress = null, Address $billingAddress = null, $currencyId = null, $countryId = true)
     {
         try {
-            return Order::prepareOrder($account, $amountsPerPriceId, $discountIds, $delivery, $deliveryWindow, $subscriptionPeriod, $shippingAddress, $currencyId, $countryId, Order::TYPE_MANUAL);
+            return SalesOrder::prepareSalesOrder($account, $amountsPerPriceId, $discountIds, $delivery, $deliveryWindow, $subscriptionPeriod, $shippingAddress, $billingAddress, $currencyId, $countryId, SalesOrder::TYPE_MANUAL);
         } catch (ArgumentValidationException $e) {
             throw $this->makeInvalidPriceException($e);
         }
-    }
-
-    protected static function preparePayment(
-        TransactionGateway $transactionGateway,
-        TransactionGatewayConfiguration $transactionGatewayConfiguration,
-        Account $account,
-        Address $billingAddress,
-        Person $billingPerson,
-        Address $shippingAddress = null,
-        Person $shippingPerson = null
-    ) {
-        switch ($transactionGateway->identifier) {
-            case 'PAY_UNITY-COPY_AND_PAY':
-                return static::preparePaymentPayUnityCopyAndPay($transactionGatewayConfiguration, $account, $billingAddress, $billingPerson, $shippingAddress, $shippingPerson);
-            case 'KLARNA-INVOICE':
-                break;
-            default:
-                throw new InvalidArgumentException('Unknown transaction gateway');
-        }
-    }
-
-    protected static function preparePaymentPayUnityCopyAndPay(
-        TransactionGatewayConfiguration $transactionGatewayConfiguration,
-        Account $account,
-        Address $billingAddress,
-        Person $billingPerson,
-        Address $shippingAddress = null,
-        Person $shippingPerson = null
-    ) {
-
-    }
-    protected static function preparePaymentKlarnaInvoice(
-        TransactionGatewayConfiguration $transactionGatewayConfiguration,
-        Account $account,
-        Address $billingAddress,
-        Person $billingPerson,
-        Address $shippingAddress = null,
-        Person $shippingPerson = null
-    ) {
-
     }
 
     /**

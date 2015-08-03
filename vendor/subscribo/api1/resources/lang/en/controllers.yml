@@ -20,7 +20,7 @@ account.errors:
 answer.errors:
         getQuestion.wrongType: Unrecognized type
         getRedirection.wrongType: Unrecognized type
-#BusinessController
+# BusinessController
 business.errors.prepareOrder:
         priceNotFound: Specified price not found
         taxGroupNotFound: Tax group not found for given country and category (Specified price is not for specified country)
@@ -40,6 +40,15 @@ business.errors.prepareOrder:
         billingAddressNotFound: Selected billing address not found
         shippingAddressCustomerMismatch: Selected shipping address is not connected to your account
         billingAddressCustomerMismatch: Selected billing address is not connected to your account
-
+# TransactionController
+transaction.errors.postCharge:
+        transactionGatewayNotFound: Specified transaction gateway has not been found
+        salesOrderNotFound: Specified sales order has not been found
+        countryNotFound: Specified country has not been found
+        currencyNotFound: Specified currency has not been found
+        invalidAmount: Specified amount has invalid format
+        currencyDoesNotMatchWithSalesOrder: Specified currency does not match with that in specified sales order
+        countryDoesNotMatchWithSalesOrder: Specified country does not match with that in specified sales order
+        amountDoesNotMatchWithSalesOrder: Specified amount does not match with that in specified sales order
 # ContextRequestValidationTrait
 contextRequestValidationTrait.errors.wrongIdentifier: Identifier have to be a positive integer
