@@ -5,6 +5,7 @@ namespace Subscribo\ModelCore\Models;
 use InvalidArgumentException;
 use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\Address;
+use Subscribo\ModelCore\Models\Currency;
 use Subscribo\ModelCore\Models\Delivery;
 use Subscribo\ModelCore\Models\DeliveryWindow;
 use Subscribo\ModelCore\Models\Discount;
@@ -13,7 +14,7 @@ use Subscribo\ModelCore\Models\Realization;
 use Subscribo\ModelCore\Models\RealizationsInSalesOrder;
 use Subscribo\ModelCore\Models\Subscription;
 use Subscribo\ModelCore\Exceptions\ArgumentValidationException;
-use Subscribo\ModelBase\Traits\HavingHashTrait;
+use Subscribo\ModelBase\Traits\HasHashTrait;
 
 /**
  * Model SalesOrder
@@ -22,14 +23,16 @@ use Subscribo\ModelBase\Traits\HavingHashTrait;
  */
 class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
 {
-    use HavingHashTrait;
+    use HasHashTrait;
 
     const STATUS_NOT_APPLICABLE = null;
 
     public static function generateSalesOrder(
         Account $account,
-        $currencyId,
+        Currency $currency,
+        $countryId = null,
         Address $shippingAddress = null,
+        Address $billingAddress = null,
         Delivery $delivery = null,
         DeliveryWindow $deliveryWindow = null,
         Subscription $subscription = null,
@@ -45,17 +48,19 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
             $anticipatedDeliveryEnd = null; //todo calculate from Delivery and DeliveryWindow
         }
         $salesOrder = static::makeWithHash();
-        $salesOrder->currencyId = $currencyId;
+        $salesOrder->currency()->associate($currency);
+        $salesOrder->countryId = $countryId;
         $salesOrder->serviceId = $account->serviceId;
-        $salesOrder->accountId = $account->id;
+        $salesOrder->account()->associate($account);
         $salesOrder->type = $type;
         $salesOrder->status = $status;
-        $salesOrder->deliveryId = $delivery ? $delivery->id : null;
-        $salesOrder->deliveryWindowId = $deliveryWindow ? $deliveryWindow->id : null;
-        $salesOrder->subscriptionId = $subscription ? $subscription->id : null;
+        $salesOrder->delivery()->associate($delivery);
+        $salesOrder->deliveryWindow()->associate($deliveryWindow);
+        $salesOrder->subscription()->associate($subscription);
         $salesOrder->anticipatedDeliveryStart = $anticipatedDeliveryStart;
         $salesOrder->anticipatedDeliveryEnd = $anticipatedDeliveryEnd;
-        $salesOrder->shippingAddressId = $shippingAddress ? $shippingAddress->id : null;
+        $salesOrder->shippingAddress()->associate($shippingAddress);
+        $salesOrder->billingAddress()->associate($billingAddress);
         $salesOrder->save();
 
         return $salesOrder;
@@ -70,6 +75,7 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
         DeliveryWindow $deliveryWindow = null,
         $subscriptionPeriod = false,
         Address $shippingAddress = null,
+        Address $billingAddress = null,
         $currencyId = null,
         $countryId = true,
         $type = self::TYPE_MANUAL,
@@ -86,7 +92,8 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
         if (empty($prices)) {
             throw new InvalidArgumentException('No prices provided');
         }
-        $currencyId = $currencyId ?: reset($prices)->currencyId;
+        /** @var Currency $currency */
+        $currency = reset($prices)->currency;
         $products = static::checkProductsAndAmounts($amountsPerPriceId, $prices);
         $realizations = static::checkRealizations($serviceId, $prices, $deliveryId);
         $discounts = static::checkDiscounts($discountIds);
@@ -101,10 +108,16 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
         }
         $productsInSubscription = $subscription ? $subscription->addProducts($prices, $amountsPerPriceId) : [];
         $discountsInSubscription = $subscription ? $subscription->addDiscounts($discounts) : [];
-        $salesOrder = static::generateSalesOrder($account, $currencyId, $shippingAddress, $delivery, $deliveryWindow, $subscription, $type, $status, $anticipatedDeliveryStart, $anticipatedDeliveryEnd);
+        if (empty($countryId) and $shippingAddress) {
+            $countryId = $shippingAddress->countryId;
+        }
+        if (empty($countryId) and $billingAddress) {
+            $countryId = $billingAddress->countryId;
+        }
+        $salesOrder = static::generateSalesOrder($account, $currency, $countryId, $shippingAddress, $billingAddress, $delivery, $deliveryWindow, $subscription, $type, $status, $anticipatedDeliveryStart, $anticipatedDeliveryEnd);
         $realizationsInSalesOrder = $salesOrder->addRealizations($realizations, $amountsPerPriceId);
         $discountsInSalesOrder = $salesOrder->addDiscounts($discounts);
-        $result = static::calculateSums($amountsPerPriceId, $prices, $products, $discountsInSalesOrder, $countryId);
+        $result = static::calculateSums($amountsPerPriceId, $prices, $products, $currency, $discountsInSalesOrder, $countryId);
         $salesOrder->netSum = $result['netSum'];
         $salesOrder->grossSum = $result['grossSum'];
         $salesOrder->save();
@@ -245,17 +258,18 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
      * @param array $amountsPerPriceId
      * @param Price[] $prices
      * @param Product[] $products
-     * @param Discount[] $discountsInOrder
+     * @param Currency $currency
+     * @param Discount[] $discountsInSalesOrder
      * @param int|null $countryId
      * @return array
      * @throws \Subscribo\ModelCore\Exceptions\ArgumentValidationException
      */
-    protected static function calculateSums(array $amountsPerPriceId, array $prices, array $products, array $discountsInOrder = [], $countryId = null)
+    protected static function calculateSums(array $amountsPerPriceId, array $prices, array $products, Currency $currency, array $discountsInSalesOrder = [], $countryId = null)
     {
         $netSum = '0';
         $grossSum = '0';
         $productsWithPrices = [];
-        $precision = $prices ? (reset($prices)->currency->precision) : 2;
+        $precision = $currency->precision;
         foreach ($amountsPerPriceId as $priceId => $amount) {
             $amountString = strval($amount);
             $price = $prices[$priceId];
@@ -272,21 +286,21 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
             $productGrossPriceMultiplied = bcmul($amountString, $productGrossPrice, $precision);
             $discountedNetPrice = $productNetPriceMultiplied;
             $discountedGrossPrice = $productGrossPriceMultiplied;
-            foreach ($discountsInOrder as $discount) {
+            foreach ($discountsInSalesOrder as $discount) {
                 $discountedNetPrice = $discount->applyOnProductNetPrice($discountedNetPrice, $productWithPrices, $amountString, $product, $price);
                 $discountedGrossPrice = $discount->applyOnProductNetPrice($discountedGrossPrice, $productWithPrices, $amountString, $product, $price);
             }
             $netSum = bcadd($netSum, $discountedNetPrice, $precision);
             $grossSum = bcadd($grossSum, $discountedGrossPrice, $precision);
         }
-        foreach ($discountsInOrder as $discount) {
+        foreach ($discountsInSalesOrder as $discount) {
             $netSum = $discount->applyOnTotalNetPrice($netSum, $productsWithPrices, $amountsPerPriceId, $products, $prices);
             $grossSum = $discount->applyOnTotalGrossPrice($grossSum, $productsWithPrices, $amountsPerPriceId, $products, $prices);
         }
 
         return [
-            'netSum' => $netSum,
-            'grossSum' => $grossSum,
+            'netSum' => $currency->normalizeAmount($netSum),
+            'grossSum' => $currency->normalizeAmount($grossSum),
             'productsWithPrices' => $productsWithPrices,
         ];
     }

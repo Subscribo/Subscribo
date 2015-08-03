@@ -645,6 +645,7 @@ model_fields:
     - anticipated_delivery_start (datetime) null
     - anticipated_delivery_end (datetime) null
     - currency_id -> currencies
+    - country_id null -> countries
     - net_sum (currency)
     - gross_sum (currency)
     - subscription_id null → subscriptions #(null for manual)
