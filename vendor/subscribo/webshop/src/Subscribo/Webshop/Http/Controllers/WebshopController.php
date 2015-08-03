@@ -12,6 +12,7 @@ use Subscribo\Localization\Deposits\CookieDeposit;
 use App\Http\Controllers\Controller;
 use Subscribo\ApiClientAuth\Connectors\AccountConnector;
 use Subscribo\Webshop\Connectors\BusinessConnector;
+use Subscribo\Webshop\Connectors\TransactionConnector;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Illuminate\Contracts\View;
 use Illuminate\Http\Request;
@@ -41,13 +42,13 @@ class WebshopController extends Controller
         return view('vendor/subscribo/webshop/product/list', $data);
     }
 
-    public function getBuyProduct($id, Guard $auth, AccountConnector $accountConnector, BusinessConnector $businessConnector, LocalizerInterface $localizer)
+    public function getBuyProduct($id, Guard $auth, AccountConnector $accountConnector, BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer)
     {
         $product = $businessConnector->getProduct($id);
         if (empty($product['name'])) {
             $product['name'] = $product['identifier'];
         }
-        $transactionGateways = $businessConnector->getGateway();
+        $transactionGateways = $transactionConnector->getGateway();
         $addresses = $auth->user() ? $accountConnector->getAddress() : [];
         $data = [
             'product' => $product,
@@ -61,7 +62,7 @@ class WebshopController extends Controller
 
 
 
-    public function postBuyProduct($id, BusinessConnector $connector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger)
+    public function postBuyProduct($id, BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger)
     {
         $orderValidationRules = [
             'transaction_gateway' => 'required|integer',
@@ -86,9 +87,10 @@ class WebshopController extends Controller
                 return $registrationResult['redirect'];
             }
         }
-
-
         $data = array_intersect_key($request->request->all(), $validationRules);
+        $transactionGatewayId = $data['transaction_gateway'];
+        unset($data['transaction_gateway']);
+        unset($data['billing_is_same']);
         $priceId = $request->request->get('item_identifier');
         $data['prices'] = [
                 $priceId => 1,
@@ -98,7 +100,7 @@ class WebshopController extends Controller
         $exceptInput = ['password', 'password_confirmation', '_token'];
 
         try {
-            $result = $connector->postOrder($data);
+            $postOrderResult = $businessConnector->postOrder($data);
 
         } catch(ServerRequestException $serverRequestException) {
 
@@ -115,9 +117,34 @@ class WebshopController extends Controller
 
             return redirect($request->url())->withInput($inputForRedirect)->withErrors($errorMessage);
         }
-        var_dump($result);
+        try {
+            $chargeData = [
+                'transaction_gateway' => $transactionGatewayId,
+                'sales_order_id' => $postOrderResult['salesOrder']['id'],
+            ];
+            $postChargeResult = $transactionConnector->postCharge($chargeData);
 
-        return 'Buying...';
+        } catch(ServerRequestException $serverRequestException) {
+
+            return $this->handleServerRequestException($serverRequestException, $request->url());
+        } catch (ValidationErrorsException $validationErrorsException) {
+            $errors = $validationErrorsException->getValidationErrors();
+            $inputForRedirect = $request->except($exceptInput);
+
+            return redirect($request->url())->withInput($inputForRedirect)->withErrors($errors);
+        } catch (Exception $genericException) {
+            $this->logException($genericException, $logger);
+            $errorMessage = $localizer->trans('errors.orderFailed', [], 'webshop::messages');
+            $inputForRedirect = $request->except($exceptInput);
+
+            return redirect($request->url())->withInput($inputForRedirect)->withErrors($errorMessage);
+        }
+        ob_start();
+        var_dump($postOrderResult);
+        var_dump($postChargeResult);
+        $result = ob_end_flush();
+
+        return 'Buying...'."<br>\n".$result;
     }
 
     public function getPay()
