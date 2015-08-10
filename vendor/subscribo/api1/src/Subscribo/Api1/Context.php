@@ -6,6 +6,8 @@ use Subscribo\ModelCore\Models\Service;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
 use Subscribo\RestCommon\AccountIdTransport;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Class Context
@@ -51,13 +53,20 @@ class Context
     protected $localizer;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @param ApiGuardInterface $auth
      * @param LocalizerInterface $localizer
+     * @param LoggerInterface $logger
      */
-    public function __construct(ApiGuardInterface $auth, LocalizerInterface $localizer)
+    public function __construct(ApiGuardInterface $auth, LocalizerInterface $localizer, LoggerInterface $logger)
     {
         $this->auth = $auth;
         $this->localizer = $localizer;
+        $this->logger = $logger;
     }
 
     /**
@@ -235,5 +244,23 @@ class Context
     public function getLocale()
     {
         return $this->localizer->getLocale();
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
+     * @param string $message
+     * @param array $context
+     * @param string $level
+     */
+    public function log($message, array $context = [], $level = LogLevel::NOTICE)
+    {
+        $this->logger->log($level, $message, $context);
     }
 }

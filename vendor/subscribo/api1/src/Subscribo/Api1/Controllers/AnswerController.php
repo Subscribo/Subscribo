@@ -9,6 +9,7 @@ use Subscribo\Exception\Exceptions\WrongAccountHttpException;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
 use Subscribo\RestCommon\Questionary;
 use Subscribo\RestCommon\ClientRedirection;
+use Subscribo\RestCommon\Widget;
 use Subscribo\RestCommon\Factories\ServerRequestFactory;
 use Subscribo\ModelCore\Models\ActionInterruption;
 use Subscribo\Support\Arr;
@@ -114,6 +115,50 @@ class AnswerController extends AbstractController
         $clientRedirection = new ClientRedirection($actionInterruption->serverRequest);
 
         return call_user_func($callback, $actionInterruption, $validatedData['answer'], 'postRedirection', $this->context, $clientRedirection);
+    }
+
+    /**
+     * POST Action handling answer to Widget ServerRequest
+     *
+     * @param string $hash
+     * @return mixed
+     * @throws InvalidInputHttpException
+     * @throws WrongAccountHttpException
+     * @throws WrongServiceHttpException
+     * @throws InstanceNotFoundHttpException
+     * @throws RuntimeException
+     */
+    public function actionPostWidget($hash)
+    {
+        $validatedData = $this->validateRequestBody(['answer' => 'required|array']);
+
+        $answerValidator = $this->assembleValidator($validatedData['answer'], ['request' => 'required|array']);
+        if ($answerValidator->fails()) {
+            throw new InvalidInputHttpException($answerValidator->errors()->all());
+        }
+        $validatedAnswer = $answerValidator->valid();
+        $rulesForRequest = [
+            'hash' => '',
+            'method' => 'in:GET,POST',
+            'uri' => 'required',
+            'scheme' => 'in:http,https',
+            'host' => '',
+            'port' => 'numeric',
+            'path' => '',
+            'content' => '',
+            'headers' => 'array',
+            'query' => 'array',
+            'postData' => 'array',
+        ];
+        $requestValidator = $this->assembleValidator($validatedAnswer['request'], $rulesForRequest);
+        if ($requestValidator->fails()) {
+            throw new InvalidInputHttpException($requestValidator->errors()->all());
+        }
+        $actionInterruption = $this->retrieveActionInterruption($hash);
+        $callback = $this->retrieveCallback($actionInterruption);
+        $widget = new Widget($actionInterruption->serverRequest);
+
+        return call_user_func($callback, $actionInterruption, $validatedAnswer, 'postWidget', $this->context, $widget);
     }
 
     /**

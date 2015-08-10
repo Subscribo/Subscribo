@@ -55,6 +55,34 @@ class BusinessController extends AbstractBusinessController
         return ['result' => $product->toArrayWithAppropriatePrice($currencyId, $countryId)];
     }
 
+    public function actionGetDelivery($id = null)
+    {
+        $queryValidationRules = [
+            'available' => 'integer',
+        ];
+        $validated = $this->validateRequestQuery($queryValidationRules);
+        $serviceId = $this->context->getServiceId();
+        if (is_null($id)) {
+            if (empty($validated['available'])) {
+
+                return ['collection' => Delivery::getAllByService($serviceId)];
+            } else {
+                $limit = intval($validated['available']);
+
+                return ['collection' => Delivery::getAvailableForOrderingByService($serviceId, $limit)];
+            }
+        }
+        $delivery = Delivery::find($id);
+        if (empty($delivery)) {
+            throw new InstanceNotFoundHttpException();
+        }
+        if ($delivery->serviceId !== $serviceId) {
+            throw new WrongServiceHttpException();
+        }
+
+        return ['instance' => $delivery];
+    }
+
 
     public function actionPostOrder()
     {

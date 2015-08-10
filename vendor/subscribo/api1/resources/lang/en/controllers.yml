@@ -41,7 +41,8 @@ business.errors.prepareOrder:
         shippingAddressCustomerMismatch: Selected shipping address is not connected to your account
         billingAddressCustomerMismatch: Selected billing address is not connected to your account
 # TransactionController
-transaction.errors.postCharge:
+transaction:
+    errors.postCharge:
         transactionGatewayNotFound: Specified transaction gateway has not been found
         salesOrderNotFound: Specified sales order has not been found
         countryNotFound: Specified country has not been found
@@ -50,5 +51,6 @@ transaction.errors.postCharge:
         currencyDoesNotMatchWithSalesOrder: Specified currency does not match with that in specified sales order
         countryDoesNotMatchWithSalesOrder: Specified country does not match with that in specified sales order
         amountDoesNotMatchWithSalesOrder: Specified amount does not match with that in specified sales order
+    description.intro: Payment for:
 # ContextRequestValidationTrait
 contextRequestValidationTrait.errors.wrongIdentifier: Identifier have to be a positive integer
