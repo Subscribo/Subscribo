@@ -51,18 +51,27 @@ trait HandleUserRegistrationTrait
             }
         } catch(ServerRequestException $serverRequestException) {
 
-            return ['redirect' => $this->handleServerRequestException($serverRequestException, $request->url())];
+            return [
+                'redirect' => $this->handleServerRequestException($serverRequestException, $request->url()),
+                'redirectReason' => 'handlingServerRequest',
+            ];
         } catch (ValidationErrorsException $validationErrorsException) {
             $errors = $validationErrorsException->getValidationErrors();
             $inputForRedirect = $request->except($exceptInput);
 
-            return ['redirect' => redirect($request->url())->withInput($inputForRedirect)->withErrors($errors)];
+            return [
+                'redirect' => redirect($request->url())->withInput($inputForRedirect)->withErrors($errors),
+                'redirectReason' => 'handlingValidationErrors',
+            ];
         } catch (Exception $genericException) {
             $this->logException($genericException, $logger);
             $errorMessage = $localizer->trans('errors.registrationFailed', [], 'apiclientauth::messages');
             $inputForRedirect = $request->except($exceptInput);
 
-            return ['redirect' => redirect($request->url())->withInput($inputForRedirect)->withErrors($errorMessage)];
+            return [
+                'redirect' => redirect($request->url())->withInput($inputForRedirect)->withErrors($errorMessage),
+                'redirectReason' => 'handlingGenericException',
+            ];
         }
         $rememberMe = $request->request->get('remember_me');
         $auth->login($account, $rememberMe);
@@ -72,6 +81,30 @@ trait HandleUserRegistrationTrait
         return [
             'account' => $account,
             'response' => $rawResponse,
+        ];
+    }
+
+    protected function handleUserRegistrationResume($resultInSession, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit)
+    {
+        if (empty($resultInSession)) {
+
+            return false;
+        }
+        $account = $registrar->resumeAttempt($resultInSession);
+        if (empty($account)) {
+
+            return false;
+        }
+        $auth->login($account);
+        //todo implement checking for remember me switch
+        $rememberMe = false;
+        $auth->login($account, $rememberMe);
+        $cookieDeposit = $rememberMe ? $cookieDeposit : null;
+        LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);
+
+        return [
+            'account' => $account,
+            'response' => $resultInSession,
         ];
     }
 }

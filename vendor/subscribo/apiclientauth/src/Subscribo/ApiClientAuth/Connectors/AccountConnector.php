@@ -34,7 +34,7 @@ class AccountConnector extends AccountSimplifiedConnector
     {
         $signatureOptions = $this->processSignatureOptions($signatureOptions);
 
-        $responseData = $this->restClient->process('account/address'.($id ? '/'.$id : ''), 'GET', null, null, null, $signatureOptions, true);
+        $responseData = $this->restClient->process('account/address'.($id ? '/'.$id : ''), 'GET', null, null, null, $signatureOptions, false);
 
         return $responseData['result'];
     }

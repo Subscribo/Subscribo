@@ -30,10 +30,9 @@ trait AuthenticatesAndRegistersUsersTrait
     public function getRegister(Guard $auth, Registrar $registrar, Store $session, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit)
     {
         $resultInSession = $session->pull($this->sessionKeyServerRequestHandledResult);
-        $account = $resultInSession ? $registrar->resumeAttempt($resultInSession) : null;
-        if ($account) {
-            $auth->login($account);
-            LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);
+        $handled = $this->handleUserRegistrationResume($resultInSession, $auth, $registrar, $sessionDeposit, $cookieDeposit);
+        if ($handled) {
+
             return redirect($this->redirectPath());
         }
         return view('auth.register');
