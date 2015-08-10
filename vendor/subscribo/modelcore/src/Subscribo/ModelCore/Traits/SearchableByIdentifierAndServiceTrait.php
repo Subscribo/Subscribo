@@ -1,22 +1,27 @@
 <?php
 
-namespace Subscribo\ModelBase\Traits;
+namespace Subscribo\ModelCore\Traits;
+
+use Subscribo\ModelCore\Traits\FilterableByServiceTrait;
+use Subscribo\ModelCore\Models\Service;
 
 /**
- * Class SearchableByIdentifierTrait
+ * Trait SearchableByIdentifierTrait
  * Trait for models with identifier and service_id
  *
  * @package Subscribo\ModelBase
  */
-trait SearchableByIdentifierAndServiceIdTrait
+trait SearchableByIdentifierAndServiceTrait
 {
+    use FilterableByServiceTrait;
+
     /**
      * @param int|string $identifier ID or identifier
-     * @param int|null $serviceId
+     * @param int|null|Service $service
      * @param bool $alsoCommon
      * @return null|static
      */
-    public static function findByIdentifierAndServiceId($identifier, $serviceId, $alsoCommon = false)
+    public static function findByIdentifierAndService($identifier, $service, $alsoCommon = false)
     {
         if (empty($identifier)) {
 
@@ -26,6 +31,8 @@ trait SearchableByIdentifierAndServiceIdTrait
 
             return null;
         }
+        $serviceId = static::extractServiceIdFromService($service);
+
         if (is_numeric($identifier)) {
             $instance = static::find($identifier);
         } else {

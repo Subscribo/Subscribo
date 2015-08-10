@@ -5,17 +5,17 @@ namespace Subscribo\ModelCore\Models;
 use Subscribo\ModelCore\Models\Price;
 use Subscribo\ModelCore\Models\TaxGroup;
 use InvalidArgumentException;
-use Subscribo\ModelBase\Traits\SearchableByIdentifierAndServiceIdTrait;
+use Subscribo\ModelCore\Traits\SearchableByIdentifierAndServiceTrait;
 
 /**
  * Model Product
  *
  * Model class for being changed and used in the application
- * @method \Subscribo\ModelCore\Models\Product findByIdentifierAndServiceId() static findByIdentifierAndServiceId(int|string $identifier, int|null $serviceId, bool $alsoCommon)
+ * @method \Subscribo\ModelCore\Models\Product findByIdentifierAndService() static findByIdentifierAndService(int|string $identifier, int|null|Service $service, bool $alsoCommon)
  */
 class Product extends \Subscribo\ModelCore\Bases\Product
 {
-    use SearchableByIdentifierAndServiceIdTrait;
+    use SearchableByIdentifierAndServiceTrait;
 
     /**
      * @param int $serviceId

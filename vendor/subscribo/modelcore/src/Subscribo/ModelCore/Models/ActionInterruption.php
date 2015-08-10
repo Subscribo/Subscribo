@@ -2,6 +2,7 @@
 
 use RuntimeException;
 use Subscribo\Support\Str;
+use Subscribo\RestCommon\ServerRequest;
 
 /**
  * Model ActionInterruption
@@ -86,4 +87,13 @@ class ActionInterruption extends \Subscribo\ModelCore\Bases\ActionInterruption
         return $this;
     }
 
+    public function syncWithServerRequest(ServerRequest $serverRequest, $endpointBase)
+    {
+        $serverRequest->hash = $this->hash;
+        $serverRequest->endpoint = $endpointBase.$serverRequest->hash;
+        $this->serverRequest = $serverRequest;
+        $this->type = $serverRequest->getType();
+
+        return $this;
+    }
 }

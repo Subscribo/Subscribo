@@ -3,7 +3,7 @@
 
 /**
  * Model Person
- *
+ * @property-read string $name
  * Model class for being changed and used in the application
  */
 class Person extends \Subscribo\ModelCore\Bases\Person
@@ -163,6 +163,4 @@ class Person extends \Subscribo\ModelCore\Bases\Person
         $result = preg_replace('/ +/', ' ', $result);
         return $result;
     }
-
-
 }

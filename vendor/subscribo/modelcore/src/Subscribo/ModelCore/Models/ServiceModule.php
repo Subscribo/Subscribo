@@ -11,6 +11,8 @@ use Subscribo\Support\Arr;
 class ServiceModule extends \Subscribo\ModelCore\Bases\ServiceModule
 {
     const MODULE_ACCOUNT_MERGING = 'account_merging';
+    const MODULE_WIDGET = 'widget';
+    const GENERIC_MODULE = 'generic_module';
 
     const STATUS_ENABLED = 'enabled';
     const STATUS_DISABLED = 'disabled';
@@ -34,6 +36,27 @@ class ServiceModule extends \Subscribo\ModelCore\Bases\ServiceModule
                 ],
             ],
         ],
+        self::MODULE_WIDGET => [
+            'client' => [
+                'main' => [
+                    'uri' => [
+                        'path' => '/widget/return',
+                        'query' => [
+                            'required' => [
+                                'hash'          => '{hash}',
+                            ],
+                            'optional' => [
+                                'locale' => '{locale}',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+
+    ];
+
+    static $defaultSettingsMap = [
     ];
 
     /**
@@ -49,7 +72,9 @@ class ServiceModule extends \Subscribo\ModelCore\Bases\ServiceModule
         $instance = static::query()->where($attributes)->first();
         if ( ! $instance) {
             $instance = new static($attributes);
-            $defaults = isset(static::$defaultSettings[$module]) ? static::$defaultSettings[$module] : null;
+            $instance->serviceId = $serviceId;
+            $key = isset(static::$defaultSettingsMap[$module]) ? static::$defaultSettingsMap[$module] : $module;
+            $defaults = isset(static::$defaultSettings[$key]) ? static::$defaultSettings[$key] : null;
             $settings = is_null($settings) ? $defaults : $settings;
         }
         if ( ! is_null($settings)) {

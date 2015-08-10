@@ -9,6 +9,8 @@ use Subscribo\ModelCore\Models\TransactionGatewayConfiguration;
  * Model TransactionGateway
  *
  * Model class for being changed and used in the application
+ *
+ * @method \Subscribo\ModelCore\Models\TransactionGateway findByIdentifier() static findByIdentifier(int|string $identifier)
  */
 class TransactionGateway extends \Subscribo\ModelCore\Bases\TransactionGateway
 {
