@@ -17,7 +17,6 @@ class ServiceSeeder extends Seeder {
         $dollar = Currency::firstOrCreate(['identifier' => 'USD']);
         $pound = Currency::firstOrCreate(['identifier' => 'GBP']);
 
-
         $austria = Country::firstOrCreate(['identifier' => 'AT']);
         $germany = Country::firstOrCreate(['identifier' => 'DE']);
         $slovakia = Country::firstOrCreate(['identifier' => 'SK']);
@@ -43,6 +42,7 @@ class ServiceSeeder extends Seeder {
         $frontendService->availableLocales()->attach($frontendGerman);
         $frontendService->availableLocales()->attach($frontendSlovak);
         ServiceModule::enableModule($frontendService, ServiceModule::MODULE_ACCOUNT_MERGING);
+        ServiceModule::enableModule($frontendService, ServiceModule::MODULE_WIDGET);
 
         if (env('FACEBOOK_APP_CLIENT_ID')) {
             $oAuthConfiguration = new OAuthConfiguration();
@@ -81,7 +81,7 @@ class ServiceSeeder extends Seeder {
         $test2Service->availableLocales()->attach($german);
 
         ServiceModule::enableModule($test2Service, ServiceModule::MODULE_ACCOUNT_MERGING);
-
+        ServiceModule::enableModule($test2Service, ServiceModule::MODULE_WIDGET);
 
         $test3Service = Service::firstOrNew(['identifier' => 'TEST3']);
         $test3Service->name = 'Test3 in Pool3';
@@ -92,7 +92,7 @@ class ServiceSeeder extends Seeder {
         $test3Service->availableLocales()->attach($british);
 
         ServiceModule::enableModule($test3Service, ServiceModule::MODULE_ACCOUNT_MERGING);
-
+        ServiceModule::enableModule($test3Service, ServiceModule::MODULE_WIDGET);
 
         $anotherService = Service::firstOrNew(['identifier' => 'ANOTHER']);
         $anotherService->name = 'Another Service';
@@ -103,6 +103,7 @@ class ServiceSeeder extends Seeder {
         $anotherService->availableLocales()->attach($british);
 
         ServiceModule::enableModule($anotherService, ServiceModule::MODULE_ACCOUNT_MERGING);
+        ServiceModule::enableModule($anotherService, ServiceModule::MODULE_WIDGET);
 
         $servicePool2 = ServicePool::firstOrCreate(['identifier' => 'POOL2']);
         $servicePool2->services()->attach($frontendService);
@@ -113,7 +114,5 @@ class ServiceSeeder extends Seeder {
         $servicePool3->services()->attach($frontendService);
         $servicePool3->services()->attach($test3Service);
         $servicePool3->save();
-
     }
-
 }

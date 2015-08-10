@@ -36,6 +36,9 @@ class TaxSeeder extends Seeder
         $austria = Country::firstOrCreate(['identifier' => 'AT']);
         $germany = Country::firstOrCreate(['identifier' => 'DE']);
         $slovakia = Country::firstOrCreate(['identifier' => 'SK']);
+        $czechRepublic = Country::firstOrCreate(['identifier' => 'CZ']);
+        $unitedKingdom = Country::firstOrCreate(['identifier' => 'GB']);
+        $unitedStates = Country::firstOrCreate(['identifier' => 'US']);
 
         $standardGroupAustria = TaxGroup::firstOrCreate([
             'country_id' => $austria->id,
@@ -61,26 +64,30 @@ class TaxSeeder extends Seeder
         $foodCategory = TaxCategory::firstOrNew(['identifier' => 'FOOD']);
         $foodCategory->translateOrNew('en')->name = 'Food (non-luxury)';
         $foodCategory->translateOrNew('en')->shortName = 'B';
+        $foodCategory->translateOrNew('de')->name = 'Lebensmittel (nicht luxuriös)';
+        $foodCategory->translateOrNew('de')->shortName = 'B';
+        $foodCategory->translateOrNew('sk')->name = 'Potraviny / Jedlo (nie luxusné)';
+        $foodCategory->translateOrNew('sk')->shortName = 'B';
         $foodCategory->description = 'Reduced tax for food items (with exception of luxury food)';
         $foodCategory->save();
 
         $foodGroupAustria = TaxGroup::firstOrCreate([
             'country_id' => $austria->id,
-            'tax_category_id' => $standardTaxCategory->id,
+            'tax_category_id' => $foodCategory->id,
         ]);
         $foodGroupAustria->taxPercent = '10';
         $foodGroupAustria->save();
 
         $foodGroupGermany = TaxGroup::firstOrCreate([
             'country_id' => $germany->id,
-            'tax_category_id' => $standardTaxCategory->id,
+            'tax_category_id' => $foodCategory->id,
         ]);
         $foodGroupGermany->taxPercent = '7';
         $foodGroupGermany->save();
 
         $foodGroupSlovakia = TaxGroup::firstOrCreate([
             'country_id' => $slovakia->id,
-            'tax_category_id' => $standardTaxCategory->id,
+            'tax_category_id' => $foodCategory->id,
         ]);
         $foodGroupSlovakia->taxPercent = '10';
         $foodGroupSlovakia->save();

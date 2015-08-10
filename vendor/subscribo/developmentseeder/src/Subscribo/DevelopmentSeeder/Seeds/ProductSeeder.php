@@ -22,9 +22,9 @@ class ProductSeeder extends Seeder
     {
         $euro = Currency::firstOrCreate(['identifier' => 'EUR']);
 
-        $noTaxCategory = TaxCategory::firstOrNew(['identifier' => 'FREE']);
-        $standardTaxCategory = TaxCategory::firstOrNew(['identifier' => 'STANDARD']);
-        $foodCategory = TaxCategory::firstOrNew(['identifier' => 'FOOD']);
+        $noTaxCategory = TaxCategory::firstOrCreate(['identifier' => 'FREE']);
+        $standardTaxCategory = TaxCategory::firstOrCreate(['identifier' => 'STANDARD']);
+        $foodCategory = TaxCategory::firstOrCreate(['identifier' => 'FOOD']);
 
         $austria = Country::firstOrCreate(['identifier' => 'AT']);
         $germany = Country::firstOrCreate(['identifier' => 'DE']);
@@ -93,8 +93,29 @@ class ProductSeeder extends Seeder
         $price3->service()->associate($frontendService);
         $price3->amount = '10.20';
         $price3->currency()->associate($euro);
-        $price3->priceType = 'brutto';
+        $price3->priceType = 'gross';
         $price3->everywhere = true;
         $price3->save();
+
+
+        $mainService = Service::query()->where(['identifier' => 'MAIN'])->first();
+
+        $bread = Product::firstOrNew(['identifier' => 'BREAD']);
+        $bread->standalone = true;
+
+        $bread->service()->associate($mainService);
+        $bread->taxCategory()->associate($foodCategory);
+        $bread->save();
+        $bread->translateOrNew('en')->name = 'Bread';
+        $bread->translateOrNew('de')->name = 'Brot';
+        $bread->translateOrNew('sk')->name = 'Chlieb';
+        $bread->translateOrNew('cz')->name = 'Chléb';
+        $bread->save();
+        $breadPrice = Price::firstOrNew(['product_id' => $bread->id]);
+        $breadPrice->service()->associate($mainService);
+        $breadPrice->amount = '1.00';
+        $breadPrice->currency()->associate($euro);
+        $breadPrice->everywhere = true;
+        $breadPrice->save();
     }
 }

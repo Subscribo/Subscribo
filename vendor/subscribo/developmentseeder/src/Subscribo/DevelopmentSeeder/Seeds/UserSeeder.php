@@ -23,23 +23,37 @@ class UserSeeder extends Seeder
         $superAdmin = $this->generateUser('admin', User::TYPE_SUPER_ADMIN);
 
         $service = Service::first();
-        $server = new User();
-        $server->username = 'frontend';
-        $server->type = User::TYPE_SERVER;
-        $server->service()->associate($service);
-        $server->save();
-        $userFactory->addTokens($server, UserToken::TYPE_SUBSCRIBO_DIGEST);
+        $frontendSystemUser = new User();
+        $frontendSystemUser->username = 'frontend';
+        $frontendSystemUser->type = User::TYPE_SERVER;
+        $frontendSystemUser->service()->associate($service);
+        $frontendSystemUser->save();
+        $tokens = $userFactory->addTokens($frontendSystemUser, UserToken::TYPE_SUBSCRIBO_DIGEST);
+        /** @var UserToken $token */
+        $token = reset($tokens);
+        $this->updateEnvFile('SUBSCRIBO_REST_CLIENT_TOKEN_RING', $token->tokenRing, '.frontend.env');
+
 
         $administrator = $this->generateUser('administrator');
         $userFactory->addTokens($administrator);
         $administrator->service()->associate($service);
         $administrator->save();
 
-        $service2 = Service::where(['identifier' => 'MAIN'])->first();
+        $mainService = Service::where(['identifier' => 'MAIN'])->first();
         $developer = $this->generateUser('developer');
-        $developer->service()->associate($service2);
+        $developer->service()->associate($mainService);
         $userFactory->addTokens($developer);
         $developer->save();
+        $mainSystemUser = new User();
+        $mainSystemUser->username = 'main';
+        $mainSystemUser->type = User::TYPE_SERVER;
+        $mainSystemUser->service()->associate($mainService);
+        $mainSystemUser->save();
+        $mainTokens = $userFactory->addTokens($mainSystemUser, UserToken::TYPE_SUBSCRIBO_DIGEST);
+        /** @var UserToken $token */
+        $tokenForMain = reset($mainTokens);
+        $this->updateEnvFile('SUBSCRIBO_REST_CLIENT_TOKEN_RING', $tokenForMain->tokenRing);
+
 
         $anotherService = Service::where(['identifier' => 'ANOTHER'])->first();
         $anotherDeveloper = $this->generateUser('developer5');
@@ -59,6 +73,28 @@ class UserSeeder extends Seeder
             $this->command->getOutput()->writeln(sprintf('User %s : %s', $username, $password));
         }
         return $user;
+    }
+
+    protected function updateEnvFile($key, $value, $fileName = '.env')
+    {
+        $envFilePath = base_path($fileName);
+        if (file_exists($envFilePath)) {
+            $oldContent = file_get_contents($fileName);
+            $count = 0;
+            $newContent = preg_replace('/^([ \\t]*)'.$key.'=.*$/m', $key.'='.$value, $oldContent, 1, $count);
+            if (empty($count)) {
+                $newContent = $oldContent."\n\n".$key.'='.$value."\n";
+            }
+            file_put_contents($fileName, $newContent);
+            if ($this->command) {
+                $this->command->getOutput()->writeln(sprintf('Environment file %s updated', $fileName));
+            }
+        } else {
+            if ($this->command) {
+                $this->command->getOutput()->writeln(sprintf('Environment file %s not found - skipped', $fileName));
+            }
+        }
+
     }
 
 }

@@ -13,10 +13,12 @@ class TransactionGatewaySeeder extends Seeder
         $klarnaInvoice = TransactionGateway::firstOrCreate(['identifier' => 'KLARNA-INVOICE']);
 
         $payUnityCopyAndPay->name = 'PayUnity';
+        $payUnityCopyAndPay->gateway = 'PayUnity\\COPYAndPAY';
         $payUnityCopyAndPay->description = 'For Credit / Debit card payments, SOFORT UEBERWEISUNG...';
         $payUnityCopyAndPay->save();
 
         $klarnaInvoice->name = 'Klarna Invoice';
+        $klarnaInvoice->gateway = 'Klarna\\Invoice';
         $klarnaInvoice->description = 'To be invoiced by Klarna';
         $klarnaInvoice->save();
     }
