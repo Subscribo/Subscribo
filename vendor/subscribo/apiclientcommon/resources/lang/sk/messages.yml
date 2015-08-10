@@ -14,3 +14,6 @@ traits:
         redirectingBack.errors.fallback: Stala sa nejaká chyba. Prosím skúste neskôr alebo sa obráťte na správcu stránok.
         getRedirection.errors.fallback: Stala sa nejaká chyba. Prosím skúste neskôr alebo sa obráťte na správcu stránok.
         validateHash.errors.invalidHash: Zadaná URL adresa je nesprávna
+# WidgetControllerTrait
+    widget:
+        widgetReturn.errors.fallback: Stala sa nejaká chyba. Prosím skúste neskôr alebo sa obráťte na správcu stránok.

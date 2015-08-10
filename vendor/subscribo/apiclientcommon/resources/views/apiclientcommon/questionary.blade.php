@@ -1,6 +1,6 @@
 @extends('app')
 
-@if( ! empty($heading))
+@if ( ! empty($heading))
     @section('pageTitle')
         @parent
         | {{ $heading }}
@@ -12,7 +12,7 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                @if ($heading)
+                @if ( ! empty($heading))
                 <div class="panel-heading">{{ $heading }}</div>
                 @endif
                 <div class="panel-body">
