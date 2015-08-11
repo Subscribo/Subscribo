@@ -27,6 +27,10 @@ use Subscribo\ModelCore\Models\ActionInterruption;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Omnipay\Omnipay;
 use Subscribo\Omnipay\Shared\CreditCard;
+use Subscribo\Omnipay\Shared\Item as ShoppingCartItem;
+use Subscribo\Omnipay\Shared\ItemBag as ShoppingCart;
+use Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException;
+use Subscribo\RestCommon\Questionary;
 use Subscribo\RestCommon\Widget;
 use Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException;
 
@@ -138,7 +142,7 @@ class TransactionController extends AbstractBusinessController
 
         $processed = $this->processChargeTransaction($transaction);
 
-        return ['result' => ['transaction' => $transaction, 'processed' => $processed]];
+        return ['result' => $processed];
     }
 
     /**
@@ -189,12 +193,15 @@ class TransactionController extends AbstractBusinessController
         if ($completePurchaseResponse->isSuccessful()) {
             $transaction->changeStage($transaction::STAGE_FINISHED, $transaction::STATUS_ACCEPTED, ['receive', 'finalize']);
             $status = 'accepted';
+            $message = $context->getLocalizer()->trans('transaction.errors.postCharge.success');
         } elseif ($completePurchaseResponse->isWaiting()) {
             $transaction->changeStage($transaction::STAGE_CHARGE_COMPLETING_RESPONSE_RECEIVED, $transaction::STATUS_WAITING);
             $status = 'waiting';
+            $message = $context->getLocalizer()->trans('transaction.errors.postCharge.success'); //Message is success on purpose
         } else {
-            $transaction->changeStage($transaction::STAGE_CHARGE_COMPLETING_RESPONSE_RECEIVED, $transaction::STATUS_DENIED);
-            $status = 'denied';
+            $transaction->changeStage($transaction::STAGE_FAILED, $transaction::STATUS_FAILED, ['receive']);
+            $status = 'failed';
+            $message = $context->getLocalizer()->trans('transaction.errors.postCharge.failed');
         }
         $registrationToken = $completePurchaseResponse->getAccountRegistration();
         $registered = $this->rememberRegistrationToken($transaction, $registrationToken) ? true : false;
@@ -202,14 +209,25 @@ class TransactionController extends AbstractBusinessController
         return [
             'result' => [
                 'transaction' => $transaction,
-                'processed' => [
-                    'status' => $status,
-                    'message' => $completePurchaseResponse->getMessage(),
-                    'code' => $completePurchaseResponse->getCode(),
-                    'registered' => $registered,
-                ]
+                'status' => $status,
+                'message' => $message,
+                'registered' => $registered,
             ]
         ];
+    }
+
+    public function resumeAdditionalCardDataForChargeKlarnaInvoice(ActionInterruption $actionInterruption, array $answer, $action, Context $context, Questionary $questionary)
+    {
+        $transaction = Transaction::find($actionInterruption->extraData['transactionId']);
+        if (empty($transaction)) {
+            throw new RuntimeException('Remembered transaction not found');
+        }
+        if (empty($answer['number'])) {
+            $data = ['birthday' => $answer['year'].'-'.$answer['month'].'-'.$answer['day']];
+        } else {
+            $data = ['nationalIdentificationNumber' => $answer['number']];
+        }
+        return $this->processChargeKlarnaInvoice($transaction, $data);
     }
 
     protected static function rememberRegistrationToken(Transaction $transaction, $registrationToken)
@@ -233,9 +251,11 @@ class TransactionController extends AbstractBusinessController
 
         switch ($transaction->transactionGatewayConfiguration->transactionGateway->identifier) {
             case 'PAY_UNITY-COPY_AND_PAY':
+
                 return $this->processChargePayUnityCopyAndPay($transaction);
             case 'KLARNA-INVOICE':
-                break;
+
+                return $this->processChargeKlarnaInvoice($transaction);
             default:
                 throw new InvalidArgumentException('Unknown transaction gateway');
         }
@@ -261,10 +281,7 @@ class TransactionController extends AbstractBusinessController
         if ($salesOrder) {
             $description = static::assembleTransactionDescription($salesOrder, $this->context->getLocalizer());
             $purchaseData['description'] = static::limitStringLength($description, 120, ',');
-            $address = $salesOrder->billingAddress ?: $salesOrder->shippingAddress;
-            if ($address) {
-                $purchaseData['card'] = static::assembleAddressData($address, $salesOrder->shippingAddress);
-            }
+            $purchaseData['card'] = static::assembleCardData($salesOrder->billingAddress, $salesOrder->shippingAddress);
         }
         try {
             $purchase = $gateway->purchase($purchaseData);
@@ -292,6 +309,67 @@ class TransactionController extends AbstractBusinessController
         $transaction->changeStage($transaction::STAGE_PREPARATION_RESPONSE_RECEIVED, $transaction::STATUS_WIDGET_PROVIDED);
 
         throw new WidgetServerRequestHttpException($widget);
+    }
+
+    protected function processChargeKlarnaInvoice(Transaction $transaction, array $additionalCardData = [])
+    {
+        $salesOrder = $transaction->salesOrder;
+        if (empty($salesOrder)) {
+            throw new InvalidArgumentException('Transaction::salesOrder is required for processing via Klarna Invoice');
+        }
+        $configuration = json_decode($transaction->transactionGatewayConfiguration->configuration, true);
+        $initializeData = $configuration['initialize'];
+        $authorizeData = empty($configuration['authorize']) ? [] : $configuration['authorize'];
+            /** @var \Omnipay\Klarna\InvoiceGateway $gateway */
+        $gateway = Omnipay::create($transaction->transactionGatewayConfiguration->transactionGateway->gateway);
+        $gateway->initialize($initializeData);
+        $additionalCardData['email'] = $transaction->account->customer->email;
+        $card = static::assembleCardData($salesOrder->billingAddress, $salesOrder->shippingAddress) + $additionalCardData;
+        $questionary = static::getQuestionaryOnCardForKlarnaInvoice($card, $gateway->getCountry(), $this->context->getLocalizer());
+        if ($questionary) {
+            $this->provideActionInterruptionFactory()
+                ->makeActionInterruption('resumeAdditionalCardDataForChargeKlarnaInvoice', ['transactionId' => $transaction->id], $questionary);
+
+            throw new QuestionaryServerRequestHttpException($questionary);
+        }
+
+        $authorizeData['transactionId'] = $transaction->hash;
+        $authorizeData['amount'] = $transaction->amount;
+        $authorizeData['currency'] = $transaction->currency->identifier;
+        $description = static::assembleTransactionDescription($salesOrder, $this->context->getLocalizer());
+        $authorizeData['orderId2'] = static::limitStringLength($description, 100, ',');
+        $authorizeData['card'] = $card;
+        $authorizeData['items'] = static::assembleShoppingCart($salesOrder->realizationsInSalesOrders, $salesOrder->discounts, $salesOrder->countryId);
+        $authorizationRequest = $gateway->authorize($authorizeData);
+        $authorizationResponse = $authorizationRequest->send();
+        $message = '';
+        if ($authorizationResponse->isSuccessful()) {
+            $captureRequest = $gateway->capture();
+            $captureRequest->setReservationNumber($authorizationResponse->getReservationNumber());
+            $captureResponse = $captureRequest->send();
+            if ($captureResponse->isSuccessful()) {
+                $status = 'accepted';
+            } elseif ($captureResponse->isWaiting()) {
+                $status = 'waiting';
+                $message = $captureResponse->getMessage();
+            } else {
+                $status = 'failed';
+                $message = $captureResponse->getMessage();
+            }
+        } elseif ($authorizationResponse->isWaiting()) {
+            $message = $authorizationResponse->getMessage();
+            $status = 'waiting';
+        } else {
+            $message = $authorizationResponse->getMessage();
+            $status = 'failed';
+        }
+        return ['result' => [
+                'transaction' => $transaction,
+                'status' => $status,
+                'message' => $message,
+                'registered' => false,
+            ],
+        ];
     }
 
     protected static function assembleWidgetReturnUrl(Service $service, $hash)
@@ -351,12 +429,17 @@ class TransactionController extends AbstractBusinessController
         return $description;
     }
 
-    protected static function assembleCardData(Address $billingAddress, Address $shippingAddress = null)
+    protected static function assembleCardData(Address $billingAddress = null, Address $shippingAddress = null)
     {
-        $shippingAddress = $shippingAddress ?: $billingAddress;
-        $result = static::assembleAddressData($billingAddress)  + static::assembleAddressData($shippingAddress, false);
+        if (empty($billingAddress) and empty($shippingAddress)) {
 
-        return $result;
+            return null;
+        }
+        $billingAddress = $billingAddress ?: $shippingAddress;
+        $shippingAddress = $shippingAddress ?: $billingAddress;
+        $data = static::assembleAddressData($billingAddress) + static::assembleAddressData($shippingAddress, false);
+
+        return $data;
     }
 
     /**
@@ -379,6 +462,8 @@ class TransactionController extends AbstractBusinessController
             'postcode' => $address->postCode,
             'state' => $address->state ? $address->state->identifier : null,
             'country' => $address->country->identifier,
+            'phone' => $address->phone,
+            'mobile' => $address->mobile,
         ];
         $result = [];
         foreach ($data as $key => $value) {
@@ -400,16 +485,87 @@ class TransactionController extends AbstractBusinessController
         return $result;
     }
 
+    /**
+     * @param \Subscribo\ModelCore\Models\RealizationsInSalesOrder[] $realizationsInSalesOrders
+     * @param \Subscribo\ModelCore\Models\Discount[] $discounts
+     * @param $country
+     * @return ShoppingCart
+     */
+    protected static function assembleShoppingCart($realizationsInSalesOrders, $discounts = [], $country)
+    {
+        $result = new ShoppingCart();
+        /** @var \Subscribo\ModelCore\Models\RealizationsInSalesOrder $realizationInSalesOrder */
+        foreach ($realizationsInSalesOrders as $realizationInSalesOrder) {
+            $price = $realizationInSalesOrder->price;
+            $product = $price->product;
+            $priceData = $product->toArrayWithPrice($price, $country);
+            $item = new ShoppingCartItem();
+            $item->setName($product->name);
+            $item->setDescription($product->description);
+            $item->setIdentifier($product->identifier);
+            $item->setTaxPercent($priceData['tax_percent']);
+            $item->setPrice($priceData['price_gross']);
+            $item->setQuantity($realizationInSalesOrder->amount);
+            $result->add($item);
+        }
+        //todo implement discounts handling
 
-    protected static function preparePaymentKlarnaInvoice(
-        TransactionGatewayConfiguration $transactionGatewayConfiguration,
-        Account $account,
-        Address $billingAddress,
-        Person $billingPerson,
-        Address $shippingAddress = null,
-        Person $shippingPerson = null
-    ) {
+        return $result;
+    }
 
+    /**
+     * @param array $card
+     * @param string $country
+     * @param LocalizerInterface $localizer
+     * @return null|Questionary
+     */
+    protected static function getQuestionaryOnCardForKlarnaInvoice(array $card, $country, LocalizerInterface $localizer)
+    {
+        $country = strtoupper($country);
+        switch ($country) {
+            case 'AT':
+            case 'DE':
+            case 'NL':
+                if ( ! empty($card['birthday'])) {
+
+                    return null;
+                }
+                $questionary = new Questionary([
+                    'title' => $localizer->trans('birthday.title'),
+                    'questions' => [
+                        'day' => [
+                            'type' => 'text',
+                            'text' => $localizer->trans('birthday.day'),
+                        ],
+                        'month' => [
+                            'type' => 'text',
+                            'text' => $localizer->trans('birthday.month'),
+                        ],
+                        'year' => [
+                            'type' => 'year',
+                            'text' => $localizer->trans('birthday.month'),
+                        ],
+                    ],
+                ]);
+                break;
+            default:
+                if ( ! empty($card['nationalIdentificationNumber'])) {
+
+                    return null;
+                }
+                $questionary = new Questionary([
+                    'title' => $localizer->trans('number.title'),
+                    'questions' => [
+                        'number' => [
+                            'type' => 'text',
+                            'text' => $localizer->trans('number.label'),
+                        ],
+                    ],
+                ]);
+                break;
+        }
+
+        return $questionary;
     }
 
     /**
