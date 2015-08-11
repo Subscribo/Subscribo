@@ -38,6 +38,7 @@ class WebshopServiceProvider extends ServiceProvider
             'subscribo.webshop.product.list' => 'webshop/products',
             'subscribo.webshop.product.getBuy' => 'webshop/buy/{productId}',
             'subscribo.webshop.product.postBuy' => 'webshop/buy/{productId}',
+            'subscribo.webshop.success' => 'webshop/success',
 
         ];
         $paths = array_replace($defaultPaths, $paths);
@@ -59,6 +60,11 @@ class WebshopServiceProvider extends ServiceProvider
             'middleware' => $middleware,
             'uses' => '\\Subscribo\\Webshop\\Http\\Controllers\\WebshopController@postBuyProduct'
         ])->where(['productId' => '[1-9][0-9]*']);
+        $router->get($paths['subscribo.webshop.success'], [
+            'as' => 'subscribo.webshop.success',
+            'middleware' => $middleware,
+            'uses' => '\\Subscribo\\Webshop\\Http\\Controllers\\WebshopController@getSuccess'
+        ]);
 
         $this->routesRegistered = true;
     }

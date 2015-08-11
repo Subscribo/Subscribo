@@ -15,6 +15,10 @@ template.product:
         netPrice: 'Cena bez dane:'
         tax: 'Daň:'
         backToListLink: Späť na zoznam produktov
+# Template resources/views/webshop/product/success.blade.php
+    success:
+        heading: Objednané
+        text: Vaša objednávka bola spracovaná.
 forms:
     buy:
 # Template resources/views/webshop/forms/buy/forguest.blade.php
@@ -53,9 +57,11 @@ forms:
             email: E-mail:
             password: Heslo:
             passwordConfirmation: Potvrdenie hesla:
-        options:
-            start: Začiatok:
-            period: Opakovanie:
+# Template resources/views/webshop/forms/buy/deliveryselector.blade.php
+        delivery.select:
+            title: Select your first delivery
+            text: Deliveries starting from {start}
 # WebshopController.php
 errors:
     orderFailed: Pokus o zadanie objednávky zlyhal
+    transactionFailed: Transakcia mohla zlyhať, ale mohla aj prebehnúť. Prosím, buďte opatrní pred zadaním novej požiadavky. Môžte kontaktovať svoju banku alebo obchodníka pre bližšie informácie.

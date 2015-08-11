@@ -16,6 +16,10 @@ template.product:
         tax: 'Steuer:'
         buyLink: Kaufen
         backToListLink: Zurück nach Produktliste
+# Template resources/views/webshop/product/success.blade.php
+    success:
+        heading: Ordered
+        text: Your order has been processed.
 forms:
     buy:
 # Template resources/views/webshop/forms/buy/forguest.blade.php
@@ -55,9 +59,11 @@ forms:
             email: E-mail:
             password: Password:
             passwordConfirmation: Confirm Password:
-        options:
-            start: Start from:
-            period: Period:
+# Template resources/views/webshop/forms/buy/deliveryselector.blade.php
+        delivery.select:
+            title: Select your first delivery
+            text: Deliveries starting from {start}
 # WebshopController.php
 errors:
     orderFailed: Ordering has failed
+    transactionFailed: Transaction might have failed, but also might have been processed. Please, be careful before making a new request. Feel free to contact your bank or merchant for further details.

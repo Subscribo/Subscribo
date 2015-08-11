@@ -15,6 +15,10 @@ template.product:
         netPrice: 'Price without tax:'
         tax: 'Tax:'
         backToListLink: Back to product list
+# Template resources/views/webshop/product/success.blade.php
+    success:
+        heading: Ordered
+        text: Your order has been processed.
 forms:
     buy:
 # Template resources/views/webshop/forms/buy/forguest.blade.php
