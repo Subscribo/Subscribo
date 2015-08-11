@@ -2,6 +2,7 @@
 
 namespace Subscribo\ModelCore\Models;
 
+use Subscribo\ModelCore\Models\Country;
 use Subscribo\ModelCore\Models\Price;
 use Subscribo\ModelCore\Models\TaxGroup;
 use InvalidArgumentException;
@@ -88,15 +89,41 @@ class Product extends \Subscribo\ModelCore\Bases\Product
     }
 
     /**
+     * @param int|string|Country|null $country
+     * @return null|TaxGroup
+     * @throws \InvalidArgumentException
+     */
+    public function acquireTaxGroup($country = null)
+    {
+        if (is_null($country)) {
+            $countryId = null;
+        } elseif (is_numeric($country)) {
+            $countryId = $country;
+        } elseif ($country instanceof Country) {
+            $countryId = $country->id;
+        } elseif (is_string($country)) {
+            $countryInstance = Country::findByIdentifier($country);
+            if (empty($countryInstance)) {
+                throw new InvalidArgumentException('Specified country not found');
+            }
+            $countryId = $countryInstance->id;
+        } else {
+            throw new InvalidArgumentException('Country argument invalid');
+        }
+
+        return TaxGroup::findByCategoryIdAndCountryId($this->taxCategoryId, $countryId);
+    }
+
+    /**
      * @param Price $price
-     * @param int|null $countryId
+     * @param int|string|Country|null $country
      * @return array|null
      * @throws \InvalidArgumentException
      */
-    public function toArrayWithPrice(Price $price, $countryId = null)
+    public function toArrayWithPrice(Price $price, $country = null)
     {
         $result = parent::toArray();
-        $taxGroup = $taxGroup = TaxGroup::findByCategoryIdAndCountryId($this->taxCategoryId, $countryId);
+        $taxGroup = $this->acquireTaxGroup($country);
         if (empty($taxGroup)) {
 
             throw new InvalidArgumentException('TaxGroup not found for given categoryId and countryId');

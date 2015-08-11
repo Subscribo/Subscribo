@@ -690,7 +690,7 @@ model_fields:
     - code null
     - payment_method (unsigned tiny int) null // 1 - used_inner_credit / 2 - send_from_account / 3 - send_from_account_using_special_service (SOFORT) / 4 - credit_card / 5 - debit_card / 6 - direct_debit / 7 - invoice...)
     - stage (enum from planned initialized preparation_requested preparation_response_received prepared authorization_requested authorization_response_received authorization_completing_requested authorization_completing_response_received authorized capture_requested capture_response_received captured charge_requested charge_response_received charge_completing_requested charge_completing_response_received charged waiting_for_async_resolution async_resolution_received finished cancelled failed unknown reversion_requested reversion_request_answered reverted) default word planned
-    - status (enum from no_response_yet accepted waiting client_error server_error connection_error response_error denied widget_provided redirected redirected_back) default word no_response_yet
+    - status (enum from no_response_yet accepted waiting client_error server_error connection_error response_error denied failed widget_provided redirected redirected_back) default word no_response_yet
     - amount (currency)
     - payment_fee (currency) null
     - currency_id (int)
