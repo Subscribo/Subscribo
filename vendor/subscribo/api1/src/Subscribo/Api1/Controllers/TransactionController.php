@@ -140,9 +140,7 @@ class TransactionController extends AbstractBusinessController
             throw new ServerErrorHttpException(501, 'Not Implemented');
         }
 
-        $processed = $this->processChargeTransaction($transaction);
-
-        return ['result' => $processed];
+        return $this->processChargeTransaction($transaction);
     }
 
     /**
@@ -317,6 +315,15 @@ class TransactionController extends AbstractBusinessController
         if (empty($salesOrder)) {
             throw new InvalidArgumentException('Transaction::salesOrder is required for processing via Klarna Invoice');
         }
+        if ($additionalCardData) {
+            $transaction->changeStage($transaction::STAGE_ADDITIONAL_DATA_RECEIVED);
+            $person = $salesOrder->acquireBillingPerson();
+            if ($person and ! empty($additionalCardData['birthday'])) {
+                $person->dateOfBirth = $additionalCardData['birthday'];
+                $person->save();
+            }
+            //todo??? nationalIdentificationNumber
+        }
         $configuration = json_decode($transaction->transactionGatewayConfiguration->configuration, true);
         $initializeData = $configuration['initialize'];
         $authorizeData = empty($configuration['authorize']) ? [] : $configuration['authorize'];
@@ -327,6 +334,7 @@ class TransactionController extends AbstractBusinessController
         $card = static::assembleCardData($salesOrder->billingAddress, $salesOrder->shippingAddress) + $additionalCardData;
         $questionary = static::getQuestionaryOnCardForKlarnaInvoice($card, $gateway->getCountry(), $this->context->getLocalizer());
         if ($questionary) {
+            $transaction->changeStage($transaction::STAGE_ADDITIONAL_DATA_REQUESTED);
             $this->provideActionInterruptionFactory()
                 ->makeActionInterruption('resumeAdditionalCardDataForChargeKlarnaInvoice', ['transactionId' => $transaction->id], $questionary);
 
@@ -340,26 +348,48 @@ class TransactionController extends AbstractBusinessController
         $authorizeData['orderId2'] = static::limitStringLength($description, 100, ',');
         $authorizeData['card'] = $card;
         $authorizeData['items'] = static::assembleShoppingCart($salesOrder->realizationsInSalesOrders, $salesOrder->discounts, $salesOrder->countryId);
-        $authorizationRequest = $gateway->authorize($authorizeData);
-        $authorizationResponse = $authorizationRequest->send();
+        $transaction->changeStage($transaction::STAGE_DATA_COLLECTED);
+
+        try {
+            $authorizationRequest = $gateway->authorize($authorizeData);
+            $transaction->changeStage($transaction::STAGE_AUTHORIZATION_REQUESTED);
+            $authorizationResponse = $authorizationRequest->send();
+        } catch (Exception $e) {
+            $transaction->changeStage($transaction::STAGE_AUTHORIZATION_REQUESTED, $transaction::STATUS_CONNECTION_ERROR);
+
+            throw new ServerErrorHttpException(502, 'Error when trying to contact API', [], 0, $e);
+        }
         $message = '';
         if ($authorizationResponse->isSuccessful()) {
-            $captureRequest = $gateway->capture();
-            $captureRequest->setReservationNumber($authorizationResponse->getReservationNumber());
-            $captureResponse = $captureRequest->send();
+            $transaction->changeStage($transaction::STAGE_AUTHORIZATION_RESPONSE_RECEIVED, $transaction::STATUS_ACCEPTED);
+            try {
+                $captureRequest = $gateway->capture();
+                $captureRequest->setReservationNumber($authorizationResponse->getReservationNumber());
+                $transaction->changeStage($transaction::STAGE_CAPTURE_REQUESTED);
+                $captureResponse = $captureRequest->send();
+            } catch (Exception $e) {
+                $transaction->changeStage($transaction::STAGE_CAPTURE_REQUESTED, $transaction::STATUS_CONNECTION_ERROR);
+
+                throw new ServerErrorHttpException(502, 'Error when trying to contact API', [], 0, $e);
+            }
             if ($captureResponse->isSuccessful()) {
+                $transaction->changeStage($transaction::STAGE_FINISHED, $transaction::STATUS_ACCEPTED, ['receive', 'finalize']);
+
                 $status = 'accepted';
-            } elseif ($captureResponse->isWaiting()) {
-                $status = 'waiting';
-                $message = $captureResponse->getMessage();
             } else {
+                $transaction->changeStage($transaction::STAGE_FINISHED, $transaction::STATUS_OWN_RISK, ['receive', 'finalize']);
+
                 $status = 'failed';
                 $message = $captureResponse->getMessage();
             }
         } elseif ($authorizationResponse->isWaiting()) {
+            $transaction->changeStage($transaction::STAGE_AUTHORIZATION_RESPONSE_RECEIVED, $transaction::STATUS_WAITING);
+
             $message = $authorizationResponse->getMessage();
             $status = 'waiting';
         } else {
+            $transaction->changeStage($transaction::STAGE_FAILED, $transaction::STATUS_FAILED, ['receive']);
+
             $message = $authorizationResponse->getMessage();
             $status = 'failed';
         }
