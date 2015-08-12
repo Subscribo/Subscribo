@@ -10,6 +10,7 @@ use Subscribo\ModelCore\Models\Delivery;
 use Subscribo\ModelCore\Models\DeliveryWindow;
 use Subscribo\ModelCore\Models\Discount;
 use Subscribo\ModelCore\Models\Price;
+use Subscribo\ModelCore\Models\Person;
 use Subscribo\ModelCore\Models\Realization;
 use Subscribo\ModelCore\Models\RealizationsInSalesOrder;
 use Subscribo\ModelCore\Models\Subscription;
@@ -303,5 +304,27 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
             'grossSum' => $currency->normalizeAmount($grossSum),
             'productsWithPrices' => $productsWithPrices,
         ];
+    }
+
+    public function acquireBillingPerson()
+    {
+        if ($this->billingAddress) {
+
+            return $this->billingAddress->person;
+        }
+        if (empty($this->shippingAddress)) {
+
+            return null;
+        }
+        $person = $this->shippingAddress->person ? $this->shippingAddress->person->replicate() : new Person();
+        $person->save();
+
+        $address = $this->shippingAddress->replicate();
+        $address->person()->associate($person);
+        $address->save();
+        $this->billingAddress()->associate($address);
+        $this->save();
+
+        return $person;
     }
 }

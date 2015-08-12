@@ -44,17 +44,17 @@ class Address extends \Subscribo\ModelCore\Bases\Address
         if (empty($country)) {
             throw new InvalidArgumentException('Specified country not found');
         }
-        $instance->countryId = $country->id;
+        $instance->country()->associate($country);
         $instance->countryUnion = $country->countryUnion;
         $person = $person ?: Person::make($data);
-        $instance->personId = $person->id; //Possibly still null
-        $instance->customerId = $customer ? $customer->id : null;
+        $instance->person()->associate($person);
+        $instance->customer()->associate($customer);
 
         if ($person->name) {
             $instance->salutation = static::compileSalutation($person, $country);
             $instance->personName = static::compilePersonName($person, $country);
         }
-        $instance->refreshDescriptor($country, $person);
+        $instance->refreshDescriptor();
 
         return $instance;
     }
@@ -135,20 +135,16 @@ class Address extends \Subscribo\ModelCore\Bases\Address
     }
 
     /**
-     * @param Country $country
-     * @param Person $person
      * @return $this
      */
-    public function refreshDescriptor(Country $country = null, Person $person = null)
+    public function refreshDescriptor()
     {
-        $country = $country ?: $this->country;
-        $person = $person ?: $this->person;
-        $descriptor = ($person and $person->name) ? $person->name.', ' : '';
+        $name = $this->person ? $this->person->name : null;
+        $descriptor = ($name) ? $name.', ' : '';
         $streetLine = $this->compileStreetLine();
         $descriptor .= $streetLine ? $streetLine.', ': '';
         $descriptor .= $this->city.', ';
-        $descriptor .= $country->identifier;
-
+        $descriptor .= $this->country->identifier;
         $this->descriptor = $descriptor;
 
         return $this;
