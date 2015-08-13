@@ -127,7 +127,7 @@ class Address extends \Subscribo\ModelCore\Bases\Address
         if (( ! ($address instanceof Address))) {
             throw new InvalidArgumentException('Parameter $data should be either array or Address object');
         }
-        $exported = $address->toArray();
+        $exported = $address->attributesToArray();
         $exported['customer_id'] = $customer->id;
         $found = static::query()->where($exported)->first();
 
