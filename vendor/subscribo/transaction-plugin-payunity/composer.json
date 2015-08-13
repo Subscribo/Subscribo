@@ -1,0 +1,23 @@
+{
+    "name": "subscribo/transaction-plugin-payunity",
+    "description": "Subscribo transaction plugin for subscribo/omnipay-payunity driver",
+    "keywords": [
+        "Subscribo",
+        "transaction plugin",
+        "transaction driver",
+        "PayUnity",
+        "PayUnity COPYandPAY"
+    ],
+    "homepage": "http://subscribo.io",
+    "license": "proprietary",
+    "require": {
+        "subscribo/transaction-plugin-manager": "@dev",
+        "subscribo/omnipay-payunity": "^0.4.0",
+        "egeloen/http-adapter": "^0.8@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\TransactionPluginPayUnity\\": "src/Subscribo/TransactionPluginPayUnity/"
+        }
+    }
+}
