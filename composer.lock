@@ -4,46 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0a1947e0144fc7bc76d793888631e151",
+    "hash": "00223f2ad780607e7e337205f831e9ce",
     "packages": [
-        {
-            "name": "Subscribo/webshop",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "/Users/slavo/Projects/packages/workbench/subscribo/webshop",
-                "reference": "e0025537d2d9d52190c48125a58283e5c26876f1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-webshop-dev-master-4fbbf1.zip",
-                "reference": "e0025537d2d9d52190c48125a58283e5c26876f1",
-                "shasum": "8b2ef173278da21f4297177b860078a8eea59a5f"
-            },
-            "require": {
-                "illuminate/routing": "^5.1",
-                "php": "~5.4",
-                "subscribo/billing": "@dev",
-                "subscribo/support": "@dev"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Subscribo\\Webshop\\": "src/Subscribo/Webshop"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "description": "A simple webshop using Subscribo system",
-            "homepage": "http://www.subscribo.io",
-            "keywords": [
-                "shop",
-                "subscribo",
-                "webshop"
-            ],
-            "time": "2015-07-15 13:09:01"
-        },
         {
             "name": "classpreloader/classpreloader",
             "version": "dev-master",
@@ -100,16 +62,16 @@
         },
         {
             "name": "danielstjules/stringy",
-            "version": "1.9.0",
+            "version": "1.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danielstjules/Stringy.git",
-                "reference": "3cf18e9e424a6dedc38b7eb7ef580edb0929461b"
+                "reference": "4749c205db47ee5b32e8d1adf6d9aff8db6caf3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danielstjules/Stringy/zipball/3cf18e9e424a6dedc38b7eb7ef580edb0929461b",
-                "reference": "3cf18e9e424a6dedc38b7eb7ef580edb0929461b",
+                "url": "https://api.github.com/repos/danielstjules/Stringy/zipball/4749c205db47ee5b32e8d1adf6d9aff8db6caf3b",
+                "reference": "4749c205db47ee5b32e8d1adf6d9aff8db6caf3b",
                 "shasum": ""
             },
             "require": {
@@ -152,7 +114,7 @@
                 "utility",
                 "utils"
             ],
-            "time": "2015-02-10 06:19:18"
+            "time": "2015-07-23 00:54:12"
         },
         {
             "name": "dimsav/laravel-translatable",
@@ -306,63 +268,38 @@
             "time": "2015-07-07 15:32:45"
         },
         {
-            "name": "egeloen/http-adapter",
+            "name": "fzaninotto/faker",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/egeloen/ivory-http-adapter.git",
-                "reference": "aa9c449493bd8da51559d526261dcea48a98c767"
+                "url": "https://github.com/fzaninotto/Faker.git",
+                "reference": "5015592f93c764c48f440511f56a6c83ce744137"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egeloen/ivory-http-adapter/zipball/aa9c449493bd8da51559d526261dcea48a98c767",
-                "reference": "aa9c449493bd8da51559d526261dcea48a98c767",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/5015592f93c764c48f440511f56a6c83ce744137",
+                "reference": "5015592f93c764c48f440511f56a6c83ce744137",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.8",
-                "zendframework/zend-diactoros": "^1.1"
+                "php": ">=5.3.3"
             },
             "require-dev": {
-                "cakephp/cakephp": "^3.0.3",
-                "ext-curl": "*",
-                "guzzle/guzzle": "^3.9.4@dev",
-                "guzzlehttp/guzzle": "^4.1.4|^5.0",
-                "guzzlehttp/streams": "^1.5|^2.0|^3.0",
-                "kriswallsmith/buzz": "^0.13",
-                "nategood/httpful": "^0.2.17",
-                "phpunit/phpunit": "^4.0",
-                "phpunit/phpunit-mock-objects": "dev-matcher-verify as 2.3.x-dev",
-                "psr/log": "^1.0",
-                "react/dns": "^0.4.1",
-                "react/http-client": "^0.4",
-                "satooshi/php-coveralls": "^0.6",
-                "symfony/event-dispatcher": "^2.0",
-                "zendframework/zend-http": "^2.3.4",
-                "zendframework/zendframework1": "^1.12.9"
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "~1.5"
             },
             "suggest": {
-                "ext-curl": "Allows you to use the cURL adapter",
-                "ext-http": "Allows you to use the PECL adapter",
-                "guzzle/guzzle": "Allows you to use the Guzzle 3 adapter",
-                "guzzlehttp/guzzle": "Allows you to use the Guzzle 4 adapter",
-                "kriswallsmith/buzz": "Allows you to use the Buzz adapter",
-                "nategood/httpful": "Allows you to use the httpful adapter",
-                "psr/log": "Allows you to use the logger event subscriber",
-                "symfony/event-dispatcher": "Allows you to use the event lifecycle",
-                "symfony/stopwatch": "Allows you to use the stopwatch http adapter and event subscriber",
-                "zendframework/zend-http": "Allows you to use the Zend 2 adapter",
-                "zendframework/zendframework1": "Allows you to use the Zend 1 adapter"
+                "ext-intl": "*"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.8-dev"
+                    "dev-master": "1.6.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Ivory\\HttpAdapter\\": "src/"
+                    "Faker\\": "src/Faker/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -371,18 +308,16 @@
             ],
             "authors": [
                 {
-                    "name": "Eric GELOEN",
-                    "email": "geloen.eric@gmail.com"
+                    "name": "François Zaninotto"
                 }
             ],
-            "description": "Issue HTTP request for PHP 5.3+.",
+            "description": "Faker is a PHP library that generates fake data for you.",
             "keywords": [
-                "http",
-                "http-adapter",
-                "http-client",
-                "psr-7"
+                "data",
+                "faker",
+                "fixtures"
             ],
-            "time": "2015-07-12 20:19:48"
+            "time": "2015-08-06 15:02:52"
         },
         {
             "name": "guzzle/guzzle",
@@ -778,53 +713,17 @@
             "time": "2015-06-09 19:13:35"
         },
         {
-            "name": "klarna/checkout",
-            "version": "v1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/klarna/kco_php.git",
-                "reference": "bbfcee7f368f302159791a56dba0419ecb975146"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/klarna/kco_php/zipball/bbfcee7f368f302159791a56dba0419ecb975146",
-                "reference": "bbfcee7f368f302159791a56dba0419ecb975146",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2.16"
-            },
-            "require-dev": {
-                "phpmd/phpmd": "~1.5",
-                "phpunit/phpunit": "~3.7",
-                "squizlabs/php_codesniffer": "~1.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Klarna": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "description": "Wrapper for the Klarna Checkout API",
-            "homepage": "http://developers.klarna.com",
-            "time": "2014-03-27 13:35:56"
-        },
-        {
             "name": "laravel/framework",
             "version": "5.1.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "d9aef5ed148e7d7920d2b8cceb216a1e5c5e63fa"
+                "reference": "ad95b463e4da32859641b7a9b3f5b2c81b3ae568"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/d9aef5ed148e7d7920d2b8cceb216a1e5c5e63fa",
-                "reference": "d9aef5ed148e7d7920d2b8cceb216a1e5c5e63fa",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/ad95b463e4da32859641b7a9b3f5b2c81b3ae568",
+                "reference": "ad95b463e4da32859641b7a9b3f5b2c81b3ae568",
                 "shasum": ""
             },
             "require": {
@@ -939,7 +838,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2015-07-15 04:09:39"
+            "time": "2015-08-13 13:07:33"
         },
         {
             "name": "laravel/socialite",
@@ -947,12 +846,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/socialite.git",
-                "reference": "42626875f6b94ae9e92ce117ad10186f3b2a0801"
+                "reference": "b36860a599669a80b45216ee9d3b39083dc767fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/socialite/zipball/42626875f6b94ae9e92ce117ad10186f3b2a0801",
-                "reference": "42626875f6b94ae9e92ce117ad10186f3b2a0801",
+                "url": "https://api.github.com/repos/laravel/socialite/zipball/b36860a599669a80b45216ee9d3b39083dc767fe",
+                "reference": "b36860a599669a80b45216ee9d3b39083dc767fe",
                 "shasum": ""
             },
             "require": {
@@ -993,7 +892,7 @@
                 "laravel",
                 "oauth"
             ],
-            "time": "2015-07-09 23:57:03"
+            "time": "2015-08-03 12:55:40"
         },
         {
             "name": "league/flysystem",
@@ -1001,12 +900,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "9d17af1035f0c4b34a004aee30926e32d73cc279"
+                "reference": "a53297cfb21e34a17aa2ad29f59b512cd5b80a1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/9d17af1035f0c4b34a004aee30926e32d73cc279",
-                "reference": "9d17af1035f0c4b34a004aee30926e32d73cc279",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/a53297cfb21e34a17aa2ad29f59b512cd5b80a1f",
+                "reference": "a53297cfb21e34a17aa2ad29f59b512cd5b80a1f",
                 "shasum": ""
             },
             "require": {
@@ -1074,7 +973,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2015-07-13 15:58:28"
+            "time": "2015-08-07 20:54:37"
         },
         {
             "name": "league/oauth1-client",
@@ -1145,12 +1044,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "c5b08724f4b11fd90a2c36a64d4868bcee7ba6a4"
+                "reference": "5779c3740ec7902c898dc7353b28d70ab0e690e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/c5b08724f4b11fd90a2c36a64d4868bcee7ba6a4",
-                "reference": "c5b08724f4b11fd90a2c36a64d4868bcee7ba6a4",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/5779c3740ec7902c898dc7353b28d70ab0e690e5",
+                "reference": "5779c3740ec7902c898dc7353b28d70ab0e690e5",
                 "shasum": ""
             },
             "require": {
@@ -1187,7 +1086,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.15.x-dev"
+                    "dev-master": "1.16.x-dev"
                 }
             },
             "autoload": {
@@ -1213,7 +1112,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2015-07-14 09:27:59"
+            "time": "2015-08-11 10:25:54"
         },
         {
             "name": "mtdowling/cron-expression",
@@ -1352,207 +1251,6 @@
             "time": "2015-07-14 17:31:05"
         },
         {
-            "name": "omnipay/common",
-            "version": "v2.3.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thephpleague/omnipay-common.git",
-                "reference": "fcd5a606713d11536c89315a5ae02d965a737c21"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/omnipay-common/zipball/fcd5a606713d11536c89315a5ae02d965a737c21",
-                "reference": "fcd5a606713d11536c89315a5ae02d965a737c21",
-                "shasum": ""
-            },
-            "require": {
-                "guzzle/guzzle": "~3.9",
-                "php": ">=5.3.2",
-                "symfony/http-foundation": "~2.1"
-            },
-            "require-dev": {
-                "omnipay/tests": "~2.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                },
-                "gateways": [
-                    "AuthorizeNet_AIM",
-                    "AuthorizeNet_SIM",
-                    "Buckaroo",
-                    "Buckaroo_Ideal",
-                    "Buckaroo_PayPal",
-                    "CardSave",
-                    "Coinbase",
-                    "Dummy",
-                    "Eway_Rapid",
-                    "FirstData_Connect",
-                    "GoCardless",
-                    "Manual",
-                    "Migs_ThreeParty",
-                    "Migs_TwoParty",
-                    "Mollie",
-                    "MultiSafepay",
-                    "Netaxept",
-                    "NetBanx",
-                    "PayFast",
-                    "Payflow_Pro",
-                    "PaymentExpress_PxPay",
-                    "PaymentExpress_PxPost",
-                    "PayPal_Express",
-                    "PayPal_Pro",
-                    "Pin",
-                    "SagePay_Direct",
-                    "SagePay_Server",
-                    "SecurePay_DirectPost",
-                    "Stripe",
-                    "TargetPay_Directebanking",
-                    "TargetPay_Ideal",
-                    "TargetPay_Mrcash",
-                    "TwoCheckout",
-                    "WorldPay",
-                    "Alipay Bank",
-                    "AliPay Dual Func",
-                    "Alipay Express",
-                    "Alipay Mobile Express",
-                    "Alipay Secured",
-                    "Alipay Wap Express",
-                    "Cybersource",
-                    "DataCash",
-                    "Ecopayz",
-                    "Neteller",
-                    "Pacnet",
-                    "PaymentSense",
-                    "Realex Remote",
-                    "SecPay (PayPoint.net)",
-                    "Sisow",
-                    "Skrill",
-                    "YandexMoney",
-                    "YandexMoneyIndividual"
-                ]
-            },
-            "autoload": {
-                "psr-0": {
-                    "Omnipay\\Common\\": "src/"
-                },
-                "classmap": [
-                    "src/Omnipay/Omnipay.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Adrian Macneil",
-                    "email": "adrian@adrianmacneil.com"
-                },
-                {
-                    "name": "Omnipay Contributors",
-                    "homepage": "https://github.com/thephpleague/omnipay-common/contributors"
-                }
-            ],
-            "description": "Common components for Omnipay payment processing library",
-            "homepage": "https://github.com/thephpleague/omnipay-common",
-            "keywords": [
-                "gateway",
-                "merchant",
-                "omnipay",
-                "pay",
-                "payment",
-                "purchase"
-            ],
-            "time": "2015-03-30 14:34:46"
-        },
-        {
-            "name": "phpxmlrpc/phpxmlrpc",
-            "version": "3.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/gggeek/phpxmlrpc.git",
-                "reference": "490862c33009397151ac39c811b6ee8e24689692"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/gggeek/phpxmlrpc/zipball/490862c33009397151ac39c811b6ee8e24689692",
-                "reference": "490862c33009397151ac39c811b6ee8e24689692",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "lib/xmlrpc.inc",
-                    "lib/xmlrpcs.inc"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "A php library for building xmlrpc clients and servers",
-            "homepage": "http://gggeek.github.io/phpxmlrpc/",
-            "keywords": [
-                "webservices",
-                "xmlrpc"
-            ],
-            "time": "2015-04-19 00:17:47"
-        },
-        {
-            "name": "psr/http-message",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/http-message.git",
-                "reference": "85d63699f0dbedb190bbd4b0d2b9dc707ea4c298"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-message/zipball/85d63699f0dbedb190bbd4b0d2b9dc707ea4c298",
-                "reference": "85d63699f0dbedb190bbd4b0d2b9dc707ea4c298",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Http\\Message\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interface for HTTP messages",
-            "keywords": [
-                "http",
-                "http-message",
-                "psr",
-                "psr-7",
-                "request",
-                "response"
-            ],
-            "time": "2015-05-04 20:22:00"
-        },
-        {
             "name": "psr/log",
             "version": "dev-master",
             "source": {
@@ -1600,16 +1298,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.5.1",
+            "version": "v0.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "e5a46a767928e85f1f47dda654beda8c680ddd94"
+                "reference": "aaf8772ade08b5f0f6830774a5d5c2f800415975"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/e5a46a767928e85f1f47dda654beda8c680ddd94",
-                "reference": "e5a46a767928e85f1f47dda654beda8c680ddd94",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/aaf8772ade08b5f0f6830774a5d5c2f800415975",
+                "reference": "aaf8772ade08b5f0f6830774a5d5c2f800415975",
                 "shasum": ""
             },
             "require": {
@@ -1668,7 +1366,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2015-07-03 16:48:00"
+            "time": "2015-07-16 15:26:57"
         },
         {
             "name": "react/promise",
@@ -1720,13 +1418,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/api1",
-                "reference": "30624b90fb7cea024404926e702225095c6a806f"
+                "reference": "59f3398b51d0744d735183965c40153646a35c3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-api1-dev-master-870830.zip",
-                "reference": "30624b90fb7cea024404926e702225095c6a806f",
-                "shasum": "ff3ec6b24c5743476cb43cef8394c4e82ebf79e8"
+                "url": "http://satis.localhost/downloads/subscribo-api1-dev-master-535a8e.zip",
+                "reference": "59f3398b51d0744d735183965c40153646a35c3c",
+                "shasum": "15cbfecf00d630e25090757b3cde4c056f2d785c"
             },
             "require": {
                 "illuminate/routing": "~5.0",
@@ -1763,7 +1461,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -1775,7 +1473,7 @@
                 "subscribo",
                 "v1"
             ],
-            "time": "2015-07-15 13:14:07"
+            "time": "2015-08-12 11:51:50"
         },
         {
             "name": "subscribo/apiclient",
@@ -1783,13 +1481,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiclient",
-                "reference": "49c5b287469de2a668f93cdd56a658d0790b35ee"
+                "reference": "f0ce8d2f7a8559eea5efa3c31ca6dfb99a9bf222"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-apiclient-dev-master-8c5652.zip",
-                "reference": "49c5b287469de2a668f93cdd56a658d0790b35ee",
-                "shasum": "16aa4111f9f2f142bc59edf60e9eaed7aa6b73df"
+                "url": "http://satis.localhost/downloads/subscribo-apiclient-dev-master-a10fb6.zip",
+                "reference": "f0ce8d2f7a8559eea5efa3c31ca6dfb99a9bf222",
+                "shasum": "d141d0936df06bb8131d42efe196b67c198b267a"
             },
             "require": {
                 "illuminate/exception": "~5.0",
@@ -1811,7 +1509,7 @@
                 "symfony/http-foundation": "~2.6"
             },
             "suggest": {
-                "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+                "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0 and 5.1"
             },
             "type": "library",
             "extra": {
@@ -1833,7 +1531,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -1845,7 +1543,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:11:00"
+            "time": "2015-08-05 09:58:12"
         },
         {
             "name": "subscribo/apiclientauth",
@@ -1853,13 +1551,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiclientauth",
-                "reference": "72a6f57dcd9cb81d62180a54ea244bea90421cec"
+                "reference": "550ce0ad67887824f1c3ebe58d4fd7ae9eb5f573"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-apiclientauth-dev-master-325c6f.zip",
-                "reference": "72a6f57dcd9cb81d62180a54ea244bea90421cec",
-                "shasum": "41a9662cc58b820e89ccf518523ffb58f5db7891"
+                "url": "http://satis.localhost/downloads/subscribo-apiclientauth-dev-master-7a0e69.zip",
+                "reference": "550ce0ad67887824f1c3ebe58d4fd7ae9eb5f573",
+                "shasum": "a98564c7911bb3f92df4f291d222b267909d2756"
             },
             "require": {
                 "illuminate/auth": "~5.0",
@@ -1899,7 +1597,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -1912,7 +1610,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:31:49"
+            "time": "2015-08-12 11:47:36"
         },
         {
             "name": "subscribo/apiclientcommon",
@@ -1920,13 +1618,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiclientcommon",
-                "reference": "31c97b45ec411ddbea2bdebfafa57b69ec0823f4"
+                "reference": "f9b3453f31ca63179bd63b44bf7b016545d99d85"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-apiclientcommon-dev-master-46a115.zip",
-                "reference": "31c97b45ec411ddbea2bdebfafa57b69ec0823f4",
-                "shasum": "b84db65592f7621c8a9d5020729c5ac2103ae729"
+                "url": "http://satis.localhost/downloads/subscribo-apiclientcommon-dev-master-863123.zip",
+                "reference": "f9b3453f31ca63179bd63b44bf7b016545d99d85",
+                "shasum": "ccc040ec2c74cd3618684d8fe1c147cc99ab188d"
             },
             "require": {
                 "illuminate/contracts": "~5.0",
@@ -1937,6 +1635,7 @@
                 "illuminate/support": "~5.0",
                 "illuminate/view": "~5.0",
                 "php": "~5.4",
+                "psr/log": "^1.0",
                 "subscribo/restclient": "@dev",
                 "subscribo/restcommon": "@dev",
                 "subscribo/support": "@dev"
@@ -1964,7 +1663,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -1977,7 +1676,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:58"
+            "time": "2015-08-12 11:47:36"
         },
         {
             "name": "subscribo/apiclientlocalization",
@@ -1985,13 +1684,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiclientlocalization",
-                "reference": "8c647fd1854b1fa75497c162cc580bba89a5e36b"
+                "reference": "88b6c3467fad9d20dfccc62b53b58bfc28a851c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-apiclientlocalization-dev-master-07e3a6.zip",
-                "reference": "8c647fd1854b1fa75497c162cc580bba89a5e36b",
-                "shasum": "85ef3d6a806512546f4a4dbe3c1d2fa6a93875a9"
+                "url": "http://satis.localhost/downloads/subscribo-apiclientlocalization-dev-master-6a5926.zip",
+                "reference": "88b6c3467fad9d20dfccc62b53b58bfc28a851c8",
+                "shasum": "392c55f8a4d3dbf04e3ce3b800b92335289101f1"
             },
             "require": {
                 "illuminate/foundation": "~5.0",
@@ -2029,7 +1728,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -2041,7 +1740,7 @@
                 "localization",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:59"
+            "time": "2015-07-15 15:36:38"
         },
         {
             "name": "subscribo/apiclientoauth",
@@ -2049,13 +1748,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiclientoauth",
-                "reference": "bcb486d3ecc48038f331d3a26125100389ea890b"
+                "reference": "3ffb2e85c745cc8a1bcf84660da3185896fa0b68"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-apiclientoauth-dev-master-654264.zip",
-                "reference": "bcb486d3ecc48038f331d3a26125100389ea890b",
-                "shasum": "e83383f3e10a39466f7809d60b7856b6fee9f221"
+                "url": "http://satis.localhost/downloads/subscribo-apiclientoauth-dev-master-ac8dc1.zip",
+                "reference": "3ffb2e85c745cc8a1bcf84660da3185896fa0b68",
+                "shasum": "1964c97a6c059849885e7b4b5f71b90c2d9ace03"
             },
             "require": {
                 "illuminate/foundation": "~5.0",
@@ -2097,7 +1796,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -2110,7 +1809,7 @@
                 "oauth",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:11:00"
+            "time": "2015-07-15 15:36:38"
         },
         {
             "name": "subscribo/apiserver",
@@ -2118,13 +1817,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/apiserver",
-                "reference": "c7c959896d05baa0ec539203f53b91b2ab62f1c8"
+                "reference": "ab766c2efa9a7a9b75fca3875c981aabcf6b16c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-apiserver-dev-master-b08d67.zip",
-                "reference": "c7c959896d05baa0ec539203f53b91b2ab62f1c8",
-                "shasum": "b184ec82ccf675c260eeb525e4e830fd0c0231eb"
+                "url": "http://satis.localhost/downloads/subscribo-apiserver-dev-master-1aac5b.zip",
+                "reference": "ab766c2efa9a7a9b75fca3875c981aabcf6b16c0",
+                "shasum": "460da6c2dffcca833e761ee0dbc4fb5ddf5d9964"
             },
             "require": {
                 "php": "~5.4",
@@ -2156,7 +1855,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -2168,7 +1867,7 @@
                 "server",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:58"
+            "time": "2015-07-15 15:36:36"
         },
         {
             "name": "subscribo/auth",
@@ -2176,13 +1875,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/auth",
-                "reference": "1e2f2659c8e1ccd6e2297e1ddb61e73581bc372c"
+                "reference": "afdfc720146a76489f687a55f663ae14595d8b87"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-auth-dev-master-467421.zip",
-                "reference": "1e2f2659c8e1ccd6e2297e1ddb61e73581bc372c",
-                "shasum": "b232d157f444cacbd3fda03d03674fc587b44a4c"
+                "url": "http://satis.localhost/downloads/subscribo-auth-dev-master-299c4a.zip",
+                "reference": "afdfc720146a76489f687a55f663ae14595d8b87",
+                "shasum": "517ca56d03381b6ef2bce8be36be0d0b6b31e60d"
             },
             "require": {
                 "illuminate/contracts": "~5.0",
@@ -2218,7 +1917,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -2230,67 +1929,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:57"
-        },
-        {
-            "name": "subscribo/billing",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "/Users/slavo/Projects/packages/workbench/subscribo/billing",
-                "reference": "db25982391a9b0123a5bd1be97bc98155ff07739"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-billing-dev-master-2451f5.zip",
-                "reference": "db25982391a9b0123a5bd1be97bc98155ff07739",
-                "shasum": "841636aa0bb9ce42053be1ededa556835fb568df"
-            },
-            "require": {
-                "klarna/checkout": "1.2",
-                "php": "~5.4",
-                "subscribo/omnipay-klarna": "dev-feature/checkout",
-                "subscribo/omnipay-payunity": "^0.4.0",
-                "subscribo/psr-http-message-tools": ">=0.3.1 <0.5",
-                "subscribo/support": "@dev"
-            },
-            "suggest": {
-                "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Subscribo\\Billing\\": "src/Subscribo/Billing/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "authors": [
-                {
-                    "name": "Slavo",
-                    "role": "developer"
-                },
-                {
-                    "name": "KochAbo GmbH",
-                    "role": "owner"
-                }
-            ],
-            "description": "Package Billing is an umbrella package for billing, charging, invoicing and payment functionality",
-            "homepage": "http://www.subscribo.io",
-            "keywords": [
-                "billing",
-                "charging",
-                "laravel",
-                "payment",
-                "subscribo"
-            ],
-            "time": "2015-07-15 13:04:06"
+            "time": "2015-07-15 15:36:35"
         },
         {
             "name": "subscribo/config",
@@ -2298,13 +1937,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/config",
-                "reference": "915a8c143659562eba804c93ea57af3608b05c2c"
+                "reference": "ba5fbae7cf22a76e2db5e7628a5d6c3e5d7ef46f"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-config-dev-master-324062.zip",
-                "reference": "915a8c143659562eba804c93ea57af3608b05c2c",
-                "shasum": "246af5fbd4680caeec812f45a0dfb2eecc687dc6"
+                "url": "http://satis.localhost/downloads/subscribo-config-dev-master-e416a4.zip",
+                "reference": "ba5fbae7cf22a76e2db5e7628a5d6c3e5d7ef46f",
+                "shasum": "aa83afacc61da644d8694db806594770e2a5e401"
             },
             "require": {
                 "php": "~5.4",
@@ -2336,7 +1975,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -2347,7 +1986,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:57"
+            "time": "2015-07-15 15:36:35"
         },
         {
             "name": "subscribo/developmentseeder",
@@ -2355,17 +1994,19 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/developmentseeder",
-                "reference": "cc9615ea17c0f4e254cdad940310651c98ac1b42"
+                "reference": "91d0e0be467c44ee3c94427e5b8ad97a4f3c1c56"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-developmentseeder-dev-master-ce7ece.zip",
-                "reference": "cc9615ea17c0f4e254cdad940310651c98ac1b42",
-                "shasum": "6bc21f278a0592aa8b4873514738b3c5749f5827"
+                "url": "http://satis.localhost/downloads/subscribo-developmentseeder-dev-master-9552fe.zip",
+                "reference": "91d0e0be467c44ee3c94427e5b8ad97a4f3c1c56",
+                "shasum": "4c57a5c6c8d290b4cda53bf9bb3faef426db571e"
             },
             "require": {
+                "fzaninotto/faker": "^1.5",
                 "illuminate/database": "~5.0",
                 "illuminate/support": "~5.0",
+                "lib-iconv": "*",
                 "php": "~5.4",
                 "subscribo/api1": "@dev",
                 "subscribo/auth": "@dev",
@@ -2395,7 +2036,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -2407,7 +2048,7 @@
                 "seeds",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:59"
+            "time": "2015-08-12 11:47:36"
         },
         {
             "name": "subscribo/environment",
@@ -2415,13 +2056,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/environment",
-                "reference": "4df20fb60ac61329cd7dcc28db7956790dffb646"
+                "reference": "35ac90cc50dd41e605823fd6a72059915046cfba"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-environment-dev-master-8d2072.zip",
-                "reference": "4df20fb60ac61329cd7dcc28db7956790dffb646",
-                "shasum": "4633e79388ff67718279b9de0c0d570dca9b0f2d"
+                "url": "http://satis.localhost/downloads/subscribo-environment-dev-master-80cb39.zip",
+                "reference": "35ac90cc50dd41e605823fd6a72059915046cfba",
+                "shasum": "41746930e1deb831fe123b5a454e9a841320dfdc"
             },
             "require": {
                 "php": "~5.4"
@@ -2449,7 +2090,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -2460,7 +2101,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:58"
+            "time": "2015-07-15 15:36:37"
         },
         {
             "name": "subscribo/exception",
@@ -2468,13 +2109,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/exception",
-                "reference": "55162b0d5c1ee5253403c37f36e4c5926ce4e095"
+                "reference": "ccc2b06e8efdc66114251f821871ab019e5bfebe"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-exception-dev-master-511c3c.zip",
-                "reference": "55162b0d5c1ee5253403c37f36e4c5926ce4e095",
-                "shasum": "9ab1ee57125c8d1e5f7e4bc0147300b9c4b3ae53"
+                "url": "http://satis.localhost/downloads/subscribo-exception-dev-master-d5cd07.zip",
+                "reference": "ccc2b06e8efdc66114251f821871ab019e5bfebe",
+                "shasum": "cd260ca62c1bbc248791d2890452d9a8e84f5035"
             },
             "require": {
                 "php": "~5.4",
@@ -2511,7 +2152,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -2522,83 +2163,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:59"
-        },
-        {
-            "name": "subscribo/klarna-invoice-sdk-wrapped",
-            "version": "v1.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Subscribo/klarna-invoice-sdk-wrapped.git",
-                "reference": "31dd51af2102a814380c5a8aae941383270c4669"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Subscribo/klarna-invoice-sdk-wrapped/zipball/31dd51af2102a814380c5a8aae941383270c4669",
-                "reference": "31dd51af2102a814380c5a8aae941383270c4669",
-                "shasum": ""
-            },
-            "require": {
-                "phpxmlrpc/phpxmlrpc": "^3.0.0"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/Klarna.php",
-                    "src/Exceptions.php",
-                    "src/Flags.php",
-                    "src/Country.php",
-                    "src/Currency.php",
-                    "src/Encoding.php",
-                    "src/Language.php",
-                    "src/klarnaaddr.php",
-                    "src/klarnacalc.php",
-                    "src/klarnaconfig.php",
-                    "src/klarnapclass.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-2-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Klarna AB",
-                    "email": "opensource@klarna.com",
-                    "homepage": "https://developers.klarna.com",
-                    "role": "Original SDK developing company"
-                },
-                {
-                    "name": "MS Dev",
-                    "email": "ms.modules@klarna.com",
-                    "homepage": "https://developers.klarna.com/en/at+php/kpm/download",
-                    "role": "Original SDK development team"
-                },
-                {
-                    "name": "Slavo",
-                    "role": "Package developer"
-                },
-                {
-                    "name": "Subscribo",
-                    "email": "packages@subscribo.io",
-                    "homepage": "http://subscribo.io",
-                    "role": "Packager"
-                },
-                {
-                    "name": "Contributors",
-                    "homepage": "https://github.com/Subscribo/klarna-invoice-sdk-wrapped/graphs/contributors",
-                    "role": "Package developers and contributors"
-                }
-            ],
-            "description": "Klarna Invoice and Part payment SDK modified and wrapped for use with Composer",
-            "homepage": "https://github.com/Subscribo/klarna-invoice-sdk-wrapped",
-            "keywords": [
-                "Part payment",
-                "invoice",
-                "klarna",
-                "sdk"
-            ],
-            "time": "2015-06-02 08:22:57"
+            "time": "2015-08-05 09:23:41"
         },
         {
             "name": "subscribo/localization",
@@ -2606,13 +2171,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/localization",
-                "reference": "d08e8ad5baa6d18b78f1badc3a1b666bf0a8ff6c"
+                "reference": "d616fe5ae191df7e187c990a109ecb8b39b9163b"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-localization-dev-master-ee8d53.zip",
-                "reference": "d08e8ad5baa6d18b78f1badc3a1b666bf0a8ff6c",
-                "shasum": "d1de4a4628cb405de6f76775880b73f07de16d6a"
+                "url": "http://satis.localhost/downloads/subscribo-localization-dev-master-a1b1a8.zip",
+                "reference": "d616fe5ae191df7e187c990a109ecb8b39b9163b",
+                "shasum": "3c532940a3192e2da38b158ca8ab7fa0a781d682"
             },
             "require": {
                 "illuminate/contracts": "~5.0",
@@ -2646,7 +2211,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -2663,7 +2228,7 @@
                 "translation",
                 "translator"
             ],
-            "time": "2015-07-15 11:10:58"
+            "time": "2015-07-15 15:36:36"
         },
         {
             "name": "subscribo/modelbase",
@@ -2671,19 +2236,21 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/modelbase",
-                "reference": "b57b551bc44f1e646b772c276450cf4268cf9a80"
+                "reference": "d99add4ddec28fb689b2162065f5fd596e87c913"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-modelbase-dev-master-92d432.zip",
-                "reference": "b57b551bc44f1e646b772c276450cf4268cf9a80",
-                "shasum": "996c7eb26ce55d4f4495a59bed3ee3c2f7017e1c"
+                "url": "http://satis.localhost/downloads/subscribo-modelbase-dev-master-0441b7.zip",
+                "reference": "d99add4ddec28fb689b2162065f5fd596e87c913",
+                "shasum": "e308dad0b9572f04d438d1813fb2e4c4a068bb70"
             },
             "require": {
                 "illuminate/database": "~5.0",
                 "php": "~5.4",
                 "subscribo/localization": "@dev",
-                "subscribo/translatablemodel": "@dev"
+                "subscribo/support": "@dev",
+                "subscribo/translatablemodel": "@dev",
+                "webpatser/laravel-uuid": "^2.0"
             },
             "suggest": {
                 "laravel/framework": "This package have been developed to work with The Laravel Framework 4.2. Version 5.0 can also be used.",
@@ -2709,7 +2276,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -2721,7 +2288,7 @@
                 "model",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:59"
+            "time": "2015-08-13 08:56:21"
         },
         {
             "name": "subscribo/modelcore",
@@ -2729,13 +2296,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/modelcore",
-                "reference": "b99c1a07f81ab15c8a3c3cf4c4f205334fad5177"
+                "reference": "ae96ab66aee459b4e5d0bda1ebf5081a47f4bd0e"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-modelcore-dev-master-5ba1be.zip",
-                "reference": "b99c1a07f81ab15c8a3c3cf4c4f205334fad5177",
-                "shasum": "a7f96fc7a7b42c83e0a4b267b63312002caf925a"
+                "url": "http://satis.localhost/downloads/subscribo-modelcore-dev-master-b5b5e8.zip",
+                "reference": "ae96ab66aee459b4e5d0bda1ebf5081a47f4bd0e",
+                "shasum": "6c13b1b3501f2699d2ef87408e860a6b5df4ee75"
             },
             "require": {
                 "illuminate/contracts": "~5.0",
@@ -2769,7 +2336,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -2781,7 +2348,7 @@
                 "model",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:58"
+            "time": "2015-08-12 11:53:26"
         },
         {
             "name": "subscribo/modifier",
@@ -2789,13 +2356,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/modifier",
-                "reference": "daa2815c383f363e773d3bb4e38c76eb49c62f61"
+                "reference": "c4f0518b68b24322fbf64b3baa603f3c42ecfa2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-modifier-dev-master-6e0645.zip",
-                "reference": "daa2815c383f363e773d3bb4e38c76eb49c62f61",
-                "shasum": "68fcec783459dff1969f0a73566b7069dbaefe94"
+                "url": "http://satis.localhost/downloads/subscribo-modifier-dev-master-9afbea.zip",
+                "reference": "c4f0518b68b24322fbf64b3baa603f3c42ecfa2c",
+                "shasum": "ca21d4ccf687049f5d6cb6a4ee5a45f85a3379f4"
             },
             "require": {
                 "php": "~5.4"
@@ -2823,7 +2390,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -2836,7 +2403,7 @@
                 "sanitize",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:59"
+            "time": "2015-07-15 15:36:37"
         },
         {
             "name": "subscribo/oauthcommon",
@@ -2844,13 +2411,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/oauthcommon",
-                "reference": "323e260ecf9c3471673b0c047d6aaa8a172b7a18"
+                "reference": "572dfc2c524f7785c85cbd27c47af63627c1ef63"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-oauthcommon-dev-master-bf9389.zip",
-                "reference": "323e260ecf9c3471673b0c047d6aaa8a172b7a18",
-                "shasum": "24db11c0acd176ae4a6448480fe331e65cee4592"
+                "url": "http://satis.localhost/downloads/subscribo-oauthcommon-dev-master-08ec1b.zip",
+                "reference": "572dfc2c524f7785c85cbd27c47af63627c1ef63",
+                "shasum": "ddaaf2e5f623c0c854c52e76b746289ab9731f2d"
             },
             "require": {
                 "laravel/socialite": "~2.0",
@@ -2880,7 +2447,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -2892,287 +2459,7 @@
                 "oauth",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:58"
-        },
-        {
-            "name": "subscribo/omnipay-klarna",
-            "version": "dev-feature/checkout",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Subscribo/omnipay-klarna.git",
-                "reference": "da19dcab6b3069ebb3162580a28357b072b10022"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Subscribo/omnipay-klarna/zipball/da19dcab6b3069ebb3162580a28357b072b10022",
-                "reference": "da19dcab6b3069ebb3162580a28357b072b10022",
-                "shasum": ""
-            },
-            "require": {
-                "omnipay/common": "^2.3.4",
-                "php": "^5.4 || 7.0@dev",
-                "subscribo/klarna-invoice-sdk-wrapped": "^1.0.1",
-                "subscribo/omnipay-subscribo-shared": "^0.3.0"
-            },
-            "require-dev": {
-                "klarna/checkout": "1.2",
-                "omnipay/tests": "^2.0",
-                "subscribo/psr-http-message-tools": ">=0.3.1 <0.5"
-            },
-            "suggest": {
-                "klarna/checkout": "(1.2) For Klarna Checkout",
-                "subscribo/psr-http-message-tools": "(>=0.3.1 <0.5) For Klarna Checkout"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Omnipay\\Klarna\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Adrian Macneil",
-                    "email": "adrian@adrianmacneil.com"
-                },
-                {
-                    "name": "Omnipay Contributors",
-                    "homepage": "https://github.com/thephpleague/omnipay-dummy/contributors"
-                },
-                {
-                    "name": "Slavo"
-                },
-                {
-                    "name": "Omnipay Klarna driver contributors",
-                    "homepage": "https://github.com/Subscribo/omnipay-klarna/contributors"
-                },
-                {
-                    "name": "Kochabo"
-                }
-            ],
-            "description": "Klarna driver for the Omnipay payment processing library",
-            "homepage": "http://www.subscribo.io",
-            "keywords": [
-                "Part payment",
-                "gateway",
-                "invoice",
-                "klarna",
-                "merchant",
-                "omnipay",
-                "pay",
-                "payment"
-            ],
-            "time": "2015-07-14 16:29:49"
-        },
-        {
-            "name": "subscribo/omnipay-payunity",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Subscribo/omnipay-payunity.git",
-                "reference": "9061a1f30f8217b445740623df5301c0430348f8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Subscribo/omnipay-payunity/zipball/9061a1f30f8217b445740623df5301c0430348f8",
-                "reference": "9061a1f30f8217b445740623df5301c0430348f8",
-                "shasum": ""
-            },
-            "require": {
-                "egeloen/http-adapter": "^0.8@dev",
-                "omnipay/common": "^2.3.4",
-                "php": "^5.4 || 7.0@dev",
-                "psr/http-message": "^1.0",
-                "subscribo/omnipay-subscribo-shared": "^0.3.4",
-                "subscribo/psr-http-message-tools": ">=0.3.2 <0.5"
-            },
-            "require-dev": {
-                "monolog/monolog": "^1.13.1",
-                "omnipay/tests": "^2.0",
-                "symfony/http-foundation": "~2.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.4.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Omnipay\\PayUnity\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Adrian Macneil",
-                    "email": "adrian@adrianmacneil.com"
-                },
-                {
-                    "name": "Omnipay Contributors",
-                    "homepage": "https://github.com/thephpleague/omnipay-dummy/contributors"
-                },
-                {
-                    "name": "Slavo"
-                },
-                {
-                    "name": "Subscribo",
-                    "email": "packages@subscribo.io",
-                    "homepage": "http://www.subscribo.io"
-                },
-                {
-                    "name": "Kochabo"
-                }
-            ],
-            "description": "PayUnity driver for the Omnipay payment processing library",
-            "homepage": "http://www.subscribo.io",
-            "keywords": [
-                "PayUnity",
-                "gateway",
-                "merchant",
-                "omnipay",
-                "pay",
-                "payment"
-            ],
-            "time": "2015-07-14 16:11:28"
-        },
-        {
-            "name": "subscribo/omnipay-subscribo-shared",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Subscribo/omnipay-subscribo-shared.git",
-                "reference": "77fa2c3a1639c3ae64a8ea42b21276d2d04ba15d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Subscribo/omnipay-subscribo-shared/zipball/77fa2c3a1639c3ae64a8ea42b21276d2d04ba15d",
-                "reference": "77fa2c3a1639c3ae64a8ea42b21276d2d04ba15d",
-                "shasum": ""
-            },
-            "require": {
-                "omnipay/common": "^2.3.2",
-                "php": ">=5.4"
-            },
-            "require-dev": {
-                "egeloen/http-adapter": "^0.8@dev",
-                "omnipay/tests": "^2.0",
-                "phly/http": ">=0.13.3 <0.15.0",
-                "phpunit/phpunit": "<5.0",
-                "psr/http-message": "^1.0",
-                "psr/log": "^1.0",
-                "subscribo/psr-http-message-tools": ">=0.3.2 <0.5",
-                "symfony/http-foundation": "<=3.0"
-            },
-            "suggest": {
-                "egeloen/http-adapter": "(^0.8@dev) when HttpMessageSendingTrait is used",
-                "psr/http-message": "(^1.0) when HttpMessageSendingTrait is used",
-                "psr/log": "(^1.0) When GuzzleClientHelper or AbstractGateway::attachPsrLogger() is used",
-                "subscribo/psr-http-message-tools": "(>=0.3.2 <0.5) For PSR-7 compliant Request object factory, e.g. when SimpleRestfulRequestTrait, AbstractRestfulResponse or SimpleRestfulResponse is used"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Subscribo\\Omnipay\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Slavo",
-                    "role": "developer"
-                },
-                {
-                    "name": "Kochabo",
-                    "role": "owner"
-                }
-            ],
-            "description": "Package with shared functionality for some Omnipay payment processing library drivers",
-            "homepage": "http://www.subscribo.io",
-            "keywords": [
-                "driver",
-                "omnipay",
-                "shared"
-            ],
-            "time": "2015-07-14 16:12:19"
-        },
-        {
-            "name": "subscribo/psr-http-message-tools",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Subscribo/psr-http-message-tools.git",
-                "reference": "7c10da5a9cbae6d32071e983072d6f620c18cedb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Subscribo/psr-http-message-tools/zipball/7c10da5a9cbae6d32071e983072d6f620c18cedb",
-                "reference": "7c10da5a9cbae6d32071e983072d6f620c18cedb",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.5",
-                "psr/http-message": "^1.0",
-                "zendframework/zend-diactoros": "^1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "<5.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.4.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Subscribo\\PsrHttpMessageTools\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Slavo",
-                    "role": "developer"
-                },
-                {
-                    "name": "Kochabo",
-                    "role": "owner"
-                }
-            ],
-            "description": "Tools which could be used with PSR-7: Request factory, Uri factory, Response parser",
-            "homepage": "http://www.subscribo.io",
-            "keywords": [
-                "factory",
-                "parser",
-                "psr-7",
-                "request",
-                "response",
-                "uri"
-            ],
-            "time": "2015-07-14 16:23:39"
+            "time": "2015-07-15 15:36:36"
         },
         {
             "name": "subscribo/restclient",
@@ -3180,13 +2467,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/restclient",
-                "reference": "d785aedbac4bb1a2c46368af41d779981c2bcea6"
+                "reference": "94e6a8fe860aa0f9ba0887003dbef2a53f13d09e"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-restclient-dev-master-417303.zip",
-                "reference": "d785aedbac4bb1a2c46368af41d779981c2bcea6",
-                "shasum": "bad5783ed3c7b1b1c103aa2d0e563852c4e94ea2"
+                "url": "http://satis.localhost/downloads/subscribo-restclient-dev-master-2983ca.zip",
+                "reference": "94e6a8fe860aa0f9ba0887003dbef2a53f13d09e",
+                "shasum": "5e86c818757e5dec20803957c721950513cb649f"
             },
             "require": {
                 "guzzlehttp/guzzle": "~5.0",
@@ -3221,7 +2508,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -3234,7 +2521,7 @@
                 "laravel",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:59"
+            "time": "2015-08-05 09:23:41"
         },
         {
             "name": "subscribo/restcommon",
@@ -3242,13 +2529,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/restcommon",
-                "reference": "26f10f8ac222786bab71dcfcc21db61ff148ebe6"
+                "reference": "9d8ee81a5cf002172c38f005e11b83d487fdbe25"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-restcommon-dev-master-a614e4.zip",
-                "reference": "26f10f8ac222786bab71dcfcc21db61ff148ebe6",
-                "shasum": "880b274feaf89b86e0e8019451f49b8257b22382"
+                "url": "http://satis.localhost/downloads/subscribo-restcommon-dev-master-9f9e00.zip",
+                "reference": "9d8ee81a5cf002172c38f005e11b83d487fdbe25",
+                "shasum": "3cc55f9f32912be02857e11cfd63a5168155acb4"
             },
             "require": {
                 "illuminate/contracts": "~5.0",
@@ -3281,7 +2568,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -3297,7 +2584,7 @@
                 "rest",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:58"
+            "time": "2015-08-05 14:40:39"
         },
         {
             "name": "subscribo/restproxy",
@@ -3305,13 +2592,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/restproxy",
-                "reference": "4cf86c1fe842dc7f9fec2595a395f4b30e7a8672"
+                "reference": "fc3d99b0ab361d37e7cff0e9adf18ec49fc199f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-restproxy-dev-master-2b2866.zip",
-                "reference": "4cf86c1fe842dc7f9fec2595a395f4b30e7a8672",
-                "shasum": "84139850a5fefdd9849d0563272dd8175df0faf1"
+                "url": "http://satis.localhost/downloads/subscribo-restproxy-dev-master-37caca.zip",
+                "reference": "fc3d99b0ab361d37e7cff0e9adf18ec49fc199f5",
+                "shasum": "4a4dbb5ca4e9cfa40d6fbfdb9053a23628fc214e"
             },
             "require": {
                 "php": "~5.4",
@@ -3343,7 +2630,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -3359,7 +2646,7 @@
                 "server",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:58"
+            "time": "2015-07-15 15:36:36"
         },
         {
             "name": "subscribo/support",
@@ -3367,17 +2654,20 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/support",
-                "reference": "e3a8547fd5cc18583a871c52a8f507d170f10d4b"
+                "reference": "e653d98cfabd3de562e4a23af41e4d7a503700fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-support-dev-master-69310f.zip",
-                "reference": "e3a8547fd5cc18583a871c52a8f507d170f10d4b",
-                "shasum": "eaf15ff3ffda039b340cae756b4da560acc1cb8a"
+                "url": "http://satis.localhost/downloads/subscribo-support-dev-master-62db65.zip",
+                "reference": "e653d98cfabd3de562e4a23af41e4d7a503700fd",
+                "shasum": "cdc4b44be127b569f12c0cb1ce8009ce6af08f7d"
             },
             "require": {
                 "illuminate/support": "~5.0",
                 "php": "~5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.7"
             },
             "suggest": {
                 "illuminate/routing": "If routing-connected functionality in ServiceProvider is used",
@@ -3405,7 +2695,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -3416,7 +2706,7 @@
                 "subscribo",
                 "support"
             ],
-            "time": "2015-07-15 11:10:59"
+            "time": "2015-07-15 17:17:33"
         },
         {
             "name": "subscribo/translatablemodel",
@@ -3424,13 +2714,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/translatablemodel",
-                "reference": "35ecb1be1956b3a735c85e9d3f08f2ec62bfc476"
+                "reference": "c4f83bcbfd085a35756fd127e8f1d0b0cf314f8b"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-translatablemodel-dev-master-486819.zip",
-                "reference": "35ecb1be1956b3a735c85e9d3f08f2ec62bfc476",
-                "shasum": "dad8836c72ed8ba69f07700c92e622ec927eafc4"
+                "url": "http://satis.localhost/downloads/subscribo-translatablemodel-dev-master-6edf85.zip",
+                "reference": "c4f83bcbfd085a35756fd127e8f1d0b0cf314f8b",
+                "shasum": "3184b65873ff66c6d67f64a7b29ecefdb23e178e"
             },
             "require": {
                 "dimsav/laravel-translatable": "~5.0",
@@ -3461,7 +2751,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -3478,7 +2768,7 @@
                 "translatable",
                 "translation"
             ],
-            "time": "2015-07-15 11:10:57"
+            "time": "2015-07-15 15:36:35"
         },
         {
             "name": "subscribo/validationlocalization",
@@ -3486,13 +2776,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/validationlocalization",
-                "reference": "f589155726c61c189ff6a5eb1f6e69e25dc38f30"
+                "reference": "58f7fa4ad732fe0c0c69aaabb12dfa871016d7c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-validationlocalization-dev-master-dea8cb.zip",
-                "reference": "f589155726c61c189ff6a5eb1f6e69e25dc38f30",
-                "shasum": "949cd10308c8e67aa48b64081c0074e70b50cf10"
+                "url": "http://satis.localhost/downloads/subscribo-validationlocalization-dev-master-e4fc97.zip",
+                "reference": "58f7fa4ad732fe0c0c69aaabb12dfa871016d7c6",
+                "shasum": "afd3350b62c8c30ea59171a71bf6948589873ba0"
             },
             "require": {
                 "illuminate/validation": "~5.0",
@@ -3523,7 +2813,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -3538,7 +2828,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2015-07-15 11:10:58"
+            "time": "2015-07-15 15:36:37"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -3546,12 +2836,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/swiftmailer/swiftmailer.git",
-                "reference": "0a6e9031371dcb384d395b1fa7bd5139a7847a60"
+                "reference": "caf94ee2473ba6503e411ce3bcbd33b080f1d903"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/0a6e9031371dcb384d395b1fa7bd5139a7847a60",
-                "reference": "0a6e9031371dcb384d395b1fa7bd5139a7847a60",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/caf94ee2473ba6503e411ce3bcbd33b080f1d903",
+                "reference": "caf94ee2473ba6503e411ce3bcbd33b080f1d903",
                 "shasum": ""
             },
             "require": {
@@ -3591,7 +2881,7 @@
                 "mail",
                 "mailer"
             ],
-            "time": "2015-06-28 17:20:48"
+            "time": "2015-07-15 23:24:06"
         },
         {
             "name": "symfony/config",
@@ -3599,12 +2889,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Config.git",
-                "reference": "358ec929e494b6f12d8508d88357cbd7383a10ca"
+                "reference": "3f495530550377a55c0cced5ddf8f58cfcd9ce5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Config/zipball/358ec929e494b6f12d8508d88357cbd7383a10ca",
-                "reference": "358ec929e494b6f12d8508d88357cbd7383a10ca",
+                "url": "https://api.github.com/repos/symfony/Config/zipball/3f495530550377a55c0cced5ddf8f58cfcd9ce5b",
+                "reference": "3f495530550377a55c0cced5ddf8f58cfcd9ce5b",
                 "shasum": ""
             },
             "require": {
@@ -3641,7 +2931,7 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-09 16:11:14"
+            "time": "2015-08-03 08:27:53"
         },
         {
             "name": "symfony/console",
@@ -3649,12 +2939,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "04ea5f4ecc5deb78d65073ccfefd8b1fcab77a3b"
+                "reference": "547582fa5c445a167a5ad6ffd88be14798efb4f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/04ea5f4ecc5deb78d65073ccfefd8b1fcab77a3b",
-                "reference": "04ea5f4ecc5deb78d65073ccfefd8b1fcab77a3b",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/547582fa5c445a167a5ad6ffd88be14798efb4f0",
+                "reference": "547582fa5c445a167a5ad6ffd88be14798efb4f0",
                 "shasum": ""
             },
             "require": {
@@ -3698,7 +2988,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-14 09:47:38"
+            "time": "2015-08-11 20:08:57"
         },
         {
             "name": "symfony/css-selector",
@@ -3759,12 +3049,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Debug.git",
-                "reference": "9daa1bf9f7e615fa2fba30357e479a90141222e3"
+                "reference": "aea19edb4a3bffb0cc6b1980d770d97724e228be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Debug/zipball/9daa1bf9f7e615fa2fba30357e479a90141222e3",
-                "reference": "9daa1bf9f7e615fa2fba30357e479a90141222e3",
+                "url": "https://api.github.com/repos/symfony/Debug/zipball/aea19edb4a3bffb0cc6b1980d770d97724e228be",
+                "reference": "aea19edb4a3bffb0cc6b1980d770d97724e228be",
                 "shasum": ""
             },
             "require": {
@@ -3776,13 +3066,8 @@
             },
             "require-dev": {
                 "symfony/class-loader": "~2.2",
-                "symfony/http-foundation": "~2.1",
                 "symfony/http-kernel": "~2.3.24|~2.5.9|~2.6,>=2.6.2",
                 "symfony/phpunit-bridge": "~2.7"
-            },
-            "suggest": {
-                "symfony/http-foundation": "",
-                "symfony/http-kernel": ""
             },
             "type": "library",
             "extra": {
@@ -3811,7 +3096,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-09 16:07:40"
+            "time": "2015-07-31 15:18:52"
         },
         {
             "name": "symfony/dom-crawler",
@@ -4028,12 +3313,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpFoundation.git",
-                "reference": "88903c0531b90d4ecd90282b18f08c0c77bde0b2"
+                "reference": "38c326b689dda8f33223a74e30c42526c684fe2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/88903c0531b90d4ecd90282b18f08c0c77bde0b2",
-                "reference": "88903c0531b90d4ecd90282b18f08c0c77bde0b2",
+                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/38c326b689dda8f33223a74e30c42526c684fe2e",
+                "reference": "38c326b689dda8f33223a74e30c42526c684fe2e",
                 "shasum": ""
             },
             "require": {
@@ -4073,7 +3358,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-09 16:07:40"
+            "time": "2015-08-05 15:45:00"
         },
         {
             "name": "symfony/http-kernel",
@@ -4081,19 +3366,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpKernel.git",
-                "reference": "86f57eb591c590a17151e5b506312c43a645189d"
+                "reference": "4ae2f30c63b4814db8b3a1d5471788e5a79f9c37"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/86f57eb591c590a17151e5b506312c43a645189d",
-                "reference": "86f57eb591c590a17151e5b506312c43a645189d",
+                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/4ae2f30c63b4814db8b3a1d5471788e5a79f9c37",
+                "reference": "4ae2f30c63b4814db8b3a1d5471788e5a79f9c37",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.9",
                 "psr/log": "~1.0",
                 "symfony/debug": "~2.6,>=2.6.2",
-                "symfony/event-dispatcher": "~2.5.9|~2.6,>=2.6.2",
+                "symfony/event-dispatcher": "~2.6,>=2.6.7",
                 "symfony/http-foundation": "~2.5,>=2.5.4"
             },
             "conflict": {
@@ -4153,7 +3438,7 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-13 20:39:19"
+            "time": "2015-07-31 13:51:28"
         },
         {
             "name": "symfony/process",
@@ -4210,12 +3495,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Routing.git",
-                "reference": "ea9134f277162b02e5f80ac058b75a77637b0d26"
+                "reference": "71fed8c6e21f6925c67ea2d4c7365a50d1989055"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Routing/zipball/ea9134f277162b02e5f80ac058b75a77637b0d26",
-                "reference": "ea9134f277162b02e5f80ac058b75a77637b0d26",
+                "url": "https://api.github.com/repos/symfony/Routing/zipball/71fed8c6e21f6925c67ea2d4c7365a50d1989055",
+                "reference": "71fed8c6e21f6925c67ea2d4c7365a50d1989055",
                 "shasum": ""
             },
             "require": {
@@ -4273,7 +3558,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2015-07-09 16:07:40"
+            "time": "2015-08-05 15:45:00"
         },
         {
             "name": "symfony/translation",
@@ -4342,12 +3627,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "fde603d9f4b2418ff0f0315b93eb039c9aa41205"
+                "reference": "e8903ebba5eb019f5886ffce739ea9e3b7519579"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/fde603d9f4b2418ff0f0315b93eb039c9aa41205",
-                "reference": "fde603d9f4b2418ff0f0315b93eb039c9aa41205",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/e8903ebba5eb019f5886ffce739ea9e3b7519579",
+                "reference": "e8903ebba5eb019f5886ffce739ea9e3b7519579",
                 "shasum": ""
             },
             "require": {
@@ -4393,7 +3678,7 @@
                 "debug",
                 "dump"
             ],
-            "time": "2015-07-01 12:07:40"
+            "time": "2015-07-28 15:18:12"
         },
         {
             "name": "symfony/yaml",
@@ -4401,12 +3686,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "000e7fc2653335cd42c6d21405dac1c74224a387"
+                "reference": "6eef1477f3c4451b6024fadb1254009be4602908"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/000e7fc2653335cd42c6d21405dac1c74224a387",
-                "reference": "000e7fc2653335cd42c6d21405dac1c74224a387",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/6eef1477f3c4451b6024fadb1254009be4602908",
+                "reference": "6eef1477f3c4451b6024fadb1254009be4602908",
                 "shasum": ""
             },
             "require": {
@@ -4442,7 +3727,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-01 14:16:54"
+            "time": "2015-07-29 07:12:56"
         },
         {
             "name": "twbs/bootstrap",
@@ -4450,12 +3735,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "cb7f569262acaf5d0d6c001146855eb595ffdd20"
+                "reference": "ab412b2404d12a3c55d1c4b798bd42ef32e80fab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/cb7f569262acaf5d0d6c001146855eb595ffdd20",
-                "reference": "cb7f569262acaf5d0d6c001146855eb595ffdd20",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/ab412b2404d12a3c55d1c4b798bd42ef32e80fab",
+                "reference": "ab412b2404d12a3c55d1c4b798bd42ef32e80fab",
                 "shasum": ""
             },
             "replace": {
@@ -4493,7 +3778,7 @@
                 "responsive",
                 "web"
             ],
-            "time": "2015-07-07 04:43:37"
+            "time": "2015-08-05 04:36:11"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -4542,54 +3827,48 @@
             "time": "2015-05-30 15:59:26"
         },
         {
-            "name": "zendframework/zend-diactoros",
-            "version": "dev-develop",
+            "name": "webpatser/laravel-uuid",
+            "version": "2.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/zend-diactoros.git",
-                "reference": "8174b7237baaac98b26caa63aa38671bd275d291"
+                "url": "https://github.com/webpatser/laravel-uuid.git",
+                "reference": "7c0a65be9367b99b7f4c13119c0c6514701de40b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/8174b7237baaac98b26caa63aa38671bd275d291",
-                "reference": "8174b7237baaac98b26caa63aa38671bd275d291",
+                "url": "https://api.github.com/repos/webpatser/laravel-uuid/zipball/7c0a65be9367b99b7f4c13119c0c6514701de40b",
+                "reference": "7c0a65be9367b99b7f4c13119c0c6514701de40b",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4",
-                "psr/http-message": "~1.0"
-            },
-            "provide": {
-                "psr/http-message-implementation": "~1.0.0"
+                "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.6",
-                "squizlabs/php_codesniffer": "^2.3.1"
+                "fzaninotto/faker": "1.5.*",
+                "phpunit/phpunit": "4.7.*"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev",
-                    "dev-develop": "1.1-dev"
-                }
-            },
             "autoload": {
-                "psr-4": {
-                    "Zend\\Diactoros\\": "src/"
+                "psr-0": {
+                    "Webpatser\\Uuid": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "BSD-2-Clause"
+                "MIT"
             ],
-            "description": "PSR HTTP Message implementations",
-            "homepage": "https://github.com/zendframework/zend-diactoros",
+            "authors": [
+                {
+                    "name": "Christoph Kempen",
+                    "email": "christoph@downsized.nl"
+                }
+            ],
+            "description": "Class to generate a UUID according to the RFC 4122 standard. Support for version 1, 3, 4 and 5 UUID are built-in.",
+            "homepage": "https://github.com/webpatser/uuid",
             "keywords": [
-                "http",
-                "psr",
-                "psr-7"
+                "UUID RFC4122"
             ],
-            "time": "2015-07-12 18:02:57"
+            "time": "2015-06-15 21:48:27"
         }
     ],
     "packages-dev": [
@@ -4599,12 +3878,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-ide-helper.git",
-                "reference": "e34b7fb84b4217614cc1a613ee12b91c38b09aed"
+                "reference": "83999f8467374adcb8893f566c9171c9d9691f50"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/e34b7fb84b4217614cc1a613ee12b91c38b09aed",
-                "reference": "e34b7fb84b4217614cc1a613ee12b91c38b09aed",
+                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/83999f8467374adcb8893f566c9171c9d9691f50",
+                "reference": "83999f8467374adcb8893f566c9171c9d9691f50",
                 "shasum": ""
             },
             "require": {
@@ -4624,7 +3903,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0-dev"
+                    "dev-master": "2.1-dev"
                 }
             },
             "autoload": {
@@ -4654,7 +3933,7 @@
                 "phpstorm",
                 "sublime"
             ],
-            "time": "2015-07-14 09:09:59"
+            "time": "2015-08-13 11:40:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -4709,58 +3988,6 @@
                 "instantiate"
             ],
             "time": "2015-06-14 21:17:01"
-        },
-        {
-            "name": "fzaninotto/faker",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fzaninotto/Faker.git",
-                "reference": "b1abe41e1357ad790398d7a668b19ac733b4e1c1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/b1abe41e1357ad790398d7a668b19ac733b4e1c1",
-                "reference": "b1abe41e1357ad790398d7a668b19ac733b4e1c1",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.0",
-                "squizlabs/php_codesniffer": "~1.5"
-            },
-            "suggest": {
-                "ext-intl": "*"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.6.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Faker\\": "src/Faker/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "François Zaninotto"
-                }
-            ],
-            "description": "Faker is a PHP library that generates fake data for you.",
-            "keywords": [
-                "data",
-                "faker",
-                "fixtures"
-            ],
-            "time": "2015-07-15 08:28:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -4957,16 +4184,16 @@
         },
         {
             "name": "phpspec/phpspec",
-            "version": "2.3.0-beta",
+            "version": "2.3.0-beta3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/phpspec.git",
-                "reference": "5858b8b111023248ff8e9fc50e914c54118cd3ff"
+                "reference": "a897a7b02f42d278ac2381f4cd19b0d2b3b6f478"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/phpspec/zipball/5858b8b111023248ff8e9fc50e914c54118cd3ff",
-                "reference": "5858b8b111023248ff8e9fc50e914c54118cd3ff",
+                "url": "https://api.github.com/repos/phpspec/phpspec/zipball/a897a7b02f42d278ac2381f4cd19b0d2b3b6f478",
+                "reference": "a897a7b02f42d278ac2381f4cd19b0d2b3b6f478",
                 "shasum": ""
             },
             "require": {
@@ -4978,15 +4205,14 @@
                 "symfony/console": "~2.3",
                 "symfony/event-dispatcher": "~2.1",
                 "symfony/finder": "~2.1",
-                "symfony/process": "~2.1",
+                "symfony/process": "^2.6",
                 "symfony/yaml": "~2.1"
             },
             "require-dev": {
                 "behat/behat": "^3.0.11",
                 "bossa/phpspec2-expect": "~1.0",
                 "phpunit/phpunit": "~4.4",
-                "symfony/filesystem": "~2.1",
-                "symfony/process": "~2.1"
+                "symfony/filesystem": "~2.1"
             },
             "suggest": {
                 "phpspec/nyan-formatters": "~1.0 – Adds Nyan formatters"
@@ -5031,7 +4257,7 @@
                 "testing",
                 "tests"
             ],
-            "time": "2015-07-04 10:12:31"
+            "time": "2015-08-08 15:09:58"
         },
         {
             "name": "phpspec/prophecy",
@@ -5039,12 +4265,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "5700f75b23b0dd3495c0f495fe33a5e6717ee160"
+                "reference": "80da5500014051b9e70740f183c5e5586f38f977"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/5700f75b23b0dd3495c0f495fe33a5e6717ee160",
-                "reference": "5700f75b23b0dd3495c0f495fe33a5e6717ee160",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/80da5500014051b9e70740f183c5e5586f38f977",
+                "reference": "80da5500014051b9e70740f183c5e5586f38f977",
                 "shasum": ""
             },
             "require": {
@@ -5058,7 +4284,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4.x-dev"
+                    "dev-master": "1.5.x-dev"
                 }
             },
             "autoload": {
@@ -5091,7 +4317,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2015-06-30 10:26:46"
+            "time": "2015-08-13 10:25:47"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -5099,12 +4325,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "1ba1290e47c3275be779967de1516e2989b6e130"
+                "reference": "40103f9b335f1d84daed099f180b9de12ba080e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/1ba1290e47c3275be779967de1516e2989b6e130",
-                "reference": "1ba1290e47c3275be779967de1516e2989b6e130",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/40103f9b335f1d84daed099f180b9de12ba080e7",
+                "reference": "40103f9b335f1d84daed099f180b9de12ba080e7",
                 "shasum": ""
             },
             "require": {
@@ -5112,7 +4338,7 @@
                 "phpunit/php-file-iterator": "~1.3",
                 "phpunit/php-text-template": "~1.2",
                 "phpunit/php-token-stream": "~1.3",
-                "sebastian/environment": "~1.0",
+                "sebastian/environment": "^1.3.2",
                 "sebastian/version": "~1.0"
             },
             "require-dev": {
@@ -5153,7 +4379,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-07-13 11:25:16"
+            "time": "2015-08-04 03:45:55"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -5290,12 +4516,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-token-stream.git",
-                "reference": "7a9b0969488c3c54fd62b4d504b3ec758fd005d9"
+                "reference": "8b0723c09dd6593a27319c631bf7152be809bab0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/7a9b0969488c3c54fd62b4d504b3ec758fd005d9",
-                "reference": "7a9b0969488c3c54fd62b4d504b3ec758fd005d9",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/8b0723c09dd6593a27319c631bf7152be809bab0",
+                "reference": "8b0723c09dd6593a27319c631bf7152be809bab0",
                 "shasum": ""
             },
             "require": {
@@ -5331,7 +4557,7 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2015-06-19 03:43:16"
+            "time": "2015-08-13 08:20:49"
         },
         {
             "name": "phpunit/phpunit",
@@ -5339,12 +4565,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e1cc5855b0dde3d6efa2df0350c72b84aa84771d"
+                "reference": "fd3050e26e3105f416d74c4d33aea659b406c59d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e1cc5855b0dde3d6efa2df0350c72b84aa84771d",
-                "reference": "e1cc5855b0dde3d6efa2df0350c72b84aa84771d",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fd3050e26e3105f416d74c4d33aea659b406c59d",
+                "reference": "fd3050e26e3105f416d74c4d33aea659b406c59d",
                 "shasum": ""
             },
             "require": {
@@ -5354,7 +4580,7 @@
                 "ext-reflection": "*",
                 "ext-spl": "*",
                 "php": ">=5.3.3",
-                "phpspec/prophecy": "~1.3,>=1.3.1",
+                "phpspec/prophecy": "^1.3.1",
                 "phpunit/php-code-coverage": "~2.1",
                 "phpunit/php-file-iterator": "~1.4",
                 "phpunit/php-text-template": "~1.2",
@@ -5362,7 +4588,7 @@
                 "phpunit/phpunit-mock-objects": "~2.3",
                 "sebastian/comparator": "~1.1",
                 "sebastian/diff": "~1.2",
-                "sebastian/environment": "~1.2",
+                "sebastian/environment": "~1.3",
                 "sebastian/exporter": "~1.2",
                 "sebastian/global-state": "~1.0",
                 "sebastian/version": "~1.0",
@@ -5403,7 +4629,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-07-13 11:33:07"
+            "time": "2015-08-10 09:16:56"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -5411,16 +4637,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "18dfbcb81d05e2296c0bcddd4db96cade75e6f42"
+                "reference": "dccd8011934fba6fb77c7182c74926ad58c9ecd1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/18dfbcb81d05e2296c0bcddd4db96cade75e6f42",
-                "reference": "18dfbcb81d05e2296c0bcddd4db96cade75e6f42",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/dccd8011934fba6fb77c7182c74926ad58c9ecd1",
+                "reference": "dccd8011934fba6fb77c7182c74926ad58c9ecd1",
                 "shasum": ""
             },
             "require": {
-                "doctrine/instantiator": "~1.0,>=1.0.2",
+                "doctrine/instantiator": "^1.0.2",
                 "php": ">=5.3.3",
                 "phpunit/php-text-template": "~1.2",
                 "sebastian/exporter": "~1.2"
@@ -5459,7 +4685,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-07-10 06:54:24"
+            "time": "2015-08-09 04:15:55"
         },
         {
             "name": "sebastian/comparator",
@@ -5467,12 +4693,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "abd05e77d364138c0532a1b78a13c4d78311f546"
+                "reference": "937efb279bd37a375bcadf584dec0726f84dbf22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/abd05e77d364138c0532a1b78a13c4d78311f546",
-                "reference": "abd05e77d364138c0532a1b78a13c4d78311f546",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/937efb279bd37a375bcadf584dec0726f84dbf22",
+                "reference": "937efb279bd37a375bcadf584dec0726f84dbf22",
                 "shasum": ""
             },
             "require": {
@@ -5486,7 +4712,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "1.2.x-dev"
                 }
             },
             "autoload": {
@@ -5523,7 +4749,7 @@
                 "compare",
                 "equality"
             ],
-            "time": "2015-06-21 07:54:35"
+            "time": "2015-07-26 15:48:44"
         },
         {
             "name": "sebastian/diff",
@@ -5583,12 +4809,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "bc66c3bbe6e5822c34395049e110566491cafa3b"
+                "reference": "6324c907ce7a52478eeeaede764f48733ef5ae44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/bc66c3bbe6e5822c34395049e110566491cafa3b",
-                "reference": "bc66c3bbe6e5822c34395049e110566491cafa3b",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6324c907ce7a52478eeeaede764f48733ef5ae44",
+                "reference": "6324c907ce7a52478eeeaede764f48733ef5ae44",
                 "shasum": ""
             },
             "require": {
@@ -5625,7 +4851,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2015-06-21 13:07:52"
+            "time": "2015-08-03 06:14:51"
         },
         {
             "name": "sebastian/exporter",
@@ -5633,12 +4859,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/exporter.git",
-                "reference": "7ae5513327cb536431847bcc0c10edba2701064e"
+                "reference": "f88f8936517d54ae6d589166810877fb2015d0a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/exporter/zipball/7ae5513327cb536431847bcc0c10edba2701064e",
-                "reference": "7ae5513327cb536431847bcc0c10edba2701064e",
+                "url": "https://api.github.com/repos/sebastianbergmann/exporter/zipball/f88f8936517d54ae6d589166810877fb2015d0a2",
+                "reference": "f88f8936517d54ae6d589166810877fb2015d0a2",
                 "shasum": ""
             },
             "require": {
@@ -5646,12 +4872,13 @@
                 "sebastian/recursion-context": "~1.0"
             },
             "require-dev": {
+                "ext-mbstring": "*",
                 "phpunit/phpunit": "~4.4"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.2.x-dev"
+                    "dev-master": "1.3.x-dev"
                 }
             },
             "autoload": {
@@ -5691,7 +4918,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2015-06-21 07:55:53"
+            "time": "2015-08-09 04:23:41"
         },
         {
             "name": "sebastian/global-state",
@@ -5838,13 +5065,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/apichecker",
-                "reference": "45fe4f3b97d93eef2de2500ee43cad276b871202"
+                "reference": "285735ffeec19b8fb60e43230bec30c8eba3510b"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-apichecker-dev-master-19c5ea.zip",
-                "reference": "45fe4f3b97d93eef2de2500ee43cad276b871202",
-                "shasum": "9f3c01dddae6bd12a024bf9122ffc70e6f1900fc"
+                "url": "http://satis.localhost/downloads/subscribo-apichecker-dev-master-510ab6.zip",
+                "reference": "285735ffeec19b8fb60e43230bec30c8eba3510b",
+                "shasum": "a3acf4a2db0c947fc457a840c40e5754c8746bb4"
             },
             "require": {
                 "php": "~5.4",
@@ -5877,7 +5104,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -5890,7 +5117,7 @@
                 "subscribo",
                 "testing"
             ],
-            "time": "2015-07-15 11:10:58"
+            "time": "2015-07-15 15:36:35"
         },
         {
             "name": "subscribo/clientchecker",
@@ -5898,13 +5125,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/clientchecker",
-                "reference": "701a35b5cd0d382b4838acd421ca8d1e11754f44"
+                "reference": "260d5b13b95ec98386170fc72f22b92b6bcd558f"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-clientchecker-dev-master-a5c3ea.zip",
-                "reference": "701a35b5cd0d382b4838acd421ca8d1e11754f44",
-                "shasum": "d182c228c91ef2b54127262c712eccab91f650ed"
+                "url": "http://satis.localhost/downloads/subscribo-clientchecker-dev-master-cc911a.zip",
+                "reference": "260d5b13b95ec98386170fc72f22b92b6bcd558f",
+                "shasum": "3745c7d7ea310a450969c757b7db26ff1a8e855d"
             },
             "require": {
                 "illuminate/encryption": "~5.0",
@@ -5937,7 +5164,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -5950,7 +5177,7 @@
                 "subscribo",
                 "testing"
             ],
-            "time": "2015-07-15 11:10:59"
+            "time": "2015-07-15 15:36:38"
         },
         {
             "name": "subscribo/dependencyresolver",
@@ -5958,13 +5185,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/dependencyresolver",
-                "reference": "92b312d07708325037c17d68798b03cdfe96793e"
+                "reference": "3f475de94a0eaa965ceb8d3faed9c1739173be7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-dependencyresolver-dev-master-3bf8bd.zip",
-                "reference": "92b312d07708325037c17d68798b03cdfe96793e",
-                "shasum": "ef7fd63751621b4e52e1eb65692f4c1114c9f210"
+                "url": "http://satis.localhost/downloads/subscribo-dependencyresolver-dev-master-2ceee0.zip",
+                "reference": "3f475de94a0eaa965ceb8d3faed9c1739173be7f",
+                "shasum": "1beae976141b951c8222099c8856d4bafb6d5416"
             },
             "require": {
                 "php": "~5.4"
@@ -5992,7 +5219,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -6003,7 +5230,7 @@
                 "resolving dependencies",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:59"
+            "time": "2015-07-15 15:36:37"
         },
         {
             "name": "subscribo/schemabuilder",
@@ -6011,13 +5238,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/schemabuilder",
-                "reference": "be0460ca73bfa8589c2beebaa1cfbaea04788654"
+                "reference": "d432a59acbca415aae8adb00b39e33bf7ca40e46"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-schemabuilder-dev-master-2ca89e.zip",
-                "reference": "be0460ca73bfa8589c2beebaa1cfbaea04788654",
-                "shasum": "1738fe8d4180dc38b973c0dd819faba902f73028"
+                "url": "http://satis.localhost/downloads/subscribo-schemabuilder-dev-master-2d7cdd.zip",
+                "reference": "d432a59acbca415aae8adb00b39e33bf7ca40e46",
+                "shasum": "06e34c5fffec7611796f33445426bc64707aa55f"
             },
             "require": {
                 "php": "~5.4",
@@ -6050,7 +5277,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -6061,7 +5288,7 @@
                 "schema",
                 "subscribo"
             ],
-            "time": "2015-07-15 11:10:59"
+            "time": "2015-08-05 09:23:41"
         },
         {
             "name": "subscribo/serviceprovider",
@@ -6069,13 +5296,13 @@
             "source": {
                 "type": "git",
                 "url": "/Users/slavo/Projects/packages/workbench/subscribo/serviceprovider",
-                "reference": "aaea551119dfed9eb6023ad35d3a463f5b491338"
+                "reference": "ad2358f384b1b9fe167aea52c2fe0f69838cba9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://satis.localhost/downloads/subscribo-serviceprovider-dev-master-6e4717.zip",
-                "reference": "aaea551119dfed9eb6023ad35d3a463f5b491338",
-                "shasum": "6d649a39473f71780c6f6d8fabbfe5e54be3f85e"
+                "url": "http://satis.localhost/downloads/subscribo-serviceprovider-dev-master-7c97bb.zip",
+                "reference": "ad2358f384b1b9fe167aea52c2fe0f69838cba9a",
+                "shasum": "2a0d6573c675ecd8769268246af27de17ab3ba11"
             },
             "require": {
                 "illuminate/support": "~5.0",
@@ -6104,7 +5331,7 @@
                     "role": "developer"
                 },
                 {
-                    "name": "Kochabo",
+                    "name": "KochAbo GmbH",
                     "role": "owner"
                 }
             ],
@@ -6115,7 +5342,7 @@
                 "subscribo",
                 "transition"
             ],
-            "time": "2015-07-15 11:10:57"
+            "time": "2015-07-15 15:36:35"
         },
         {
             "name": "symfony/class-loader",
@@ -6123,12 +5350,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ClassLoader.git",
-                "reference": "b590813ab629d29c81dcc5978425f51ac66a076a"
+                "reference": "db4b10fd727c38d02b1ce11ea318d2d712da2508"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ClassLoader/zipball/b590813ab629d29c81dcc5978425f51ac66a076a",
-                "reference": "b590813ab629d29c81dcc5978425f51ac66a076a",
+                "url": "https://api.github.com/repos/symfony/ClassLoader/zipball/db4b10fd727c38d02b1ce11ea318d2d712da2508",
+                "reference": "db4b10fd727c38d02b1ce11ea318d2d712da2508",
                 "shasum": ""
             },
             "require": {
@@ -6165,7 +5392,7 @@
             ],
             "description": "Symfony ClassLoader Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-01 14:16:54"
+            "time": "2015-08-01 09:43:59"
         }
     ],
     "aliases": [],
@@ -6175,7 +5402,6 @@
         "subscribo/apiclient": 20,
         "subscribo/modifier": 20,
         "subscribo/developmentseeder": 20,
-        "subscribo/webshop": 20,
         "subscribo/schemabuilder": 20,
         "subscribo/apichecker": 20,
         "subscribo/clientchecker": 20,

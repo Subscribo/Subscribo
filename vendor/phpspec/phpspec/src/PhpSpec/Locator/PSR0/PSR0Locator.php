@@ -45,7 +45,7 @@ class PSR0Locator implements ResourceLocatorInterface
      */
     private $fullSpecPath;
     /**
-     * @var \PhpSpec\Util\Filesystem
+     * @var Filesystem
      */
     private $filesystem;
 
@@ -60,6 +60,7 @@ class PSR0Locator implements ResourceLocatorInterface
      * @param string     $srcPath
      * @param string     $specPath
      * @param Filesystem $filesystem
+     * @param string     $psr4Prefix
      */
     public function __construct(
         $srcNamespace = '',

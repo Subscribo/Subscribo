@@ -176,6 +176,24 @@ class Logger implements LoggerInterface
     }
 
     /**
+     * Set handlers, replacing all existing ones.
+     *
+     * If a map is passed, keys will be ignored.
+     *
+     * @param HandlerInterface[] $handlers
+     * @return $this
+     */
+    public function setHandlers(array $handlers)
+    {
+        $this->handlers = array();
+        foreach (array_reverse($handlers) as $handler) {
+            $this->pushHandler($handler);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return HandlerInterface[]
      */
     public function getHandlers()

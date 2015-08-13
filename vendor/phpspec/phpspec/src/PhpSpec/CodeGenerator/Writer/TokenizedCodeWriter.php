@@ -13,7 +13,6 @@
 
 namespace PhpSpec\CodeGenerator\Writer;
 
-use PhpSpec\Exception\Generator\NamedMethodNotFoundException;
 use PhpSpec\Util\ClassFileAnalyser;
 
 final class TokenizedCodeWriter implements CodeWriter
@@ -55,7 +54,8 @@ final class TokenizedCodeWriter implements CodeWriter
     public function insertMethodLastInClass($class, $method)
     {
         if ($this->analyser->classHasMethods($class)) {
-            return $this->writeAtEndOfClass($class, $method, true);
+            $line = $this->analyser->getEndLineOfLastMethod($class);
+            return $this->insertStringAfterLine($class, $method, $line);
         }
 
         return $this->writeAtEndOfClass($class, $method);
@@ -134,12 +134,12 @@ final class TokenizedCodeWriter implements CodeWriter
                 continue;
             }
 
-            if (is_array($token) && $token[1] === PHP_EOL) {
+            if ($this->isWritePoint($token)) {
                 $line = $token[2];
-                return $this->insertStringAfterLine($class, $method, $line, $prependNewLine);
+                return $this->insertStringAfterLine($class, $method, $line, $token[0] === T_COMMENT ?: $prependNewLine);
             }
 
-            array_unshift($searchPattern, is_array($token)? $token[1] : $token);
+            array_unshift($searchPattern, is_array($token) ? $token[1] : $token);
 
             if ($token === '{') {
                 $search = implode('', $searchPattern);
@@ -147,5 +147,14 @@ final class TokenizedCodeWriter implements CodeWriter
                 return substr_replace($class, PHP_EOL . $method . PHP_EOL, $position, 0);
             }
         }
+    }
+
+    /**
+     * @param $token
+     * @return bool
+     */
+    private function isWritePoint($token)
+    {
+        return is_array($token) && ($token[1] === PHP_EOL || $token[0] === T_COMMENT);
     }
 }
