@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
         $tokens = $userFactory->addTokens($frontendSystemUser, UserToken::TYPE_SUBSCRIBO_DIGEST);
         /** @var UserToken $token */
         $token = reset($tokens);
-        $this->updateEnvFile('SUBSCRIBO_REST_CLIENT_TOKEN_RING', $token->tokenRing, '.frontend.env');
+        $this->updateEnvFile('SUBSCRIBO_REST_CLIENT_TOKEN_RING', $token->tokenRing, '.env.frontend');
 
 
         $administrator = $this->generateUser('administrator');
