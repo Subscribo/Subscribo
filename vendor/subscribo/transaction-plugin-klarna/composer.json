@@ -1,0 +1,23 @@
+{
+    "name": "subscribo/transaction-plugin-klarna",
+    "description": "Subscribo transaction plugin for subscribo/omnipay-klarna driver",
+    "keywords": [
+        "Subscribo",
+        "transaction plugin",
+        "transaction driver",
+        "charge",
+        "Klarna",
+        "Klarna Invoice"
+    ],
+    "homepage": "http://subscribo.io",
+    "license": "proprietary",
+    "require": {
+        "subscribo/transaction-plugin-manager": "@dev",
+        "subscribo/omnipay-klarna": "^0.1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\TransactionPluginKlarna\\": "src/Subscribo/TransactionPluginKlarna/"
+        }
+    }
+}
