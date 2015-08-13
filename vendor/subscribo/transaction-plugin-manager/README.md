@@ -10,6 +10,14 @@ Projects and Transaction plugins depending on this package should require it in 
     }
 ```
 
+You also might want to add TransactionPluginManagerServiceProvider in your bootstrap/app.php
+(but generally it is not necessary, as any added driver should register it.
+```php
+    if (class_exists('\\Subscribo\\TransactionPluginManager\\Integration\\Laravel\\TransactionPluginManagerServiceProvider')) {
+        $app->register('\\Subscribo\\TransactionPluginManager\\Integration\\Laravel\\TransactionPluginManagerServiceProvider');
+    }
+```
+
 ## Usage
 
 ### By transaction plugins
