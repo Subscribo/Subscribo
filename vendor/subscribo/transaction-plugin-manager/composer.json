@@ -1,0 +1,25 @@
+{
+    "name": "subscribo/transaction-plugin-manager",
+    "description": "Base package for Transaction plugins",
+    "keywords": [
+        "subscribo",
+        "transaction plugin",
+        "transaction driver",
+        "manager"
+    ],
+    "homepage": "http://subscribo.io",
+    "license": "proprietary",
+    "require": {
+        "php": "^5.4",
+        "laravel/framework": "^5.1",
+        "subscribo/support": "@dev",
+        "subscribo/modelcore": "@dev",
+        "subscribo/localization": "@dev",
+        "psr/log": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\TransactionPluginManager\\": "src/Subscribo/TransactionPluginManager/"
+        }
+    }
+}
