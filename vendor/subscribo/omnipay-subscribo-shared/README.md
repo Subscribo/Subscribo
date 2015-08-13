@@ -27,7 +27,7 @@ both to your driver and your project, if you are using protected method HttpMess
 
 ```json
     "require": {
-        "subscribo/omnipay-subscribo-shared": "^0.3.4",
+        "subscribo/omnipay-subscribo-shared": "^0.3.5",
         "egeloen/http-adapter": "^0.8@dev",
         "psr/http-message": "^1.0"
     }
