@@ -1,11 +1,17 @@
-<?php namespace Subscribo\RestCommon;
+<?php
+
+namespace Subscribo\RestCommon;
 
 use JsonSerializable;
 use Illuminate\Contracts\Support\Arrayable;
 use Subscribo\RestCommon\Interfaces\ServerRequestInterface;
 use Subscribo\RestCommon\Exceptions\InvalidArgumentException;
 
-
+/**
+ * Class ServerRequest
+ *
+ * @package Subscribo\RestCommon
+ */
 class ServerRequest implements ServerRequestInterface, JsonSerializable, Arrayable
 {
     const TYPE = 'request';
@@ -21,6 +27,9 @@ class ServerRequest implements ServerRequestInterface, JsonSerializable, Arrayab
 
     /** @var string|null  */
     public $locale;
+
+    /** @var  string|null */
+    public $domain;
 
     public function __construct(array $data = array())
     {
@@ -45,9 +54,16 @@ class ServerRequest implements ServerRequestInterface, JsonSerializable, Arrayab
         if (isset($data['locale'])) {
             $this->locale = $data['locale'];
         }
+        if ( ! empty($data['domain'])) {
+            $this->domain = $data['domain'];
+        }
+
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function export()
     {
         $result = array();
@@ -56,19 +72,30 @@ class ServerRequest implements ServerRequestInterface, JsonSerializable, Arrayab
         $result['hash'] = $this->hash;
         $result['endpoint'] = $this->endpoint;
         $result['locale']   = $this->locale;
+        $result['domain'] = $this->domain;
+
         return $result;
     }
 
+    /**
+     * @return string
+     */
     public function getType()
     {
         return $this::TYPE;
     }
 
+    /**
+     * @return array
+     */
     public function jsonSerialize()
     {
         return $this->export();
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return $this->export();

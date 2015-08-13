@@ -2,11 +2,23 @@
 
 class Question
 {
-    const TYPE_SELECT = 'select';
+    const TYPE_GROUP = 'group'; //Not actually a type of question, but reserved for denoting array content being QuestionGroup
+
+    const TYPE_TEXT = 'text';
 
     const TYPE_EMAIL = 'email';
 
     const TYPE_PASSWORD = 'password';
+
+    const TYPE_CHECKBOX = 'checkbox';
+
+    const TYPE_SELECT = 'select';
+
+    const TYPE_DAY = 'day';
+
+    const TYPE_MONTH = 'month';
+
+    const TYPE_YEAR = 'year';
 
     const CODE_NEW_CUSTOMER_EMAIL_EMAIL = 1010;
 
@@ -30,6 +42,18 @@ class Question
     /** @var string */
     public $text;
 
+    /** @var int|string */
+    public $checkboxValue = 1;
+
+    /** @var  int|string  */
+    public $defaultValue;
+
+    /** @var  int|null */
+    public $minimumValue;
+
+    /** @var  int|null */
+    public $maximumValue;
+
     /** @var  string|null */
     public $validationAttributeName;
 
@@ -39,7 +63,7 @@ class Question
     /** @var bool  */
     public $addValidationCustomValuesFromSelect = true;
 
-    /** @var array */
+    /** @var string|array */
     protected $validationRules = array();
 
     /** @var array|string  */
@@ -50,6 +74,9 @@ class Question
     /** @var  bool|null */
     protected $rememberValueOnError;
 
+    /**
+     * @param array $data
+     */
     public function __construct(array $data = array())
     {
         if (is_array($data)) {
@@ -57,6 +84,9 @@ class Question
         }
     }
 
+    /**
+     * @param array $data
+     */
     public function import(array $data)
     {
         if ( ! empty($data['type'])) {
@@ -89,8 +119,23 @@ class Question
         if ( array_key_exists('rememberValueOnError', $data)) {
             $this->setRememberValueOnError($data['rememberValueOnError']);
         }
+        if ( ! empty($data['checkboxValue'])) {
+            $this->checkboxValue = $data['checkboxValue'];
+        }
+        if ( array_key_exists('defaultValue', $data)) {
+            $this->defaultValue = $data['defaultValue'];
+        }
+        if ( array_key_exists('minimumValue', $data)) {
+            $this->minimumValue = $data['minimumValue'];
+        }
+        if ( array_key_exists('maximumValue', $data)) {
+            $this->maximumValue = $data['maximumValue'];
+        }
     }
 
+    /**
+     * @return array
+     */
     public function export()
     {
         $result = [
@@ -103,7 +148,15 @@ class Question
             'validationCustomValues' => $this->validationCustomValues,
             'addValidationCustomValuesFromSelect' => $this->addValidationCustomValuesFromSelect,
             'rememberValueOnError' => $this->rememberValueOnError,
+            'checkboxValue' => $this->checkboxValue,
+            'defaultValue' => $this->defaultValue,
         ];
+        if (is_numeric($this->minimumValue)) {
+            $result['minimumValue'] = $this->minimumValue;
+        }
+        if (is_numeric($this->maximumValue)) {
+            $result['maximumValue'] = $this->maximumValue;
+        }
         if ($this->selectOptions) {
             $result['selectOptions'] = $this->selectOptions;
         }
@@ -117,6 +170,8 @@ class Question
     {
         $rules = is_string($this->validationRules) ? explode('|', $this->validationRules) : $this->validationRules;
         $rules = $this->addValidationRulesBasedOnType($rules);
+        $rules = $this->addValidationRulesBasedOnConstraints($rules);
+
         return $rules;
     }
 
@@ -139,6 +194,7 @@ class Question
             $ruleName = reset($rule);
             $result[$ruleName] = $message;
         }
+
         return $result;
     }
 
@@ -151,6 +207,7 @@ class Question
         if ($this->addValidationCustomValuesFromSelect) {
             $result = array_replace($this->selectOptions, $result);
         }
+
         return $result;
     }
 
@@ -162,6 +219,10 @@ class Question
         return $this->selectOptions;
     }
 
+    /**
+     * @param array $additionalSelectOptions
+     * @return $this
+     */
     public function prependSelectOptions(array $additionalSelectOptions)
     {
         $oldSelectOptions = $this->getSelectOptions();
@@ -183,6 +244,7 @@ class Question
             $newSelectOptions[$key] = $value;
         }
         $this->setSelectOptions($newSelectOptions);
+
         return $this;
     }
 
@@ -192,6 +254,7 @@ class Question
     public function getRememberValueOnError()
     {
         if (is_bool($this->rememberValueOnError)) {
+
             return $this->rememberValueOnError;
         }
         switch ($this->type) {
@@ -201,12 +264,18 @@ class Question
             case static::TYPE_SELECT:
                 return true;
         }
+
         return false;
     }
 
+    /**
+     * @param string|array $validationRules
+     * @return $this
+     */
     protected function setValidationRules($validationRules)
     {
         $this->validationRules = $validationRules;
+
         return $this;
     }
 
@@ -217,6 +286,7 @@ class Question
     protected function setSelectOptions(array $selectOptions)
     {
         $this->selectOptions = $selectOptions;
+
         return $this;
     }
 
@@ -227,6 +297,7 @@ class Question
     protected function setValidationMessages($validationMessages)
     {
         $this->validationMessages = $validationMessages;
+
         return $this;
     }
 
@@ -237,6 +308,7 @@ class Question
     protected function setValidationCustomValues(array $validationCustomValues)
     {
         $this->validationCustomValues = $validationCustomValues;
+
         return $this;
     }
 
@@ -247,9 +319,14 @@ class Question
     protected function setRememberValueOnError($rememberValueOnError)
     {
         $this->rememberValueOnError = $rememberValueOnError;
+
         return $this;
     }
 
+    /**
+     * @param array $rules
+     * @return array
+     */
     protected function addValidationRulesBasedOnType(array $rules = array())
     {
         $type = $this->type;
@@ -263,6 +340,24 @@ class Question
             array_unshift($rule, 'in');
             $rules[] = $rule;
         }
+
+        return $rules;
+    }
+
+    /**
+     * @param array $rules
+     * @return array
+     */
+    protected function addValidationRulesBasedOnConstraints(array $rules = array())
+    {
+        if (is_numeric($this->minimumValue) and is_numeric($this->maximumValue)) {
+            $rules[] = 'between:'.$this->minimumValue.','.$this->maximumValue;
+        } elseif (is_numeric($this->minimumValue)) {
+            $rules[] = 'min:'.$this->minimumValue;
+        } elseif (is_numeric($this->maximumValue)) {
+            $rules[] = 'max:'.$this->maximumValue;
+        }
+
         return $rules;
     }
 }

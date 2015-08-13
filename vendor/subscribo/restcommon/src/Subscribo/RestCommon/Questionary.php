@@ -1,10 +1,20 @@
-<?php namespace Subscribo\RestCommon;
+<?php
+
+namespace Subscribo\RestCommon;
 
 use Subscribo\RestCommon\ServerRequest;
-use Subscribo\RestCommon\Question;
+use Subscribo\RestCommon\Interfaces\HasQuestionsInterface;
+use Subscribo\RestCommon\Traits\HasQuestionsTrait;
 
-class Questionary extends ServerRequest
+/**
+ * Class Questionary
+ *
+ * @package Subscribo\RestCommon
+ */
+class Questionary extends ServerRequest implements HasQuestionsInterface
 {
+    use HasQuestionsTrait;
+
     const TYPE = 'questionary';
 
     const CODE_NEW_CUSTOMER_EMAIL = 10;
@@ -16,23 +26,27 @@ class Questionary extends ServerRequest
     /** @var string  */
     public $title;
 
-    /** @var Question[] */
-    public $questions = array();
+    /** @var array  */
+    protected $questionItems = [];
 
+    /** @var array  */
     protected $validationMessages = array();
 
+    /** @var array  */
     protected $validationAttributes = array();
 
+    /**
+     * @param array $data
+     * @return $this
+     * @throws \InvalidArgumentException
+     */
     public function import(array $data)
     {
         if ( ! empty($data['title'])) {
             $this->title = $data['title'];
         }
         if ( ! empty($data['questions'])) {
-            $questions = is_array($data['questions']) ? $data['questions'] : ['value' => $data['questions']];
-            foreach ($questions as $key => $questionData) {
-                $this->questions[$key] = ($questionData instanceof Question) ? $questionData : new Question($questionData);
-            }
+            $this->importQuestionItems($data['questions']);
         }
         if ( ! empty($data['validationMessages'])) {
             $this->setValidationMessages($data['validationMessages']);
@@ -40,16 +54,21 @@ class Questionary extends ServerRequest
         if ( ! empty($data['validationAttributes'])) {
             $this->setValidationAttributes($data['validationAttributes']);
         }
+
         return parent::import($data);
     }
 
+    /**
+     * @return array
+     */
     public function export()
     {
         $result = parent::export();
         $result['title'] = $this->title;
-        foreach ($this->questions as $key => $question) {
-            $result['questions'][$key] = $question->export();
+        foreach ($this->questionItems as $key => $item) {
+            $result['questions'][$key] = $item->export();
         }
+
         return $result;
     }
 
@@ -59,10 +78,10 @@ class Questionary extends ServerRequest
     public function getValidationRules()
     {
         $rules = [];
-        foreach ($this->questions as $key => $question)
-        {
+        foreach ($this->getQuestions() as $key => $question) {
             $rules[$key] = $question->getValidationRules();
         }
+
         return $rules;
     }
 
@@ -72,12 +91,13 @@ class Questionary extends ServerRequest
     public function getValidationMessages()
     {
         $result = $this->validationMessages;
-        foreach ($this->questions as $attribute => $question) {
+        foreach ($this->getQuestions() as $attribute => $question) {
             foreach ($question->getValidationMessages() as $rule => $message) {
                 $key = $attribute.'.'.$rule;
                 $result[$key] = $message;
             }
         }
+
         return $result;
     }
 
@@ -87,11 +107,12 @@ class Questionary extends ServerRequest
     public function getValidationAttributes()
     {
         $result = $this->validationAttributes;
-        foreach ($this->questions as $attribute => $question) {
+        foreach ($this->getQuestions() as $attribute => $question) {
             if ( ! empty($question->validationAttributeName)) {
                 $result[$attribute] = $question->validationAttributeName;
             }
         }
+
         return $result;
     }
 
@@ -101,11 +122,12 @@ class Questionary extends ServerRequest
     public function getValidationCustomValues()
     {
         $result = [];
-        foreach ($this->questions as $attribute => $question) {
+        foreach ($this->getQuestions() as $attribute => $question) {
             foreach ($question->getValidationCustomValues() as $valueName => $value) {
                 $result[$attribute][$valueName] = $value;
             }
         }
+
         return $result;
     }
 
@@ -115,11 +137,12 @@ class Questionary extends ServerRequest
     public function getFieldsToRememberOnError()
     {
         $result = [];
-        foreach ($this->questions as $attribute => $question) {
+        foreach ($this->getQuestions() as $attribute => $question) {
             if ($question->getRememberValueOnError()) {
                 $result[$attribute] = $attribute;
             }
         }
+
         return $result;
     }
 
@@ -130,6 +153,7 @@ class Questionary extends ServerRequest
     protected function setValidationMessages(array $validationMessages)
     {
         $this->validationMessages = $validationMessages;
+
         return $this;
     }
 
@@ -140,6 +164,7 @@ class Questionary extends ServerRequest
     protected function setValidationAttributes(array $validationAttributes)
     {
         $this->validationAttributes = $validationAttributes;
+
         return $this;
     }
 }
