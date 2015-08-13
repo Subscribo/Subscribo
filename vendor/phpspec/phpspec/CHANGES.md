@@ -1,4 +1,14 @@
-2.3.0-beta1 / 2015-07-04
+2.3.0-beta3 / 2015-08-08
+========================
+
+* Fixed broken dependency in beta2
+
+2.3.0-beta2 / 2015-08-08
+========================
+
+* Fixed bugs when generating methods in class with unusual whitespace
+
+2.3.0-beta / 2015-07-04
 ========================
 
 * Adds `duringInstantiation()` to more easily test constructor exceptions
