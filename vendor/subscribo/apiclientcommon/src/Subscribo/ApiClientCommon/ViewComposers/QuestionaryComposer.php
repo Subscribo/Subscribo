@@ -28,7 +28,7 @@ class QuestionaryComposer
         $heading = $questionary->title ?: $localizer->trans('defaultTitle');
         $errorTitle = $localizer->trans('errorTitle');
         $submit = $localizer->trans('submitButton');
-        $questions = $questionary->questions;
+        $questions = $questionary->getQuestions();
         $oldValues = Arr::only($this->request->old(), $questionary->getFieldsToRememberOnError());
 
         $view->with('heading', $heading);
