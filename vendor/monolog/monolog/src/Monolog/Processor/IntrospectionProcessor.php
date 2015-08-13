@@ -30,10 +30,15 @@ class IntrospectionProcessor
 
     private $skipClassesPartials;
 
-    public function __construct($level = Logger::DEBUG, array $skipClassesPartials = array('Monolog\\'))
+    private $skipFunctions = array(
+        'call_user_func',
+        'call_user_func_array',
+    );
+
+    public function __construct($level = Logger::DEBUG, array $skipClassesPartials = array())
     {
         $this->level = Logger::toMonologLevel($level);
-        $this->skipClassesPartials = $skipClassesPartials;
+        $this->skipClassesPartials = array_merge(array('Monolog\\'), $skipClassesPartials);
     }
 
     /**
@@ -56,13 +61,19 @@ class IntrospectionProcessor
 
         $i = 0;
 
-        while (isset($trace[$i]['class'])) {
-            foreach ($this->skipClassesPartials as $part) {
-                if (strpos($trace[$i]['class'], $part) !== false) {
-                    $i++;
-                    continue 2;
+        while ($this->isTraceClassOrSkippedFunction($trace, $i)) {
+            if (isset($trace[$i]['class'])) {
+                foreach ($this->skipClassesPartials as $part) {
+                    if (strpos($trace[$i]['class'], $part) !== false) {
+                        $i++;
+                        continue 2;
+                    }
                 }
+            } elseif (in_array($trace[$i]['function'], $this->skipFunctions)) {
+                $i++;
+                continue;
             }
+
             break;
         }
 
@@ -78,5 +89,14 @@ class IntrospectionProcessor
         );
 
         return $record;
+    }
+
+    private function isTraceClassOrSkippedFunction (array $trace, $index)
+    {
+        if (!isset($trace[$index])) {
+            return false;
+        }
+
+        return isset($trace[$index]['class']) || in_array($trace[$index]['function'], $this->skipFunctions);
     }
 }
