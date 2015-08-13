@@ -718,7 +718,7 @@ model_fields:
 
     transaction_gateways:
     - identifier (identifier) unique representative
-    - gateway
+    - driver
     - name translate
     - description translate
 
