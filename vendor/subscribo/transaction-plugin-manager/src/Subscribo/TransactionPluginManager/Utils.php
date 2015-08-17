@@ -20,7 +20,7 @@ use Subscribo\Omnipay\Shared\Item as ShoppingCartItem;
  */
 class Utils
 {
-    protected static function assembleWidgetReturnUrl(Service $service, $hash)
+    public static function assembleWidgetReturnUrl(Service $service, $hash)
     {
         $parameters = ['hash' => $hash];
         $url = ServiceModule::retrieveUri($service, ServiceModule::MODULE_WIDGET, $parameters);
@@ -33,7 +33,7 @@ class Utils
         return $url;
     }
 
-    protected static function limitStringLength($input, $limit = 120, $delimiter = ' ', $ending = '...')
+    public static function limitStringLength($input, $limit = 120, $delimiter = ' ', $ending = '...')
     {
         if ($delimiter) {
             $parts = explode($delimiter, $input);
@@ -58,7 +58,7 @@ class Utils
         return $result;
     }
 
-    protected static function assembleTransactionDescription(SalesOrder $salesOrder, LocalizerInterface $localizer)
+    public static function assembleTransactionDescription(SalesOrder $salesOrder, LocalizerInterface $localizer)
     {
         $description = $localizer->trans('transaction.description.intro');
         $first = true;
@@ -77,7 +77,7 @@ class Utils
         return $description;
     }
 
-    protected static function assembleCardData(Address $billingAddress = null, Address $shippingAddress = null)
+    public static function assembleCardData(Address $billingAddress = null, Address $shippingAddress = null)
     {
         if (empty($billingAddress) and empty($shippingAddress)) {
 
@@ -96,7 +96,7 @@ class Utils
      * @param Person $person
      * @return array
      */
-    protected static function assembleAddressData(Address $address, $billing = true, Person $person = null)
+    public static function assembleAddressData(Address $address, $billing = true, Person $person = null)
     {
         $prefix = $billing ? 'billing' : 'shipping';
         $person = $person ?: $address->person;
@@ -139,7 +139,7 @@ class Utils
      * @param $country
      * @return ShoppingCart
      */
-    protected static function assembleShoppingCart($realizationsInSalesOrders, $discounts = [], $country)
+    public static function assembleShoppingCart($realizationsInSalesOrders, $discounts = [], $country)
     {
         $result = new ShoppingCart();
         /** @var \Subscribo\ModelCore\Models\RealizationsInSalesOrder $realizationInSalesOrder */
