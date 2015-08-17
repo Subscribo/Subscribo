@@ -38,6 +38,11 @@ interface TransactionProcessingResultInterface
     public function isRegistered();
 
     /**
+     * @return bool
+     */
+    public function shouldContinue();
+
+    /**
      * @return array
      */
     public function export();

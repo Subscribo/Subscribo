@@ -14,6 +14,11 @@ use Subscribo\TransactionPluginManager\Interfaces\PluginResourceManagerInterface
 interface TransactionPluginDriverInterface
 {
     /**
+     * @return string
+     */
+    public static function getDriverIdentifier();
+
+    /**
      * @param TransactionFacadeInterface $transaction
      * @return TransactionProcessorInterface
      */
@@ -24,4 +29,9 @@ interface TransactionPluginDriverInterface
      * @return TransactionPluginDriverInterface
      */
     public function withPluginResourceManager(PluginResourceManagerInterface $pluginManager);
+
+    /**
+     * @return PluginResourceManagerInterface|null
+     */
+    public function getPluginResourceManager();
 }

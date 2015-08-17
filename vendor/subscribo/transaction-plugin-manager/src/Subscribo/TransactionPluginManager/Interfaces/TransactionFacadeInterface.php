@@ -15,6 +15,21 @@ interface TransactionFacadeInterface
     public function getTransactionModelInstance();
 
     /**
+     * @return null|array
+     */
+    public function getAnswerFromQuestionary();
+
+    /**
+     * @return null|array
+     */
+    public function getAnswerFromWidget();
+
+    /**
+     * @return null|array
+     */
+    public function getAnswerFromClientRedirection();
+
+    /**
      * @return bool;
      */
     public function isChargeTransaction();

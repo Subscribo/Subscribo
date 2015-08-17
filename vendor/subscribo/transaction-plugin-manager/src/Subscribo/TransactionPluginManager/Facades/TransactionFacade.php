@@ -38,6 +38,46 @@ class TransactionFacade implements TransactionFacadeInterface
     }
 
     /**
+     * @return null|array
+     */
+    public function getAnswerFromQuestionary()
+    {
+        if (isset($this->instanceOfObjectBehindFacade->processingData['answerFromQuestionary'])) {
+
+            return $this->instanceOfObjectBehindFacade->processingData['answerFromQuestionary'];
+        }
+
+        return null;
+    }
+
+    /**
+     * @return null|array
+     */
+    public function getAnswerFromWidget()
+    {
+        if (isset($this->instanceOfObjectBehindFacade->processingData['answerFromWidget'])) {
+
+            return $this->instanceOfObjectBehindFacade->processingData['answerFromWidget'];
+        }
+
+        return null;
+    }
+
+    /**
+     * @return null|array
+     */
+    public function getAnswerFromClientRedirection()
+    {
+        if (isset($this->instanceOfObjectBehindFacade->processingData['answerFromClientRedirection'])) {
+
+            return $this->instanceOfObjectBehindFacade->processingData['answerFromClientRedirection'];
+        }
+
+        return null;
+    }
+
+
+    /**
      * @return bool
      */
     public function isChargeTransaction()

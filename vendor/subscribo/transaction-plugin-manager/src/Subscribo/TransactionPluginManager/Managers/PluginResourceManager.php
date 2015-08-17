@@ -2,11 +2,29 @@
 
 namespace Subscribo\TransactionPluginManager\Managers;
 
+use RuntimeException;
 use InvalidArgumentException;
+use Subscribo\Api1\Context;
+use Subscribo\ModelCore\Factories\ActionInterruptionFactory;
+use Subscribo\ModelCore\Models\ActionInterruption;
+use Subscribo\ModelCore\Models\Transaction;
+use Subscribo\RestCommon\Exceptions\ClientRedirectionServerRequestHttpException;
+use Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException;
+use Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException;
+use Subscribo\RestCommon\ServerRequest;
+use Subscribo\RestCommon\Questionary;
+use Subscribo\RestCommon\Widget;
+use Subscribo\RestCommon\ClientRedirection;
+use Subscribo\TransactionPluginManager\Facades\TransactionFacade;
+use Subscribo\TransactionPluginManager\Factories\QuestionaryFactory;
+use Subscribo\TransactionPluginManager\Factories\WidgetFactory;
+use Subscribo\TransactionPluginManager\Factories\ClientRedirectionFactory;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionDriverManagerInterface;
 use Subscribo\TransactionPluginManager\Interfaces\PluginResourceManagerInterface;
 use Subscribo\TransactionPluginManager\Interfaces\LocalizerFacadeInterface;
+use Subscribo\TransactionPluginManager\Interfaces\QuestionaryFacadeInterface;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionPluginDriverInterface;
+use Subscribo\TransactionPluginManager\Interfaces\TransactionProcessorInterface;
 use Subscribo\TransactionPluginManager\Facades\LocalizerFacade;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Psr\Log\LoggerInterface;
@@ -49,19 +67,19 @@ class PluginResourceManager implements PluginResourceManagerInterface
     /**
      * Returns specified driver, connected to this instance of PluginResourceManagerInterface as its resource manager
      *
-     * @param TransactionPluginDriverInterface|string $name
+     * @param TransactionPluginDriverInterface|string $driver
      * @return TransactionPluginDriverInterface
      * @throws InvalidArgumentException
      */
-    public function getDriver($name)
+    public function getDriver($driver)
     {
-        if ($name instanceof TransactionPluginDriverInterface) {
-            $driver = $name;
+        if ($driver instanceof TransactionPluginDriverInterface) {
+            $instance = $driver;
         } else {
-            $driver = $this->driverManager->getDriver($name);
+            $instance = $this->driverManager->getDriver($driver);
         }
 
-        return $driver->withPluginResourceManager($this);
+        return $instance->withPluginResourceManager($this);
     }
 
     /**
@@ -78,5 +96,162 @@ class PluginResourceManager implements PluginResourceManagerInterface
     public function getLogger()
     {
         return $this->logger;
+    }
+
+    /**
+     * @param int|mixed|string $questionary
+     * @param TransactionProcessorInterface $processor
+     * @return void
+     * @throws \Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException
+     */
+    public function interruptByQuestionary($questionary, TransactionProcessorInterface $processor)
+    {
+        $questionaryFactory = new QuestionaryFactory($this->localizer, $this->assembleDefaultDomain($processor));
+        $questionaryInstance = $questionaryFactory->make($questionary);
+        $this->assembleActionInterruption($questionaryInstance, $processor);
+
+        throw new QuestionaryServerRequestHttpException($questionaryInstance);
+    }
+
+    /**
+     * @param mixed|string $widget
+     * @param TransactionProcessorInterface $processor
+     * @return void
+     * @throws \Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException
+     */
+    public function interruptByWidget($widget, TransactionProcessorInterface $processor)
+    {
+        $widgetFactory = new WidgetFactory($this->assembleDefaultDomain($processor));
+        $widgetInstance = $widgetFactory->make($widget);
+        $this->assembleActionInterruption($widgetInstance, $processor);
+
+        throw new WidgetServerRequestHttpException($widgetInstance);
+    }
+
+    /**
+     * @param mixed|string $redirection
+     * @param TransactionProcessorInterface $processor
+     * @return void
+     * @throws \Subscribo\RestCommon\Exceptions\ClientRedirectionServerRequestHttpException
+     */
+    public function interruptByClientRedirection($redirection, TransactionProcessorInterface $processor)
+    {
+        $clientRedirectionFactory = new ClientRedirectionFactory($this->assembleDefaultDomain($processor));
+        $clientRedirectionInstance = $clientRedirectionFactory->make($redirection);
+        $this->assembleActionInterruption($clientRedirectionInstance, $processor);
+
+        throw new ClientRedirectionServerRequestHttpException($clientRedirectionInstance);
+    }
+
+    /**
+     * @param ActionInterruption $actionInterruption
+     * @param array|null $validatedData
+     * @param string $action
+     * @param Context $context
+     * @param ServerRequest $serverRequest
+     * @return mixed|array
+     * @throws \RuntimeException
+     */
+    public function resumeFromInterruption(ActionInterruption $actionInterruption, $validatedData, $action, Context $context, ServerRequest $serverRequest)
+    {
+        $this->localizer = $context->getLocalizer();
+        $this->localizerFacade = new LocalizerFacade($this->localizer);
+
+        if (empty($actionInterruption->extraData['transactionHash'])) {
+            throw new RuntimeException('Key transactionHash not found in extraData of ActionInterruption provided');
+        }
+        $transaction = Transaction::findByHash($actionInterruption->extraData['transactionHash']);
+        if (empty($transaction)) {
+            throw new RuntimeException('Transaction by given hash not found');
+        }
+        $transactionFacade = new TransactionFacade($transaction);
+
+        if (empty($actionInterruption->extraData['transactionDriverIdentifier'])) {
+            throw new RuntimeException(
+                'Key transactionDriverIdentifier not found in extraData of ActionInterruption provided'
+            );
+        }
+        $driver = $this->getDriver($actionInterruption->extraData['transactionDriverIdentifier']);
+        $processingData = $transaction->processingData ?: [];
+        $type = $serverRequest->getType();
+        switch ($type) {
+            case Questionary::TYPE:
+                $processingData['answerFromQuestionary'] = $validatedData;
+                $transaction->processingData = $processingData;
+                $this->processResumeFromInterruptionByQuestionary($transactionFacade, $serverRequest);
+                break;
+            case Widget::TYPE:
+                $processingData['answerFromWidget'] = $validatedData;
+                break;
+            case ClientRedirection::TYPE:
+                $processingData['answerFromClientRedirection'] = $validatedData;
+                break;
+            default:
+                throw new RuntimeException('Unknown ServerRequest type');
+        }
+        $transaction->processingData = $processingData;
+        $transaction->save();
+
+        return ['result' => $driver->makeProcessor($transactionFacade)->process()->export()];
+    }
+
+    /**
+     * @param TransactionFacade $transactionFacade
+     * @param Questionary $questionary
+     */
+    protected function processResumeFromInterruptionByQuestionary(TransactionFacade $transactionFacade, Questionary $questionary)
+    {
+        $data = $transactionFacade->getAnswerFromQuestionary();
+        switch ($questionary->code) {
+            case QuestionaryFacadeInterface::CODE_CUSTOMER_BIRTH_DATE:
+                $birthDate  = null;
+                if (is_numeric($data['birth_date_year'])
+                    and is_numeric($data['birth_date_month'])
+                    and is_numeric($data['birth_date_day'])) {
+                    $birthDate = $data['birth_date_year'].'-'.$data['birth_date_month'].'-'.$data['birth_date_day'];
+                }
+                $person = $transactionFacade->getTransactionModelInstance()->salesOrder->acquireBillingPerson();
+                if ($birthDate and $person) {
+                    $person->dateOfBirth = $birthDate;
+                    $person->save();
+                }
+                break;
+            case QuestionaryFacadeInterface::CODE_CUSTOMER_NATIONAL_IDENTIFICATION_NUMBER:
+                $person = $transactionFacade->getTransactionModelInstance()->salesOrder->acquireBillingPerson();
+                if ($person) {
+                    $person->nationalIdentificationNumber = $data['nin_number'];
+                    $person->save();
+                }
+                break;
+        }
+    }
+
+    /**
+     * @param TransactionProcessorInterface $processor
+     * @return string
+     */
+    protected function assembleDefaultDomain(TransactionProcessorInterface $processor)
+    {
+        return 'subscribo/transaction-plugin-manager:'.$processor->getDriverIdentifier();
+    }
+
+    /**
+     * @param ServerRequest $serverRequest
+     * @param TransactionProcessorInterface $processor
+     * @return ActionInterruption
+     */
+    protected function assembleActionInterruption(ServerRequest $serverRequest, TransactionProcessorInterface $processor)
+    {
+        $transactionModelInstance = $processor->getTransactionFacade()->getTransactionModelInstance();
+        $transactionHash = $transactionModelInstance->hash;
+        $serviceId = $transactionModelInstance->serviceId;
+        $accountId = $transactionModelInstance->accountId;
+        $extraData = [
+            'transactionDriverIdentifier' => $processor->getDriverIdentifier(),
+            'transactionHash' => $transactionHash,
+        ];
+        $factory = new ActionInterruptionFactory(get_class($this), $serviceId, $accountId);
+
+        return $factory->makeActionInterruption('resumeFromInterruption', $extraData, $serverRequest, true);
     }
 }

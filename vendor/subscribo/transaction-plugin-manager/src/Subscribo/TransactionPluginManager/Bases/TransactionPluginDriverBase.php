@@ -36,9 +36,9 @@ abstract class TransactionPluginDriverBase implements TransactionPluginDriverInt
     }
 
     /**
-     * @return PluginResourceManagerInterface
+     * @return PluginResourceManagerInterface|null
      */
-    protected function getPluginResourceManager()
+    public function getPluginResourceManager()
     {
         return $this->pluginResourceManager;
     }

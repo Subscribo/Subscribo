@@ -30,21 +30,21 @@ class TransactionDriverManager implements TransactionDriverManagerInterface
     }
 
     /**
-     * @param string $name
+     * @param string $identifier
      * @param Closure|string|TransactionPluginDriverInterface $driver
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function registerDriver($name, $driver)
+    public function registerDriver($identifier, $driver)
     {
-        if ( ! is_string($name)) {
+        if ( ! is_string($identifier)) {
             throw new InvalidArgumentException('Provided name is not string');
         }
         if (is_string($driver)
             or ($driver instanceof TransactionPluginDriverInterface)
             or ($driver instanceof Closure)
         ) {
-            $this->registeredDrivers[$name] = $driver;
+            $this->registeredDrivers[$identifier] = $driver;
 
             return $this;
         }
@@ -55,16 +55,16 @@ class TransactionDriverManager implements TransactionDriverManagerInterface
     }
 
     /**
-     * @param string $name
+     * @param string $identifier
      * @return TransactionPluginDriverInterface
      * @throws \InvalidArgumentException
      */
-    public function getDriver($name)
+    public function getDriver($identifier)
     {
-        if (empty($this->registeredDrivers[$name])) {
+        if (empty($this->registeredDrivers[$identifier])) {
             throw new InvalidArgumentException('Requested driver is not registered');
         }
-        $driver = $this->registeredDrivers[$name];
+        $driver = $this->registeredDrivers[$identifier];
         if ($driver instanceof Closure) {
             $driver = call_user_func($driver);
         }
@@ -79,7 +79,7 @@ class TransactionDriverManager implements TransactionDriverManagerInterface
 
             throw new InvalidArgumentException('Driver not instance of TransactionPluginDriverInterface');
         }
-        $this->registeredDrivers[$name] = $driver;
+        $this->registeredDrivers[$identifier] = $driver;
 
         return $driver;
     }

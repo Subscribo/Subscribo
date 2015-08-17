@@ -13,15 +13,15 @@ use Subscribo\TransactionPluginManager\Interfaces\TransactionPluginDriverInterfa
 interface TransactionDriverManagerInterface
 {
     /**
-     * @param string $name
+     * @param string $identifier
      * @param string|TransactionPluginDriverInterface|Closure $driver
      * @return $this
      */
-    public function registerDriver($name, $driver);
+    public function registerDriver($identifier, $driver);
 
     /**
-     * @param string $name
+     * @param string $identifier
      * @return TransactionPluginDriverInterface
      */
-    public function getDriver($name);
+    public function getDriver($identifier);
 }

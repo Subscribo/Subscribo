@@ -1,0 +1,22 @@
+# English language resource file for QuestionaryFactory and QuestionFactory
+questionary:
+    generic:
+        title: Additional information is needed.
+    date:
+        title: Please, provide information about date.
+    birthDate:
+        title: Please, provide your birth date.
+    nationalIdentificationNumber:
+        title: Please, provide your social security number.
+questionGroup:
+    date:
+        title: Date:
+    birthDate:
+        title: Birth date:
+questions:
+    nationalIdentificationNumber:
+        number.text: Social security number:
+    date:
+        day.text: Day:
+        month.text: Month:
+        year.text: Year:

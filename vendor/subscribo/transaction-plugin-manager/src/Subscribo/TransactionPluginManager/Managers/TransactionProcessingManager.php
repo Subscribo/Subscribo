@@ -8,7 +8,11 @@ use Subscribo\TransactionPluginManager\Interfaces\TransactionPluginChargeDriverI
 use Subscribo\TransactionPluginManager\Facades\TransactionFacade;
 use Subscribo\ModelCore\Models\Transaction;
 
-
+/**
+ * Class TransactionProcessingManager
+ *
+ * @package Subscribo\TransactionPluginManager
+ */
 class TransactionProcessingManager
 {
     /** @var PluginResourceManagerInterface  */
@@ -34,6 +38,6 @@ class TransactionProcessingManager
             throw new RuntimeException('Provided transaction is not charge');
         }
 
-        return $this->driver->makeProcessor($transactionFacade)->process()->export();
+        return ['result' => $this->driver->makeProcessor($transactionFacade)->process()->export()];
     }
 }

@@ -1,8 +1,14 @@
 <?php
 
 namespace Subscribo\TransactionPluginManager\Bases;
+
 use Subscribo\Support\ServiceProvider;
 
+/**
+ * Class TransactionPluginServiceProviderBase
+ *
+ * @package Subscribo\TransactionPluginManager
+ */
 abstract class TransactionPluginServiceProviderBase extends ServiceProvider
 {
     protected $transactionPluginManagerServiceProvider;
@@ -12,10 +18,12 @@ abstract class TransactionPluginServiceProviderBase extends ServiceProvider
      */
     public abstract function getProvidedDrivers();
 
+
     public function register()
     {
         $this->transactionPluginManagerServiceProvider = $this->registerServiceProvider('\\Subscribo\\TransactionPluginManager\\Integration\\Laravel\\TransactionPluginManagerServiceProvider');
     }
+
 
     public function boot()
     {

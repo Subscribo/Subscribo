@@ -58,7 +58,7 @@ class Utils
         return $result;
     }
 
-    public static function assembleTransactionDescription(SalesOrder $salesOrder, LocalizerInterface $localizer)
+    public static function assembleTransactionDescription(SalesOrder $salesOrder, $localizer)
     {
         $description = $localizer->trans('transaction.description.intro');
         $first = true;
@@ -77,7 +77,13 @@ class Utils
         return $description;
     }
 
-    public static function assembleCardData(Address $billingAddress = null, Address $shippingAddress = null)
+    /**
+     * @param Address $billingAddress
+     * @param Address $shippingAddress
+     * @param bool $extractPersonalData
+     * @return array|null
+     */
+    public static function assembleCardData(Address $billingAddress = null, Address $shippingAddress = null, $extractPersonalData = false)
     {
         if (empty($billingAddress) and empty($shippingAddress)) {
 
@@ -85,7 +91,8 @@ class Utils
         }
         $billingAddress = $billingAddress ?: $shippingAddress;
         $shippingAddress = $shippingAddress ?: $billingAddress;
-        $data = static::assembleAddressData($billingAddress) + static::assembleAddressData($shippingAddress, false);
+        $data = static::assembleAddressData($billingAddress, true, null, $extractPersonalData)
+            + static::assembleAddressData($shippingAddress, false);
 
         return $data;
     }
@@ -94,9 +101,10 @@ class Utils
      * @param Address $address
      * @param bool $billing
      * @param Person $person
+     * @param bool $extractPersonalData
      * @return array
      */
-    public static function assembleAddressData(Address $address, $billing = true, Person $person = null)
+    public static function assembleAddressData(Address $address, $billing = true, Person $person = null, $extractPersonalData = false)
     {
         $prefix = $billing ? 'billing' : 'shipping';
         $person = $person ?: $address->person;
@@ -126,8 +134,11 @@ class Utils
         if ($billing and (Person::GENDER_WOMAN === $person->gender)) {
             $result['gender'] = CreditCard::GENDER_FEMALE;
         }
-        if ($billing and $person->dateOfBirth) {
+        if ($extractPersonalData and $billing and $person->dateOfBirth) {
             $result['birthday'] = $person->dateOfBirth;
+        }
+        if ($extractPersonalData and $billing and $person->nationalIdentificationNumber) {
+            $result['nationalIdentificationNumber'] = $person->nationalIdentificationNumber;
         }
 
         return $result;

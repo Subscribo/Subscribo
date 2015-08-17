@@ -79,6 +79,23 @@ class TransactionProcessingResultBase implements TransactionProcessingResultInte
     }
 
     /**
+     * @return bool
+     */
+    public function shouldContinue()
+    {
+        switch ($this->getStatus()) {
+            case static::STATUS_SUCCESS:
+            case static::STATUS_WAITING:
+                return true;
+            case static::STATUS_OWN_RISK:
+            case static::STATUS_FAILURE:
+            case static::STATUS_ERROR:
+            default:
+                return false;
+        }
+    }
+
+    /**
      * @return array
      */
     public function export()
@@ -88,6 +105,7 @@ class TransactionProcessingResultBase implements TransactionProcessingResultInte
             'status' => $this->getStatus(),
             'message' => $this->getMessage(),
             'registered' => $this->isRegistered(),
+            'continue' => $this->shouldContinue(),
         ];
     }
 }

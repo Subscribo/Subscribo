@@ -15,6 +15,10 @@ class TransactionPluginManagerServiceProvider extends ServiceProvider
     {
         $this->app->singleton('\\Subscribo\\TransactionPluginManager\\Interfaces\\TransactionDriverManagerInterface', '\\Subscribo\\TransactionPluginManager\\Managers\\TransactionDriverManager');
         $this->app->singleton('\\Subscribo\\TransactionPluginManager\\Interfaces\\PluginResourceManagerInterface', '\\Subscribo\\TransactionPluginManager\\Managers\\PluginResourceManager');
+    }
 
+    public function boot()
+    {
+        $this->registerTranslationResources(['questionary']);
     }
 }
