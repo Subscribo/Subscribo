@@ -38,6 +38,14 @@ trait HasQuestionsTrait
     }
 
     /**
+     * @return array
+     */
+    public function getQuestionItems()
+    {
+        return $this->questionItems;
+    }
+
+    /**
      * @param array $data
      * @throws \InvalidArgumentException
      */

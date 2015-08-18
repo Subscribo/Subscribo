@@ -10,6 +10,8 @@ class ClientRedirection extends ServerRequest
 
     const CODE_CONFIRM_MERGE_RESPONSE = 200;
 
+    const CODE_GENERIC_REDIRECTION = 1000;
+
     /** @var string|null */
     public $urlPattern;
 

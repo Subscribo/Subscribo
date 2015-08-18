@@ -58,12 +58,16 @@ class QuestionGroup implements HasQuestionsInterface
      */
     public function export()
     {
+        $questions = [];
+        foreach ($this->getQuestionItems() as $key => $item) {
+            $questions[$key] = $item->export();
+        }
         return [
             'type' => Question::TYPE_GROUP,
             'display' => $this->display,
             'title' => $this->title,
             'code' => $this->code,
-            'questions' => $this->getQuestions(),
+            'questions' => $questions,
         ];
     }
 }

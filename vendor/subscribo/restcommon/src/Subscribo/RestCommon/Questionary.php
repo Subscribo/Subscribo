@@ -23,6 +23,11 @@ class Questionary extends ServerRequest implements HasQuestionsInterface
     const CODE_CONFIRM_ACCOUNT_MERGE_PASSWORD = 40;
     const CODE_CONFIRM_ACCOUNT_MERGE_SIMPLE = 50;
 
+    const CODE_GENERIC_QUESTIONARY                      = 100;
+    const CODE_DATE                                     = 200;
+    const CODE_CUSTOMER_BIRTH_DATE                      = 210;
+    const CODE_CUSTOMER_NATIONAL_IDENTIFICATION_NUMBER  = 220;
+
     /** @var string  */
     public $title;
 
@@ -64,10 +69,12 @@ class Questionary extends ServerRequest implements HasQuestionsInterface
     public function export()
     {
         $result = parent::export();
-        $result['title'] = $this->title;
-        foreach ($this->questionItems as $key => $item) {
-            $result['questions'][$key] = $item->export();
+        $questions = [];
+        foreach ($this->getQuestionItems() as $key => $item) {
+            $questions[$key] = $item->export();
         }
+        $result['questions'] = $questions;
+        $result['title'] = $this->title;
 
         return $result;
     }

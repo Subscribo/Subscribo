@@ -14,6 +14,14 @@ class Question
 
     const TYPE_SELECT = 'select';
 
+    const TYPE_NUMBER_SELECT = 'number_select';
+
+    const TYPE_RANGE = 'range';
+
+    const TYPE_NUMBER = 'number';
+
+    const TYPE_DATE = 'date';
+
     const TYPE_DAY = 'day';
 
     const TYPE_MONTH = 'month';
@@ -32,6 +40,21 @@ class Question
 
     const CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD = 4020;
 
+    const CODE_GENERIC_QUESTION = 10000;
+
+    const CODE_DATE_DAY = 20010;
+
+    const CODE_DATE_MONTH = 20020;
+
+    const CODE_DATE_YEAR = 20030;
+
+    const CODE_CUSTOMER_BIRTH_DATE_DAY = 21010;
+
+    const CODE_CUSTOMER_BIRTH_DATE_MONTH = 21020;
+
+    const CODE_CUSTOMER_BIRTH_DATE_YEAR = 21030;
+
+    const CODE_CUSTOMER_NATIONAL_IDENTIFICATION_NUMBER_NUMBER = 22010;
 
     /** @var string */
     public $type;
@@ -39,7 +62,7 @@ class Question
     /** @var int */
     public $code = 0;
 
-    /** @var string */
+    /** @var string|null */
     public $text;
 
     /** @var int|string */
@@ -54,21 +77,25 @@ class Question
     /** @var  int|null */
     public $maximumValue;
 
+    /** @var int|null */
+    public $incrementStep;
+
     /** @var  string|null */
     public $validationAttributeName;
 
-    /** @var array  */
+    /** @var array */
     protected $validationCustomValues = array();
 
-    /** @var bool  */
+    /** @var bool */
     public $addValidationCustomValuesFromSelect = true;
 
     /** @var string|array */
     protected $validationRules = array();
 
-    /** @var array|string  */
+    /** @var array|string */
     protected $validationMessages = array();
 
+    /** @var array */
     protected $selectOptions = array();
 
     /** @var  bool|null */
@@ -95,7 +122,7 @@ class Question
         if (array_key_exists('code', $data)) {
             $this->code = $data['code'];
         }
-        if ( ! empty($data['text'])) {
+        if (isset($data['text'])) {
             $this->text = $data['text'];
         }
         if ( ! empty($data['validationRules'])) {
@@ -131,6 +158,9 @@ class Question
         if ( array_key_exists('maximumValue', $data)) {
             $this->maximumValue = $data['maximumValue'];
         }
+        if ( array_key_exists('incrementStep', $data)) {
+            $this->incrementStep = $data['incrementStep'];
+        }
     }
 
     /**
@@ -157,9 +187,13 @@ class Question
         if (is_numeric($this->maximumValue)) {
             $result['maximumValue'] = $this->maximumValue;
         }
+        if (is_numeric($this->incrementStep)) {
+            $result['incrementStep'] = $this->incrementStep;
+        }
         if ($this->selectOptions) {
             $result['selectOptions'] = $this->selectOptions;
         }
+
         return $result;
     }
 
@@ -257,15 +291,66 @@ class Question
 
             return $this->rememberValueOnError;
         }
-        switch ($this->type) {
+        switch (strval($this->type)) {
             case static::TYPE_PASSWORD:
+
                 return false;
+            case static::TYPE_TEXT:
             case static::TYPE_EMAIL:
+            case static::TYPE_CHECKBOX:
             case static::TYPE_SELECT:
+            case static::TYPE_NUMBER_SELECT:
+            case static::TYPE_RANGE:
+            case static::TYPE_NUMBER:
+            case static::TYPE_DATE:
+            case static::TYPE_DAY:
+            case static::TYPE_MONTH:
+            case static::TYPE_YEAR:
+
                 return true;
         }
 
         return false;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMinimumValue()
+    {
+        if (isset($this->minimumValue)) {
+
+            return $this->minimumValue;
+        }
+        switch (strval($this->type)) {
+            case static::TYPE_DAY:
+            case static::TYPE_MONTH:
+
+                return 1;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMaximumValue()
+    {
+        if (isset($this->maximumValue)) {
+
+            return $this->maximumValue;
+        }
+        switch (strval($this->type)) {
+            case static::TYPE_DAY:
+
+                return 31;
+            case static::TYPE_MONTH:
+
+                return 12;
+        }
+
+        return null;
     }
 
     /**
@@ -329,16 +414,44 @@ class Question
      */
     protected function addValidationRulesBasedOnType(array $rules = array())
     {
-        $type = $this->type;
-        if ($this::TYPE_EMAIL === $type) {
-            if (false === array_search('email', $rules, true)) {
-                $rules[] = 'email';
-            }
-        } elseif ($this::TYPE_SELECT === $type) {
-            $optionKeys = array_keys($this->getSelectOptions());
-            $rule = array_filter($optionKeys, 'strlen');
-            array_unshift($rule, 'in');
-            $rules[] = $rule;
+        switch (strval($this->type))
+        {
+            case static::TYPE_EMAIL:
+                if (false === array_search('email', $rules, true)) {
+                    $rules[] = 'email';
+                }
+                break;
+            case static::TYPE_SELECT:
+                $optionKeys = array_keys($this->getSelectOptions());
+                $rule = array_filter($optionKeys, 'strlen');
+                array_unshift($rule, 'in');
+                $rules[] = $rule;
+                break;
+            case static::TYPE_CHECKBOX:
+                $rule = 'in:'.$this->checkboxValue;
+                if (false === array_search($rule, $rules, true)) {
+                    $rules[] = $rule;
+                }
+                break;
+            case static::TYPE_NUMBER_SELECT:
+            case static::TYPE_RANGE:
+            case static::TYPE_DAY:
+            case static::TYPE_MONTH:
+            case static::TYPE_YEAR:
+                if (false === array_search('integer', $rules, true)) {
+                    $rules[] = 'integer';
+                }
+                break;
+            case static::TYPE_NUMBER:
+                if (false === array_search('numeric', $rules, true)) {
+                    $rules[] = 'numeric';
+                }
+                break;
+            case static::TYPE_DATE:
+                if (false === array_search('date', $rules, true)) {
+                    $rules[] = 'date';
+                }
+                break;
         }
 
         return $rules;
@@ -350,12 +463,14 @@ class Question
      */
     protected function addValidationRulesBasedOnConstraints(array $rules = array())
     {
-        if (is_numeric($this->minimumValue) and is_numeric($this->maximumValue)) {
-            $rules[] = 'between:'.$this->minimumValue.','.$this->maximumValue;
-        } elseif (is_numeric($this->minimumValue)) {
-            $rules[] = 'min:'.$this->minimumValue;
-        } elseif (is_numeric($this->maximumValue)) {
-            $rules[] = 'max:'.$this->maximumValue;
+        $min = $this->getMinimumValue();
+        $max = $this->getMaximumValue();
+        if (is_numeric($min) and is_numeric($max)) {
+            $rules[] = 'between:'.$min.','.$max;
+        } elseif (is_numeric($min)) {
+            $rules[] = 'min:'.$min;
+        } elseif (is_numeric($max)) {
+            $rules[] = 'max:'.$max;
         }
 
         return $rules;
