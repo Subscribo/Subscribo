@@ -2,12 +2,16 @@
 questionary:
     generic:
         title: Additional information is needed.
+    multiple:
+        title: Please, provide following information.
     date:
         title: Please, provide information about date.
     birthDate:
         title: Please, provide your birth date.
     nationalIdentificationNumber:
         title: Please, provide your social security number.
+    gender:
+        title: Please, provide your gender.
 questionGroup:
     date:
         title: Date:
@@ -20,3 +24,9 @@ questions:
         day.text: Day:
         month.text: Month:
         year.text: Year:
+    birthDate:
+        date.text: Birth date:
+    gender.gender:
+        text: Gender:
+        man: Man
+        woman: Woman

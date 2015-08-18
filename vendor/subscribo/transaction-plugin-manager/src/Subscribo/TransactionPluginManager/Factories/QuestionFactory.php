@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use Subscribo\TransactionPluginManager\Factories\QuestionGroupFactory;
 use Subscribo\RestCommon\Question;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Subscribo\ModelCore\Models\Person;
 
 /**
  * Class QuestionFactory
@@ -91,6 +92,14 @@ class QuestionFactory
             case Question::CODE_GENERIC_QUESTION:
 
                 throw new UnexpectedValueException ('Generic question cannot be assembled via code');
+            case Question::CODE_CUSTOMER_BIRTH_DATE_DATE:
+                $text = $this->localizer->trans('questions.birthDate.date.text');
+                $type = Question::TYPE_DATE;
+                $validationRules = [
+                    'after:1890-01-01',
+                    'before:tomorrow',
+                ];
+                break;
             case Question::CODE_DATE_DAY:
             case Question::CODE_CUSTOMER_BIRTH_DATE_DAY:
                 $text = $this->localizer->trans('questions.date.day.text');
@@ -115,6 +124,14 @@ class QuestionFactory
                 $text = $this->localizer->trans('questions.nationalIdentificationNumber.number.text');
                 $type = Question::TYPE_TEXT;
                 break;
+            case Question::CODE_CUSTOMER_GENDER_GENDER:
+                $text = $this->localizer->trans('questions.gender.gender.text');
+                $type = Question::TYPE_RADIO;
+                $selectOptions = [
+                    Person::GENDER_MAN => $this->localizer->trans('questions.gender.gender.man'),
+                    Person::GENDER_WOMAN => $this->localizer->trans('questions.gender.gender.woman'),
+                ];
+                break;
             default:
                 throw new UnexpectedValueException ('Unknown question code');
         }
@@ -129,6 +146,12 @@ class QuestionFactory
         if (isset($text)) {
             $data['text'] = $text;
             $data['validationAttributeName'] = trim($text, ':');
+        }
+        if (isset($selectOptions)) {
+            $data['selectOptions'] = $selectOptions;
+        }
+        if (isset($validationRules)) {
+            $data['validationRules'] = $validationRules;
         }
 
         return $this->assembleFromArray($data, $additionalData);

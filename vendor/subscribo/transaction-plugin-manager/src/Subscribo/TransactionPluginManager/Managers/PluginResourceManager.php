@@ -201,13 +201,34 @@ class PluginResourceManager implements PluginResourceManagerInterface
      */
     protected function processResumeFromInterruptionByQuestionary(TransactionFacade $transactionFacade, Questionary $questionary)
     {
+        if (QuestionaryFacadeInterface::CODE_MULTIPLE_QUESTIONARY === $questionary->code) {
+            foreach ($questionary->extraData['codesPerDomain'] as $codes) {
+                foreach ($codes as $code) {
+                    $this->processQuestionaryCode($transactionFacade, $code);
+                }
+            }
+        } else {
+            $this->processQuestionaryCode($transactionFacade, $questionary->code);
+        }
+    }
+
+    protected function processQuestionaryCode(TransactionFacade $transactionFacade, $code)
+    {
         $data = $transactionFacade->getAnswerFromQuestionary();
-        switch ($questionary->code) {
+        switch ($code) {
             case QuestionaryFacadeInterface::CODE_CUSTOMER_BIRTH_DATE:
-                $birthDate  = null;
-                if (is_numeric($data['birth_date_year'])
+                $birthDate = null;
+                $birthDateTimestamp = empty($data['birth_date_date']) ? false : strtotime($data['birth_date_date']);
+                if (false !== $birthDateTimestamp) {
+                    $birthDate = date('Y-m-d', $birthDateTimestamp);
+                } elseif (
+                    isset($data['birth_date_year'])
+                    and isset($data['birth_date_month'])
+                    and isset($data['birth_date_day'])
+                    and is_numeric($data['birth_date_year'])
                     and is_numeric($data['birth_date_month'])
-                    and is_numeric($data['birth_date_day'])) {
+                    and is_numeric($data['birth_date_day'])
+                ) {
                     $birthDate = $data['birth_date_year'].'-'.$data['birth_date_month'].'-'.$data['birth_date_day'];
                 }
                 $person = $transactionFacade->getTransactionModelInstance()->salesOrder->acquireBillingPerson();
@@ -220,6 +241,13 @@ class PluginResourceManager implements PluginResourceManagerInterface
                 $person = $transactionFacade->getTransactionModelInstance()->salesOrder->acquireBillingPerson();
                 if ($person) {
                     $person->nationalIdentificationNumber = $data['nin_number'];
+                    $person->save();
+                }
+                break;
+            case QuestionaryFacadeInterface::CODE_CUSTOMER_GENDER:
+                $person = $transactionFacade->getTransactionModelInstance()->salesOrder->acquireBillingPerson();
+                if ($person) {
+                    $person->gender = $data['gender'];
                     $person->save();
                 }
                 break;

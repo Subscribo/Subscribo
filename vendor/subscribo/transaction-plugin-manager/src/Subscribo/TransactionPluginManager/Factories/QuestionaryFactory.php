@@ -10,6 +10,7 @@ use Subscribo\TransactionPluginManager\Factories\QuestionFactory;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Subscribo\TransactionPluginManager\Interfaces\QuestionaryFacadeInterface;
 use Subscribo\TransactionPluginManager\Factories\AbstractServerRequestFactory;
+use Subscribo\Support\Arr;
 
 /**
  * Class QuestionaryFactory
@@ -51,15 +52,55 @@ class QuestionaryFactory extends AbstractServerRequestFactory
         } elseif (is_numeric($questionary)) {
 
             throw new InvalidArgumentException('A numeric string has been provided as argument. Please provide integer for code-base questionary or string for generic questionary');
-        } elseif (is_string($questionary, $additionalData)) {
+        } elseif (is_string($questionary)) {
 
             return $this->assembleFromString($questionary, $additionalData);
-        } elseif (is_array($questionary)) {
+        } elseif ( ! is_array($questionary)) {
 
-            return $this->assembleFromArray($questionary, $additionalData);
+            throw new InvalidArgumentException('Invalid questionary argument type');
+        }
+        if (isset($questionary['questionary_array_data']) and is_array($questionary['questionary_array_data'])) {
+
+            return $this->assembleFromArray($questionary['questionary_array_data'], $additionalData);
         }
 
-        throw new InvalidArgumentException('Invalid questionary argument type');
+        return $this->assembleMultiple($questionary, $additionalData);
+    }
+
+
+    public function assembleMultiple(array $questionaries, array $additionalData = [])
+    {
+        if (Arr::isAssoc($questionaries)) {
+
+            throw new UnexpectedValueException('Multiple questionaries should not be provided as an associative array');
+        }
+        if (1 === count($questionaries)) {
+
+            return $this->make(reset($questionaries), $additionalData);
+        }
+        $questions = [];
+        $codes = [];
+        foreach ($questionaries as $questionarySource) {
+            $questionaryData = $this->make($questionarySource, $additionalData)->export();
+            $domain = $questionaryData['domain'] ?: '';
+            if (empty($codes[$domain])) {
+                $codes[$domain] = [];
+            }
+            $codes[$domain][] = $questionaryData['code'];
+            $questions = $questions + $questionaryData['questions'];
+        }
+
+        return $this->assembleFromArray(
+            [
+                'code' => QuestionaryFacadeInterface::CODE_MULTIPLE_QUESTIONARY,
+                'title' => $this->localizer->trans('questionary.multiple.title'),
+                'questions' => $questions,
+                'extraData' => [
+                    'codesPerDomain' => $codes,
+                ],
+            ],
+            $additionalData
+        );
     }
 
     /**
@@ -100,7 +141,7 @@ class QuestionaryFactory extends AbstractServerRequestFactory
         ];
         $question = $questionFactory->make($questionData, $additionalData);
         $questionary = new Questionary([
-            'code' => Questionary::CODE_GENERIC_QUESTIONARY,
+            'code' => QuestionaryFacadeInterface::CODE_GENERIC_QUESTIONARY,
             'title' => $this->localizer->trans('questionary.generic.title'),
             'questions' => ['answer' => $question],
         ]);
@@ -139,13 +180,8 @@ class QuestionaryFactory extends AbstractServerRequestFactory
             case QuestionaryFacadeInterface::CODE_CUSTOMER_BIRTH_DATE:
                 $required = true;
                 $title = $this->localizer->trans('questionary.birthDate.title');
-                $questionGroup = [
-                    'title' => $this->localizer->trans('questionGroup.birthDate.title'),
-                    'questions' => [
-                        'birth_date_day' => Question::CODE_CUSTOMER_BIRTH_DATE_DAY,
-                        'birth_date_month' => Question::CODE_CUSTOMER_BIRTH_DATE_MONTH,
-                        'birth_date_year' => Question::CODE_CUSTOMER_BIRTH_DATE_YEAR,
-                    ]
+                $questions = [
+                    'birth_date_date' => Question::CODE_CUSTOMER_BIRTH_DATE_DATE,
                 ];
                 break;
             case QuestionaryFacadeInterface::CODE_CUSTOMER_NATIONAL_IDENTIFICATION_NUMBER:
@@ -153,6 +189,13 @@ class QuestionaryFactory extends AbstractServerRequestFactory
                 $title = $this->localizer->trans('questionary.nationalIdentificationNumber.title');
                 $questions = [
                     'nin_number' => Question::CODE_CUSTOMER_NATIONAL_IDENTIFICATION_NUMBER_NUMBER,
+                ];
+                break;
+            case QuestionaryFacadeInterface::CODE_CUSTOMER_GENDER:
+                $required = true;
+                $title = $this->localizer->trans('questionary.gender.title');
+                $questions = [
+                    'gender' => Question::CODE_CUSTOMER_GENDER_GENDER,
                 ];
                 break;
             default:
