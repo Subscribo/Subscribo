@@ -50,6 +50,19 @@ class Transaction extends \Subscribo\ModelCore\Bases\Transaction
         return $instance;
     }
 
+
+    public function getProcessingDataAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
+
+    public function setProcessingDataAttribute($value)
+    {
+        $this->attributes['processing_data'] = json_encode($value);
+    }
+
+
     public function changeStage($stage, $status = self::STATUS_NO_RESPONSE_YET, $timestamp = null, $message = null, $code = null)
     {
         $this->stage = $stage;

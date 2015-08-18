@@ -461,6 +461,7 @@ model_fields:
     - suffix null
     - gender (enum from man woman) null
     - date_of_birth (date) null
+    - national_identification_number (string) null hidden //Note - not recommended to collect these if not necessary
 
     contacts:
     - phone (string) null
@@ -683,6 +684,7 @@ model_fields:
     - user_id null
     - account_id null
     - sales_order_id null
+    - processing_data (text) null
     - transaction_gateway_configuration_id null hidden
     - hash unique
     - reference null
@@ -693,7 +695,7 @@ model_fields:
     - status (enum from no_response_yet accepted waiting own_risk client_error server_error connection_error response_error denied failed widget_provided redirected redirected_back) default word no_response_yet
     - amount (currency)
     - payment_fee (currency) null
-    - currency_id (int)
+    - currency_id
     - payment_fee_paid_by (enum from receiver sender) null
     - first_request_sent_on (datetime) null
     - first_response_received_on (datetime) null
