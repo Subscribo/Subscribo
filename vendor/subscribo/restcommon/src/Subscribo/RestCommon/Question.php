@@ -12,6 +12,8 @@ class Question
 
     const TYPE_CHECKBOX = 'checkbox';
 
+    const TYPE_RADIO = 'radio';
+
     const TYPE_SELECT = 'select';
 
     const TYPE_NUMBER_SELECT = 'number_select';
@@ -54,7 +56,11 @@ class Question
 
     const CODE_CUSTOMER_BIRTH_DATE_YEAR = 21030;
 
+    const CODE_CUSTOMER_BIRTH_DATE_DATE = 21050;
+
     const CODE_CUSTOMER_NATIONAL_IDENTIFICATION_NUMBER_NUMBER = 22010;
+
+    const CODE_CUSTOMER_GENDER_GENDER                         = 23010;
 
     /** @var string */
     public $type;
@@ -299,6 +305,7 @@ class Question
             case static::TYPE_EMAIL:
             case static::TYPE_CHECKBOX:
             case static::TYPE_SELECT:
+            case static::TYPE_RADIO:
             case static::TYPE_NUMBER_SELECT:
             case static::TYPE_RANGE:
             case static::TYPE_NUMBER:
@@ -422,6 +429,7 @@ class Question
                 }
                 break;
             case static::TYPE_SELECT:
+            case static::TYPE_RADIO:
                 $optionKeys = array_keys($this->getSelectOptions());
                 $rule = array_filter($optionKeys, 'strlen');
                 array_unshift($rule, 'in');

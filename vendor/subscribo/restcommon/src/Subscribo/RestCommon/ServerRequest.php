@@ -31,6 +31,9 @@ class ServerRequest implements ServerRequestInterface, JsonSerializable, Arrayab
     /** @var  string|null */
     public $domain;
 
+    /** @var array  */
+    public $extraData = [];
+
     public function __construct(array $data = array())
     {
         if (is_array($data)) {
@@ -57,6 +60,13 @@ class ServerRequest implements ServerRequestInterface, JsonSerializable, Arrayab
         if ( ! empty($data['domain'])) {
             $this->domain = $data['domain'];
         }
+        if ( ! empty($data['extraData'])) {
+            if (is_array($data['extraData'])) {
+                $this->extraData = $data['extraData'];
+            } else {
+                $this->extraData = json_decode($data['extraData'], true);
+            }
+        }
 
         return $this;
     }
@@ -73,6 +83,7 @@ class ServerRequest implements ServerRequestInterface, JsonSerializable, Arrayab
         $result['endpoint'] = $this->endpoint;
         $result['locale']   = $this->locale;
         $result['domain'] = $this->domain;
+        $result['extraData'] = $this->extraData;
 
         return $result;
     }

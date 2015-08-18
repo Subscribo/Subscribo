@@ -24,9 +24,11 @@ class Questionary extends ServerRequest implements HasQuestionsInterface
     const CODE_CONFIRM_ACCOUNT_MERGE_SIMPLE = 50;
 
     const CODE_GENERIC_QUESTIONARY                      = 100;
+    const CODE_MULTIPLE_QUESTIONARY                     = 110;
     const CODE_DATE                                     = 200;
     const CODE_CUSTOMER_BIRTH_DATE                      = 210;
     const CODE_CUSTOMER_NATIONAL_IDENTIFICATION_NUMBER  = 220;
+    const CODE_CUSTOMER_GENDER                          = 230;
 
     /** @var string  */
     public $title;
