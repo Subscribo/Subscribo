@@ -19,10 +19,10 @@
                     @include('subscribo::apiclientcommon.formerrors', ['errorTitle' => $errorTitle])
                     <form method="POST" class="form-horizontal" role="form">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        @foreach ($questions as $key => $item)
+                        @foreach ($items as $key => $item)
                             @if ($item->type === 'group')
                                 @include('subscribo::apiclientcommon.questionGroup', ['questionGroup' => $item])
-                            @elsif
+                            @else
                                 @include('subscribo::apiclientcommon.singlequestion', ['key' => $key, 'question' => $item])
                             @endif
                         @endforeach

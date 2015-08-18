@@ -103,7 +103,12 @@ trait QuestionaryControllerTrait
         }
         $session->keep([$this->sessionKeyQuestionaryServerRequest, $this->sessionKeyRedirectFromQuestionary]);
         $rules = $questionary->getValidationRules();
-        $this->validate($request, $rules, $questionary->getValidationMessages());
+        $this->validate(
+            $request,
+            $rules,
+            $questionary->getValidationMessages(),
+            $questionary->getValidationAttributes()
+        );
         $data = $request->only(array_keys($rules));
         $inputToRemember = Arr::only($data, $questionary->getFieldsToRememberOnError());
         try {
