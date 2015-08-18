@@ -3,6 +3,7 @@
 namespace Subscribo\TransactionPluginKlarna\Integration\Laravel;
 
 use Subscribo\TransactionPluginManager\Bases\TransactionPluginServiceProviderBase;
+use Subscribo\TransactionPluginKlarna\Drivers\InvoiceDriver;
 
 /**
  * Class TransactionPluginKlarnaServiceProvider
@@ -13,6 +14,8 @@ class TransactionPluginKlarnaServiceProvider extends TransactionPluginServicePro
 {
     public function getProvidedDrivers()
     {
-        return [];
+        return [
+            InvoiceDriver::getDriverIdentifier() => '\\Subscribo\\TransactionPluginKlarna\\Drivers\\InvoiceDriver',
+        ];
     }
 }
