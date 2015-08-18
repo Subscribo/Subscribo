@@ -56,6 +56,20 @@ if (isset($totalColumns)) {
         <input type="checkbox" class="form-control" name="{{ $key }}" value="{{ $question->$checkboxValue }}" @if ($value === $question->$checkboxValue) checked="checked" @endif >
         {{ $question->text }}
     </label>
+@elseif ($type === 'radio')
+    @if (isset($question->text))
+        <label class="{{ $labelClassAdd }} control-label">{{ $question->text }}</label>
+    @endif
+    <div class="{{ $inputClassAdd }}">
+        @foreach ($selectOptions as $selectOptionKey => $selectOptionText)
+            <div class="radio">
+                <label>
+                    <input type="radio" name="{{ $key }}" value="{{ $selectOptionKey }}" @if ($value === strval($selectOptionKey))) checked="checked" @endif  >
+                    {{ $selectOptionText }}
+                </label>
+            </div>
+        @endforeach
+    </div>
 @else
     @if (isset($question->text))
         <label class="{{ $labelClassAdd }} control-label">{{ $question->text }}</label>
