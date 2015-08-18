@@ -213,12 +213,11 @@ class WebshopController extends Controller
 
     protected function processPostBuyProductFinalization(array $data, array $inputForRedirect, $backUrl)
     {
-        if ('failed' === $data['result']['status']) {
+        if (empty($data['result']['continue'])) {
             return [
                 'redirect' => redirect($backUrl)->withInput($inputForRedirect)->withErrors($data['result']['message']),
                 'redirectReason' => 'handlingFailedTransaction',
             ];
-
         }
         return [
             'redirect' => redirect()->route('subscribo.webshop.success'),

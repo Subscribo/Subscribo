@@ -10,7 +10,6 @@
     "license": "proprietary",
     "require": {
         "php": "~5.4",
-        "subscribo/billing": "@dev",
         "subscribo/support": "@dev",
         "illuminate/routing": "^5.1",
         "subscribo/apiclient": "@dev"
