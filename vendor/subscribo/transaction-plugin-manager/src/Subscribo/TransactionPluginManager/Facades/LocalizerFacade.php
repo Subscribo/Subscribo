@@ -28,4 +28,12 @@ class LocalizerFacade implements LocalizerFacadeInterface
     {
         $this->instanceOfObjectBehindFacade = $localizer;
     }
+
+    /**
+     * @return \Subscribo\Localization\Interfaces\LocalizerInterface;
+     */
+    public function getLocalizerInstance()
+    {
+        return $this->instanceOfObjectBehindFacade;
+    }
 }

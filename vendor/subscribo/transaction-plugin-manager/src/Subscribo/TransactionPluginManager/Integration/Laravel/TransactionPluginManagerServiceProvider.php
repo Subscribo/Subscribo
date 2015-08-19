@@ -19,6 +19,6 @@ class TransactionPluginManagerServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->registerTranslationResources(['questionary']);
+        $this->registerTranslationResources(['questionary', 'processingresult']);
     }
 }

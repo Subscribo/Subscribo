@@ -5,6 +5,7 @@ namespace Subscribo\TransactionPluginManager\Factories;
 use InvalidArgumentException;
 use Subscribo\RestCommon\Widget;
 use Subscribo\TransactionPluginManager\Factories\AbstractServerRequestFactory;
+use Subscribo\Omnipay\Shared\Interfaces\WidgetInterface;
 
 /**
  * Class WidgetFactory
@@ -14,7 +15,7 @@ use Subscribo\TransactionPluginManager\Factories\AbstractServerRequestFactory;
 class WidgetFactory extends AbstractServerRequestFactory
 {
     /**
-     * @param Widget|string|array $widget
+     * @param Widget|WidgetInterface|string|array $widget
      * @return Widget
      * @throws \InvalidArgumentException
      */
@@ -23,6 +24,9 @@ class WidgetFactory extends AbstractServerRequestFactory
         if ($widget instanceof Widget) {
 
             return $widget;
+        } elseif ($widget instanceof WidgetInterface) {
+
+            return $this->assembleFromString($widget->render());
         } elseif (is_string($widget)) {
 
             return $this->assembleFromString($widget);

@@ -4,6 +4,7 @@ namespace Subscribo\TransactionPluginManager\Bases;
 
 use Subscribo\TransactionPluginManager\Interfaces\TransactionProcessingResultInterface;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionFacadeInterface;
+use Subscribo\TransactionPluginManager\Interfaces\LocalizerFacadeInterface;
 
 /**
  * Class TransactionProcessingResultBase
@@ -45,6 +46,20 @@ class TransactionProcessingResultBase implements TransactionProcessingResultInte
         $this->message = $message;
         $this->registered = $registered;
     }
+
+    /**
+     * @param string $status
+     * @param LocalizerFacadeInterface $localizer
+     * @return string
+     */
+    public static function makeGenericMessage($status, LocalizerFacadeInterface $localizer)
+    {
+        $id = 'messages.generic.'.$status;
+        $domain = 'transaction-plugin-manager::processingresult';
+
+        return $localizer->getLocalizerInstance()->transOrDefault($id, [], $domain, null, '???');
+    }
+
 
     /**
      * @return \Subscribo\TransactionPluginManager\Interfaces\TransactionFacadeInterface

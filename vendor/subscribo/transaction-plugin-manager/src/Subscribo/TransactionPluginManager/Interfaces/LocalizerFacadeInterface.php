@@ -9,5 +9,8 @@ namespace Subscribo\TransactionPluginManager\Interfaces;
  */
 interface LocalizerFacadeInterface
 {
-
+    /**
+     * @return \Subscribo\Localization\Interfaces\LocalizerInterface;
+     */
+    public function getLocalizerInstance();
 }

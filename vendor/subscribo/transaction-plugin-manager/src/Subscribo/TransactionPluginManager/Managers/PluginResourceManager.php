@@ -117,7 +117,7 @@ class PluginResourceManager implements PluginResourceManagerInterface
     }
 
     /**
-     * @param mixed|string $widget
+     * @param \Subscribo\Omnipay\Shared\Interfaces\WidgetInterface|string|mixed $widget
      * @param TransactionProcessorInterface $processor
      * @param InterruptionFacadeInterface|null $interruption
      * @return void

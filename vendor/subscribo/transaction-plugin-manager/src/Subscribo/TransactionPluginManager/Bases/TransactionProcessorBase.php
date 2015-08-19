@@ -44,4 +44,12 @@ abstract class TransactionProcessorBase implements TransactionProcessorInterface
     {
         return $this->driver->getDriverIdentifier();
     }
+
+    /**
+     * @return \Subscribo\TransactionPluginManager\Interfaces\LocalizerFacadeInterface
+     */
+    protected function getLocalizer()
+    {
+        return $this->driver->getPluginResourceManager()->getLocalizer();
+    }
 }
