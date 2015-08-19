@@ -2,13 +2,11 @@
 
 ## Installation in project
 
-Project using this package should include it under `require` key of its composer.json
-usually together with development version of `egeloen/http-adapter` package:
+Project using this package should include it under `require` key of its composer.json:
 
 ```json
     "require": {
-        "subscribo/transaction-plugin-payunity": "@dev",
-        "egeloen/http-adapter": "^0.8@dev"
+        "subscribo/transaction-plugin-payunity": "@dev"
     }
 ```
 

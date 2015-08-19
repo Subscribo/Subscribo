@@ -12,8 +12,7 @@
     "license": "proprietary",
     "require": {
         "subscribo/transaction-plugin-manager": "@dev",
-        "subscribo/omnipay-payunity": "^0.4.0",
-        "egeloen/http-adapter": "^0.8@dev"
+        "subscribo/omnipay-payunity": "^0.4.1"
     },
     "autoload": {
         "psr-4": {
