@@ -5,6 +5,7 @@ namespace Subscribo\TransactionPluginManager\Interfaces;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionPluginDriverInterface;
 use Subscribo\TransactionPluginManager\Interfaces\LocalizerFacadeInterface;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionProcessorInterface;
+use Subscribo\TransactionPluginManager\Interfaces\InterruptionFacadeInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -33,26 +34,47 @@ interface PluginResourceManagerInterface
     public function getLogger();
 
     /**
-     * @param string|int|mixed $questionary
+     * @param int|string|array|mixed $questionary
      * @param TransactionProcessorInterface $processor
+     * @param InterruptionFacadeInterface|null $interruption
      * @return mixed|void
      * @throws \Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException
      */
-    public function interruptByQuestionary($questionary, TransactionProcessorInterface $processor);
+    public function interruptByQuestionary(
+        $questionary,
+        TransactionProcessorInterface $processor,
+        InterruptionFacadeInterface $interruption = null
+    );
 
     /**
      * @param string|mixed $widget
      * @param TransactionProcessorInterface $processor
+     * @param InterruptionFacadeInterface|null $interruption
      * @return mixed|void
      * @throws \Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException
      */
-    public function interruptByWidget($widget, TransactionProcessorInterface $processor);
+    public function interruptByWidget(
+        $widget,
+        TransactionProcessorInterface $processor,
+        InterruptionFacadeInterface $interruption = null
+    );
 
     /**
      * @param string|mixed $redirection
      * @param TransactionProcessorInterface $processor
+     * @param InterruptionFacadeInterface|null $interruption
      * @return mixed|void
      * @throws \Subscribo\RestCommon\Exceptions\ClientRedirectionServerRequestHttpException
      */
-    public function interruptByClientRedirection($redirection, TransactionProcessorInterface $processor);
+    public function interruptByClientRedirection(
+        $redirection,
+        TransactionProcessorInterface $processor,
+        InterruptionFacadeInterface $interruption = null
+    );
+
+    /**
+     * @param TransactionProcessorInterface $processor
+     * @return InterruptionFacadeInterface
+     */
+    public function prepareInterruptionFacade(TransactionProcessorInterface $processor);
 }

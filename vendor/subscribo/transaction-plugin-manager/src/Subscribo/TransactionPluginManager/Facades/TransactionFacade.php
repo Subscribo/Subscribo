@@ -5,6 +5,7 @@ namespace Subscribo\TransactionPluginManager\Facades;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionFacadeInterface;
 use Subscribo\TransactionPluginManager\Traits\TransparentFacadeTrait;
 use Subscribo\ModelCore\Models\Transaction;
+use Subscribo\Support\Arr;
 
 /**
  * Class TransactionFacade
@@ -76,6 +77,39 @@ class TransactionFacade implements TransactionFacadeInterface
         return null;
     }
 
+    /**
+     * @param null|string $key
+     * @return null|array|mixed
+     */
+    public function getDataToRemember($key = null)
+    {
+        if ( ! isset($this->instanceOfObjectBehindFacade->processingData['dataToRemember'])) {
+
+            return null;
+        }
+        $dataToRemember = $this->instanceOfObjectBehindFacade->processingData['dataToRemember'];
+
+        return Arr::get($dataToRemember, $key);
+    }
+
+    /**
+     * @param mixed $value
+     * @param null|string $key
+     * @return $this
+     */
+    public function setDataToRemember($value, $key = null)
+    {
+        $processingData = $this->instanceOfObjectBehindFacade->processingData;
+        $processingData = is_array($processingData) ? $processingData : [];
+        $dataToRemember = empty($processingData['dataToRemember']) ? [] : $processingData['dataToRemember'];
+        $dataToRemember = is_array($dataToRemember) ? $dataToRemember : [];
+        Arr::set($dataToRemember, $key, $value);
+        $processingData['dataToRemember'] = $dataToRemember;
+        $this->instanceOfObjectBehindFacade->processingData = $processingData;
+        $this->instanceOfObjectBehindFacade->save();
+
+        return $this;
+    }
 
     /**
      * @return bool

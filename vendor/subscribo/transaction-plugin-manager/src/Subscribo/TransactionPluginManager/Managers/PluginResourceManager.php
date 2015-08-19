@@ -25,6 +25,8 @@ use Subscribo\TransactionPluginManager\Interfaces\LocalizerFacadeInterface;
 use Subscribo\TransactionPluginManager\Interfaces\QuestionaryFacadeInterface;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionPluginDriverInterface;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionProcessorInterface;
+use Subscribo\TransactionPluginManager\Interfaces\InterruptionFacadeInterface;
+use Subscribo\TransactionPluginManager\Facades\InterruptionFacade;
 use Subscribo\TransactionPluginManager\Facades\LocalizerFacade;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Psr\Log\LoggerInterface;
@@ -101,14 +103,15 @@ class PluginResourceManager implements PluginResourceManagerInterface
     /**
      * @param int|mixed|string $questionary
      * @param TransactionProcessorInterface $processor
+     * @param InterruptionFacadeInterface|null $interruption
      * @return void
      * @throws \Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException
      */
-    public function interruptByQuestionary($questionary, TransactionProcessorInterface $processor)
+    public function interruptByQuestionary($questionary, TransactionProcessorInterface $processor, InterruptionFacadeInterface $interruption = null)
     {
         $questionaryFactory = new QuestionaryFactory($this->localizer, $this->assembleDefaultDomain($processor));
         $questionaryInstance = $questionaryFactory->make($questionary);
-        $this->assembleActionInterruption($questionaryInstance, $processor);
+        $this->generateActionInterruption($processor, $questionaryInstance, $interruption);
 
         throw new QuestionaryServerRequestHttpException($questionaryInstance);
     }
@@ -116,14 +119,15 @@ class PluginResourceManager implements PluginResourceManagerInterface
     /**
      * @param mixed|string $widget
      * @param TransactionProcessorInterface $processor
+     * @param InterruptionFacadeInterface|null $interruption
      * @return void
      * @throws \Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException
      */
-    public function interruptByWidget($widget, TransactionProcessorInterface $processor)
+    public function interruptByWidget($widget, TransactionProcessorInterface $processor, InterruptionFacadeInterface $interruption = null)
     {
         $widgetFactory = new WidgetFactory($this->assembleDefaultDomain($processor));
         $widgetInstance = $widgetFactory->make($widget);
-        $this->assembleActionInterruption($widgetInstance, $processor);
+        $this->generateActionInterruption($processor, $widgetInstance, $interruption);
 
         throw new WidgetServerRequestHttpException($widgetInstance);
     }
@@ -131,16 +135,28 @@ class PluginResourceManager implements PluginResourceManagerInterface
     /**
      * @param mixed|string $redirection
      * @param TransactionProcessorInterface $processor
+     * @param InterruptionFacadeInterface|null $interruption
      * @return void
      * @throws \Subscribo\RestCommon\Exceptions\ClientRedirectionServerRequestHttpException
      */
-    public function interruptByClientRedirection($redirection, TransactionProcessorInterface $processor)
+    public function interruptByClientRedirection($redirection, TransactionProcessorInterface $processor, InterruptionFacadeInterface $interruption = null)
     {
         $clientRedirectionFactory = new ClientRedirectionFactory($this->assembleDefaultDomain($processor));
         $clientRedirectionInstance = $clientRedirectionFactory->make($redirection);
-        $this->assembleActionInterruption($clientRedirectionInstance, $processor);
+        $this->generateActionInterruption($processor, $clientRedirectionInstance, $interruption);
 
         throw new ClientRedirectionServerRequestHttpException($clientRedirectionInstance);
+    }
+
+    /**
+     * @param TransactionProcessorInterface $processor
+     * @return InterruptionFacade
+     */
+    public function prepareInterruptionFacade(TransactionProcessorInterface $processor)
+    {
+        $actionInterruption = $this->generateActionInterruption($processor);
+
+        return new InterruptionFacade($actionInterruption);
     }
 
     /**
@@ -264,22 +280,38 @@ class PluginResourceManager implements PluginResourceManagerInterface
     }
 
     /**
-     * @param ServerRequest $serverRequest
      * @param TransactionProcessorInterface $processor
+     * @param ServerRequest|null $serverRequest
+     * @param InterruptionFacadeInterface|null $interruption
      * @return ActionInterruption
+     * @throws \InvalidArgumentException
      */
-    protected function assembleActionInterruption(ServerRequest $serverRequest, TransactionProcessorInterface $processor)
-    {
+    protected function generateActionInterruption(
+        TransactionProcessorInterface $processor,
+        ServerRequest $serverRequest = null,
+        InterruptionFacadeInterface $interruption = null
+    ) {
         $transactionModelInstance = $processor->getTransactionFacade()->getTransactionModelInstance();
-        $transactionHash = $transactionModelInstance->hash;
         $serviceId = $transactionModelInstance->serviceId;
         $accountId = $transactionModelInstance->accountId;
-        $extraData = [
-            'transactionDriverIdentifier' => $processor->getDriverIdentifier(),
-            'transactionHash' => $transactionHash,
-        ];
         $factory = new ActionInterruptionFactory(get_class($this), $serviceId, $accountId);
+        if (empty($interruption)) {
+            $transactionHash = $transactionModelInstance->hash;
+            $extraData = [
+                'transactionDriverIdentifier' => $processor->getDriverIdentifier(),
+                'transactionHash' => $transactionHash,
+            ];
 
-        return $factory->makeActionInterruption('resumeFromInterruption', $extraData, $serverRequest, true);
+            return $factory->makeActionInterruption('resumeFromInterruption', $extraData, $serverRequest, true);
+        }
+        if (empty($serverRequest)) {
+            throw new InvalidArgumentException(
+                'If interruption argument is provided, then serverRequest argument should be provided as well'
+            );
+        }
+        $actionInterruption = $interruption->getActionInterruptionModelInstance();
+        $factory->syncActionInterruptionWithServerRequest($actionInterruption, $serverRequest, true);
+
+        return $actionInterruption;
     }
 }

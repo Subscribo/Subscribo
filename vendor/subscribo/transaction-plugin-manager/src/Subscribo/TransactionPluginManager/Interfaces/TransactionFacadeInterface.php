@@ -30,6 +30,19 @@ interface TransactionFacadeInterface
     public function getAnswerFromClientRedirection();
 
     /**
+     * @param null|string $key
+     * @return null|array|mixed
+     */
+    public function getDataToRemember($key = null);
+
+    /**
+     * @param mixed $value
+     * @param null|string $key
+     * @return $this
+     */
+    public function setDataToRemember($value, $key = null);
+
+    /**
      * @return bool;
      */
     public function isChargeTransaction();
