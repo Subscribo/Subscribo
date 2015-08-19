@@ -9,6 +9,8 @@ use Subscribo\ModelBase\Traits\HasHashTrait;
 /**
  * Model Transaction
  *
+ * @property array $processingData Json encoded array - careful - can be saved only whole
+ *
  * Model class for being changed and used in the application
  */
 class Transaction extends \Subscribo\ModelCore\Bases\Transaction
@@ -149,5 +151,10 @@ class Transaction extends \Subscribo\ModelCore\Bases\Transaction
         $this->save();
 
         return $this;
+    }
+
+    public function isAutomatic()
+    {
+        return ((static::ORIGIN_SYSTEM === $this->origin) or (static::ORIGIN_OUTSIDE === $this->origin));
     }
 }
