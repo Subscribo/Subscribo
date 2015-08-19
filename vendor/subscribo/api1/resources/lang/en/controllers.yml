@@ -51,8 +51,5 @@ transaction:
         currencyDoesNotMatchWithSalesOrder: Specified currency does not match with that in specified sales order
         countryDoesNotMatchWithSalesOrder: Specified country does not match with that in specified sales order
         amountDoesNotMatchWithSalesOrder: Specified amount does not match with that in specified sales order
-        failed: Transaction has failed
-        success: Thank you for your order
-    description.intro: Payment for:
 # ContextRequestValidationTrait
 contextRequestValidationTrait.errors.wrongIdentifier: Identifier have to be a positive integer

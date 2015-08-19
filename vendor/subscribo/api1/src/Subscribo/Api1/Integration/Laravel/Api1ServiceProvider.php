@@ -19,6 +19,9 @@ class Api1ServiceProvider extends ServiceProvider
 
     public function register()
     {
+        if (class_exists('\\Subscribo\\TransactionPluginManager\\Integration\\Laravel\\TransactionPluginManagerServiceProvider')) {
+            $this->app->register('\\Subscribo\\TransactionPluginManager\\Integration\\Laravel\\TransactionPluginManagerServiceProvider');
+        }
         $this->app->register('\\Subscribo\\Auth\\Integration\\Laravel\\AuthServiceProvider');
         /** @var LocalizationServiceProvider $localizationServiceProvider */
         $localizationServiceProvider = $this->app->register('\\Subscribo\\Localization\\Integration\\Laravel\\LocalizationServiceProvider');
