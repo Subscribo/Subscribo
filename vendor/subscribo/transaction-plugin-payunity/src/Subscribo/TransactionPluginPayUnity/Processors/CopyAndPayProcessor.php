@@ -59,8 +59,7 @@ class CopyAndPayProcessor extends TransactionProcessorBase
         $purchaseData['returnUrl'] = Utils::assembleWidgetReturnUrl($transaction->service, $interruption->getHash());
         $salesOrder = $transaction->salesOrder;
         if ($salesOrder) {
-            $localizer = $this->driver->getPluginResourceManager()->getLocalizer();
-            $description = Utils::assembleTransactionDescription($salesOrder, $localizer);
+            $description = Utils::assembleTransactionDescription($salesOrder, $this->getLocalizer());
             $purchaseData['description'] = Utils::limitStringLength($description, 120, ',');
             $purchaseData['card'] = Utils::assembleCardData($salesOrder->billingAddress, $salesOrder->shippingAddress);
         }
@@ -80,9 +79,9 @@ class CopyAndPayProcessor extends TransactionProcessorBase
         }
         $transaction->setDataToRemember($purchaseResponse->getTransactionToken(), 'transactionToken');
         $transaction->changeStage(Transaction::STAGE_PREPARED, Transaction::STATUS_WIDGET_PROVIDED, ['receive']);
-        $widgetContent = $purchaseResponse->getWidget()->render();
+        $widget = $purchaseResponse->getWidget();
 
-        return $this->driver->getPluginResourceManager()->interruptByWidget($widgetContent, $this, $interruption);
+        return $this->driver->getPluginResourceManager()->interruptByWidget($widget, $this, $interruption);
     }
 
     protected function processPreparedTransaction()
@@ -118,15 +117,15 @@ class CopyAndPayProcessor extends TransactionProcessorBase
         $transaction->message = $completePurchaseResponse->getMessage();
         $transaction->code = $completePurchaseResponse->getCode();
         $transaction->reference = $completePurchaseResponse->getTransactionReference();
-        $localizer = $this->driver->getPluginResourceManager()->getLocalizer();
+        $message = null;
         if ($completePurchaseResponse->isSuccessful()) {
             $transaction->changeStage(Transaction::STAGE_FINISHED, Transaction::STATUS_ACCEPTED, ['receive', 'finalize']);
             $status = TransactionProcessingResultInterface::STATUS_SUCCESS;
-            $message = $localizer->trans('transaction.errors.postCharge.success');
+
         } else {
             $transaction->changeStage(Transaction::STAGE_FAILED, Transaction::STATUS_FAILED, ['receive']);
             $status = TransactionProcessingResultInterface::STATUS_FAILURE;
-            $message = $localizer->trans('transaction.errors.postCharge.failed');
+            $message = TransactionProcessingResultBase::makeGenericMessage($status, $this->getLocalizer());
         }
         $registrationToken = $completePurchaseResponse->getAccountRegistration();
         $registered = Utils::rememberRegistrationToken($transaction, $registrationToken) ? true : false;
