@@ -35,17 +35,30 @@ class TransactionGatewayConfigurationSeeder extends Seeder
                     'userLogin' => env('PAYUNITY_USER_LOGIN'),
                     'userPwd' => env('PAYUNITY_USER_PWD'),
                     'testMode' => true,
-                    'registrationMode' => true,
-                ],
-                'purchase' => [
-                    'brands' => 'VISA MASTER MAESTRO SOFORTUEBERWEISUNG',
                 ],
             ];
         } else {
             $payUnityConfigData = [];
         }
 
+        $payUnityConfigDataCard = $payUnityConfigData;
+        $payUnityConfigDataSofort = $payUnityConfigData;
+        if ($payUnityConfigDataCard) {
+            $payUnityConfigDataCard['purchase'] = [
+                'registrationMode' => true,
+                'brands' => 'VISA MASTER MAESTRO',
+            ];
+        }
+        if ($payUnityConfigDataSofort) {
+            $payUnityConfigDataSofort['purchase'] = [
+                'registrationMode' => false,
+                'brands' => 'SOFORTUEBERWEISUNG',
+            ];
+        }
+
         $payUnityCopyAndPay = TransactionGateway::firstOrCreate(['identifier' => 'PAY_UNITY-COPY_AND_PAY']);
+        $payUnityCopyAndPaySofort = TransactionGateway::firstOrCreate(['identifier' => 'PAY_UNITY-COPY_AND_PAY-SOFORT']);
+        $payUnityPost = TransactionGateway::firstOrCreate(['identifier' => 'PAY_UNITY-POST']);
         $klarnaInvoice = TransactionGateway::firstOrCreate(['identifier' => 'KLARNA-INVOICE']);
 
         $austria = Country::firstOrCreate(['identifier' => 'AT']);
@@ -58,11 +71,7 @@ class TransactionGatewayConfigurationSeeder extends Seeder
         $frontendService = Service::query()->where(['identifier' => 'FRONTEND'])->first();
         $mainService = Service::query()->where(['identifier' => 'MAIN'])->first();
 
-
-        $payUnityConfigForFrontend = TransactionGatewayConfiguration::firstOrCreate([
-            'service_id' => $frontendService->id,
-            'transaction_gateway_id' => $payUnityCopyAndPay->id,
-        ]);
+        /* Frontend Service */
 
         $klarnaConfigForFrontend = TransactionGatewayConfiguration::firstOrCreate([
             'service_id' => $frontendService->id,
@@ -70,20 +79,64 @@ class TransactionGatewayConfigurationSeeder extends Seeder
             'country_id' => $austria->id,
 
         ]);
-
-        $klarnaConfigForFrontend->configuration = json_encode($klarnaConfigData);
+        $klarnaConfigForFrontend->configuration = $klarnaConfigData;
         $klarnaConfigForFrontend->isDefault = true;
         $klarnaConfigForFrontend->ordering = 1;
         $klarnaConfigForFrontend->save();
 
-        $payUnityConfigForFrontend->configuration = json_encode($payUnityConfigData);
-        $payUnityConfigForFrontend->ordering = 2;
-        $payUnityConfigForFrontend->save();
+        $payUnityConfigForFrontendPost = TransactionGatewayConfiguration::firstOrCreate([
+            'service_id' => $frontendService->id,
+            'transaction_gateway_id' => $payUnityPost->id,
+        ]);
+        $payUnityConfigForFrontendPost->configuration = $payUnityConfigData;
+        $payUnityConfigForFrontendPost->ordering = 4;
+        $payUnityConfigForFrontendPost->save();
 
-        $payUnityConfigForMain = TransactionGatewayConfiguration::firstOrCreate([
+        $payUnityConfigForFrontendCard = TransactionGatewayConfiguration::firstOrCreate([
+            'service_id' => $frontendService->id,
+            'transaction_gateway_id' => $payUnityCopyAndPay->id,
+        ]);
+        $payUnityConfigForFrontendCard->configuration = $payUnityConfigDataCard;
+        $payUnityConfigForFrontendCard->ordering = 2;
+        $payUnityConfigForFrontendCard->parent()->associate($payUnityConfigForFrontendPost);
+        $payUnityConfigForFrontendCard->save();
+
+        $payUnityConfigForFrontendSofort = TransactionGatewayConfiguration::firstOrCreate([
+            'service_id' => $frontendService->id,
+            'transaction_gateway_id' => $payUnityCopyAndPaySofort->id,
+        ]);
+        $payUnityConfigForFrontendSofort->configuration = $payUnityConfigDataSofort;
+        $payUnityConfigForFrontendSofort->ordering = 3;
+        $payUnityConfigForFrontendSofort->parent()->associate($payUnityConfigForFrontendPost);
+        $payUnityConfigForFrontendSofort->save();
+
+        /* Main Service */
+
+        $payUnityConfigForMainPost = TransactionGatewayConfiguration::firstOrCreate([
+            'service_id' => $mainService->id,
+            'transaction_gateway_id' => $payUnityPost->id,
+        ]);
+        $payUnityConfigForMainPost->configuration = $payUnityConfigData;
+        $payUnityConfigForMainPost->ordering = 4;
+        $payUnityConfigForMainPost->save();
+
+        $payUnityConfigForMainCard = TransactionGatewayConfiguration::firstOrCreate([
             'service_id' => $mainService->id,
             'transaction_gateway_id' => $payUnityCopyAndPay->id,
         ]);
+        $payUnityConfigForMainCard->configuration = $payUnityConfigDataCard;
+        $payUnityConfigForMainCard->ordering = 2;
+        $payUnityConfigForMainCard->parent()->associate($payUnityConfigForMainPost);
+        $payUnityConfigForMainCard->save();
+
+        $payUnityConfigForMainSofort = TransactionGatewayConfiguration::firstOrCreate([
+            'service_id' => $mainService->id,
+            'transaction_gateway_id' => $payUnityCopyAndPaySofort->id,
+        ]);
+        $payUnityConfigForMainSofort->configuration = $payUnityConfigDataSofort;
+        $payUnityConfigForMainSofort->ordering = 3;
+        $payUnityConfigForMainSofort->parent()->associate($payUnityConfigForMainPost);
+        $payUnityConfigForMainSofort->save();
 
         $klarnaConfigForMain = TransactionGatewayConfiguration::firstOrCreate([
             'service_id' => $mainService->id,
@@ -91,13 +144,7 @@ class TransactionGatewayConfigurationSeeder extends Seeder
             'country_id' => $austria->id,
 
         ]);
-
-        $payUnityConfigForMain->configuration = json_encode($payUnityConfigData);
-        $payUnityConfigForMain->ordering = 2;
-        $payUnityConfigForMain->save();
-
-        $klarnaConfigForMain->configuration = json_encode($klarnaConfigData);
-        $payUnityConfigForMain->isDefault = true;
+        $klarnaConfigForMain->configuration = $klarnaConfigData;
         $klarnaConfigForMain->ordering = 1;
         $klarnaConfigForMain->save();
     }
