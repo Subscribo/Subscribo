@@ -725,6 +725,7 @@ model_fields:
     - description translate
 
     transaction_gateway_configurations:
+    - parent_id null -> transaction_gateway_configurations
     - service_id
     - transaction_gateway_id
     - for_receiving_payments (bool) default true

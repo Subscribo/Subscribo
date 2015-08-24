@@ -159,7 +159,7 @@ class ServiceModule extends \Subscribo\ModelCore\Bases\ServiceModule
 
     public function setSettingsAttribute($value)
     {
-        $this->attributes['settings'] = json_encode($value);
+        $this->attributes['settings'] = json_encode($value, JSON_BIGINT_AS_STRING);
     }
 
     public static function retrieveUri($service, $module, array $parameters = array(), $key = 'main')

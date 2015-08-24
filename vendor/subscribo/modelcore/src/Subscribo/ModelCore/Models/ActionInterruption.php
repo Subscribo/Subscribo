@@ -54,7 +54,7 @@ class ActionInterruption extends \Subscribo\ModelCore\Bases\ActionInterruption
 
     public function setExtraDataAttribute($value)
     {
-        $this->attributes['extra_data'] = json_encode($value);
+        $this->attributes['extra_data'] = json_encode($value, JSON_BIGINT_AS_STRING);
     }
 
     public function getServerRequestAttribute($value)
@@ -64,7 +64,7 @@ class ActionInterruption extends \Subscribo\ModelCore\Bases\ActionInterruption
 
     public function setServerRequestAttribute($value)
     {
-        $this->attributes['server_request'] = json_encode($value);
+        $this->attributes['server_request'] = json_encode($value, JSON_BIGINT_AS_STRING);
     }
 
     public function getAnswerAttribute($value)
@@ -74,7 +74,7 @@ class ActionInterruption extends \Subscribo\ModelCore\Bases\ActionInterruption
 
     public function setAnswerAttribute($value)
     {
-        $this->attributes['answer'] = json_encode($value);
+        $this->attributes['answer'] = json_encode($value, JSON_BIGINT_AS_STRING);
     }
 
     public function markAsProcessed($answer = null)

@@ -5,6 +5,8 @@
  * Model TransactionGatewayConfiguration
  *
  * Model class for being changed and used in the application
+ *
+ * @property array $configuration JSON encoded array - careful - can be saved only whole
  */
 class TransactionGatewayConfiguration extends \Subscribo\ModelCore\Bases\TransactionGatewayConfiguration
 {
@@ -66,5 +68,28 @@ class TransactionGatewayConfiguration extends \Subscribo\ModelCore\Bases\Transac
         $collection = static::getCollectionByAttributes($serviceId, $countryId, $currencyId, $transactionGatewayId, $forReceivingPayments, $withTransactionGateway);
 
         return $collection ? $collection->first() : null;
+    }
+
+    public function getConfigurationAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
+    public function setConfigurationAttribute($value)
+    {
+        $this->attributes['configuration'] = json_encode($value, JSON_BIGINT_AS_STRING);
+    }
+
+    /**
+     * @return TransactionGatewayConfiguration
+     */
+    public function acquireRoot()
+    {
+        $instance = $this;
+        while ($instance->parent) {
+            $instance = $instance->parent;
+        }
+
+        return $instance;
     }
 }

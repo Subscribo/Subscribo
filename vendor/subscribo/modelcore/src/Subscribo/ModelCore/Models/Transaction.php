@@ -9,9 +9,10 @@ use Subscribo\ModelBase\Traits\HasHashTrait;
 /**
  * Model Transaction
  *
- * @property array $processingData Json encoded array - careful - can be saved only whole
- *
  * Model class for being changed and used in the application
+ *
+ * @property array $processingData JSON encoded array - careful - can be saved only whole
+ *
  */
 class Transaction extends \Subscribo\ModelCore\Bases\Transaction
 {
@@ -61,7 +62,7 @@ class Transaction extends \Subscribo\ModelCore\Bases\Transaction
 
     public function setProcessingDataAttribute($value)
     {
-        $this->attributes['processing_data'] = json_encode($value);
+        $this->attributes['processing_data'] = json_encode($value, JSON_BIGINT_AS_STRING);
     }
 
 
