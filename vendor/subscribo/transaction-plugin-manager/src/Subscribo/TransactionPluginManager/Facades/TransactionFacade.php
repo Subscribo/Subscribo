@@ -6,6 +6,7 @@ use Subscribo\TransactionPluginManager\Interfaces\TransactionFacadeInterface;
 use Subscribo\TransactionPluginManager\Traits\TransparentFacadeTrait;
 use Subscribo\ModelCore\Models\Transaction;
 use Subscribo\Support\Arr;
+use Subscribo\ModelCore\Models\AccountTransactionGatewayToken;
 
 /**
  * Class TransactionFacade
@@ -119,4 +120,58 @@ class TransactionFacade implements TransactionFacadeInterface
         return ((Transaction::DIRECTION_RECEIVE === $this->instanceOfObjectBehindFacade->direction)
             and (Transaction::TYPE_STANDARD === $this->instanceOfObjectBehindFacade->type));
     }
+
+    /**
+     * @param string $registrationToken
+     * @return bool
+     */
+    public function rememberRegistrationToken($registrationToken)
+    {
+        if (empty($registrationToken)) {
+
+            return false;
+        }
+        $account = $this->instanceOfObjectBehindFacade->account;
+        if (empty($account)) {
+
+            return false;
+        }
+        $configuration = $this->instanceOfObjectBehindFacade->transactionGatewayConfiguration;
+        $addedToken = AccountTransactionGatewayToken::addToken($configuration, $account, $registrationToken);
+
+        return (boolean) $addedToken;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function retrieveRegistrationToken()
+    {
+        $account = $this->instanceOfObjectBehindFacade->account;
+        if (empty($account)) {
+
+            return null;
+        }
+        $configuration = $this->instanceOfObjectBehindFacade->transactionGatewayConfiguration;
+        $accountTransactionGatewayToken = AccountTransactionGatewayToken::findDefaultOrLast($configuration, $account);
+
+        if (empty($accountTransactionGatewayToken)) {
+
+            return null;
+        }
+
+        return $accountTransactionGatewayToken->token;
+    }
+
+    /**
+     * @param string|null $key
+     * @return array|mixed
+     */
+    public function getGatewayConfiguration($key = null)
+    {
+        $configuration = $this->instanceOfObjectBehindFacade->transactionGatewayConfiguration->configuration ?: [];
+
+        return Arr::get($configuration, $key);
+    }
+
 }

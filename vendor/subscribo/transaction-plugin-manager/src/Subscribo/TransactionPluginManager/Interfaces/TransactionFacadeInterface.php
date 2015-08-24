@@ -46,4 +46,21 @@ interface TransactionFacadeInterface
      * @return bool;
      */
     public function isChargeTransaction();
+
+    /**
+     * @param string $registrationToken
+     * @return bool
+     */
+    public function rememberRegistrationToken($registrationToken);
+
+    /**
+     * @return string|null
+     */
+    public function retrieveRegistrationToken();
+
+    /**
+     * @param string|null $key
+     * @return array|mixed
+     */
+    public function getGatewayConfiguration($key = null);
 }

@@ -12,7 +12,6 @@ use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Subscribo\Omnipay\Shared\CreditCard;
 use Subscribo\Omnipay\Shared\ItemBag as ShoppingCart;
 use Subscribo\Omnipay\Shared\Item as ShoppingCartItem;
-use Subscribo\ModelCore\Models\AccountTransactionGatewayToken;
 
 /**
  * Class Utils - various static methods
@@ -21,22 +20,6 @@ use Subscribo\ModelCore\Models\AccountTransactionGatewayToken;
  */
 class Utils
 {
-    public static function rememberRegistrationToken($transaction, $registrationToken)
-    {
-        if (empty($registrationToken)) {
-
-            return null;
-        }
-        $account = $transaction->account;
-        if (empty($account)) {
-
-            return null;
-        }
-
-        return AccountTransactionGatewayToken::addToken($account->id, $transaction->transactionGatewayConfigurationId, $registrationToken);
-    }
-
-
     public static function assembleWidgetReturnUrl(Service $service, $hash)
     {
         $parameters = ['hash' => $hash];
