@@ -37,7 +37,7 @@ class InvoiceProcessor extends TransactionProcessorBase
         if (empty($salesOrder)) {
             throw new RuntimeException('Transaction::salesOrder is required for processing via Klarna Invoice');
         }
-        $configuration = json_decode($transaction->transactionGatewayConfiguration->configuration, true);
+        $configuration = $transaction->getGatewayConfiguration();
         $initializeData = $configuration['initialize'];
         $authorizeData = empty($configuration['authorize']) ? [] : $configuration['authorize'];
         /** @var \Omnipay\Klarna\InvoiceGateway $gateway */
