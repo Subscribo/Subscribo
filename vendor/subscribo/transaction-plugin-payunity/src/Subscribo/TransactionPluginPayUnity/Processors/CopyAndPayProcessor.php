@@ -22,6 +22,12 @@ class CopyAndPayProcessor extends TransactionProcessorBase
 {
     const OMNIPAY_GATEWAY_NAME = 'PayUnity\\COPYandPAY';
 
+    /**
+     * @return TransactionProcessingResultBase|TransactionProcessingResultInterface
+     * @throws \RuntimeException
+     * @throws \Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException
+     * @throws \Subscribo\Exception\Exceptions\ServerErrorHttpException
+     */
     public function process()
     {
         $transaction = $this->transaction->getTransactionModelInstance();
@@ -43,11 +49,15 @@ class CopyAndPayProcessor extends TransactionProcessorBase
         }
     }
 
+    /**
+     * @throws \Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException
+     * @throws \Subscribo\Exception\Exceptions\ServerErrorHttpException
+     */
     protected function processPlannedTransaction()
     {
         $transaction = $this->transaction;
         $interruption = $this->driver->getPluginResourceManager()->prepareInterruptionFacade($this);
-        $configuration = json_decode($transaction->transactionGatewayConfiguration->configuration, true);
+        $configuration = $transaction->getGatewayConfiguration();
         $initializeData = $configuration['initialize'];
         $purchaseData = $configuration['purchase'];
         /** @var \Omnipay\PayUnity\COPYandPAYGateway $gateway */
@@ -84,6 +94,10 @@ class CopyAndPayProcessor extends TransactionProcessorBase
         return $this->driver->getPluginResourceManager()->interruptByWidget($widget, $this, $interruption);
     }
 
+    /**
+     * @return TransactionProcessingResultBase
+     * @throws \Subscribo\Exception\Exceptions\ServerErrorHttpException
+     */
     protected function processPreparedTransaction()
     {
         $transaction = $this->transaction;
@@ -99,11 +113,9 @@ class CopyAndPayProcessor extends TransactionProcessorBase
 
             throw new ServerErrorHttpException(500, 'Token does not match with the one in internal system');
         }
-        $configuration = json_decode($transaction->transactionGatewayConfiguration->configuration, true);
-        $initializeData = $configuration['initialize'];
         /** @var \Omnipay\PayUnity\COPYandPAYGateway $gateway */
         $gateway = Omnipay::create(static::OMNIPAY_GATEWAY_NAME);
-        $gateway->initialize($initializeData);
+        $gateway->initialize($transaction->getGatewayConfiguration('initialize'));
         try {
             $completePurchase = $gateway->completePurchase();
             $completePurchase->setTransactionToken($transactionToken);
@@ -127,8 +139,8 @@ class CopyAndPayProcessor extends TransactionProcessorBase
             $status = TransactionProcessingResultInterface::STATUS_FAILURE;
             $message = TransactionProcessingResultBase::makeGenericMessage($status, $this->getLocalizer());
         }
-        $registrationToken = $completePurchaseResponse->getAccountRegistration();
-        $registered = Utils::rememberRegistrationToken($transaction, $registrationToken) ? true : false;
+        $cardReference = $completePurchaseResponse->getCardReference();
+        $registered = $transaction->rememberRegistrationToken($cardReference);
 
         return new TransactionProcessingResultBase($transaction, $status, $message, $registered);
     }

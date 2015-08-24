@@ -16,11 +16,18 @@ class CopyAndPayDriver extends TransactionPluginDriverBase implements Transactio
 {
     const DRIVER_IDENTIFIER = 'subscribo/pay_unity-copy_and_pay';
 
+    /**
+     * @return string
+     */
     public static function getDriverIdentifier()
     {
         return static::DRIVER_IDENTIFIER;
     }
 
+    /**
+     * @param TransactionFacadeInterface $transaction
+     * @return CopyAndPayProcessor
+     */
     public function makeProcessor(TransactionFacadeInterface $transaction)
     {
         return new CopyAndPayProcessor($this, $transaction);
