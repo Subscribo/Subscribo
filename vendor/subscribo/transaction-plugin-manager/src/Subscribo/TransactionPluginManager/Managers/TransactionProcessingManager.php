@@ -37,7 +37,8 @@ class TransactionProcessingManager
         if ( ! $transactionFacade->isChargeTransaction()) {
             throw new RuntimeException('Provided transaction is not charge');
         }
+        $transactionProcessingResult = $this->driver->makeProcessor($transactionFacade)->process();
 
-        return ['result' => $this->driver->makeProcessor($transactionFacade)->process()->export()];
+        return $this->transactionPluginManager->finalizeTransactionProcessingResult($transactionProcessingResult);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Subscribo\TransactionPluginManager\Managers;
 
+use Exception;
 use RuntimeException;
 use InvalidArgumentException;
 use Subscribo\Api1\Context;
@@ -26,9 +27,12 @@ use Subscribo\TransactionPluginManager\Interfaces\QuestionaryFacadeInterface;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionPluginDriverInterface;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionProcessorInterface;
 use Subscribo\TransactionPluginManager\Interfaces\InterruptionFacadeInterface;
+use Subscribo\TransactionPluginManager\Interfaces\TransactionProcessingResultInterface;
 use Subscribo\TransactionPluginManager\Facades\InterruptionFacade;
 use Subscribo\TransactionPluginManager\Facades\LocalizerFacade;
+use Subscribo\TransactionPluginManager\Bases\TransactionProcessingResultBase;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Subscribo\Support\Str;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -101,51 +105,51 @@ class PluginResourceManager implements PluginResourceManagerInterface
     }
 
     /**
-     * @param int|mixed|string $questionary
+     * @param array|int|mixed|string $questionary
      * @param TransactionProcessorInterface $processor
      * @param InterruptionFacadeInterface|null $interruption
-     * @return void
-     * @throws \Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException
+     * @return TransactionProcessingResultBase|TransactionProcessingResultInterface
      */
     public function interruptByQuestionary($questionary, TransactionProcessorInterface $processor, InterruptionFacadeInterface $interruption = null)
     {
         $questionaryFactory = new QuestionaryFactory($this->localizer, $this->assembleDefaultDomain($processor));
         $questionaryInstance = $questionaryFactory->make($questionary);
         $this->generateActionInterruption($processor, $questionaryInstance, $interruption);
+        $exception = new QuestionaryServerRequestHttpException($questionaryInstance);
 
-        throw new QuestionaryServerRequestHttpException($questionaryInstance);
+        return TransactionProcessingResultBase::makeInterruptionResult($processor->getTransactionFacade(), $exception);
     }
 
     /**
      * @param \Subscribo\Omnipay\Shared\Interfaces\WidgetInterface|string|mixed $widget
      * @param TransactionProcessorInterface $processor
      * @param InterruptionFacadeInterface|null $interruption
-     * @return void
-     * @throws \Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException
+     * @return TransactionProcessingResultBase|TransactionProcessingResultInterface
      */
     public function interruptByWidget($widget, TransactionProcessorInterface $processor, InterruptionFacadeInterface $interruption = null)
     {
         $widgetFactory = new WidgetFactory($this->assembleDefaultDomain($processor));
         $widgetInstance = $widgetFactory->make($widget);
         $this->generateActionInterruption($processor, $widgetInstance, $interruption);
+        $exception = new WidgetServerRequestHttpException($widgetInstance);
 
-        throw new WidgetServerRequestHttpException($widgetInstance);
+        return TransactionProcessingResultBase::makeInterruptionResult($processor->getTransactionFacade(), $exception);
     }
 
     /**
      * @param mixed|string $redirection
      * @param TransactionProcessorInterface $processor
      * @param InterruptionFacadeInterface|null $interruption
-     * @return void
-     * @throws \Subscribo\RestCommon\Exceptions\ClientRedirectionServerRequestHttpException
+     * @return TransactionProcessingResultBase|TransactionProcessingResultInterface
      */
     public function interruptByClientRedirection($redirection, TransactionProcessorInterface $processor, InterruptionFacadeInterface $interruption = null)
     {
         $clientRedirectionFactory = new ClientRedirectionFactory($this->assembleDefaultDomain($processor));
         $clientRedirectionInstance = $clientRedirectionFactory->make($redirection);
         $this->generateActionInterruption($processor, $clientRedirectionInstance, $interruption);
+        $exception = new ClientRedirectionServerRequestHttpException($clientRedirectionInstance);
 
-        throw new ClientRedirectionServerRequestHttpException($clientRedirectionInstance);
+        return TransactionProcessingResultBase::makeInterruptionResult($processor->getTransactionFacade(), $exception);
     }
 
     /**
@@ -157,6 +161,39 @@ class PluginResourceManager implements PluginResourceManagerInterface
         $actionInterruption = $this->generateActionInterruption($processor);
 
         return new InterruptionFacade($actionInterruption);
+    }
+
+    /**
+     * @param TransactionProcessingResultInterface $processingResult
+     * @return array
+     * @throws \Exception
+     * @throws \Subscribo\RestCommon\Exceptions\ServerRequestHttpException
+     * @throws \Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException
+     * @throws \Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException
+     * @throws \Subscribo\RestCommon\Exceptions\ClientRedirectionServerRequestHttpException
+     */
+    public function finalizeTransactionProcessingResult(TransactionProcessingResultInterface $processingResult)
+    {
+        $status = $processingResult->getStatus();
+        switch ($status) {
+            case TransactionProcessingResultInterface::STATUS_INTERRUPTION:
+                $result = $processingResult->getException();
+                break;
+            case TransactionProcessingResultInterface::STATUS_ERROR:
+                $result = $this->makeResultFromError($processingResult);
+                break;
+            case TransactionProcessingResultInterface::STATUS_SUCCESS:
+            case TransactionProcessingResultInterface::STATUS_WAITING:
+            case TransactionProcessingResultInterface::STATUS_FAILURE:
+            default:
+                $result = $processingResult->export();
+        }
+        if ($result instanceof Exception) {
+
+            throw $result;
+        }
+
+        return ['result' => $result];
     }
 
     /**
@@ -208,7 +245,7 @@ class PluginResourceManager implements PluginResourceManagerInterface
         $transaction->processingData = $processingData;
         $transaction->save();
 
-        return ['result' => $driver->makeProcessor($transactionFacade)->process()->export()];
+        return $this->finalizeTransactionProcessingResult($driver->makeProcessor($transactionFacade)->process());
     }
 
     /**
@@ -313,5 +350,75 @@ class PluginResourceManager implements PluginResourceManagerInterface
         $factory->syncActionInterruptionWithServerRequest($actionInterruption, $serverRequest, true);
 
         return $actionInterruption;
+    }
+
+    /**
+     * @param TransactionProcessingResultInterface $processingResult
+     * @return array
+     */
+    protected static function makeResultFromError(TransactionProcessingResultInterface $processingResult)
+    {
+        $result = $processingResult->export();
+        if (TransactionProcessingResultInterface::ERROR_INPUT !== $processingResult->getReason()) {
+
+            return $result;
+        }
+        $validationErrors = [];
+        foreach ($processingResult->getInvalidInputFields() as $cardFieldName => $message) {
+            $key = static::mapCardFieldNameToFormFieldName($cardFieldName);
+            $validationErrors[$key] = (true === $message) ? $processingResult->getMessage() : $message;
+        }
+        if (static::takeOnlyAddressFormFields(array_keys($validationErrors))) {
+            $validationErrors['address'] = $processingResult->getMessage();
+        }
+        if ($validationErrors) {
+            $result['validationErrors'] = $validationErrors;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $fieldNames
+     * @return array
+     */
+    protected static function takeOnlyAddressFormFields(array $fieldNames)
+    {
+        $addressFields = ['address', 'gender', 'first_name', 'last_name', 'street', 'post_code', 'city', 'country',
+                          'phone', 'mobile', 'delivery_information'];
+
+        return array_intersect($addressFields, $fieldNames);
+    }
+
+    /**
+     * @param string $cardFieldName
+     * @return string
+     */
+    protected static function mapCardFieldNameToFormFieldName($cardFieldName)
+    {
+        $key = strval($cardFieldName);
+        switch ($key) {
+            case 'socialSecurityNumber':
+            case 'nationalIdentificationNumber':
+                $mapped = 'nationalIdentificationNumber';
+                break;
+            case 'address1':
+            case 'address2':
+                $mapped = 'street';
+                break;
+            case 'postcode':
+                $mapped = 'postCode';
+                break;
+            case 'title':
+                $mapped = 'prefix';
+                break;
+            case 'company':
+                $mapped = 'companyName';
+                break;
+            default:
+                $mapped = strval($key);
+        }
+
+        return Str::snake($mapped);
     }
 }

@@ -5,6 +5,7 @@ namespace Subscribo\TransactionPluginManager\Interfaces;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionPluginDriverInterface;
 use Subscribo\TransactionPluginManager\Interfaces\LocalizerFacadeInterface;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionProcessorInterface;
+use Subscribo\TransactionPluginManager\Interfaces\TransactionProcessingResultInterface;
 use Subscribo\TransactionPluginManager\Interfaces\InterruptionFacadeInterface;
 use Psr\Log\LoggerInterface;
 
@@ -37,8 +38,7 @@ interface PluginResourceManagerInterface
      * @param int|string|array|mixed $questionary
      * @param TransactionProcessorInterface $processor
      * @param InterruptionFacadeInterface|null $interruption
-     * @return mixed|void
-     * @throws \Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException
+     * @return TransactionProcessingResultInterface
      */
     public function interruptByQuestionary(
         $questionary,
@@ -50,8 +50,7 @@ interface PluginResourceManagerInterface
      * @param string|mixed $widget
      * @param TransactionProcessorInterface $processor
      * @param InterruptionFacadeInterface|null $interruption
-     * @return mixed|void
-     * @throws \Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException
+     * @return TransactionProcessingResultInterface
      */
     public function interruptByWidget(
         $widget,
@@ -63,8 +62,7 @@ interface PluginResourceManagerInterface
      * @param string|mixed $redirection
      * @param TransactionProcessorInterface $processor
      * @param InterruptionFacadeInterface|null $interruption
-     * @return mixed|void
-     * @throws \Subscribo\RestCommon\Exceptions\ClientRedirectionServerRequestHttpException
+     * @return TransactionProcessingResultInterface
      */
     public function interruptByClientRedirection(
         $redirection,
@@ -77,4 +75,17 @@ interface PluginResourceManagerInterface
      * @return InterruptionFacadeInterface
      */
     public function prepareInterruptionFacade(TransactionProcessorInterface $processor);
+
+    /**
+     * @param TransactionProcessingResultInterface $processingResult
+     * @return array
+     * @throws \Exception
+     * @throws \Subscribo\RestCommon\Exceptions\ServerRequestHttpException
+     * @throws \Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException
+     * @throws \Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException
+     * @throws \Subscribo\RestCommon\Exceptions\ClientRedirectionServerRequestHttpException
+     * @throws \Subscribo\Exception\Exceptions\ServerErrorHttpException
+     * @throws \Subscribo\Exception\Exceptions\ClientErrorHttpException
+     */
+    public function finalizeTransactionProcessingResult(TransactionProcessingResultInterface $processingResult);
 }
