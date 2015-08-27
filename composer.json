@@ -22,7 +22,8 @@
         "subscribo/schemabuilder": "@dev",
         "subscribo/apichecker": "@dev",
         "subscribo/clientchecker": "@dev",
-        "barryvdh/laravel-ide-helper": "~2.0@dev"
+        "barryvdh/laravel-ide-helper": "~2.0@dev",
+        "frozennode/administrator": "5.*"
     },
     "autoload": {
         "classmap": [

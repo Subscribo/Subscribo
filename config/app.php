@@ -137,6 +137,12 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
+        /**
+         * Administration interface service provider
+         * (conditional registration results in error, so we are listing it here)
+         */
+        '\\Frozennode\\Administrator\\AdministratorServiceProvider',
+
         /*
          * IDE Helper Service provider
          * (conditional registration results in error, so we are listing it here)
