@@ -5,12 +5,9 @@ namespace Subscribo\TransactionPluginPayUnity\Processors;
 use Exception;
 use RuntimeException;
 use Subscribo\TransactionPluginManager\Bases\TransactionProcessorBase;
-use Subscribo\TransactionPluginManager\Bases\TransactionProcessingResultBase;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionProcessingResultInterface;
 use Omnipay\Omnipay;
-use Subscribo\Exception\Exceptions\ServerErrorHttpException;
 use Subscribo\ModelCore\Models\Transaction;
-
 
 /**
  * Class PostProcessor
@@ -21,8 +18,14 @@ class PostProcessor extends TransactionProcessorBase
 {
     const OMNIPAY_GATEWAY_NAME = 'PayUnity\\Post';
 
-    public function process()
+    /**
+     * @return TransactionProcessingResultInterface
+     * @throws \RuntimeException
+     */
+    public function doProcess()
     {
+        $this->checkInitialStage();
+        $this->switchResultMoneyStart();
         $transaction = $this->transaction;
         $registrationToken = $transaction->retrieveRegistrationToken();
         if (empty($registrationToken)) {
@@ -39,26 +42,27 @@ class PostProcessor extends TransactionProcessorBase
         $purchaseRequest->setTransactionId($transaction->hash);
         try {
             $transaction->changeStage(Transaction::STAGE_CHARGE_REQUESTED);
+            $this->switchResultMoneyTransferred(false);
             $purchaseResponse = $purchaseRequest->send();
         } catch (Exception $e) {
             $transaction->changeStage(Transaction::STAGE_CHARGE_REQUESTED, Transaction::STATUS_CONNECTION_ERROR);
-            $this->driver->getPluginResourceManager()->getLogger()->debug($e);
-            throw new ServerErrorHttpException(502, 'Error when communicating with API');
+            $this->getLogger()->error($e);
+
+            return $this->result->error(TransactionProcessingResultInterface::ERROR_CONNECTION);
         }
         $transaction->reference = $purchaseResponse->getTransactionReference();
         $transaction->message = $purchaseResponse->getMessage();
         $transaction->code = $purchaseResponse->getCode();
-        $message = null;
         if ($purchaseResponse->isSuccessful()) {
+            $this->switchResultMoneyTransferred(true);
             $status = TransactionProcessingResultInterface::STATUS_SUCCESS;
             $transaction->changeStage(Transaction::STAGE_FINISHED, Transaction::STATUS_ACCEPTED, ['receive', 'finalize']);
         } else {
+            $this->switchResultMoneyStart();
             $status = TransactionProcessingResultInterface::STATUS_FAILURE;
-            $message = TransactionProcessingResultBase::makeGenericMessage($status, $this->getLocalizer());
             $transaction->changeStage(Transaction::STAGE_FAILED, Transaction::STATUS_FAILED, ['receive']);
         }
 
-        return new TransactionProcessingResultBase($transaction, $status, $message);
+        return $this->result->setStatus($status);
     }
-
 }

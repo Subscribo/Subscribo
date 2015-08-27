@@ -28,7 +28,7 @@ class CopyAndPayProcessor extends TransactionProcessorBase
      * @throws \Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException
      * @throws \Subscribo\Exception\Exceptions\ServerErrorHttpException
      */
-    public function process()
+    protected function doProcess()
     {
         $transaction = $this->transaction->getTransactionModelInstance();
         if ($transaction->isAutomatic()) {
@@ -55,6 +55,7 @@ class CopyAndPayProcessor extends TransactionProcessorBase
      */
     protected function processPlannedTransaction()
     {
+        $this->switchResultMoneyStart();
         $transaction = $this->transaction;
         $interruption = $this->driver->getPluginResourceManager()->prepareInterruptionFacade($this);
         $configuration = $transaction->getGatewayConfiguration();
@@ -79,13 +80,15 @@ class CopyAndPayProcessor extends TransactionProcessorBase
             $purchaseResponse = $purchase->send();
         } catch (Exception $e) {
             $transaction->changeStage(Transaction::STAGE_PREPARATION_REQUESTED, Transaction::STATUS_CONNECTION_ERROR);
+            $this->getLogger()->error($e);
 
-            throw new ServerErrorHttpException(502, 'Error when trying to contact API', [], 0, $e);
+            return $this->result->error(TransactionProcessingResultInterface::ERROR_CONNECTION);
         }
         if ( ! $purchaseResponse->isTransactionToken()) {
             $transaction->changeStage(Transaction::STAGE_PREPARATION_RESPONSE_RECEIVED, Transaction::STATUS_RESPONSE_ERROR, null, 'No token');
+            $this->getLogger()->error('No transaction token found in API response');
 
-            throw new ServerErrorHttpException(502, 'Wrong response from API contacted');
+            return $this->result->error(TransactionProcessingResultInterface::ERROR_RESPONSE);
         }
         $transaction->setDataToRemember($purchaseResponse->getTransactionToken(), 'transactionToken');
         $transaction->changeStage(Transaction::STAGE_PREPARED, Transaction::STATUS_WIDGET_PROVIDED, ['receive']);
@@ -100,18 +103,21 @@ class CopyAndPayProcessor extends TransactionProcessorBase
      */
     protected function processPreparedTransaction()
     {
+        $this->switchResultMoneyTransferred(false);
         $transaction = $this->transaction;
         $transactionToken =  $transaction->getDataToRemember('transactionToken');
         $answer = $transaction->getAnswerFromWidget();
         if (empty($answer['request']['query']['token'])) {
             $transaction->changeStage(Transaction::STAGE_CHARGE_RESPONSE_RECEIVED, Transaction::STATUS_RESPONSE_ERROR);
+            $this->getLogger()->error('No transaction token found in query');
 
-            throw new ServerErrorHttpException(502, 'Wrong response from API contacted');
+            return $this->result->error(TransactionProcessingResultInterface::ERROR_RESPONSE);
         }
         if (strval($transactionToken) !== strval($answer['request']['query']['token'])) {
             $transaction->changeStage(Transaction::STAGE_CHARGE_RESPONSE_RECEIVED, Transaction::STATUS_RESPONSE_ERROR);
+            $this->getLogger()->error('Transaction token does not match with the one in internal system');
 
-            throw new ServerErrorHttpException(500, 'Token does not match with the one in internal system');
+            return $this->result->error(TransactionProcessingResultInterface::ERROR_RESPONSE);
         }
         /** @var \Omnipay\PayUnity\COPYandPAYGateway $gateway */
         $gateway = Omnipay::create(static::OMNIPAY_GATEWAY_NAME);
@@ -123,25 +129,25 @@ class CopyAndPayProcessor extends TransactionProcessorBase
             $completePurchaseResponse = $completePurchase->send();
         } catch (Exception $e) {
             $transaction->changeStage(Transaction::STAGE_CHARGE_COMPLETING_REQUESTED, Transaction::STATUS_CONNECTION_ERROR);
+            $this->getLogger()->error($e);
 
-            throw new ServerErrorHttpException(502, 'Error when trying to contact API', [], 0, $e);
+            return $this->result->error(TransactionProcessingResultInterface::ERROR_CONNECTION);
         }
         $transaction->message = $completePurchaseResponse->getMessage();
         $transaction->code = $completePurchaseResponse->getCode();
         $transaction->reference = $completePurchaseResponse->getTransactionReference();
-        $message = null;
         if ($completePurchaseResponse->isSuccessful()) {
+            $this->switchResultMoneyTransferred(true);
             $transaction->changeStage(Transaction::STAGE_FINISHED, Transaction::STATUS_ACCEPTED, ['receive', 'finalize']);
             $status = TransactionProcessingResultInterface::STATUS_SUCCESS;
 
         } else {
             $transaction->changeStage(Transaction::STAGE_FAILED, Transaction::STATUS_FAILED, ['receive']);
             $status = TransactionProcessingResultInterface::STATUS_FAILURE;
-            $message = TransactionProcessingResultBase::makeGenericMessage($status, $this->getLocalizer());
         }
         $cardReference = $completePurchaseResponse->getCardReference();
         $registered = $transaction->rememberRegistrationToken($cardReference);
 
-        return new TransactionProcessingResultBase($transaction, $status, $message, $registered);
+        return $this->result->setStatus($status)->setIsRegistered($registered);
     }
 }
