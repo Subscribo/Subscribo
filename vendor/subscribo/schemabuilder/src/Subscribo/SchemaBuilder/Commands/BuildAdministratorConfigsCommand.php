@@ -160,6 +160,15 @@ class BuildAdministratorConfigsCommand extends BuildCommandAbstract {
                 $editFields[$objectConfiguration['key']] = $objectConfiguration['configuration'];
             }
         }
+        $rules = [];
+        $translatable = empty($options['translatable']) ? [] : $options['translatable'];
+        foreach ($options['rules'] as $key => $rule) {
+            if (in_array($key, $translatable, true)) {
+                $rules[$key] = $this->_filterOutValue($rule, 'required');
+            } else {
+                $rules[$key] = $rule;
+            }
+        }
         $result = array(
             'title' => $options['title'],
             'single' => $options['singular'],
@@ -167,7 +176,24 @@ class BuildAdministratorConfigsCommand extends BuildCommandAbstract {
             'columns' => $columns,
             'edit_fields' => $editFields,
             'filters' => $filters,
+            'rules' => $rules,
         );
+
+        return $result;
+    }
+
+    private function _filterOutValue($source, $value) {
+        if (empty($source)) {
+            return $source;
+        }
+        $data = is_array($source) ? $source : explode(':', $source);
+        $result = [];
+        foreach ($data as $dataValue) {
+            if ($dataValue != $value) {
+                $result[] = $dataValue;
+            }
+        }
+
         return $result;
     }
 
@@ -189,7 +215,8 @@ class BuildAdministratorConfigsCommand extends BuildCommandAbstract {
         if ( ! empty($field['description'])) {
             $result['description'] = $field['description'];
         }
-        if (isset($field['default'])) {
+        if (isset($field['default'])
+          and ($field['default'] or ('bool' !== $result['type']))) {
             $result['value'] = $field['default'];
         }
         return $result;
@@ -217,6 +244,9 @@ class BuildAdministratorConfigsCommand extends BuildCommandAbstract {
             //  'polymorphic_many_belongs_to_many',  'many_morphed_by_many',
             //  'has_many_through',
         ), true)) {
+            return null;
+        }
+        if ('translations' === $foreignObject['name']) {
             return null;
         }
         $tableToOptions = $this->_findOptionsByTableName($modelOptions, $foreignObject['relation']['table_to'], true);

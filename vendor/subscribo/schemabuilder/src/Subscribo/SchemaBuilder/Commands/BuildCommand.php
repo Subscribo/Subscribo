@@ -53,7 +53,7 @@ class BuildCommand extends BuildCommandAbstract {
         $this->call('build:schema', array($inputFile, $outputFile));
         $this->call('build:models', array($outputFile));
         $this->call('build:migrations', array($outputFile));
-    //    $this->call('build:administrator-configs', array($outputFile));
+        $this->call('build:administrator-configs', array($outputFile));
 /*
         $exitCode = null;
         passthru('php ~/bin/composer.phar dump-autoload -o -vvv', $exitCode);
