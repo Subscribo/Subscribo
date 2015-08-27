@@ -214,8 +214,13 @@ class WebshopController extends Controller
     protected function processPostBuyProductFinalization(array $data, array $inputForRedirect, $backUrl)
     {
         if (empty($data['result']['continue'])) {
+            $result = $data['result'];
+            $errors = empty($result['validationErrors']) ? $result['message'] : $result['validationErrors'];
+            if ( ! empty($errors['mobile'])) {
+                $errors['phone'] = $errors['mobile'];
+            }
             return [
-                'redirect' => redirect($backUrl)->withInput($inputForRedirect)->withErrors($data['result']['message']),
+                'redirect' => redirect($backUrl)->withInput($inputForRedirect)->withErrors($errors),
                 'redirectReason' => 'handlingFailedTransaction',
             ];
         }
