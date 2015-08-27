@@ -60,7 +60,7 @@ default_model_options:
         model:
             base: overwrite
             draft: skip
-        administrator: false
+        administrator: overwrite
     administrator_menu: Other
     administrator_menu_order: null
     is_pivot_table: null
@@ -69,6 +69,7 @@ default_model_options:
 default_translation_model_options:
     is_translation_model: true
     automatic_enum_constants: false
+    administrator_menu: Translations
     generate:
         model:
             draft: false
@@ -409,7 +410,7 @@ model_fields:
 
     customers:
         - id hidden
-        - email null
+        - email null representative
         - password (password) null hidden
         - person_id null hidden → persons (show_from)
         - preferred_locale_id null -> locales
