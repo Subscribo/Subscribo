@@ -19,6 +19,8 @@ use Subscribo\ModelCore\Models\Service;
 use Subscribo\ModelCore\Exceptions\ArgumentValidationException;
 use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
+use Subscribo\ApiServerCommon\Jobs\Triggered\SalesOrder\SendConfirmationEmail;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 
 /**
  * Class BusinessController
@@ -27,6 +29,8 @@ use Subscribo\Exception\Exceptions\WrongServiceHttpException;
  */
 class BusinessController extends AbstractBusinessController
 {
+    use DispatchesJobs;
+
     public function actionGetProduct($id = null)
     {
         $serviceId = $this->context->getServiceId();
@@ -122,7 +126,11 @@ class BusinessController extends AbstractBusinessController
     private function prepareOrder(Account $account, array $amountsPerPriceId, array $discountIds, Delivery $delivery, DeliveryWindow $deliveryWindow = null, $subscriptionPeriod = false, Address $shippingAddress = null, Address $billingAddress = null, $currencyId = null, $countryId = true)
     {
         try {
-            return SalesOrder::prepareSalesOrder($account, $amountsPerPriceId, $discountIds, $delivery, $deliveryWindow, $subscriptionPeriod, $shippingAddress, $billingAddress, $currencyId, $countryId, SalesOrder::TYPE_MANUAL);
+            $result = SalesOrder::prepareSalesOrder($account, $amountsPerPriceId, $discountIds, $delivery, $deliveryWindow, $subscriptionPeriod, $shippingAddress, $billingAddress, $currencyId, $countryId, SalesOrder::TYPE_MANUAL);
+            $job = new SendConfirmationEmail($result['salesOrder']);
+            $this->dispatch($job);
+
+            return $result;
         } catch (ArgumentValidationException $e) {
             throw $this->makeInvalidPriceException($e);
         }
