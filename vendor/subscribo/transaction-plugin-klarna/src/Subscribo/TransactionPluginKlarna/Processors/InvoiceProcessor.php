@@ -142,11 +142,13 @@ class InvoiceProcessor extends TransactionProcessorBase
         $transactionReference = $captureResponse->getTransactionReference(); //Invoice Number
         if ($transactionReference) {
             $this->switchResultMoneyTransferred(true);
+            $transaction->method = Transaction::METHOD_INVOICE;
             $transaction->reference = $transactionReference;
             $transaction->changeStage(Transaction::STAGE_FINISHED, Transaction::STATUS_ACCEPTED, ['receive', 'finalize']);
 
             return $this->result->setStatus(ResultInterface::STATUS_SUCCESS);
         }
+        $this->switchResultMoneyStart();
 
         return $this->handleError($captureResponse, $gateway->getCountry());
     }
