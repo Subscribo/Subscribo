@@ -33,6 +33,8 @@ use Subscribo\TransactionPluginManager\Facades\LocalizerFacade;
 use Subscribo\TransactionPluginManager\Bases\TransactionProcessingResultBase;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Subscribo\Support\Str;
+use Subscribo\ApiServerCommon\Jobs\Triggered\Transaction\SendConfirmationEmail;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -42,6 +44,8 @@ use Psr\Log\LoggerInterface;
  */
 class PluginResourceManager implements PluginResourceManagerInterface
 {
+    use DispatchesJobs;
+
     /** @var TransactionDriverManagerInterface  */
     protected $driverManager;
 
@@ -174,6 +178,7 @@ class PluginResourceManager implements PluginResourceManagerInterface
      */
     public function finalizeTransactionProcessingResult(TransactionProcessingResultInterface $processingResult)
     {
+        static::addResultToTransaction($processingResult);
         $status = $processingResult->getStatus();
         switch ($status) {
             case TransactionProcessingResultInterface::STATUS_INTERRUPTION:
@@ -191,6 +196,11 @@ class PluginResourceManager implements PluginResourceManagerInterface
         if ($result instanceof Exception) {
 
             throw $result;
+        }
+        $transaction = $processingResult->getTransactionFacadeObject()->getTransactionModelInstance();
+        if ($transaction->confirmationMessage) {
+            $job = new SendConfirmationEmail($transaction);
+            $this->dispatch($job);
         }
 
         return ['result' => $result];
@@ -246,6 +256,42 @@ class PluginResourceManager implements PluginResourceManagerInterface
         $transaction->save();
 
         return $this->finalizeTransactionProcessingResult($driver->makeProcessor($transactionFacade)->process());
+    }
+
+    /**
+     * @param TransactionProcessingResultInterface $processingResult
+     */
+    protected static function addResultToTransaction(TransactionProcessingResultInterface $processingResult)
+    {
+        $transaction = $processingResult->getTransactionFacadeObject()->getTransactionModelInstance();
+        $status = $processingResult->getStatus();
+        switch ($status) {
+            case TransactionProcessingResultInterface::STATUS_SUCCESS:
+                $transaction->result = Transaction::RESULT_SUCCESS;
+                break;
+            case TransactionProcessingResultInterface::STATUS_WAITING:
+                $transaction->result = Transaction::RESULT_WAITING;
+                break;
+            case TransactionProcessingResultInterface::STATUS_ERROR:
+                if (static::noPartOfTransactionHaveBeenProcessed($processingResult)) {
+                    $transaction->result = Transaction::RESULT_ERROR;
+                } else {
+                    $transaction->result = Transaction::RESULT_UNDETERMINED;
+                }
+                break;
+            case TransactionProcessingResultInterface::STATUS_FAILURE:
+                if (static::noPartOfTransactionHaveBeenProcessed($processingResult)) {
+                    $transaction->result = Transaction::RESULT_FAILURE;
+                } else {
+                    $transaction->result = Transaction::RESULT_UNDETERMINED;
+                }
+                break;
+            case TransactionProcessingResultInterface::STATUS_INTERRUPTION:
+            default:
+                return;
+
+        }
+        $transaction->save();
     }
 
     /**
@@ -420,5 +466,15 @@ class PluginResourceManager implements PluginResourceManagerInterface
         }
 
         return Str::snake($mapped);
+    }
+
+    /**
+     * @param TransactionProcessingResultInterface $processingResult
+     * @return bool
+     */
+    private static function noPartOfTransactionHaveBeenProcessed(TransactionProcessingResultInterface $processingResult)
+    {
+        return ((TransactionProcessingResultInterface::NO === $processingResult->moneyAreTransferred())
+            and (TransactionProcessingResultInterface::NO === $processingResult->moneyAreReserved()));
     }
 }

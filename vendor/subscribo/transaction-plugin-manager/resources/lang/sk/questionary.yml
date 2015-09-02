@@ -1,0 +1,32 @@
+# Slovak language resource file for QuestionaryFactory and QuestionFactory
+questionary:
+    generic:
+        title: Je potreba dodatočných informácií.
+    multiple:
+        title: Prosím, zadajte nasledujúce informácie.
+    date:
+        title: Prosím, zadajten informácie týkajúce sa dátumu.
+    birthDate:
+        title: Prosím, zadajte svoj dátum narodenia.
+    nationalIdentificationNumber:
+        title: Prosím, zadajte svoje rodné číslo.
+    gender:
+        title: Prosím, zadajte svoje pohlavie.
+questionGroup:
+    date:
+        title: Dátum:
+    birthDate:
+        title: Dátum narodenia:
+questions:
+    nationalIdentificationNumber:
+        number.text: Rodné číslo:
+    date:
+        day.text: Deň:
+        month.text: Mesiac:
+        year.text: Rok:
+    birthDate:
+        date.text: Dátum narodenia:
+    gender.gender:
+        text: Pohlavie:
+        man: Muž
+        woman: Žena

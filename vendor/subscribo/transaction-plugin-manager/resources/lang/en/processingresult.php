@@ -27,7 +27,7 @@ return [
                 ProcessingResult::FAILURE_UNSPECIFIED =>  'Transaction processing failed',
                 ProcessingResult::FAILURE_DENIED => 'Please try other payment method',
                 ProcessingResult::FAILURE_INSUFFICIENT_FUNDS => 'Your card / account does not have sufficient funds for this transaction',
-                ProcessingResult::FAILURE_LIMIT_EXCEEDED => 'Your card / account does not have sufficient funds for this transaction',
+                ProcessingResult::FAILURE_LIMIT_EXCEEDED => 'Your card / account does not have sufficient limit for this transaction',
                 ProcessingResult::FAILURE_CARD_BLOCKED => 'Your card is blocked',
                 ProcessingResult::FAILURE_CARD_EXPIRED => 'Your card is expired',
                 ProcessingResult::FAILURE_CARD_NOT_ACTIVATED => 'Your card is not activated for payments on internet',
