@@ -142,6 +142,7 @@ class CopyAndPayProcessor extends TransactionProcessorBase
             $status = TransactionProcessingResultInterface::STATUS_SUCCESS;
 
         } else {
+            $this->switchResultMoneyStart();
             $transaction->changeStage(Transaction::STAGE_FAILED, Transaction::STATUS_FAILED, ['receive']);
             $status = TransactionProcessingResultInterface::STATUS_FAILURE;
         }
