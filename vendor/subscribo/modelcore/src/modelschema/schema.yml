@@ -273,6 +273,9 @@ model_options:
     currencies: #    (possibly a “virtual” table)
        administrator_menu: Billing
 
+    messages:
+        administrator_menu: General
+
     pictures:
         administrator_menu: Media
         relations:
@@ -654,6 +657,7 @@ model_fields:
     - subscription_id null → subscriptions #(null for manual)
     - shipping_address_id null → addresses #(null if default)
     - billing_address_id null → addresses #(null if same as shipping)
+    - confirmation_message_id null -> messages
 
     realizations_in_sales_orders:
     - sales_order_id → sales_orders
@@ -691,13 +695,16 @@ model_fields:
     - reference null
     - message null
     - code null
-    - payment_method (unsigned tiny int) null // 1 - used_inner_credit / 2 - send_from_account / 3 - send_from_account_using_special_service (SOFORT) / 4 - credit_card / 5 - debit_card / 6 - direct_debit / 7 - invoice...)
+    - method (enum from other invoice credit_card debit_card voucher inner_credit direct_debit bank_transfer mediated_bank_transfer) null
     - stage (enum from planned initialized additional_data_requested additional_data_received data_collected preparation_requested preparation_response_received prepared authorization_requested authorization_response_received authorization_completing_requested authorization_completing_response_received authorized capture_requested capture_response_received captured charge_requested charge_response_received charge_completing_requested charge_completing_response_received charged waiting_for_async_resolution async_resolution_received finished cancelled failed unknown reversion_requested reversion_request_answered reverted) default word planned
-    - status (enum from no_response_yet accepted waiting own_risk client_error server_error connection_error response_error denied failed widget_provided redirected redirected_back) default word no_response_yet
+    - status (enum from no_response_yet accepted waiting_for_customer_input waiting_for_customer_confirmation waiting_for_merchant_processing waiting_for_gateway_processing own_risk client_error server_error connection_error response_error denied failed widget_provided redirected redirected_back) default word no_response_yet //status of last operation
+    - result (enum from success failure error cancelled undetermined waiting) null //final result of transaction
     - amount (currency)
     - payment_fee (currency) null
     - currency_id
+    - description null
     - payment_fee_paid_by (enum from receiver sender) null
+    - confirmation_message_id null -> messages
     - first_request_sent_on (datetime) null
     - first_response_received_on (datetime) null
     - last_request_sent_on (datetime) null
@@ -735,6 +742,16 @@ model_fields:
     - is_default (bool) default false
     - ordering (int) null
     - configuration (text)
+
+    messages:
+    - service_id null
+    - account_id null
+    - type (enum from email) default word email
+    - status (enum from planned prepared sent failed cancelled) default word planned
+    - subject null
+    - content null
+    - content_type (enum from text html) null
+    - message_data (text) null
 
     pictures:
     - comment null

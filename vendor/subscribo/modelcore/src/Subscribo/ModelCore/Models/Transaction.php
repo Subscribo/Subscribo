@@ -4,6 +4,7 @@ namespace Subscribo\ModelCore\Models;
 
 use Subscribo\ModelCore\Models\SalesOrder;
 use Subscribo\ModelCore\Models\TransactionGatewayConfiguration;
+use Subscribo\ModelCore\Models\Message;
 use Subscribo\ModelBase\Traits\HasHashTrait;
 
 /**
@@ -21,6 +22,8 @@ class Transaction extends \Subscribo\ModelCore\Bases\Transaction
     public static function generateFromSalesOrder(SalesOrder $salesOrder, TransactionGatewayConfiguration $transactionGatewayConfiguration = null, $origin = null)
     {
         $instance = static::makeFromSalesOrder($salesOrder, $transactionGatewayConfiguration, $origin);
+        $message = Message::generateEmailForAccount($salesOrder->account);
+        $instance->confirmationMessage()->associate($message);
         $instance->save();
 
         return $instance;

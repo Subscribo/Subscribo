@@ -62,6 +62,8 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
         $salesOrder->anticipatedDeliveryEnd = $anticipatedDeliveryEnd;
         $salesOrder->shippingAddress()->associate($shippingAddress);
         $salesOrder->billingAddress()->associate($billingAddress);
+        $message = Message::generateEmailForAccount($account);
+        $salesOrder->confirmationMessage()->associate($message);
         $salesOrder->save();
 
         return $salesOrder;

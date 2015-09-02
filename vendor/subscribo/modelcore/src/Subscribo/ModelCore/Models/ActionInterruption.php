@@ -8,6 +8,7 @@ use Subscribo\RestCommon\ServerRequest;
  * Model ActionInterruption
  *
  * Model class for being changed and used in the application
+ * @property array $processingData JSON encoded array - careful - can be saved only whole
  */
 class ActionInterruption extends \Subscribo\ModelCore\Bases\ActionInterruption
 {
