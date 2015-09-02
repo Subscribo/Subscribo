@@ -4,8 +4,8 @@ template.product:
 # Template resources/views/webshop/product/list.blade.php
     list:
         heading: Produktliste
-        grossPrice: 'Preis netto:'
-        netPrice: 'Preis brutto:'
+        grossPrice: 'Preis brutto:'
+        netPrice: 'Preis netto:'
         tax: 'Steuer:'
         buyLink: Kaufen
 # Template resources/views/webshop/product/buy.blade.php
