@@ -1,0 +1,54 @@
+<?php
+
+namespace Subscribo\ApiServerCommon\Jobs\Triggered\SalesOrder;
+
+use Subscribo\ApiServerCommon\Jobs\AbstractMessageHandlingJob;
+use Subscribo\ModelCore\Models\SalesOrder;
+use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Illuminate\Contracts\Mail\Mailer;
+
+/**
+ * Class SendConfirmationEmail
+ *
+ * @package Subscribo\ApiServerCommon
+ */
+class SendConfirmationEmail extends AbstractMessageHandlingJob
+{
+    /** @var \Subscribo\ModelCore\Models\SalesOrder  */
+    protected $salesOrder;
+
+    /**
+     * @param SalesOrder $salesOrder
+     */
+    public function __construct(SalesOrder $salesOrder)
+    {
+        $this->salesOrder = $salesOrder;
+    }
+
+    /**
+     * @return null|\Subscribo\ModelCore\Models\Message
+     */
+    protected function getMessageModel()
+    {
+        return $this->salesOrder->confirmationMessage;
+    }
+
+    /**
+     * @param Mailer $mailer
+     * @param LocalizerInterface $localizer
+     */
+    protected function handleEmailMessage(Mailer $mailer, LocalizerInterface $localizer)
+    {
+        $message = $this->getMessageModel();
+        $loc = $localizer->template('emails', 'apiservercommon')->setPrefix('order.manual.confirm');
+        if (empty($message->subject)) {
+            $message->subject = $loc->transOrDefault('subject');
+        }
+        $templatePath = $loc->transOrDefault('templatePath');
+        $viewData = [
+            'person' => $this->salesOrder->account->customer->person,
+            'salesOrder' => $this->salesOrder,
+        ];
+        $this->sendEmail($mailer, $message, $templatePath, $viewData);
+    }
+}

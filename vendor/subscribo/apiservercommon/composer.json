@@ -1,0 +1,29 @@
+{
+    "name": "subscribo/apiservercommon",
+    "description": "API Server functionality not specific to a particular version of API",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "api",
+        "server",
+        "common",
+        "shared",
+        "jobs"
+    ],
+    "license": "proprietary",
+    "homepage": "http://www.subscribo.io",
+    "require": {
+        "php": "~5.4",
+        "illuminate/contracts": "~5.1",
+        "illuminate/bus": "~5.1",
+        "illuminate/queue": "~5.1",
+        "subscribo/modelcore": "@dev",
+        "subscribo/localization": "@dev",
+        "subscribo/support": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\ApiServerCommon\\": "src/Subscribo/ApiServerCommon/"
+        }
+    }
+}

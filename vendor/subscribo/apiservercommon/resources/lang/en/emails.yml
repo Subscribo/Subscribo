@@ -1,0 +1,44 @@
+# English translations resource file
+# view paths for translated templates and parts of messages
+order.manual.confirm:
+    templatePath: subscribo::apiservercommon.emails.en.order.manual.confirm
+    subject: Order confimation email
+generic:
+    heading: Dear %salutation%
+    ending: Kind regards
+transaction.atomic.manual.content:
+    success: Thank you for your money transfer.
+    failure: Your transaction has not been processed. Please try other payment method.
+    error: There was an error during processing of your transaction. Please try other payment method.
+    cancelled: Your transaction has been cancelled on your request.
+    undetermined: Your transaction is in undetermined state. Please contact our support.
+    waiting:
+        customerInput: Please provide additional data needed.
+        customerConfirmation: Please confirm the transaction. (You might need to check your email box.)
+transaction.invoice.manual.content:
+    success: Thank you for your order. You should receive an invoice from our partner.
+    failure: Your request has not been processed. Please try other payment method.
+    error: There was an error during processing of your request. Please try other payment method.
+    cancelled: Your request has been cancelled on your request.
+    undetermined: Your request is in undetermined state. Please contact our support.
+    waiting:
+        customerInput: Please provide additional data needed.
+        customerConfirmation: Please confirm the request. (You might need to check your email box.)
+transaction.atomic.manual.subject:
+    success: Confirmation
+    failure: Transaction failed
+    error: Transaction error
+    cancelled: Transaction cancelled
+    undetermined: Transaction error
+    waiting:
+        customerInput: Waiting
+        customerConfirmation: Waiting
+transaction.invoice.manual.subject:
+    success: Confirmation
+    failure: Request failed
+    error: Request error
+    cancelled: Request cancelled
+    undetermined: Request error
+    waiting:
+            customerInput: Waiting
+            customerConfirmation: Waiting
