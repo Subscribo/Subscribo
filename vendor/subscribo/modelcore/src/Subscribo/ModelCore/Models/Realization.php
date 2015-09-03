@@ -5,7 +5,6 @@ namespace Subscribo\ModelCore\Models;
 use Subscribo\ModelCore\Models\Product;
 use Subscribo\ModelCore\Models\Delivery;
 
-
 /**
  * Model Realization
  *
@@ -42,16 +41,53 @@ class Realization extends \Subscribo\ModelCore\Bases\Realization
         return null;
     }
 
-    public static function generate(Product $product, $deliveryId = null, $identifier = true, $names = true, $descriptions = true)
+    /**
+     * @param Product[] $products
+     * @param Delivery[] $deliveries
+     * @return Realization[]
+     */
+    public static function supplyRealizations($products, $deliveries)
     {
-        $instance = static::make($product, $deliveryId, $identifier);
+        $supplied = [];
+        foreach ($products as $product) {
+            $serviceId = $product->serviceId;
+            foreach ($deliveries as $delivery) {
+                $found = static::findByAttributes($serviceId, $product->id, $delivery->id, false);
+                if ($found) {
+                    continue;
+                }
+                $realization = static::generate($product, $delivery);
+                $supplied[] = $realization;
+            }
+        }
+        return $supplied;
+    }
+
+    /**
+     * @param Product $product
+     * @param Delivery|int|null $delivery
+     * @param string|bool $identifier
+     * @param bool $names
+     * @param bool $descriptions
+     * @return Realization
+     */
+    public static function generate(Product $product, $delivery = null, $identifier = true, $names = true, $descriptions = true)
+    {
+        $instance = static::make($product, $delivery, $identifier);
         $instance->save();
 
         return $instance;
     }
 
-    public static function make(Product $product, $deliveryId = null, $identifier = true)
+    /**
+     * @param Product $product
+     * @param null $delivery
+     * @param string|bool $identifier
+     * @return Realization
+     */
+    public static function make(Product $product, $delivery = null, $identifier = true)
     {
+        $deliveryId = ($delivery instanceof Delivery) ? $delivery->id : $delivery;
         $instance = static::firstOrNew([
             'product_id' => $product->id,
             'delivery_id' => $deliveryId,
@@ -60,11 +96,11 @@ class Realization extends \Subscribo\ModelCore\Bases\Realization
             $identifier = 'REALIZATION_'.($deliveryId ?: 'FOR').'_'.$product->identifier;
             $instance->comment = 'Identifier generated automatically';
         }
+        $instance->product()->associate($product);
+        $instance->delivery()->associate($delivery);
         $instance->identifier = $identifier;
         $instance->serviceId = $product->serviceId;
 
         return $instance;
     }
-
-
 }

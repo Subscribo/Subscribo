@@ -342,6 +342,10 @@ model_fields:
         - default_locale_id → locales (hide to)
         - default_country_id → countries (hide to)
         - remember_locale (int) default 10080
+        - delivery_period null default words 1 week //string understandable by DateInterval - createFromDateString()
+        - delivery_auto_add_limit null //string understandable by DateTime
+        - delivery_auto_available_start null default word today //string understandable by DateTime
+        - delivery_auto_available_end null //string understandable by DateTime
         - operator_id default 1 → operators (type none) //operators table does not exist in current version of the schema, so the relation type is no_relation
 
     service_pools: # auxiliary table, allowing grouping of services, allowing user to use same user for different services
