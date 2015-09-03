@@ -3,6 +3,8 @@
 namespace Subscribo\ApiServerCommon\Managers;
 
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Subscribo\ApiServerCommon\Jobs\Regular\HourlyMaintenance;
 
 /**
  * Class ScheduleManager
@@ -11,6 +13,8 @@ use Illuminate\Console\Scheduling\Schedule;
  */
 class ScheduleManager
 {
+    use DispatchesJobs;
+
     /** @var Schedule|null  */
     protected $schedule;
 
@@ -48,7 +52,7 @@ class ScheduleManager
         }
         while ($this->registeredCallbacks) {
             $callback = array_shift($this->registeredCallbacks);
-            call_user_func($callback, $schedule);
+            call_user_func($callback, $schedule, $this);
             $this->scheduledCallbacks[] = $callback;
         }
     }
@@ -59,7 +63,7 @@ class ScheduleManager
     public function addCallback(callable $callback)
     {
         if ($this->schedule) {
-            call_user_func($callback, $this->schedule);
+            call_user_func($callback, $this->schedule, $this);
             $this->scheduledCallbacks[] = $callback;
         } else {
             $this->registeredCallbacks[] = $callback;
@@ -71,9 +75,11 @@ class ScheduleManager
      */
     protected function scheduleHardcoded(Schedule $schedule)
     {
+        $manager = $this;
         $schedule->call(
-            function() {
-                //something to do regularly
+            function() use ($manager) {
+                $job  = new HourlyMaintenance();
+                $manager->dispatch($job);
             }
         )->hourly();
     }
