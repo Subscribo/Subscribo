@@ -30,6 +30,10 @@ class ServiceSeeder extends Seeder {
         $frontendService = Service::firstOrNew(['identifier' => 'FRONTEND']);
         $frontendService->url = 'http://frontend.sio.kochabo.at';
         $frontendService->name = 'Frontend';
+        $frontendService->deliveryPeriod = '1 week';
+        $frontendService->deliveryAutoAddLimit = '2 months';
+        $frontendService->deliveryAutoAvailableStart = 'today';
+        $frontendService->deliveryAutoAvailableEnd = '1 month';
         $frontendService->defaultLocale()->associate($frontendGerman);
         $frontendService->addCountries([$austria, $germany, $slovakia, $czechRepublic], [$euro, $dollar]);
         $frontendService->addCountries($unitedKingdom, [$pound, $euro]);
@@ -71,6 +75,8 @@ class ServiceSeeder extends Seeder {
         $test2Service = Service::firstOrNew(['identifier' => 'MAIN']);
         $test2Service->url = 'http://subscribo.localhost';
         $test2Service->name = 'Main';
+        $test2Service->deliveryAutoAddLimit = '2 months';
+        $test2Service->deliveryAutoAvailableEnd = '1 month';
         $test2Service->defaultLocale()->associate($american);
         $test2Service->translateOrNew('de')->name = 'Haupt';
         $test2Service->addCountries([$austria, $germany, $slovakia, $czechRepublic], $euro);
@@ -85,6 +91,11 @@ class ServiceSeeder extends Seeder {
 
         $test3Service = Service::firstOrNew(['identifier' => 'TEST3']);
         $test3Service->name = 'Test3 in Pool3';
+        $test3Service->deliveryPeriod = '1 month';
+        $test3Service->deliveryAutoAddLimit = '5 months';
+        $test3Service->deliveryAutoAvailableStart = '2 weeks';
+        $test3Service->deliveryAutoAvailableEnd = '3 month';
+
         $test3Service->defaultLocale()->associate($american);
         $test3Service->addCountries([$austria, $germany, $slovakia], $euro);
         $test3Service->save();
