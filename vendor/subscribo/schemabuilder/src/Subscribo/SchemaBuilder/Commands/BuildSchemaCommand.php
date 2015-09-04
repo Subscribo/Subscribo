@@ -71,6 +71,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             $this->_checkConsistency($modelFields, $modelOptions);
             $modelFields = $this->_addTimestamps($modelFields, $modelOptions);
             $modelOptions = $this->_collectRules($modelFields, $modelOptions);
+            $modelOptions = $this->_addDatesFromFields($modelFields, $modelOptions);
             $pivotTables = $this->_assemblePivotTables($modelFields, $modelOptions, $relations);
 
             $data = array(
@@ -1473,6 +1474,33 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         return $result;
     }
 
+    private function _addDatesFromFields($modelFields, $modelOptions)
+    {
+        $result = $modelOptions;
+        foreach ($modelFields as $tableName => $fields) {
+            $options = Arr::get($modelOptions, $tableName, array());
+            $result[$tableName] = $this->_addDatesFromFieldsToModel($fields, $options);
+        }
+
+        return $result;
+    }
+
+    private function _addDatesFromFieldsToModel($fields, $options)
+    {
+        $result = $options;
+        $dates = Arr::get($options, 'dates', array());
+        foreach ($fields as $fieldName => $field) {
+            $type = Arr::get($field, 'type');
+            if ('datetime' === $type) {
+                $dates[] = $fieldName;
+            }
+        }
+        $result['dates'] = array_unique($dates);
+
+        return $result;
+    }
+
+
     /**
      * Do some heuristics, whether field should be fillable via mass assignement
      * @param array $field
@@ -2153,8 +2181,11 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         {
             $tableName = $options['table_name'];
             $fields = Arr::get($modelFields, $modelKey, array());
-            $timestamps = Arr::get($options, 'timestamps');
-            if (is_array($timestamps))
+            $timestamps = Arr::get($options, 'timestamps', []);
+            if ( ! empty($options['soft_delete'])) {
+                $timestamps = $timestamps + Arr::get($options, 'soft_delete_timestamps', []);
+            }
+            if ($timestamps)
             {
                 try {
                     $result[$modelKey] = $this->_addFields($fields, $timestamps, true, $tableName, $modelFields, $modelOptions);

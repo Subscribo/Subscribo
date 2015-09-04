@@ -98,6 +98,9 @@ class <?php echo $migrationName; ?> extends Migration
     if ( ! empty($options['migration_timestamps'])) {
         echo '            $table->timestamps();' . "\n";
     }
+    if ( ! empty($options['soft_delete'])) {
+        echo '            $table->softDeletes();' . "\n";
+    }
 
     foreach($fields as $field) {
         if ( ! $field['migration_setup']) {
