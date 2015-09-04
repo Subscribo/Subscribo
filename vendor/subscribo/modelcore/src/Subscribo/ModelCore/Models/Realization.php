@@ -52,6 +52,12 @@ class Realization extends \Subscribo\ModelCore\Bases\Realization
         foreach ($products as $product) {
             $serviceId = $product->serviceId;
             foreach ($deliveries as $delivery) {
+                if ($product->availableFrom and ($product->availableFrom > $delivery->start)) {
+                    continue;
+                }
+                if ($product->availableUntil and ($product->availableUntil <= $delivery->start)) {
+                    continue;
+                }
                 $found = static::findByAttributes($serviceId, $product->id, $delivery->id, false);
                 if ($found) {
                     continue;
@@ -61,6 +67,42 @@ class Realization extends \Subscribo\ModelCore\Bases\Realization
             }
         }
         return $supplied;
+    }
+
+    /**
+     * @param Product[] $products
+     * @return int
+     */
+    public static function restoreInBoundsRealizations($products)
+    {
+        $restoredCount = 0;
+        foreach ($products as $product) {
+            foreach ($product->realizations()->onlyTrashed()->get() as $realization) {
+                if ($realization->restoreIfInBounds($product)) {
+                    $restoredCount++;
+                }
+            }
+        }
+
+        return $restoredCount;
+    }
+
+    /**
+     * @param Product[] $products
+     * @return int
+     */
+    public static function softDeleteOutOfBoundsRealizations($products)
+    {
+        $softDeletedCount = 0;
+        foreach ($products as $product) {
+            foreach ($product->realizations as $realization) {
+                if ($realization->softDeleteIfOutOfBounds($product)) {
+                    $softDeletedCount++;
+                }
+            }
+        }
+
+        return $softDeletedCount;
     }
 
     /**
@@ -102,5 +144,42 @@ class Realization extends \Subscribo\ModelCore\Bases\Realization
         $instance->serviceId = $product->serviceId;
 
         return $instance;
+    }
+
+    /**
+     * @param Product|null $product
+     * @return bool|null
+     */
+    protected function softDeleteIfOutOfBounds(Product $product = null)
+    {
+        $product = $product ?: $this->product;
+        $delivery = $this->delivery;
+        if ($product->availableFrom and ($product->availableFrom > $delivery->start)) {
+
+            return $this->delete();
+        }
+        if ($product->availableUntil and ($product->availableUntil <= $delivery->start)) {
+
+            return $this->delete();
+        }
+
+        return null;
+    }
+
+    /**
+     * @param Product|null $product
+     * @return bool|null
+     */
+    protected function restoreIfInBounds(Product $product = null)
+    {
+        $product = $product ?: $this->product;
+        $delivery = $this->delivery;
+        if ((empty($product->availableFrom) or ($product->availableFrom <= $delivery->start))
+            and (empty($product->availableUntil) or ($product->availableUntil > $delivery->start))) {
+
+            return $this->restore();
+        }
+
+        return null;
     }
 }

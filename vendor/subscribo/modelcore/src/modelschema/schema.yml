@@ -34,10 +34,23 @@ default_model_options:
             administrator:
                 list: true
                 edit: false
+    soft_delete_timestamps:
+        deleted_at:
+            type: datetime
+            description: Timestamp (datetime) when model was soft deleted
+            migration_setup: false
+            required: false
+            fillable: false
+            guarded: true
+            administrator:
+                list: true
+                edit: false
     migration_timestamps: true
+    soft_delete: false
     automatic_enum_constants: true
     title: null
     description: null
+    dates: []
     comments: []
     constants: []
     rules: []
@@ -225,9 +238,10 @@ model_options:
        administrator_menu: Delivery
 
     prices:
-      administrator_menu: Delivery
-      relations:
-          many_to_many:
+        administrator_menu: Delivery
+        soft_delete: true
+        relations:
+            many_to_many:
               - countries
 
     deliveries:
@@ -241,7 +255,8 @@ model_options:
        administrator_menu: Delivery
 
     realizations:
-       administrator_menu: Delivery
+        soft_delete: true
+        administrator_menu: Delivery
 
     subscriptions:
        administrator_menu: Delivery
@@ -568,8 +583,10 @@ model_fields:
     - description translate null
     - tax_category_id -> tax_categories
     - flags (int) default 0
+    - available_from (datetime) null
+    - available_until (datetime) null
 
-    prices:
+    prices: #Prices should not be changed (if has been already used) but a new price (or better new product) should be made instead
     - service_id → services
     - product_id -> products
     - amount (currency)
