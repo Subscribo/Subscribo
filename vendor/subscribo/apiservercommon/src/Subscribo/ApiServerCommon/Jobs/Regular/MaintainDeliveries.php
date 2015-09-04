@@ -52,7 +52,17 @@ class MaintainDeliveries extends AbstractJob
         $log->notice("Maintaining Deliveries for service '".$this->service->identifier."' finished");
         $log->notice("Maintaining Product Realizations for service '".$this->service->identifier."' started");
 
-        $suppliedRealizations = Realization::supplyRealizations($this->service->products, $this->service->deliveries);
+        $products = $this->service->products;
+
+        $restoredRealizationsCount = Realization::restoreInBoundsRealizations($products);
+
+        $log->notice("Realizations restored: ".$restoredRealizationsCount);
+
+        $softDeletedRealizationsCount = Realization::softDeleteOutOfBoundsRealizations($products);
+
+        $log->notice("Realizations soft deleted: ".$softDeletedRealizationsCount);
+
+        $suppliedRealizations = Realization::supplyRealizations($products, $this->service->deliveries);
 
         foreach ($suppliedRealizations as $realization) {
                 $log->notice(
