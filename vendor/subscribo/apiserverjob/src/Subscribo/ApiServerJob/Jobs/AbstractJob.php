@@ -1,6 +1,6 @@
 <?php
 
-namespace Subscribo\ApiServerCommon\Jobs;
+namespace Subscribo\ApiServerJob\Jobs;
 
 use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,7 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 /**
  * Abstract class AbstractJob
  *
- * @package Subscribo\ApiServerCommon
+ * @package Subscribo\ApiServerJob
  */
 abstract class AbstractJob implements SelfHandling, ShouldQueue
 {

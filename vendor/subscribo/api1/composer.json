@@ -29,7 +29,7 @@
         "subscribo/support": "@dev",
         "subscribo/localization": "@dev",
         "subscribo/validationlocalization": "@dev",
-        "subscribo/apiservercommon": "@dev"
+        "subscribo/apiserverjob": "@dev"
     },
     "suggest": {
         "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",

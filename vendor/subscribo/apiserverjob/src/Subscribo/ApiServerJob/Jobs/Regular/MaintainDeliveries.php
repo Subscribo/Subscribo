@@ -1,8 +1,8 @@
 <?php
 
-namespace Subscribo\ApiServerCommon\Jobs\Regular;
+namespace Subscribo\ApiServerJob\Jobs\Regular;
 
-use Subscribo\ApiServerCommon\Jobs\AbstractJob;
+use Subscribo\ApiServerJob\Jobs\AbstractJob;
 use Subscribo\ModelCore\Models\Service;
 use Subscribo\ModelCore\Models\Delivery;
 use Subscribo\ModelCore\Models\Realization;
@@ -12,7 +12,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Class MaintainDeliveries
  *
- * @package Subscribo\ApiServerCommon
+ * @package Subscribo\ApiServerJob
  */
 class MaintainDeliveries extends AbstractJob
 {

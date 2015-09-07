@@ -19,7 +19,7 @@ use Subscribo\ModelCore\Models\Service;
 use Subscribo\ModelCore\Exceptions\ArgumentValidationException;
 use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
-use Subscribo\ApiServerCommon\Jobs\Triggered\SalesOrder\SendConfirmationEmail;
+use Subscribo\ApiServerJob\Jobs\Triggered\SalesOrder\SendConfirmationEmail;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
 /**

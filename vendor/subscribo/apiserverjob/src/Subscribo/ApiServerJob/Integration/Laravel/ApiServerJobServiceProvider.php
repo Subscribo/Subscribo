@@ -1,16 +1,16 @@
 <?php
 
-namespace Subscribo\ApiServerCommon\Integration\Laravel;
+namespace Subscribo\ApiServerJob\Integration\Laravel;
 
 use Subscribo\Support\ServiceProvider;
-use Subscribo\ApiServerCommon\Managers\ScheduleManager;
+use Subscribo\ApiServerJob\Managers\ScheduleManager;
 
 /**
- * Class ApiServerCommonServiceProvider
+ * Class ApiServerJobServiceProvider
  *
- * @package Subscribo\ApiServerCommon
+ * @package Subscribo\ApiServerJob
  */
-class ApiServerCommonServiceProvider extends ServiceProvider
+class ApiServerJobServiceProvider extends ServiceProvider
 {
     protected $toRegisterSchedule = false;
 
@@ -38,7 +38,7 @@ class ApiServerCommonServiceProvider extends ServiceProvider
 
             return;
         }
-        $this->app->singleton('subscribo.schedule.manager', 'Subscribo\\ApiServerCommon\\Managers\\ScheduleManager');
+        $this->app->singleton('subscribo.schedule.manager', 'Subscribo\\ApiServerJob\\Managers\\ScheduleManager');
         if ( ! $this->app->bound('Illuminate\\Console\\Scheduling\\Schedule')) {
             $this->app->singleton('Illuminate\\Console\\Scheduling\\Schedule');
         }

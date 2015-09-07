@@ -1,7 +1,7 @@
 # English translations resource file
 # view paths for translated templates and parts of messages
 order.manual.confirm:
-    templatePath: subscribo::apiservercommon.emails.en.order.manual.confirm
+    templatePath: subscribo::apiserverjob.emails.en.order.manual.confirm
     subject: Order confimation email
 generic:
     heading: Dear %salutation%

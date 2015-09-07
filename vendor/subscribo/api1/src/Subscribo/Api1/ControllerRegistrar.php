@@ -16,6 +16,14 @@ class ControllerRegistrar implements ControllerRegistrarInterface
 
     protected $options = [];
 
+    /**
+     * @return array
+     */
+    public static function getAcceptedVerbs()
+    {
+        return ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
+    }
+
     public function __construct(Registrar $registrar, $prefix = null, array $options = array())
     {
         $this->registrar = $registrar;
@@ -26,7 +34,11 @@ class ControllerRegistrar implements ControllerRegistrarInterface
     public function registerRoute($verb, $uri, $action)
     {
         $uri = $this->addPrefix($uri);
-        $this->registrar->match($verb, $uri, $action);
+        if (true === $verb) {
+            $this->registrar->match(static::getAcceptedVerbs(), $uri, $action);
+        } else {
+            $this->registrar->match($verb, $uri, $action);
+        }
     }
 
     public function registerDescription($uri, $description)

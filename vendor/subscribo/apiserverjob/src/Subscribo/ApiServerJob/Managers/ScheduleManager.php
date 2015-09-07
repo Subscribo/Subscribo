@@ -1,15 +1,15 @@
 <?php
 
-namespace Subscribo\ApiServerCommon\Managers;
+namespace Subscribo\ApiServerJob\Managers;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Subscribo\ApiServerCommon\Jobs\Regular\HourlyMaintenance;
+use Subscribo\ApiServerJob\Jobs\Regular\HourlyMaintenance;
 
 /**
  * Class ScheduleManager
  *
- * @package Subscribo\ApiServerCommon
+ * @package Subscribo\ApiServerJob
  */
 class ScheduleManager
 {

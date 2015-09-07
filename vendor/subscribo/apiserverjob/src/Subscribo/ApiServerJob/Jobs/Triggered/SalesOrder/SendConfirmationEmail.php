@@ -1,8 +1,8 @@
 <?php
 
-namespace Subscribo\ApiServerCommon\Jobs\Triggered\SalesOrder;
+namespace Subscribo\ApiServerJob\Jobs\Triggered\SalesOrder;
 
-use Subscribo\ApiServerCommon\Jobs\AbstractMessageHandlingJob;
+use Subscribo\ApiServerJob\Jobs\AbstractMessageHandlingJob;
 use Subscribo\ModelCore\Models\SalesOrder;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Illuminate\Contracts\Mail\Mailer;
@@ -10,7 +10,7 @@ use Illuminate\Contracts\Mail\Mailer;
 /**
  * Class SendConfirmationEmail
  *
- * @package Subscribo\ApiServerCommon
+ * @package Subscribo\ApiServerJob
  */
 class SendConfirmationEmail extends AbstractMessageHandlingJob
 {
@@ -40,7 +40,7 @@ class SendConfirmationEmail extends AbstractMessageHandlingJob
     protected function handleEmailMessage(Mailer $mailer, LocalizerInterface $localizer)
     {
         $message = $this->getMessageModel();
-        $loc = $localizer->template('emails', 'apiservercommon')->setPrefix('order.manual.confirm');
+        $loc = $localizer->template('emails', 'apiserverjob')->setPrefix('order.manual.confirm');
         if (empty($message->subject)) {
             $message->subject = $loc->transOrDefault('subject');
         }

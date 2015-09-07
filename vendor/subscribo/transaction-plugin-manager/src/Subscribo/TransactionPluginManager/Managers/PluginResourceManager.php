@@ -33,7 +33,7 @@ use Subscribo\TransactionPluginManager\Facades\LocalizerFacade;
 use Subscribo\TransactionPluginManager\Bases\TransactionProcessingResultBase;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Subscribo\Support\Str;
-use Subscribo\ApiServerCommon\Jobs\Triggered\Transaction\SendConfirmationEmail;
+use Subscribo\ApiServerJob\Jobs\Triggered\Transaction\SendConfirmationEmail;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Psr\Log\LoggerInterface;
 

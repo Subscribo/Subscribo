@@ -1,17 +1,17 @@
 <?php
 
-namespace Subscribo\ApiServerCommon\Traits;
+namespace Subscribo\ApiServerJob\Traits;
 
 use RuntimeException;
 use Subscribo\ModelCore\Models\Message;
-use Subscribo\ApiServerCommon\Utils\EmailUtils;
+use Subscribo\ApiServerJob\Utils\EmailUtils;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\View\Factory;
 
 /**
  * Trait EmailSendingTrait
  *
- * @package Subscribo\ApiServerCommon
+ * @package Subscribo\ApiServerJob
  */
 trait EmailSendingTrait
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace Subscribo\ApiServerCommon\Utils;
+namespace Subscribo\ApiServerJob\Utils;
 
 /**
  * Class EmailUtils
  *
  * Utilities to handle email and its message
  *
- * @package Subscribo\ApiServerCommon
+ * @package Subscribo\ApiServerJob
  */
 class EmailUtils
 {

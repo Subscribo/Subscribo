@@ -17,8 +17,6 @@ trait SelfRegisteringControllerTrait
 
     protected static $descriptions = [];
 
-    protected static $autoPublishVerbs = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'];
-
     protected static $controllerUriStub;
 
     /**
@@ -53,7 +51,7 @@ trait SelfRegisteringControllerTrait
             if ( ! empty(static::$descriptions[$uri])) {
                 $router->registerDescription($uri, static::$descriptions[$uri]);
             } else {
-                $generatedDescriptions = static::addGeneratedDescription($generatedDescriptions, $parsed, $uri);
+                $generatedDescriptions = static::addGeneratedDescription($generatedDescriptions, $parsed, $uri, $router);
             }
         }
         foreach ($generatedDescriptions as $uri => $description) {
@@ -78,9 +76,10 @@ trait SelfRegisteringControllerTrait
      * @param array $descriptions
      * @param array $action
      * @param string $uri
+     * @param ControllerRegistrarInterface $router
      * @return array
      */
-    protected static function addGeneratedDescription(array $descriptions, array $action, $uri)
+    protected static function addGeneratedDescription(array $descriptions, array $action, $uri, ControllerRegistrarInterface $router)
     {
         $controllerSimpleName = static::assembleControllerSimpleName();
         $name = ucfirst(Str::snake($controllerSimpleName, ' ')).' : '.ucfirst(Str::snake($action['method'], ' '));
@@ -90,7 +89,16 @@ trait SelfRegisteringControllerTrait
         if (empty($descriptions[$uri])) {
             $descriptions[$uri] = $base;
         }
-        $descriptions[$uri]['verbs'][$action['verb']] = $base;
+        if (true === $action['verb']) {
+            $verbs = $router::getAcceptedVerbs();
+            $verbs = (true === $verbs) ? ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'] : $verbs;
+            foreach ($verbs as $verb) {
+                $descriptions[$uri]['verbs'][$verb] = $base;
+            }
+        } else {
+            $descriptions[$uri]['verbs'][$action['verb']] = $base;
+        }
+
         return $descriptions;
     }
 
@@ -117,6 +125,9 @@ trait SelfRegisteringControllerTrait
         }
         $uri = implode('/', $parts);
         $params = static::analyseParams($action);
+        if ('ANY' === $verb) {
+            $verb = true;
+        }
         $result = ['method' => $action, 'verb' => $verb, 'uri' => $uri, 'params' => $params];
         return $result;
     }

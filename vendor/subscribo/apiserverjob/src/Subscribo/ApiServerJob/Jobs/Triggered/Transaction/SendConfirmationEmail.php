@@ -1,9 +1,9 @@
 <?php
 
-namespace Subscribo\ApiServerCommon\Jobs\Triggered\Transaction;
+namespace Subscribo\ApiServerJob\Jobs\Triggered\Transaction;
 
 use RuntimeException;
-use Subscribo\ApiServerCommon\Jobs\AbstractMessageHandlingJob;
+use Subscribo\ApiServerJob\Jobs\AbstractMessageHandlingJob;
 use Subscribo\ModelCore\Models\Transaction;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Illuminate\Contracts\Mail\Mailer;
@@ -11,7 +11,7 @@ use Illuminate\Contracts\Mail\Mailer;
 /**
  * Class SendConfirmationEmail
  *
- * @package Subscribo\ApiServerCommon
+ * @package Subscribo\ApiServerJob
  */
 class SendConfirmationEmail extends AbstractMessageHandlingJob
 {
@@ -61,7 +61,7 @@ class SendConfirmationEmail extends AbstractMessageHandlingJob
         }
         $person = $this->transaction->account->customer->person;
         $salutation = $person->salutation ?: $person->name;
-        $loc = $localizer->duplicate('emails', 'apiservercommon');
+        $loc = $localizer->duplicate('emails', 'apiserverjob');
         if (empty($message->subject)) {
             $message->subject = $loc->transOrDefault($idBase.'subject'.$idEnd);
         }
@@ -73,7 +73,7 @@ class SendConfirmationEmail extends AbstractMessageHandlingJob
             'content' => $content,
             'ending' => $ending,
         ];
-        $templatePath = 'subscribo::apiservercommon.emails.generic';
+        $templatePath = 'subscribo::apiserverjob.emails.generic';
         $this->sendEmail($mailer, $message, $templatePath, $viewData);
     }
 }

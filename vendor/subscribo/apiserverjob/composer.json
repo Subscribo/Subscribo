@@ -1,13 +1,14 @@
 {
-    "name": "subscribo/apiservercommon",
-    "description": "API Server functionality not specific to a particular version of API",
+    "name": "subscribo/apiserverjob",
+    "description": "Jobs and jobs related functionality for API Server",
     "keywords": [
         "laravel",
         "subscribo",
         "api",
         "server",
-        "common",
-        "shared",
+        "work",
+        "worker",
+        "scheduled",
         "jobs"
     ],
     "license": "proprietary",
@@ -23,7 +24,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Subscribo\\ApiServerCommon\\": "src/Subscribo/ApiServerCommon/"
+            "Subscribo\\ApiServerJob\\": "src/Subscribo/ApiServerJob/"
         }
     }
 }

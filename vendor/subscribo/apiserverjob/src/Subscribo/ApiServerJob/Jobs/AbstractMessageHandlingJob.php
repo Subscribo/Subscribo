@@ -1,18 +1,18 @@
 <?php
 
-namespace Subscribo\ApiServerCommon\Jobs;
+namespace Subscribo\ApiServerJob\Jobs;
 
 use RuntimeException;
-use Subscribo\ApiServerCommon\Jobs\AbstractJob;
+use Subscribo\ApiServerJob\Jobs\AbstractJob;
 use Subscribo\ModelCore\Models\Message;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Illuminate\Contracts\Mail\Mailer;
-use Subscribo\ApiServerCommon\Traits\EmailSendingTrait;
+use Subscribo\ApiServerJob\Traits\EmailSendingTrait;
 
 /**
  * Abstract class AbstractMessageHandlingJob
  *
- * @package Subscribo\ApiServerCommon
+ * @package Subscribo\ApiServerJob
  */
 abstract class AbstractMessageHandlingJob extends AbstractJob
 {

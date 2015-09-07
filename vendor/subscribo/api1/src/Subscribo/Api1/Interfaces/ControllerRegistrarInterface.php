@@ -3,9 +3,14 @@
 
 interface ControllerRegistrarInterface
 {
+    /**
+     * True for any
+     * @return array|bool
+     */
+    public static function getAcceptedVerbs();
 
     /**
-     * @param string $verb
+     * @param string|bool $verb True for any
      * @param string $uri
      * @param string|\Closure|array $action
      * @return void

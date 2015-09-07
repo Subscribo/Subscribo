@@ -30,7 +30,7 @@ class Api1ServiceProvider extends ServiceProvider
         }
         $localizationServiceProvider->registerLocaleSettingsManager(array(), null, '\\Subscribo\\Api1\\Factories\\LocaleSettingsFactory', true);
         $this->app->register('\\Subscribo\\ValidationLocalization\\Integration\\Laravel\\ValidationLocalizationServiceProvider');
-        $this->app->register('\\Subscribo\\ApiServerCommon\\Integration\\Laravel\\ApiServerCommonServiceProvider');
+        $this->app->register('\\Subscribo\\ApiServerJob\\Integration\\Laravel\\ApiServerJobServiceProvider');
     }
 
     public function boot()
