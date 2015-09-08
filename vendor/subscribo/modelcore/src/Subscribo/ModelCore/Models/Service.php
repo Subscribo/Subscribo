@@ -118,4 +118,13 @@ class Service extends \Subscribo\ModelCore\Bases\Service
         }
         return false;
     }
+
+    /**
+     * Todo: maybe make it a model field if needed
+     * @return array
+     */
+    public function getSubscriptionPeriods()
+    {
+        return ['weekly', 'biweekly'];
+    }
 }

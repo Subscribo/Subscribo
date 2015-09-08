@@ -259,10 +259,14 @@ model_options:
         administrator_menu: Delivery
 
     subscriptions:
-       administrator_menu: Delivery
+        administrator_menu: Delivery
 
-    vetos:
-       administrator_menu: Delivery
+    subscription_filters:
+        administrator_menu: Delivery
+        soft_delete: true
+
+    subscription_vetos:
+        administrator_menu: Delivery
 
     products_in_subscriptions:
        administrator_menu: Delivery
@@ -361,6 +365,8 @@ model_fields:
         - delivery_auto_add_limit null //string understandable by DateTime
         - delivery_auto_available_start null default word today //string understandable by DateTime
         - delivery_auto_available_end null //string understandable by DateTime
+        - subscription_add_sales_order_start null default word today //string understandable by DateTime
+        - subscription_add_sales_order_end null default words 3 days //string understandable by DateTime
         - operator_id default 1 → operators (type none) //operators table does not exist in current version of the schema, so the relation type is no_relation
 
     service_pools: # auxiliary table, allowing grouping of services, allowing user to use same user for different services
@@ -625,8 +631,8 @@ model_fields:
     - service_id → services
 
     delivery_windows:
-    - start (datetime)
-    - end (datetime)
+    - start (date)
+    - end (date)
     - delivery_window_type_id → delivery_window_types
     - delivery_id → deliveries
 
@@ -642,15 +648,23 @@ model_fields:
 
 
     subscriptions:
+    - service_id -> services
     - account_id → accounts
+    - shipping_address_id null → addresses #(null if default)
+    - billing_address_id null → addresses #(null if same as shipping)
+    - currency_id -> currencies
+    - country_id null -> countries
     - delivery_window_type_id null → delivery_window_types
-    - period (unsigned tiny int) default 1 //1 - weekly, 2 - every two weeks, 4 - monthly - other periods could be defined (possibility to use enum, but tiny int used for more flexibility)
-    - status (unsigned tiny int) default 1 //1 - active, 2 - cancelled
+    - status (enum from active cancelled) default word active
     - start (date)
     - end (date) null
 
+    subscription_filters:
+    - type (enum from monday tuesday wednesday thursday friday saturday sunday odd_week even_week)
+    - subscription_id -> subscriptions
 
-    vetos:
+
+    subscription_vetos:
     - start (date)
     - end (date)
     - subscription_id → subscriptions

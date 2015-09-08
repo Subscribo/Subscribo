@@ -28,6 +28,37 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
 
     const STATUS_NOT_APPLICABLE = null;
 
+    /**
+     * @param Subscription $subscription
+     * @param Delivery $delivery
+     * @return SalesOrder
+     */
+    public static function generateFromSubscriptionForDelivery(Subscription $subscription, Delivery $delivery)
+    {
+        $amountsPerPriceId = [];
+        foreach ($subscription->productsInSubscriptions as $productInSubscription) {
+            $priceId = $productInSubscription->priceId;
+            $amountsPerPriceId[$priceId] = $productInSubscription->amount;
+        }
+        $deliveryWindow = $delivery->getDeliveryWindowByType($subscription->deliveryWindowTypeId);
+        $preparedSalesOrderResult = static::prepareSalesOrder(
+            $subscription->account,
+            $amountsPerPriceId,
+            $subscription->discounts,
+            $delivery,
+            $deliveryWindow,
+            $subscription->shippingAddress,
+            $subscription->billingAddress,
+            $subscription,
+            [],
+            $subscription->currencyId,
+            $subscription->countryId,
+            static::TYPE_AUTOMATIC
+        );
+
+        return $preparedSalesOrderResult['salesOrder'];
+    }
+
     public static function generateSalesOrder(
         Account $account,
         Currency $currency,
@@ -69,29 +100,58 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
         return $salesOrder;
     }
 
-
+    /**
+     * @param Account $account
+     * @param array $amountsPerPriceId
+     * @param array|Discount $discounts
+     * @param Delivery $delivery
+     * @param DeliveryWindow $deliveryWindow
+     * @param Address $shippingAddress
+     * @param Address $billingAddress
+     * @param bool|null|\Subscribo\ModelCore\Models\Subscription $subscription
+     * @param array $subscriptionFilterTypes
+     * @param null $currencyId
+     * @param bool $countryId
+     * @param $type
+     * @param $status
+     * @param bool $anticipatedDeliveryStart
+     * @param bool $anticipatedDeliveryEnd
+     * @throws \InvalidArgumentException
+     * @internal param bool $subscriptionPeriod
+     * @return array
+     */
     public static function prepareSalesOrder(
         Account $account,
         array $amountsPerPriceId,
-        array $discountIds = [],
+        $discounts = [],
         Delivery $delivery = null,
         DeliveryWindow $deliveryWindow = null,
-        $subscriptionPeriod = false,
         Address $shippingAddress = null,
         Address $billingAddress = null,
+        $subscription = null,
+        $subscriptionFilterTypes = [],
         $currencyId = null,
         $countryId = true,
-        $type = self::TYPE_MANUAL,
+        $type = true,
         $status = self::STATUS_ORDERING,
         $anticipatedDeliveryStart = true,
         $anticipatedDeliveryEnd = true
     ) {
+        if (true === $type) {
+            $type = ($subscription instanceof Subscription) ? static::TYPE_AUTOMATIC : static::TYPE_MANUAL;
+        }
         if (true === $countryId) {
             $countryId = $shippingAddress ? $shippingAddress->countryId : null;
         }
         $serviceId = $account->serviceId;
         $deliveryId = $delivery ? $delivery->id : null;
         $prices = static::checkPrices($serviceId, $amountsPerPriceId, $currencyId, $countryId);
+        if (empty($countryId) and $shippingAddress) {
+            $countryId = $shippingAddress->countryId;
+        }
+        if (empty($countryId) and $billingAddress) {
+            $countryId = $billingAddress->countryId;
+        }
         if (empty($prices)) {
             throw new InvalidArgumentException('No prices provided');
         }
@@ -99,27 +159,28 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
         $currency = reset($prices)->currency;
         $products = static::checkProductsAndAmounts($amountsPerPriceId, $prices);
         $realizations = static::checkRealizations($serviceId, $prices, $deliveryId);
-        $discounts = static::checkDiscounts($discountIds);
-        if ($subscriptionPeriod) {
-            if (empty($delivery)) {
-                throw new InvalidArgumentException('Subscription period specified but Delivery not');
-            }
+        $checkedDiscounts = static::checkDiscounts($discounts);
+        $productsInSubscription = [];
+        $discountsInSubscription = [];
+        if (true === $subscription) {
+            $start = $delivery ? $delivery->start : null;
             $deliveryWindowTypeId = $deliveryWindow ? $deliveryWindow->deliveryWindowTypeId : null;
-            $subscription = Subscription::generateSubscription($account, $subscriptionPeriod, $delivery->start, $deliveryWindowTypeId);
-        } else {
-            $subscription = null;
-        }
-        $productsInSubscription = $subscription ? $subscription->addProducts($prices, $amountsPerPriceId) : [];
-        $discountsInSubscription = $subscription ? $subscription->addDiscounts($discounts) : [];
-        if (empty($countryId) and $shippingAddress) {
-            $countryId = $shippingAddress->countryId;
-        }
-        if (empty($countryId) and $billingAddress) {
-            $countryId = $billingAddress->countryId;
+            $subscription = Subscription::generateSubscription(
+                $account,
+                $currency,
+                $countryId,
+                $shippingAddress,
+                $billingAddress,
+                $subscriptionFilterTypes,
+                $start,
+                $deliveryWindowTypeId
+            );
+            $productsInSubscription = $subscription->addProducts($prices, $amountsPerPriceId);
+            $discountsInSubscription = $subscription->addDiscounts($checkedDiscounts);
         }
         $salesOrder = static::generateSalesOrder($account, $currency, $countryId, $shippingAddress, $billingAddress, $delivery, $deliveryWindow, $subscription, $type, $status, $anticipatedDeliveryStart, $anticipatedDeliveryEnd);
         $realizationsInSalesOrder = $salesOrder->addRealizations($realizations, $amountsPerPriceId);
-        $discountsInSalesOrder = $salesOrder->addDiscounts($discounts);
+        $discountsInSalesOrder = $salesOrder->addDiscounts($checkedDiscounts);
         $result = static::calculateSums($amountsPerPriceId, $prices, $products, $currency, $discountsInSalesOrder, $countryId);
         $salesOrder->netSum = $result['netSum'];
         $salesOrder->grossSum = $result['grossSum'];
@@ -135,6 +196,16 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
         $result['discountsInSalesOrder'] = $discountsInSalesOrder;
 
         return $result;
+    }
+
+    /**
+     * @param Subscription|int $subscription
+     * @param Delivery|int $delivery
+     * @return SalesOrder
+     */
+    public static function findBySubscriptionAndDelivery($subscription, $delivery)
+    {
+        return static::bySubscription($subscription)->byDelivery($delivery)->first();
     }
 
     /**
@@ -247,10 +318,10 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
 
     /**
      * @todo implement
-     * @param array $discountIds
+     * @param array|Discount[] $discounts
      * @return Discount[]
      */
-    protected static function checkDiscounts(array $discountIds)
+    protected static function checkDiscounts($discounts)
     {
         return [];
     }
@@ -308,6 +379,9 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
         ];
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Model|null|Person
+     */
     public function acquireBillingPerson()
     {
         if ($this->billingAddress) {
@@ -328,5 +402,31 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
         $this->save();
 
         return $person;
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Subscription|int $subscription
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeBySubscription($query, $subscription)
+    {
+        $subscriptionId = ($subscription instanceof Subscription) ? $subscription->id : $subscription;
+        $query->where('subscription_id', $subscriptionId);
+
+        return $query;
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Delivery|int $delivery
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeByDelivery($query, $delivery)
+    {
+        $deliveryId = ($delivery instanceof Delivery) ? $delivery->id : $delivery;
+        $query->where('delivery_id', $deliveryId);
+
+        return $query;
     }
 }

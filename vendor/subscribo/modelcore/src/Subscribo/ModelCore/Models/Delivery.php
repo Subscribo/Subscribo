@@ -7,6 +7,7 @@ use DateTime;
 use DateInterval;
 use Subscribo\ModelCore\Traits\FilterableByServiceTrait;
 use Subscribo\ModelCore\Models\Service;
+use Subscribo\ModelCore\Models\DeliveryWindow;
 use Subscribo\Support\DateTimeUtils;
 
 /**
@@ -138,6 +139,30 @@ class Delivery extends \Subscribo\ModelCore\Bases\Delivery
     }
 
     /**
+     * Returns those deliveries, which are connected to particular Service
+     * and their start date is within boundaries, set by that particular service,
+     * for automatic adding Sales Orders based on a running Subscription
+     * @param Service $service
+     * @return Delivery[]
+     */
+    public static function getAvailableForSubscriptionAddSalesOrderByService(Service $service)
+    {
+        $start = DateTimeUtils::makeDate($service->subscriptionAddSalesOrderStart);
+        $end = DateTimeUtils::makeDate($service->subscriptionAddSalesOrderEnd);
+        if (empty($start) or empty($end)) {
+
+            return [];
+        }
+
+        return static::byService($service, false)->startFrom($start)->startTo($end)->get();
+    }
+
+    public function getDeliveryWindowByType($deliveryWindowType)
+    {
+        return DeliveryWindow::findByDeliveryAndDeliveryWindowType($this, $deliveryWindowType);
+    }
+
+    /**
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param null|int $limit
      * @return \Illuminate\Database\Eloquent\Builder
@@ -175,8 +200,21 @@ class Delivery extends \Subscribo\ModelCore\Bases\Delivery
      */
     public function scopeStartFrom($query, $when = 'today')
     {
-        $from = ($when instanceof DateTime) ? $when  : new DateTime($when);
-        $query->where('start', '>=', $from);
+        $dateFrom = ($when instanceof DateTime) ? $when  : new DateTime($when);
+        $query->where('start', '>=', $dateFrom);
+
+        return $query;
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param DateTime|string $when
+     * @return \Illuminate\Database\Eloquent\Builder $query
+     */
+    public function scopeStartTo($query, $when = 'today')
+    {
+        $dateTo = ($when instanceof DateTime) ? $when  : new DateTime($when);
+        $query->where('start', '<=', $dateTo);
 
         return $query;
     }
