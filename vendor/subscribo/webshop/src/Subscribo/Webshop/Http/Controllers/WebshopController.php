@@ -22,7 +22,11 @@ use Subscribo\ApiClientAuth\Traits\HandleUserRegistrationTrait;
 use Subscribo\ApiClientCommon\Traits\HandleServerRequestExceptionTrait;
 use Psr\Log\LoggerInterface;
 
-
+/**
+ * Class WebshopController
+ *
+ * @package Subscribo\Webshop
+ */
 class WebshopController extends Controller
 {
     use HandleUserRegistrationTrait;
@@ -30,9 +34,14 @@ class WebshopController extends Controller
 
     protected $sessionKeyBuyProductStage = 'subscribo_webshop_buy_product_stage';
     protected $sessionKeyBuyProductValidatedInput = 'subscribo_webshop_buy_product_validated_input';
+    protected $sessionKeyBuyProductProcessingData = 'subscribo_webshop_buy_product_processing_data';
     protected $sessionKeyBuyProductInputForRedirect = 'subscribo_webshop_buy_product_input_for_redirect';
 
-
+    /**
+     * @param BusinessConnector $connector
+     * @param LocalizerInterface $localizer
+     * @return \Illuminate\View\View
+     */
     public function listProducts(BusinessConnector $connector, LocalizerInterface $localizer)
     {
         $products = $connector->getProduct();
@@ -49,6 +58,22 @@ class WebshopController extends Controller
         return view('vendor/subscribo/webshop/product/list', $data);
     }
 
+    /**
+     * @param $id
+     * @param AccountConnector $accountConnector
+     * @param BusinessConnector $businessConnector
+     * @param TransactionConnector $transactionConnector
+     * @param LocalizerInterface $localizer
+     * @param Request $request
+     * @param Guard $auth
+     * @param Registrar $registrar
+     * @param SessionDeposit $sessionDeposit
+     * @param CookieDeposit $cookieDeposit
+     * @param LoggerInterface $logger
+     * @param Store $session
+     * @return \Illuminate\View\View
+     * @throws \Subscribo\Exception\Exceptions\RuntimeException
+     */
     public function getBuyProduct($id, AccountConnector $accountConnector, BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger, Store $session)
     {
         $resultInSession = $session->pull($this->sessionKeyServerRequestHandledResult);
@@ -80,7 +105,20 @@ class WebshopController extends Controller
         return view('vendor/subscribo/webshop/product/buy', $data);
     }
 
-
+    /**
+     * @param $id
+     * @param BusinessConnector $businessConnector
+     * @param TransactionConnector $transactionConnector
+     * @param LocalizerInterface $localizer
+     * @param Request $request
+     * @param Guard $auth
+     * @param Registrar $registrar
+     * @param SessionDeposit $sessionDeposit
+     * @param CookieDeposit $cookieDeposit
+     * @param LoggerInterface $logger
+     * @param Store $session
+     * @return mixed
+     */
     public function postBuyProduct($id, BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger, Store $session)
     {
         $subscriptionPeriods = $businessConnector->getSubscriptionPeriods();
@@ -111,6 +149,10 @@ class WebshopController extends Controller
         return $this->processPostBuyProduct(1, [], $businessConnector, $transactionConnector, $localizer, $request, $auth, $registrar, $sessionDeposit, $cookieDeposit, $logger, $session);
     }
 
+    /**
+     * @param LocalizerInterface $localizer
+     * @return \Illuminate\View\View
+     */
     public function getSuccess(LocalizerInterface $localizer)
     {
         $data = [
@@ -120,11 +162,26 @@ class WebshopController extends Controller
         return view('vendor/subscribo/webshop/product/success', $data);
     }
 
+    /**
+     * @param int $stage
+     * @param array $previousProcessResultData
+     * @param BusinessConnector $businessConnector
+     * @param TransactionConnector $transactionConnector
+     * @param LocalizerInterface $localizer
+     * @param Request $request
+     * @param Guard $auth
+     * @param Registrar $registrar
+     * @param SessionDeposit $sessionDeposit
+     * @param CookieDeposit $cookieDeposit
+     * @param LoggerInterface $logger
+     * @param Store $session
+     * @return mixed
+     */
     protected function processPostBuyProduct($stage, array $previousProcessResultData, BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger, Store $session)
     {
         $validatedData = $session->get($this->sessionKeyBuyProductValidatedInput);
         $inputForRedirect = $session->get($this->sessionKeyBuyProductInputForRedirect);
-        if ($stage < 2) {
+        if ($stage <= 1) {
             if ($auth->guest()) {
                 $processingResult = $this->handleUserRegistration($auth, $registrar, $request, $sessionDeposit, $cookieDeposit, $localizer, $logger, []);
             } else {
@@ -136,6 +193,7 @@ class WebshopController extends Controller
             unset($data['transaction_gateway']);
             unset($data['billing_is_same']);
             unset($data['item_identifier']);
+            unset($data['subscription_period']);
             $data['prices'] = [$priceId => 1];
             $callback = [$businessConnector, 'postOrder'];
             $genericErrorMessage = function () use ($localizer) {
@@ -143,18 +201,40 @@ class WebshopController extends Controller
             };
             $processingResult = $this->processRemoteCall($callback, [$data], $inputForRedirect, $request->url(), $genericErrorMessage, $logger);
         } elseif ($stage == 3) {
+            $salesOrderId = $previousProcessResultData['result']['salesOrder']['id'];
+            $session->set($this->sessionKeyBuyProductProcessingData, ['sales_order_id' => $salesOrderId]);
             $data = [
                 'transaction_gateway' => $validatedData['transaction_gateway'],
-                'sales_order_id' => $previousProcessResultData['result']['salesOrder']['id'],
+                'sales_order_id' => $salesOrderId,
             ];
             $callback = [$transactionConnector, 'postCharge'];
             $genericErrorMessage = function () use ($localizer) {
                 return $errorMessage = $localizer->trans('errors.transactionFailed', [], 'webshop::messages');
             };
             $processingResult = $this->processRemoteCall($callback, [$data], $inputForRedirect, $request->url(), $genericErrorMessage, $logger);
-        } elseif ($stage > 3) {
+        } elseif ($stage == 4) {
 
-            $processingResult = $this->processPostBuyProductFinalization($previousProcessResultData, $inputForRedirect, $request->url());
+            $processingResult = $this->processPostBuyProductTransactionFinalization($previousProcessResultData, $inputForRedirect, $request->url());
+        } elseif ($stage == 5) {
+            $data = $session->get($this->sessionKeyBuyProductProcessingData);
+            $data['subscription_period'] = $validatedData['subscription_period'];
+            $callback = [$businessConnector, 'postSubscription'];
+            $genericErrorMessage = function () use ($localizer) {
+                return $localizer->trans('errors.subscriptionFailed', [], 'webshop::messages');
+            };
+            $processingResult = $this->processRemoteCall($callback, [$data], $inputForRedirect, $request->url(), $genericErrorMessage, $logger);
+        } elseif ($stage == 6) {
+            $data = $session->get($this->sessionKeyBuyProductProcessingData);
+            $callback = [$businessConnector, 'postMessage'];
+            $genericErrorMessage = function () use ($localizer) {
+                return $localizer->trans('errors.confirmationMessageFailed', [], 'webshop::messages');
+            };
+            $processingResult = $this->processRemoteCall($callback, [$data], $inputForRedirect, $request->url(), $genericErrorMessage, $logger);
+        } elseif ($stage >= 7) {
+            $processingResult = [
+                'redirect' => redirect()->route('subscribo.webshop.success'),
+                'redirectReason' => 'finished',
+            ];
         }
         if (isset($processingResult['redirectReason'])) {
             if ('handlingServerRequest' === $processingResult['redirectReason']) {
@@ -162,6 +242,7 @@ class WebshopController extends Controller
             } else {
                 $session->pull($this->sessionKeyBuyProductStage);
                 $session->pull($this->sessionKeyBuyProductValidatedInput);
+                $session->pull($this->sessionKeyBuyProductProcessingData);
                 $session->pull($this->sessionKeyBuyProductInputForRedirect);
             }
         }
@@ -213,26 +294,44 @@ class WebshopController extends Controller
         return ['result' => $callbackResult];
     }
 
-    protected function processPostBuyProductFinalization(array $data, array $inputForRedirect, $backUrl)
+    /**
+     * @param array $data
+     * @param array $inputForRedirect
+     * @param string $backUrl
+     * @return array
+     */
+    protected function processPostBuyProductTransactionFinalization(array $data, array $inputForRedirect, $backUrl)
     {
-        if (empty($data['result']['continue'])) {
-            $result = $data['result'];
-            $errors = empty($result['validationErrors']) ? $result['message'] : $result['validationErrors'];
-            if ( ! empty($errors['mobile'])) {
-                $errors['phone'] = $errors['mobile'];
-            }
-            return [
-                'redirect' => redirect($backUrl)->withInput($inputForRedirect)->withErrors($errors),
-                'redirectReason' => 'handlingFailedTransaction',
-            ];
+        if ( ! empty($data['result']['continue'])) {
+
+            return $data;
         }
+        $result = $data['result'];
+        $errors = empty($result['validationErrors']) ? $result['message'] : $result['validationErrors'];
+        if ( ! empty($errors['mobile'])) {
+            $errors['phone'] = $errors['mobile'];
+        }
+
         return [
-            'redirect' => redirect()->route('subscribo.webshop.success'),
-            'redirectReason' => 'finished',
+            'redirect' => redirect($backUrl)->withInput($inputForRedirect)->withErrors($errors),
+            'redirectReason' => 'handlingFailedTransaction',
         ];
     }
 
-
+    /**
+     * @param $resultInSession
+     * @param BusinessConnector $businessConnector
+     * @param TransactionConnector $transactionConnector
+     * @param LocalizerInterface $localizer
+     * @param Request $request
+     * @param Guard $auth
+     * @param Registrar $registrar
+     * @param SessionDeposit $sessionDeposit
+     * @param CookieDeposit $cookieDeposit
+     * @param LoggerInterface $logger
+     * @param Store $session
+     * @return mixed
+     */
     protected function handleResultInSession($resultInSession, BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger, Store $session)
     {
         $stage = $session->pull($this->sessionKeyBuyProductStage);

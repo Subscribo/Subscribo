@@ -67,3 +67,5 @@ forms:
 errors:
     orderFailed: Ordering has failed
     transactionFailed: Transaction might have failed, but also might have been processed. Please, be careful before making a new request. Feel free to contact your bank or merchant for further details.
+    subscriptionFailed: Subscription setting has failed
+    confirmationMessageFailed: Sending confirmation message has failed

@@ -46,4 +46,24 @@ class BusinessConnector extends AbstractConnector
 
         return $responseData['result'];
     }
+
+
+    public function postSubscription(array $content = null, array $query = null, $signatureOptions = true)
+    {
+        $signatureOptions = $this->processSignatureOptions($signatureOptions);
+
+        $responseData = $this->restClient->process('business/subscription', 'POST', $content, $query, null, $signatureOptions);
+
+        return $responseData['result'];
+    }
+
+
+    public function postMessage(array $content = null, array $query = null, $signatureOptions = true)
+    {
+        $signatureOptions = $this->processSignatureOptions($signatureOptions);
+
+        $responseData = $this->restClient->process('business/message', 'POST', $content, $query, null, $signatureOptions);
+
+        return $responseData['result'];
+    }
 }
