@@ -1491,7 +1491,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         $dates = Arr::get($options, 'dates', array());
         foreach ($fields as $fieldName => $field) {
             $type = Arr::get($field, 'type');
-            if ('datetime' === $type) {
+            if (('datetime' === $type) or ('date' === $type)) {
                 $dates[] = $fieldName;
             }
         }
@@ -1958,12 +1958,12 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 }
             break;
             case 'datetime':
-                $typeHint   = 'string';
+                $typeHint   = '\\Carbon\\Carbon';
                 $dbTypeBase = 'datetime';
                 $description = '(datetime)';
             break;
             case 'date':
-                $typeHint   = 'string';
+                $typeHint   = '\\Carbon\\Carbon';
                 $dbTypeBase = 'date';
                 $description = '(date)';
             break;

@@ -59,7 +59,7 @@ foreach ($options['foreign_objects'] as $foreignObject):
         echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($foreignObject['foreign_model_name']);
         echo $foreignObject['returns_array'] ? '[]' : '|null';
     }
-    echo " ".\Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($foreignObject['name']);
+    echo " $".\Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($foreignObject['name']);
     echo $foreignObject['returns_array'] ? ' A collection of foreign models' : ' Foreign model';
     echo " related via ";
     echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment(strtr($foreignObject['relation']['type'], '_', ' '));
