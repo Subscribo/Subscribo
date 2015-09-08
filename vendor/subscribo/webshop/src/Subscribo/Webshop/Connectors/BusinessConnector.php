@@ -15,6 +15,7 @@ class BusinessConnector extends AbstractConnector
         return $responseData['result'];
     }
 
+
     public function getAvailableDeliveries($limit = 5, $signatureOptions = true)
     {
         $query = ['available' => $limit];
@@ -25,6 +26,17 @@ class BusinessConnector extends AbstractConnector
 
         return $responseData['collection'];
     }
+
+
+    public function getSubscriptionPeriods($signatureOptions = true)
+    {
+        $signatureOptions = $this->processSignatureOptions($signatureOptions);
+
+        $responseData = $this->restClient->process('business/period', 'GET', null, null, null, $signatureOptions);
+
+        return $responseData['result'];
+    }
+
 
     public function postOrder(array $content = null, array $query = null, $signatureOptions = true)
     {

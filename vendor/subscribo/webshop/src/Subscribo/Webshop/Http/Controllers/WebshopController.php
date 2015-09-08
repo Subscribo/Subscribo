@@ -58,6 +58,7 @@ class WebshopController extends Controller
         }
         try {
             $product = $businessConnector->getProduct($id);
+            $subscriptionPeriods = $businessConnector->getSubscriptionPeriods();
             $transactionGateways = $transactionConnector->getGateway();
             $addresses = $auth->user() ? $accountConnector->getAddress() : [];
             $deliveries = $businessConnector->getAvailableDeliveries();
@@ -73,6 +74,7 @@ class WebshopController extends Controller
             'localizer' => $localizer->template('messages', 'webshop')->setPrefix('template.product.buy'),
             'addresses' => $addresses,
             'deliveries' => $deliveries,
+            'subscriptionPeriods' => $subscriptionPeriods,
         ];
 
         return view('vendor/subscribo/webshop/product/buy', $data);
@@ -81,11 +83,12 @@ class WebshopController extends Controller
 
     public function postBuyProduct($id, BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger, Store $session)
     {
+        $subscriptionPeriods = $businessConnector->getSubscriptionPeriods();
         $orderValidationRules = [
             'transaction_gateway' => 'required|integer',
             'delivery_id' => 'integer',
             'delivery_window_id' => 'integer',
-            'subscription_period' => 'max:10',
+            'subscription_period' => 'in:'.implode(',', array_keys($subscriptionPeriods)),
             'address_id' => 'integer',
             'shipping_address_id' => 'integer',
             'billing_is_same' => 'boolean',
@@ -134,7 +137,6 @@ class WebshopController extends Controller
             unset($data['billing_is_same']);
             unset($data['item_identifier']);
             $data['prices'] = [$priceId => 1];
-            $data['subscription_period'] = 1;
             $callback = [$businessConnector, 'postOrder'];
             $genericErrorMessage = function () use ($localizer) {
                 return $localizer->trans('errors.orderFailed', [], 'webshop::messages');
