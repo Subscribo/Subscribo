@@ -45,6 +45,8 @@ business:
         billingAddressNotFound: Selected billing address not found
         shippingAddressCustomerMismatch: Selected shipping address is not connected to your account
         billingAddressCustomerMismatch: Selected billing address is not connected to your account
+    errors.postSubscription:
+        salesOrderNotFound: Selected sales order not found
 # TransactionController
 transaction:
     errors.postCharge:
