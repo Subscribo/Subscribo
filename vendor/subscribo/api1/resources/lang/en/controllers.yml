@@ -21,7 +21,11 @@ answer.errors:
         getQuestion.wrongType: Unrecognized type
         getRedirection.wrongType: Unrecognized type
 # BusinessController
-business.errors.prepareOrder:
+business:
+    getPeriod.subscriptionPeriods:
+        weekly: Every week
+        biweekly: Every other week
+    errors.prepareOrder:
         priceNotFound: Specified price not found
         taxGroupNotFound: Tax group not found for given country and category (Specified price is not for specified country)
         invalidCurrency: Specified price has different currency
@@ -30,6 +34,7 @@ business.errors.prepareOrder:
         productNotFound: Product not found for this price
         amountInvalid: Specified amount (%amount%) of product is invalid
         noRealization: No realization found for specified product and delivery
+        invalidSubscriptionPeriod: Invalid subscription period
         deliveryNotFound: Specified delivery not found
         deliveryWindowNotFound: Specified delivery window not found
         shippingCountryNotFound: Unrecognized shipping country

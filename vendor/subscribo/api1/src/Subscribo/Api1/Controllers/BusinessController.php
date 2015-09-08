@@ -16,6 +16,8 @@ use Subscribo\ModelCore\Models\DeliveryWindow;
 use Subscribo\ModelCore\Models\Product;
 use Subscribo\ModelCore\Models\SalesOrder;
 use Subscribo\ModelCore\Models\Service;
+use Subscribo\ModelCore\Models\Subscription;
+use Subscribo\ModelCore\Models\SubscriptionFilter;
 use Subscribo\ModelCore\Exceptions\ArgumentValidationException;
 use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
@@ -88,14 +90,31 @@ class BusinessController extends AbstractBusinessController
     }
 
 
+    public function actionGetPeriod()
+    {
+        $subscriptionPeriods = Subscription::getAvailableSubscriptionPeriods($this->context->getService());
+        $result = [];
+        $localizer = $this->context->getLocalizer()->template('controllers', 'api1')
+            ->setPrefix('business.getPeriod.subscriptionPeriods');
+        foreach ($subscriptionPeriods as $subscriptionPeriodKey)
+        {
+            $text = $localizer->transOrDefault($subscriptionPeriodKey, [], null, null, $subscriptionPeriodKey);
+            $result[$subscriptionPeriodKey] = $text;
+        }
+
+        return ['result' => $result];
+    }
+
+
     public function actionPostOrder()
     {
+        $subscriptionPeriods = Subscription::getAvailableSubscriptionPeriods($this->context->getService());
         $orderValidationRules = [
             'prices' => 'required|array',
             'discount_codes' => 'array',
             'delivery_id' => 'required|integer',
             'delivery_window_id' => 'integer',
-            'subscription_period' => 'integer',
+            'subscription_period' => 'in:'.implode(',', $subscriptionPeriods),
             'address_id' => 'integer',
             'billing_address_id' => 'integer',
             'shipping_address_id' => 'integer,'
@@ -116,17 +135,87 @@ class BusinessController extends AbstractBusinessController
         $billingAddress = $this->retrieveBillingAddress($validated, $customer);
         $this->checkAddresses($validated, $service, $shippingAddress, $billingAddress);
         AccountFactory::addAddressesIfNotPresent($customer, $shippingAddress, $billingAddress);
-
-        $subscriptionPeriod = isset($validated['subscription_period']) ? $validated['subscription_period'] : false;
-        $result = $this->prepareOrder($account, $validated['prices'], $discountIds, $delivery, $deliveryWindow, $subscriptionPeriod, $shippingAddress, $billingAddress);
+        if (empty($validated['subscription_period'])) {
+            $toMakeSubscription = false;
+            $subscriptionFilters = [];
+        } else {
+            $toMakeSubscription = true;
+            $subscriptionFilters = $this->assembleSubscriptionFilterTypes($validated['subscription_period'], $delivery);
+        }
+        $result = $this->prepareOrder(
+            $account,
+            $validated['prices'],
+            $discountIds,
+            $delivery,
+            $deliveryWindow,
+            $shippingAddress,
+            $billingAddress,
+            $toMakeSubscription,
+            $subscriptionFilters
+        );
 
         return ['result' => $result];
     }
 
-    private function prepareOrder(Account $account, array $amountsPerPriceId, array $discountIds, Delivery $delivery, DeliveryWindow $deliveryWindow = null, $subscriptionPeriod = false, Address $shippingAddress = null, Address $billingAddress = null, $currencyId = null, $countryId = true)
+    private function assembleSubscriptionFilterTypes($subscriptionPeriod, Delivery $delivery)
     {
+        switch (strval($subscriptionPeriod)) {
+            case 'weekly':
+
+                return [];
+            case 'biweekly':
+
+                return ($delivery->start->weekOfYear % 2)
+                    ? [SubscriptionFilter::TYPE_ODD_WEEK] : [SubscriptionFilter::TYPE_EVEN_WEEK];
+        }
+        $messageId = 'business.errors.prepareOrder.invalidSubscriptionPeriod';
+        $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+        throw new InvalidInputHttpException(['subscription_period' => $message]);
+    }
+
+    /**
+     * @param Account $account
+     * @param array $amountsPerPriceId
+     * @param array $discountIds
+     * @param Delivery $delivery
+     * @param DeliveryWindow $deliveryWindow
+     * @param Address $shippingAddress
+     * @param Address $billingAddress
+     * @param bool $toMakeSubscription
+     * @param array $subscriptionFilters
+     * @param int|null $currencyId
+     * @param int|null|bool $countryId
+     * @return array
+     * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException
+     */
+    private function prepareOrder(
+        Account $account,
+        array $amountsPerPriceId,
+        array $discountIds,
+        Delivery $delivery,
+        DeliveryWindow $deliveryWindow = null,
+        Address $shippingAddress = null,
+        Address $billingAddress = null,
+        $toMakeSubscription = false,
+        array $subscriptionFilters = [],
+        $currencyId = null,
+        $countryId = true
+    ) {
         try {
-            $result = SalesOrder::prepareSalesOrder($account, $amountsPerPriceId, $discountIds, $delivery, $deliveryWindow, $subscriptionPeriod, $shippingAddress, $billingAddress, $currencyId, $countryId, SalesOrder::TYPE_MANUAL);
+            $result = SalesOrder::prepareSalesOrder(
+                $account,
+                $amountsPerPriceId,
+                $discountIds,
+                $delivery,
+                $deliveryWindow,
+                $shippingAddress,
+                $billingAddress,
+                $toMakeSubscription,
+                $subscriptionFilters,
+                $currencyId,
+                $countryId,
+                SalesOrder::TYPE_MANUAL
+            );
             $job = new SendConfirmationEmail($result['salesOrder']);
             $this->dispatch($job);
 
