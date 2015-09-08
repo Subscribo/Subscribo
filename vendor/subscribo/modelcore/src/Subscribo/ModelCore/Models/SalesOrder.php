@@ -37,8 +37,7 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
     {
         $amountsPerPriceId = [];
         foreach ($subscription->productsInSubscriptions as $productInSubscription) {
-            $priceId = $productInSubscription->priceId;
-            $amountsPerPriceId[$priceId] = $productInSubscription->amount;
+            $amountsPerPriceId[$productInSubscription->priceId] = $productInSubscription->amount;
         }
         $deliveryWindow = $delivery->getDeliveryWindowByType($subscription->deliveryWindowTypeId);
         $preparedSalesOrderResult = static::prepareSalesOrder(
@@ -175,7 +174,7 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
                 $start,
                 $deliveryWindowTypeId
             );
-            $productsInSubscription = $subscription->addProducts($prices, $amountsPerPriceId);
+            $productsInSubscription = $subscription->addProducts($amountsPerPriceId);
             $discountsInSubscription = $subscription->addDiscounts($checkedDiscounts);
         }
         $salesOrder = static::generateSalesOrder($account, $currency, $countryId, $shippingAddress, $billingAddress, $delivery, $deliveryWindow, $subscription, $type, $status, $anticipatedDeliveryStart, $anticipatedDeliveryEnd);

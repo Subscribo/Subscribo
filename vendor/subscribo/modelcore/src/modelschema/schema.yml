@@ -671,7 +671,6 @@ model_fields:
 
     products_in_subscriptions:
     - subscription_id → subscriptions
-    - product_id → products
     - price_id -> prices
     - amount (int)
 
@@ -698,7 +697,7 @@ model_fields:
     - sales_order_id → sales_orders
     - realization_id → realizations
     - price_id -> prices
-    - amount (unsigned int)
+    - amount (int)
 
     discounts:
     - service_id

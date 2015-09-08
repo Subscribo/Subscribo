@@ -1,5 +1,6 @@
 <?php namespace Subscribo\ModelCore\Models;
 
+use RuntimeException;
 use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\Address;
 use Subscribo\ModelCore\Models\Discount;
@@ -10,7 +11,6 @@ use Subscribo\ModelCore\Models\SubscriptionFilter;
 use Subscribo\ModelCore\Models\ProductsInSubscription;
 use Subscribo\Support\DateTimeUtils;
 
-
 /**
  * Model Subscription
  *
@@ -18,6 +18,47 @@ use Subscribo\Support\DateTimeUtils;
  */
 class Subscription extends \Subscribo\ModelCore\Bases\Subscription
 {
+    /**
+     * @param Account $account
+     * @param Currency|int $currency
+     * @param Country|int|null $country
+     * @param Address|int|null $shippingAddress
+     * @param Address|int|null|bool $billingAddress
+     * @param \DateTime|string $start
+     * @param DeliveryWindowType|int|null $deliveryWindowType
+     * @param string $status
+     * @return Subscription
+     */
+    public static function generate(
+        Account $account,
+        $currency,
+        $country,
+        $shippingAddress,
+        $billingAddress = true,
+        $start = 'today',
+        $deliveryWindowType = null,
+        $status = self::STATUS_ACTIVE
+    ) {
+        if (true === $billingAddress) {
+            $billingAddress = $shippingAddress;
+        }
+        $startDate = DateTimeUtils::makeDate($start);
+
+        $subscription = new Subscription();
+        $subscription->serviceId = $account->serviceId;
+        $subscription->account()->associate($account);
+        $subscription->currency()->associate($currency);
+        $subscription->country()->associate($country);
+        $subscription->shippingAddress()->associate($shippingAddress);
+        $subscription->billingAddress()->associate($billingAddress);
+        $subscription->status = $status;
+        $subscription->deliveryWindowType()->associate($deliveryWindowType);
+        $subscription->start = $startDate;
+        $subscription->save();
+
+        return $subscription;
+    }
+
     /**
      * @param Account $account
      * @param Currency|int $currency
@@ -62,6 +103,52 @@ class Subscription extends \Subscribo\ModelCore\Bases\Subscription
         }
 
         return $subscription;
+    }
+
+    public static function generateFromSalesOrder(SalesOrder $salesOrder, $start = true, $status = self::STATUS_ACTIVE)
+    {
+        if (true === $start) {
+            $start = $salesOrder->delivery->start;
+        }
+        $deliveryWindowTypeId = $salesOrder->deliveryWindow ? $salesOrder->deliveryWindow->deliveryWindowTypeId : null;
+
+        return static::generate(
+            $salesOrder->account,
+            $salesOrder->currencyId,
+            $salesOrder->countryId,
+            $salesOrder->shippingAddressId,
+            $salesOrder->billingAddressId,
+            $start,
+            $deliveryWindowTypeId,
+            $status
+        );
+    }
+
+    public static function prepareSubscriptionFromSalesOrder(
+        SalesOrder $salesOrder,
+        $subscriptionFilterTypes = [],
+        $discounts = [],
+        $start = true,
+        $status = self::STATUS_ACTIVE
+    ) {
+        $amountsPerPriceId = [];
+        foreach ($salesOrder->realizationsInSalesOrders as $realizationInSalesOrder) {
+            $amountsPerPriceId[$realizationInSalesOrder->priceId] = $realizationInSalesOrder->amount;
+        }
+        if (empty($amountsPerPriceId)) {
+            throw new RuntimeException('No amounts per price id');
+        }
+        $subscription = static::generateFromSalesOrder($salesOrder, $start, $status);
+        $appliedFilters = $subscription->applyFilters($subscriptionFilterTypes);
+        $productsInSubscription = $subscription->addProducts($amountsPerPriceId);
+        $discountsInSubscription = $subscription->addDiscounts($discounts, $salesOrder->discounts);
+
+        return [
+            'subscription' => $subscription,
+            'appliedSubscriptionFilters' => $appliedFilters,
+            'productsInSubscription' => $productsInSubscription,
+            'discountsInSubscription' => $discountsInSubscription,
+        ];
     }
 
     /**
@@ -170,22 +257,20 @@ class Subscription extends \Subscribo\ModelCore\Bases\Subscription
     }
 
     /**
-     * @param Price[] $prices
      * @param array $amountsPerPriceId
      * @return ProductsInSubscription[]
      */
-    public function addProducts(array $prices, array $amountsPerPriceId)
+    public function addProducts(array $amountsPerPriceId)
     {
         $result = [];
-        foreach ($prices as $priceId => $price) {
+        foreach ($amountsPerPriceId as $priceId => $amount) {
             $productInSubscription = ProductsInSubscription::firstOrNew([
                 'subscription_id'   => $this->id,
-                'product_id'        => $price->productId,
+                'price_id'        => $priceId,
             ]);
             $productInSubscription->subscriptionId = $this->id;
-            $productInSubscription->productId = $price->productId;
-            $productInSubscription->priceId = $price->id;
-            $productInSubscription->amount = $amountsPerPriceId[$priceId];
+            $productInSubscription->priceId = $priceId;
+            $productInSubscription->amount = $amount;
             $productInSubscription->save();
             $result[$priceId] = $productInSubscription;
         }
@@ -194,13 +279,27 @@ class Subscription extends \Subscribo\ModelCore\Bases\Subscription
     }
 
     /**
-     * @todo implement
-     * @param Discount[] $discounts
+     * @param array $discounts
+     * @param array $discountsFromSalesOrder
      * @return array
      */
-    public function addDiscounts(array $discounts)
+    public function addDiscounts(array $discounts, $discountsFromSalesOrder = [])
     {
         return [];
+    }
+
+    /**
+     * @param array $subscriptionFilterTypes
+     * @return array
+     */
+    protected function applyFilters($subscriptionFilterTypes)
+    {
+        $appliedFilters = [];
+        foreach ($subscriptionFilterTypes as $filterType) {
+            $appliedFilters[] = $this->enableFilter($filterType);
+        }
+
+        return $appliedFilters;
     }
 
     /**
