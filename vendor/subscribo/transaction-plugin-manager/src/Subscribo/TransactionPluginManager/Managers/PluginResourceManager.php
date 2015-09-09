@@ -33,9 +33,10 @@ use Subscribo\TransactionPluginManager\Facades\LocalizerFacade;
 use Subscribo\TransactionPluginManager\Bases\TransactionProcessingResultBase;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Subscribo\Support\Str;
-use Subscribo\ApiServerJob\Jobs\Triggered\Transaction\SendConfirmationEmail;
+use Subscribo\ApiServerJob\Jobs\Triggered\Transaction\SendConfirmationMessage;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Class PluginResourceManager
@@ -169,6 +170,9 @@ class PluginResourceManager implements PluginResourceManagerInterface
 
     /**
      * @param TransactionProcessingResultInterface $processingResult
+     * @param bool|callable $sendMessage Whether to send email
+     * @param bool|callable $throwExceptions Whether to throw exceptions
+     * @param bool|callable $shouldLog Whether to log log messages
      * @return array
      * @throws \Exception
      * @throws \Subscribo\RestCommon\Exceptions\ServerRequestHttpException
@@ -176,31 +180,65 @@ class PluginResourceManager implements PluginResourceManagerInterface
      * @throws \Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException
      * @throws \Subscribo\RestCommon\Exceptions\ClientRedirectionServerRequestHttpException
      */
-    public function finalizeTransactionProcessingResult(TransactionProcessingResultInterface $processingResult)
-    {
+    public function finalizeTransactionProcessingResult(
+        TransactionProcessingResultInterface $processingResult,
+        $sendMessage = true,
+        $throwExceptions = true,
+        $shouldLog = true
+    ) {
         static::addResultToTransaction($processingResult);
+        $exportedResult = $processingResult->export();
+        $result = $exportedResult;
         $status = $processingResult->getStatus();
         switch ($status) {
             case TransactionProcessingResultInterface::STATUS_INTERRUPTION:
+                $logMessage = "Transaction with hash: '%s' has asked for interruption.";
                 $result = $processingResult->getException();
                 break;
             case TransactionProcessingResultInterface::STATUS_ERROR:
                 $result = $this->makeResultFromError($processingResult);
+                $logMessage = "Error while processing transaction with hash: '%s'. (Reason: "
+                    .$processingResult->getReason().')';
                 break;
             case TransactionProcessingResultInterface::STATUS_SUCCESS:
+                $logMessage = "Transaction with hash: '%s' has been successfully processed";
+                break;
             case TransactionProcessingResultInterface::STATUS_WAITING:
+                $logMessage = "Transaction with hash: '%s' is waiting. (Reason: ".$processingResult->getReason().')';
+                break;
             case TransactionProcessingResultInterface::STATUS_FAILURE:
+                $logMessage = "Transaction with hash: '%s' has failed. (Reason: ".$processingResult->getReason().')';
+                break;
             default:
-                $result = $processingResult->export();
-        }
-        if ($result instanceof Exception) {
-
-            throw $result;
+                $logMessage = "Transaction with hash: '%s' has undefined status.";
         }
         $transaction = $processingResult->getTransactionFacadeObject()->getTransactionModelInstance();
+        $logLevel = $this->deriveLogLevel($transaction);
+        $messageForLogging = sprintf($logMessage, $transaction->hash);
+        $this->logResult($shouldLog, 'result', $logLevel, $result, $processingResult, $messageForLogging);
+        if ($result instanceof Exception) {
+            if (is_callable($throwExceptions)) {
+                $throwExceptions = call_user_func($throwExceptions, $result, $processingResult);
+            }
+            if ($throwExceptions) {
+                $exceptionLogMessage = (LogLevel::NOTICE === $logLevel) ? $result->getMessage() : $result;
+                $this->logResult($shouldLog, 'exception', $logLevel, $result, $processingResult, $exceptionLogMessage);
+
+                throw $result;
+            }
+            $result = $exportedResult;
+        }
         if ($transaction->confirmationMessage) {
-            $job = new SendConfirmationEmail($transaction);
-            $this->dispatch($job);
+            if (is_callable($sendMessage)) {
+                $sendMessage = call_user_func($sendMessage, $result, $processingResult);
+            }
+            if ($sendMessage) {
+                $messageSendingJob = new SendConfirmationMessage($transaction);
+                $this->dispatch($messageSendingJob);
+                $jobLogMessage = "Job for sending confirmation message for transaction with hash: '"
+                    .$transaction->hash."' has been dispatched.";
+                $this->logResult($shouldLog, 'sendMessage', $logLevel, $result, $processingResult, $jobLogMessage);
+            }
         }
 
         return ['result' => $result];
@@ -476,5 +514,47 @@ class PluginResourceManager implements PluginResourceManagerInterface
     {
         return ((TransactionProcessingResultInterface::NO === $processingResult->moneyAreTransferred())
             and (TransactionProcessingResultInterface::NO === $processingResult->moneyAreReserved()));
+    }
+
+    /**
+     * @param bool|callable $shouldLog
+     * @param string $action
+     * @param string $logLevel
+     * @param mixed $result
+     * @param TransactionProcessingResultInterface $processingResult
+     * @param string|mixed $message
+     */
+    private function logResult($shouldLog, $action, $logLevel, $result, TransactionProcessingResultInterface $processingResult, $message)
+    {
+        if (is_callable($shouldLog)) {
+            $loggingNow = call_user_func($shouldLog, $action, $logLevel, $result, $processingResult);
+        } else {
+            $loggingNow = $shouldLog;
+        }
+        if ($loggingNow) {
+            $this->getLogger()->log($logLevel, $message);
+        }
+    }
+
+    /**
+     * @param Transaction $transaction
+     * @return string
+     */
+    private function deriveLogLevel(Transaction $transaction)
+    {
+        switch (strval($transaction->result)) {
+            case Transaction::RESULT_FAILURE:
+            case Transaction::RESULT_WAITING:
+
+                return LogLevel::WARNING;
+            case Transaction::RESULT_ERROR:
+
+                return LogLevel::ERROR;
+            case Transaction::RESULT_UNDETERMINED:
+
+                return LogLevel::CRITICAL;
+        }
+
+        return LogLevel::NOTICE;
     }
 }

@@ -78,6 +78,9 @@ interface PluginResourceManagerInterface
 
     /**
      * @param TransactionProcessingResultInterface $processingResult
+     * @param bool|callable $sendMessage Whether to send email
+     * @param bool|callable $throwExceptions Whether to throw exceptions
+     * @param bool|callable $shouldLog Whether to log log messages
      * @return array
      * @throws \Exception
      * @throws \Subscribo\RestCommon\Exceptions\ServerRequestHttpException
@@ -87,5 +90,10 @@ interface PluginResourceManagerInterface
      * @throws \Subscribo\Exception\Exceptions\ServerErrorHttpException
      * @throws \Subscribo\Exception\Exceptions\ClientErrorHttpException
      */
-    public function finalizeTransactionProcessingResult(TransactionProcessingResultInterface $processingResult);
+    public function finalizeTransactionProcessingResult(
+        TransactionProcessingResultInterface $processingResult,
+        $sendMessage = true,
+        $throwExceptions = true,
+        $shouldLog = true
+    );
 }
