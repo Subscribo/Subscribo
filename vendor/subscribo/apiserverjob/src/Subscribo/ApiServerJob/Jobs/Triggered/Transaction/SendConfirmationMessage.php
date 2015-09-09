@@ -9,11 +9,11 @@ use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Illuminate\Contracts\Mail\Mailer;
 
 /**
- * Class SendConfirmationEmail
+ * Class SendConfirmationMessage
  *
  * @package Subscribo\ApiServerJob
  */
-class SendConfirmationEmail extends AbstractMessageHandlingJob
+class SendConfirmationMessage extends AbstractMessageHandlingJob
 {
     /** @var \Subscribo\ModelCore\Models\Transaction  */
     protected $transaction;
@@ -43,8 +43,8 @@ class SendConfirmationEmail extends AbstractMessageHandlingJob
     {
         $message = $this->getMessageModel();
         $idBase = 'transaction.';
-        $idBase .= (Transaction::METHOD_INVOICE === $this->transaction->method) ? 'invoice' : 'atomic';
-        $idBase .= '.manual.';
+        $idBase .= (Transaction::METHOD_INVOICE === $this->transaction->method) ? 'invoice.' : 'atomic.';
+        $idBase .= (Transaction::ORIGIN_SYSTEM === $this->transaction->origin) ? 'system.' : 'manual.';
         $result = $this->transaction->result;
         if (empty($result)) {
             throw new RuntimeException('This transaction is not finished yet');
@@ -74,6 +74,12 @@ class SendConfirmationEmail extends AbstractMessageHandlingJob
             'ending' => $ending,
         ];
         $templatePath = 'subscribo::apiserverjob.emails.generic';
-        $this->sendEmail($mailer, $message, $templatePath, $viewData);
+        $emailSent = $this->sendEmail($mailer, $message, $templatePath, $viewData);
+        if ($emailSent) {
+            $this->logger->notice("Confirmation email for transaction with hash: '".$this->transaction->hash."' sent.");
+        } else {
+            $this->logger->error("Attempt to send confirmation email for transaction with hash: '"
+                                    .$this->transaction->hash."' has failed (at least for one of addresses).");
+        }
     }
 }

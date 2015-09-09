@@ -49,6 +49,12 @@ class SendConfirmationEmail extends AbstractMessageHandlingJob
             'person' => $this->salesOrder->account->customer->person,
             'salesOrder' => $this->salesOrder,
         ];
-        $this->sendEmail($mailer, $message, $templatePath, $viewData);
+        $emailSent = $this->sendEmail($mailer, $message, $templatePath, $viewData);
+        if ($emailSent) {
+            $this->logger->notice("Confirmation email for sales order with hash: '".$this->salesOrder->hash."' sent.");
+        } else {
+            $this->logger->error("Attempt to send confirmation email for sales order with hash: '"
+                                .$this->salesOrder->hash."' has failed (at least for one of addresses).");
+        }
     }
 }

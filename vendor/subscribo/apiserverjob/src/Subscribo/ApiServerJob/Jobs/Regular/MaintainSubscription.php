@@ -2,11 +2,14 @@
 
 namespace Subscribo\ApiServerJob\Jobs\Regular;
 
+use Subscribo\ApiServerJob\Jobs\Automatic\ProcessChargeTransaction;
 use Subscribo\ApiServerJob\Jobs\AbstractJob;
 use Subscribo\ModelCore\Models\SalesOrder;
 use Subscribo\ModelCore\Models\Subscription;
 use Subscribo\ModelCore\Models\Delivery;
 use Psr\Log\LoggerInterface;
+use Subscribo\ModelCore\Models\Transaction;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 
 /**
  * Class MaintainSubscription
@@ -15,6 +18,8 @@ use Psr\Log\LoggerInterface;
  */
 class MaintainSubscription extends AbstractJob
 {
+    use DispatchesJobs;
+
     /** @var \Subscribo\ModelCore\Models\Subscription  */
     protected $subscription;
 
@@ -30,7 +35,7 @@ class MaintainSubscription extends AbstractJob
     {
         $service = $this->subscription->service;
         if (empty($service->subscriptionAddSalesOrderStart) or empty ($service->subscriptionAddSalesOrderEnd)) {
-            $logger->info("Skipping subscription ID: ".$this->subscription->id
+            $logger->warning("Skipping subscription ID: ".$this->subscription->id
                 ." as add sales order dates not defined for service");
 
             return;
@@ -68,11 +73,21 @@ class MaintainSubscription extends AbstractJob
 
                 continue;
             }
+            $TGConfig = $this->subscription->account->customer->defaultTransactionGatewayConfiguration;
+            if (empty($TGConfig)) {
+                $logger->error("SalesOrder for delivery starting from: '".$delivery->start
+                        ."' not generated as no defaultTransactionGatewayConfiguration defined for customer");
+
+                continue;
+            }
             $salesOrder = SalesOrder::generateFromSubscriptionForDelivery($this->subscription, $delivery);
             $logger->notice("Sales order generated for delivery starting from: '".$delivery->start
                         ."'. Total gross amount: ".$salesOrder->grossSum." ".$salesOrder->currency->symbol);
-            //Todo: make job for sending email
-            //Todo: generate transaction and make job for handling it
+            $transaction = Transaction::generateFromSalesOrder($salesOrder, $TGConfig, Transaction::ORIGIN_SYSTEM);
+            $processChargeTransactionJob = new ProcessChargeTransaction($transaction);
+            $this->dispatch($processChargeTransactionJob);
+            $logger->notice("Processing charge transaction job for transaction hash: '"
+                        .$transaction->hash."' dispatched");
         }
 
         $logger->info("Handling subscription ID: ".$this->subscription->id." finished");

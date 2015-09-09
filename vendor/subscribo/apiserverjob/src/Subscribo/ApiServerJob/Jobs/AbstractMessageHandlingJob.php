@@ -4,10 +4,11 @@ namespace Subscribo\ApiServerJob\Jobs;
 
 use RuntimeException;
 use Subscribo\ApiServerJob\Jobs\AbstractJob;
+use Subscribo\ApiServerJob\Traits\EmailSendingTrait;
 use Subscribo\ModelCore\Models\Message;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Illuminate\Contracts\Mail\Mailer;
-use Subscribo\ApiServerJob\Traits\EmailSendingTrait;
+use Psr\Log\LoggerInterface;
 
 /**
  * Abstract class AbstractMessageHandlingJob
@@ -17,6 +18,9 @@ use Subscribo\ApiServerJob\Traits\EmailSendingTrait;
 abstract class AbstractMessageHandlingJob extends AbstractJob
 {
     use EmailSendingTrait;
+
+    /** @var LoggerInterface $logger */
+    protected $logger;
 
     /**
      * @return Message|null
@@ -33,10 +37,12 @@ abstract class AbstractMessageHandlingJob extends AbstractJob
     /**
      * @param Mailer $mailer
      * @param LocalizerInterface $localizer
+     * @param LoggerInterface $logger
      * @throws \RuntimeException
      */
-    public function handle(Mailer $mailer, LocalizerInterface $localizer)
+    public function handle(Mailer $mailer, LocalizerInterface $localizer, LoggerInterface $logger)
     {
+        $this->logger = $logger;
         $message = $this->getMessageModel();
         if (empty($message)) {
             throw new RuntimeException('Message is empty');

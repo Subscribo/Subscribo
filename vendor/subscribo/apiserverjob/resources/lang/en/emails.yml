@@ -42,3 +42,39 @@ transaction.invoice.manual.subject:
     waiting:
             customerInput: Waiting
             customerConfirmation: Waiting
+transaction.atomic.system.content:
+    success: Thank you for your money transfer, that have been automatically triggered by your running subscription.
+    failure: Transaction, that have been automatically triggered by your running subscription, has not been processed. Please check your settings (especially default transaction gateway and token).
+    error: There was an error during processing of your transaction, that have been automatically triggered by your running subscription, has not been processed. Please check your settings (especially default transaction gateway and token).
+    cancelled: Transaction, that have been automatically triggered by your running subscription, has been cancelled.
+    undetermined: Transaction, that have been automatically triggered by your running subscription, is in undetermined state. Please contact our support.
+    waiting:
+        customerInput: Transaction, that have been automatically triggered by your running subscription, is waiting for additional data. Please check your settings.
+        customerConfirmation: Please confirm the transaction, that have been automatically triggered by your running subscription. (You might need to check your email box.)
+transaction.invoice.system.content:
+    success: Thank you for your running subscription. You should receive an invoice from our partner.
+    failure: Invoice request, that have been automatically triggered by your running subscription, has not been processed. Please check (and if needed change) your settings (especially default transaction gateway).
+    error: There was an error during processing of your invoice request, that have been automatically triggered by your running subscription. Please check (and if needed change) your settings (especially default transaction gateway).
+    cancelled: Invoice request, that have been automatically triggered by your running subscription, has been cancelled.
+    undetermined: Invoice request, that have been automatically triggered by your running subscription, is in undetermined state. Please contact our support.
+    waiting:
+        customerInput: Invoice request, that have been automatically triggered by your running subscription, is waiting for additional data. Please check your settings.
+        customerConfirmation: Please confirm the invoice request, that have been automatically triggered by your running subscription. (You might need to check your email box.)
+transaction.atomic.system.subject:
+    success: Confirmation
+    failure: Transaction failed
+    error: Transaction error
+    cancelled: Transaction cancelled
+    undetermined: Transaction error
+    waiting:
+        customerInput: Waiting
+        customerConfirmation: Waiting
+transaction.invoice.system.subject:
+    success: Confirmation
+    failure: Request failed
+    error: Request error
+    cancelled: Request cancelled
+    undetermined: Request error
+    waiting:
+        customerInput: Waiting
+        customerConfirmation: Waiting
