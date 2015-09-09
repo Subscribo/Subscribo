@@ -124,6 +124,11 @@ class TransactionController extends AbstractBusinessController
 
             throw new ServerErrorHttpException(501, 'Not Implemented');
         }
+        $customer = $transaction->account->customer;
+        if (empty($customer->defaultTransactionGatewayConfigurationId)) {
+            $customer->defaultTransactionGatewayConfiguration()->associate($transactionGatewayConfiguration);
+            $customer->save();
+        }
         $driverName = $transaction->transactionGatewayConfiguration->transactionGateway->driver;
         $processingManager = new TransactionProcessingManager($resourceManager, $driverName);
 
