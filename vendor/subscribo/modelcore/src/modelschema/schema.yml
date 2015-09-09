@@ -443,6 +443,7 @@ model_fields:
         - person_id null hidden → persons (show_from)
         - preferred_locale_id null -> locales
         - remember_locale (int) default 43200
+        - default_transaction_gateway_configuration_id null hidden -> transaction_gateway_configurations
 
     customer_configurations:
         - id hidden
