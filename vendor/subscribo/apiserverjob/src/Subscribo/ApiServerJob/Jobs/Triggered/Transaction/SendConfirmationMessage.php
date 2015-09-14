@@ -35,11 +35,18 @@ class SendConfirmationMessage extends AbstractMessageHandlingJob
     }
 
     /**
+     * @return string
+     */
+    protected function acquireLocale()
+    {
+        return $this->transaction->account->locale;
+    }
+
+    /**
      * @param Mailer $mailer
-     * @param LocalizerInterface $localizer
      * @throws \RuntimeException
      */
-    protected function handleEmailMessage(Mailer $mailer, LocalizerInterface $localizer)
+    protected function handleEmailMessage(Mailer $mailer)
     {
         $message = $this->getMessageModel();
         $idBase = 'transaction.';
@@ -61,13 +68,13 @@ class SendConfirmationMessage extends AbstractMessageHandlingJob
         }
         $person = $this->transaction->account->customer->person;
         $salutation = $person->salutation ?: $person->name;
-        $loc = $localizer->duplicate('emails', 'apiserverjob');
+        $localizer = $this->getLocalizer()->duplicate('emails', 'apiserverjob');
         if (empty($message->subject)) {
-            $message->subject = $loc->transOrDefault($idBase.'subject'.$idEnd);
+            $message->subject = $localizer->transOrDefault($idBase.'subject'.$idEnd);
         }
-        $content = $loc->transOrDefault($idBase.'content'.$idEnd);
-        $heading = $loc->transOrDefault('generic.heading', ['%salutation%' => $salutation]);
-        $ending = $loc->transOrDefault('generic.ending');
+        $content = $localizer->transOrDefault($idBase.'content'.$idEnd);
+        $heading = $localizer->transOrDefault('generic.heading', ['%salutation%' => $salutation]);
+        $ending = $localizer->transOrDefault('generic.ending');
         $viewData = [
             'heading' => $heading,
             'content' => $content,
@@ -76,10 +83,10 @@ class SendConfirmationMessage extends AbstractMessageHandlingJob
         $templatePath = 'subscribo::apiserverjob.emails.generic';
         $emailSent = $this->sendEmail($mailer, $message, $templatePath, $viewData);
         if ($emailSent) {
-            $this->logger->notice("Confirmation email for transaction with hash: '".$this->transaction->hash."' sent.");
+            $this->logNotice("Confirmation email for transaction with hash: '".$this->transaction->hash."' sent.");
         } else {
-            $this->logger->error("Attempt to send confirmation email for transaction with hash: '"
-                                    .$this->transaction->hash."' has failed (at least for one of addresses).");
+            $this->logError("Attempt to send confirmation email for transaction with hash: '"
+                            .$this->transaction->hash."' has failed (at least for one of addresses).");
         }
     }
 }

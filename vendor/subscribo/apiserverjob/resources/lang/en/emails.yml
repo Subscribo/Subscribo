@@ -3,6 +3,9 @@
 order.manual.confirm:
     templatePath: subscribo::apiserverjob.emails.en.order.manual.confirm
     subject: Order confimation email
+order.automatic.confirm:
+    templatePath: subscribo::apiserverjob.emails.en.order.automatic.confirm
+    subject: Order information email
 generic:
     heading: Dear %salutation%
     ending: Kind regards

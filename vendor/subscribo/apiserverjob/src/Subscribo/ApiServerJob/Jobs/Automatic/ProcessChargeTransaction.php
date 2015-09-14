@@ -3,8 +3,11 @@
 namespace Subscribo\ApiServerJob\Jobs\Automatic;
 
 use Subscribo\ApiServerJob\Jobs\AbstractJob;
+use Subscribo\ApiServerJob\Jobs\Triggered\SalesOrder\SendConfirmationMessage as SendSalesOrderConfirmationMessage;
 use Subscribo\ModelCore\Models\Transaction;
+use Subscribo\ModelCore\Models\SalesOrder;
 use Subscribo\TransactionPluginManager\Interfaces\PluginResourceManagerInterface;
+use Subscribo\TransactionPluginManager\Interfaces\TransactionProcessingResultInterface;
 use Subscribo\TransactionPluginManager\Managers\TransactionProcessingManager;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Psr\Log\LoggerInterface;
@@ -38,10 +41,36 @@ class ProcessChargeTransaction extends AbstractJob
         $logger->info("Processing transaction with hash '".$this->transaction->hash."' started");
         $driverName = $this->transaction->transactionGatewayConfiguration->transactionGateway->driver;
         $processingManager = new TransactionProcessingManager($resourceManager, $driverName);
-        $sendMessage = true; //todo implement callback logic
-        $processingResult = $processingManager->charge($this->transaction, $sendMessage, false);
-        //todo send Sales Order confirmation, if needed
+        $sendMessage = function ($result, TransactionProcessingResultInterface $processingResult) {
+            switch(strval($processingResult->getTransactionFacadeObject()->getTransactionModelInstance()->result)) {
+                case Transaction::RESULT_SUCCESS:
+                case Transaction::RESULT_FAILURE:
+                case Transaction::RESULT_CANCELLED:
+                case Transaction::RESULT_WAITING:
 
+                    return true;
+                default:
+
+                    return false;
+            }
+        };
+        $processResult = $processingManager->charge($this->transaction, $sendMessage, false);
+        $salesOrder = $this->transaction->salesOrder;
+        $status = empty($processResult['result']['status']) ? '' : $processResult['result']['status'];
+        if ((TransactionProcessingResultInterface::STATUS_SUCCESS === $status)
+            and $salesOrder
+            and (SalesOrder::STATUS_ORDERING === $salesOrder->status)) {
+            $messageSendingJob = new SendSalesOrderConfirmationMessage($salesOrder);
+            $this->dispatch($messageSendingJob);
+            $logger->info("Sending message job for sales order with hash '".$salesOrder->hash."' dispatched");
+            $salesOrder->status = SalesOrder::STATUS_ORDERED;
+            $salesOrder->save();
+        } else {
+            $reasonAdd = empty($processResult['result']['reason'])
+                ? '' : (' reason: '.$processResult['result']['reason']);
+            $logger->warning("Processing transaction with hash '"
+                .$this->transaction->hash."' status: ".$status.$reasonAdd);
+        }
         $logger->info("Processing transaction with hash '".$this->transaction->hash."' finished");
     }
 }
