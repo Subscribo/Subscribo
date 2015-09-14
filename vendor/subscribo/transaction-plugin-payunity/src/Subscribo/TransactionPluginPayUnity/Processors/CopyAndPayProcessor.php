@@ -3,14 +3,12 @@
 namespace Subscribo\TransactionPluginPayUnity\Processors;
 
 use Exception;
-use RuntimeException;
 use Subscribo\TransactionPluginPayUnity\Drivers\PostDriver;
 use Subscribo\TransactionPluginManager\Bases\TransactionProcessorBase;
 use Subscribo\TransactionPluginManager\Bases\TransactionProcessingResultBase;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionProcessingResultInterface;
 use Subscribo\TransactionPluginManager\Utils;
 use Subscribo\ModelCore\Models\Transaction;
-use Subscribo\Exception\Exceptions\ServerErrorHttpException;
 use Omnipay\Omnipay;
 
 /**
@@ -24,9 +22,6 @@ class CopyAndPayProcessor extends TransactionProcessorBase
 
     /**
      * @return TransactionProcessingResultBase|TransactionProcessingResultInterface
-     * @throws \RuntimeException
-     * @throws \Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException
-     * @throws \Subscribo\Exception\Exceptions\ServerErrorHttpException
      */
     protected function doProcess()
     {
@@ -45,14 +40,10 @@ class CopyAndPayProcessor extends TransactionProcessorBase
                 return $this->processPreparedTransaction();
             default:
 
-                throw new RuntimeException('Transaction is in invalid stage for continuing');
+                return $this->result->skipped();
         }
     }
 
-    /**
-     * @throws \Subscribo\RestCommon\Exceptions\WidgetServerRequestHttpException
-     * @throws \Subscribo\Exception\Exceptions\ServerErrorHttpException
-     */
     protected function processPlannedTransaction()
     {
         $this->switchResultMoneyStart();
@@ -99,7 +90,6 @@ class CopyAndPayProcessor extends TransactionProcessorBase
 
     /**
      * @return TransactionProcessingResultBase
-     * @throws \Subscribo\Exception\Exceptions\ServerErrorHttpException
      */
     protected function processPreparedTransaction()
     {

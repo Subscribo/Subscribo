@@ -3,7 +3,6 @@
 namespace Subscribo\TransactionPluginPayUnity\Processors;
 
 use Exception;
-use RuntimeException;
 use Subscribo\TransactionPluginManager\Bases\TransactionProcessorBase;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionProcessingResultInterface;
 use Omnipay\Omnipay;
@@ -20,17 +19,19 @@ class PostProcessor extends TransactionProcessorBase
 
     /**
      * @return TransactionProcessingResultInterface
-     * @throws \RuntimeException
      */
     public function doProcess()
     {
-        $this->checkInitialStage();
+        if ($this->stageIsNotAmongAllowed()) {
+            return $this->result->skipped();
+        }
         $this->switchResultMoneyStart();
         $transaction = $this->transaction;
         $registrationToken = $transaction->retrieveRegistrationToken();
         if (empty($registrationToken)) {
+            $this->getLogger()->error('Driver PayUnity Post is not able to process transactions without registration token');
 
-            throw new RuntimeException('This driver is not able to process transactions without registration token');
+            return $this->result->error(TransactionProcessingResultInterface::ERROR_TRANSACTION);
         }
         /** @var \Omnipay\PayUnity\PostGateway $gateway */
         $gateway = Omnipay::create(static::OMNIPAY_GATEWAY_NAME);
