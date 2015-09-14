@@ -32,6 +32,14 @@ class WebshopController extends Controller
     use HandleUserRegistrationTrait;
     use HandleServerRequestExceptionTrait;
 
+    const STAGE_REGISTER_USER = 1;
+    const STAGE_CREATE_ORDER = 2;
+    const STAGE_CREATE_TRANSACTION = 3;
+    const STAGE_EVALUATE_TRANSACTION_RESPONSE = 4;
+    const STAGE_CREATE_SUBSCRIPTION = 5;
+    const STAGE_CREATE_JOB_SENDING_ORDER_CONFIRMATION_MESSAGE = 6;
+    const STAGE_FINAL_REDIRECT = 7;
+
     protected $sessionKeyBuyProductStage = 'subscribo_webshop_buy_product_stage';
     protected $sessionKeyBuyProductValidatedInput = 'subscribo_webshop_buy_product_validated_input';
     protected $sessionKeyBuyProductProcessingData = 'subscribo_webshop_buy_product_processing_data';
@@ -146,7 +154,7 @@ class WebshopController extends Controller
         $session->set($this->sessionKeyBuyProductValidatedInput, $validatedData);
         $session->set($this->sessionKeyBuyProductInputForRedirect, $inputForRedirect);
 
-        return $this->processPostBuyProduct(1, [], $businessConnector, $transactionConnector, $localizer, $request, $auth, $registrar, $sessionDeposit, $cookieDeposit, $logger, $session);
+        return $this->processPostBuyProduct(self::STAGE_REGISTER_USER, [], $businessConnector, $transactionConnector, $localizer, $request, $auth, $registrar, $sessionDeposit, $cookieDeposit, $logger, $session);
     }
 
     /**
@@ -181,13 +189,13 @@ class WebshopController extends Controller
     {
         $validatedData = $session->get($this->sessionKeyBuyProductValidatedInput);
         $inputForRedirect = $session->get($this->sessionKeyBuyProductInputForRedirect);
-        if ($stage <= 1) {
+        if ($stage <= self::STAGE_REGISTER_USER) {
             if ($auth->guest()) {
                 $processingResult = $this->handleUserRegistration($auth, $registrar, $request, $sessionDeposit, $cookieDeposit, $localizer, $logger, []);
             } else {
                 $processingResult = [];
             }
-        } elseif ($stage == 2) {
+        } elseif ($stage == self::STAGE_CREATE_ORDER) {
             $priceId = $validatedData['item_identifier'];
             $data = $validatedData;
             unset($data['transaction_gateway']);
@@ -200,7 +208,7 @@ class WebshopController extends Controller
                 return $localizer->trans('errors.orderFailed', [], 'webshop::messages');
             };
             $processingResult = $this->processRemoteCall($callback, [$data], $inputForRedirect, $request->url(), $genericErrorMessage, $logger);
-        } elseif ($stage == 3) {
+        } elseif ($stage == self::STAGE_CREATE_TRANSACTION) {
             $salesOrderId = $previousProcessResultData['result']['salesOrder']['id'];
             $session->set($this->sessionKeyBuyProductProcessingData, ['sales_order_id' => $salesOrderId]);
             $data = [
@@ -212,10 +220,10 @@ class WebshopController extends Controller
                 return $errorMessage = $localizer->trans('errors.transactionFailed', [], 'webshop::messages');
             };
             $processingResult = $this->processRemoteCall($callback, [$data], $inputForRedirect, $request->url(), $genericErrorMessage, $logger);
-        } elseif ($stage == 4) {
+        } elseif ($stage == self::STAGE_EVALUATE_TRANSACTION_RESPONSE) {
 
             $processingResult = $this->processPostBuyProductTransactionFinalization($previousProcessResultData, $inputForRedirect, $request->url());
-        } elseif ($stage == 5) {
+        } elseif ($stage == self::STAGE_CREATE_SUBSCRIPTION) {
             $data = $session->get($this->sessionKeyBuyProductProcessingData);
             $data['subscription_period'] = $validatedData['subscription_period'];
             $callback = [$businessConnector, 'postSubscription'];
@@ -223,14 +231,14 @@ class WebshopController extends Controller
                 return $localizer->trans('errors.subscriptionFailed', [], 'webshop::messages');
             };
             $processingResult = $this->processRemoteCall($callback, [$data], $inputForRedirect, $request->url(), $genericErrorMessage, $logger);
-        } elseif ($stage == 6) {
+        } elseif ($stage == self::STAGE_CREATE_JOB_SENDING_ORDER_CONFIRMATION_MESSAGE) {
             $data = $session->get($this->sessionKeyBuyProductProcessingData);
             $callback = [$businessConnector, 'postMessage'];
             $genericErrorMessage = function () use ($localizer) {
                 return $localizer->trans('errors.confirmationMessageFailed', [], 'webshop::messages');
             };
             $processingResult = $this->processRemoteCall($callback, [$data], $inputForRedirect, $request->url(), $genericErrorMessage, $logger);
-        } elseif ($stage >= 7) {
+        } elseif ($stage >= self::STAGE_FINAL_REDIRECT) {
             $processingResult = [
                 'redirect' => redirect()->route('subscribo.webshop.success'),
                 'redirectReason' => 'finished',

@@ -12,6 +12,7 @@
     @foreach($products as $product)
         <li>
             {{ $product['name'] }}
+            <small>{{ $product['description'] }}</small>
             <strong> {{ $localizer->trans('grossPrice') }} {{ $product['price_gross'] }} {{ $product['price_currency_symbol'] }} </strong>
             {{ $localizer->trans('netPrice') }} {{ $product['price_net'] }} {{ $product['price_currency_symbol'] }}
             [ {{ $localizer->trans('tax') }} {{ $product['tax_percent'] }} %
