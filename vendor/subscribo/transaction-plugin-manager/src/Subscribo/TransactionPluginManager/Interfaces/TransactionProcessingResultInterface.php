@@ -18,6 +18,7 @@ interface TransactionProcessingResultInterface
     const STATUS_ERROR = 'error';
     const STATUS_WAITING = 'waiting';
     const STATUS_INTERRUPTION = 'interruption';
+    const STATUS_SKIPPED = 'skipped';
 
     const WAITING_FOR_CUSTOMER_INPUT = 'waiting_for_customer_input'; //Necessary? Remove?
     const WAITING_FOR_CUSTOMER_CONFIRMATION = 'waiting_for_customer_confirmation'; //Merge with  WAITING_FOR_CUSTOMER_INPUT? and rename to WAITING_FOR_CUSTOMER?
@@ -32,6 +33,7 @@ interface TransactionProcessingResultInterface
     const ERROR_CONNECTION = 'error_connection'; //For errors cause after an API call to gateway has been made
     const ERROR_RESPONSE = 'error_response'; //For errors caused by unexpected response of Gateway API
     const ERROR_GATEWAY = 'error_gateway'; //Gateway responded by reasonable manner, but is telling, that it is not able to proceed this transaction at this point
+    const ERROR_TRANSACTION = 'error_transaction'; //Errors caused by transaction being in unexpected state, stage or missing required data
     const ERROR_SERVER = 'error_server'; //For errors caused by server logic, database, unknown errors etc.
 
     const FAILURE_UNSPECIFIED = 'failure_unspecified'; //A catch-all for all kinds of problems (mainly) on Customer side
@@ -42,6 +44,9 @@ interface TransactionProcessingResultInterface
     const FAILURE_CARD_BLOCKED = 'failure_card_blocked';
     const FAILURE_CARD_NOT_ACTIVATED = 'failure_card_not_activated'; //Card has not been activated for internet payments
 
+    const SKIPPED_PROCESSED = 'skipped_processed'; //Transaction has already been processed
+    const SKIPPED_WRONG_STAGE = 'skipped_wrong_stage'; //Transaction is in wrong stage, not allowing start of processing
+
     /**
      * Uncertainty logic constants for moneyAreReserved() and moneyAreTransferred()
      */
@@ -49,6 +54,7 @@ interface TransactionProcessingResultInterface
     const YES = 'yes';
     const NO = 'no';
     const POSSIBLY = 'possibly'; //For states, when we are not sure, but we know we are not sure - this should happen only when state is Error or Waiting
+    const NON_APPLICABLE = 'non_applicable'; //For states, when we do not care and know, we do not care intentionally (not by unintended omission)
 
     /**
      * @return TransactionFacadeInterface

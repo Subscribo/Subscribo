@@ -226,7 +226,7 @@ class PluginResourceManager implements PluginResourceManagerInterface
 
                 throw $result;
             }
-            $result = $exportedResult;
+            return ['result' => $exportedResult];
         }
         if ($transaction->confirmationMessage) {
             if (is_callable($sendMessage)) {
@@ -325,6 +325,7 @@ class PluginResourceManager implements PluginResourceManagerInterface
                 }
                 break;
             case TransactionProcessingResultInterface::STATUS_INTERRUPTION:
+            case TransactionProcessingResultInterface::STATUS_SKIPPED:
             default:
                 return;
 

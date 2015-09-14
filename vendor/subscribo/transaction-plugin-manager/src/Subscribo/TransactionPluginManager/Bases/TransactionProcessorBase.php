@@ -3,7 +3,6 @@
 namespace Subscribo\TransactionPluginManager\Bases;
 
 use Exception;
-use RuntimeException;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionProcessorInterface;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionPluginDriverInterface;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionFacadeInterface;
@@ -154,9 +153,9 @@ abstract class TransactionProcessorBase implements TransactionProcessorInterface
     /**
      * @param array $allowedStages
      * @param bool $addPlannedStage
-     * @throws \RuntimeException
+     * @return bool
      */
-    protected function checkInitialStage($allowedStages = [], $addPlannedStage = true)
+    protected function stageIsNotAmongAllowed($allowedStages = [], $addPlannedStage = true)
     {
         $allowedStages = is_array($allowedStages) ? $allowedStages : [$allowedStages];
         if ($addPlannedStage) {
@@ -165,9 +164,9 @@ abstract class TransactionProcessorBase implements TransactionProcessorInterface
 
         $stage = $this->transaction->getTransactionModelInstance()->stage;
         if (in_array($stage, $allowedStages, true)) {
-            return;
+            return false;
         }
 
-        throw new RuntimeException('Transaction not in allowed stage');
+        return true;
     }
 }

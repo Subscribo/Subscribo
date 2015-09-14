@@ -84,10 +84,38 @@ class TransactionProcessingResultBase implements TransactionProcessingResultInte
     {
         $instance = new static($transaction, static::STATUS_INTERRUPTION);
         $instance->setException($exception);
+        $instance->setMoneyAreReserved(static::NON_APPLICABLE);
+        $instance->setMoneyAreTransferred(static::NON_APPLICABLE);
 
         return $instance;
     }
 
+    /**
+     * @param TransactionFacadeInterface $transaction
+     * @param string $reason
+     * @param string|null $message
+     * @param string $moneyAreReserved
+     * @param string $moneyAreTransferred
+     * @return TransactionProcessingResultBase
+     */
+    public static function makeSkippedResult(
+        TransactionFacadeInterface $transaction,
+        $reason =  self::SKIPPED_WRONG_STAGE,
+        $message = null,
+        $moneyAreReserved = self::NON_APPLICABLE,
+        $moneyAreTransferred = self::NON_APPLICABLE
+    ) {
+        $instance = new static($transaction, static::STATUS_SKIPPED, $message, false, $reason);
+        $instance->setMoneyAreReserved($moneyAreReserved);
+        $instance->setMoneyAreTransferred($moneyAreTransferred);
+
+        return $instance;
+    }
+
+    /**
+     * @param LocalizerFacadeInterface $localizer
+     * @return mixed|null|string
+     */
     public function getGenericMessage(LocalizerFacadeInterface $localizer)
     {
         $loc = $localizer->getLocalizerInstance();
@@ -110,7 +138,7 @@ class TransactionProcessingResultBase implements TransactionProcessingResultInte
                 $addId = 'messages.add.transferred';
             } elseif (static::POSSIBLY === $transferred) {
                 $addId = 'messages.add.possibly_transferred';
-            } elseif (static::NO === $transferred) {
+            } elseif ((static::NO === $transferred) or (static::NON_APPLICABLE === $transferred)) {
                 if (static::YES === $reserved) {
                     $addId = 'messages.add.reserved';
                 } elseif (static::POSSIBLY === $reserved) {
@@ -369,6 +397,28 @@ class TransactionProcessingResultBase implements TransactionProcessingResultInte
         $this->setStatus(static::STATUS_ERROR);
         $this->setReason($reason);
         $this->setMessage($message);
+
+        return $this;
+    }
+
+    /**
+     * @param string $reason
+     * @param string|null $message
+     * @param string $moneyAreReserved
+     * @param string $moneyAreTransferred
+     * @return $this
+     */
+    public function skipped(
+        $reason =  self::SKIPPED_WRONG_STAGE,
+        $message = null,
+        $moneyAreReserved = self::NON_APPLICABLE,
+        $moneyAreTransferred = self::NON_APPLICABLE
+    ) {
+        $this->setStatus(static::STATUS_SKIPPED);
+        $this->setReason($reason);
+        $this->setMessage($message);
+        $this->setMoneyAreReserved($moneyAreReserved);
+        $this->setMoneyAreTransferred($moneyAreTransferred);
 
         return $this;
     }
