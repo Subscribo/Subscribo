@@ -3,7 +3,6 @@
 namespace Subscribo\TransactionPluginKlarna\Processors;
 
 use Exception;
-use RuntimeException;
 use Omnipay\Omnipay;
 use Subscribo\TransactionPluginManager\Bases\TransactionProcessorBase;
 use Subscribo\TransactionPluginManager\Bases\TransactionProcessingResultBase;
@@ -25,14 +24,16 @@ class InvoiceProcessor extends TransactionProcessorBase
 
     /**
      * @return TransactionProcessingResultBase|ResultInterface
-     * @throws \RuntimeException
      */
     public function doProcess()
     {
-        $this->checkInitialStage([
+        if ($this->stageIsNotAmongAllowed([
             Transaction::STAGE_ADDITIONAL_DATA_REQUESTED,
             Transaction::STAGE_AUTHORIZATION_RESPONSE_RECEIVED
-        ]);
+        ])) {
+
+            return $this->result->skipped();
+        }
         $this->switchResultMoneyStart();
         $transaction = $this->transaction;
         $configuration = $transaction->getGatewayConfiguration();
@@ -43,20 +44,23 @@ class InvoiceProcessor extends TransactionProcessorBase
         if (Transaction::STAGE_AUTHORIZATION_RESPONSE_RECEIVED === $transaction->stage) {
             $reservationNumber = $transaction->getDataToRemember('reservationNumber');
             if (empty($reservationNumber)) {
+                $this->getLogger()->error('Klarna Invoice transaction processing: reservationNumber missing');
 
-                throw new RuntimeException('Remembered data reservationNumber missing');
+                return $this->result->error(ResultInterface::ERROR_TRANSACTION);
             }
-            if (Transaction::STATUS_WAITING !== $transaction->status) {
+            if (Transaction::STATUS_WAITING_FOR_GATEWAY_PROCESSING !== $transaction->status) {
+                $this->getLogger()->error('Transaction can not be proceeded further, as it is not in a waiting state');
 
-                throw new RuntimeException('Transaction can not be proceeded further, as it is not in waiting state');
+                return $this->result->error(ResultInterface::ERROR_TRANSACTION);
             }
 
             return $this->capture($gateway, $reservationNumber);
         }
         $salesOrder = $transaction->salesOrder;
         if (empty($salesOrder)) {
+            $this->getLogger()->error('Transaction::salesOrder is required for processing via Klarna Invoice');
 
-            throw new RuntimeException('Transaction::salesOrder is required for processing via Klarna Invoice');
+            return $this->result->error(ResultInterface::ERROR_TRANSACTION);
         }
 
         $card = Utils::assembleCardData($salesOrder->billingAddress, $salesOrder->shippingAddress, true)
@@ -109,7 +113,7 @@ class InvoiceProcessor extends TransactionProcessorBase
             return $this->capture($gateway, $reservationNumber);
         }
         if ($authorizationResponse->isWaiting()) {
-            $transaction->changeStage(Transaction::STAGE_AUTHORIZATION_RESPONSE_RECEIVED, Transaction::STATUS_WAITING);
+            $transaction->changeStage(Transaction::STAGE_AUTHORIZATION_RESPONSE_RECEIVED, Transaction::STATUS_WAITING_FOR_GATEWAY_PROCESSING);
             $status = ResultInterface::STATUS_WAITING;
             $reason = ResultInterface::WAITING_FOR_GATEWAY_PROCESSING;
 
