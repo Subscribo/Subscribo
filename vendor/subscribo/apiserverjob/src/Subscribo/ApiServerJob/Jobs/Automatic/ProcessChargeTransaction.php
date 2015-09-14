@@ -42,6 +42,10 @@ class ProcessChargeTransaction extends AbstractJob
         $driverName = $this->transaction->transactionGatewayConfiguration->transactionGateway->driver;
         $processingManager = new TransactionProcessingManager($resourceManager, $driverName);
         $sendMessage = function ($result, TransactionProcessingResultInterface $processingResult) {
+            if (TransactionProcessingResultInterface::STATUS_SKIPPED === $processingResult->getStatus()) {
+
+                return false;
+            }
             switch(strval($processingResult->getTransactionFacadeObject()->getTransactionModelInstance()->result)) {
                 case Transaction::RESULT_SUCCESS:
                 case Transaction::RESULT_FAILURE:
