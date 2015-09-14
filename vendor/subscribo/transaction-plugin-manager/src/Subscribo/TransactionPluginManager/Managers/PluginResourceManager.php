@@ -209,6 +209,10 @@ class PluginResourceManager implements PluginResourceManagerInterface
             case TransactionProcessingResultInterface::STATUS_FAILURE:
                 $logMessage = "Transaction with hash: '%s' has failed. (Reason: ".$processingResult->getReason().')';
                 break;
+            case TransactionProcessingResultInterface::STATUS_SKIPPED:
+                $logMessage = "Transaction with hash: '%s' has been skipped. (Reason: "
+                    .$processingResult->getReason().')';
+                break;
             default:
                 $logMessage = "Transaction with hash: '%s' has undefined status.";
         }

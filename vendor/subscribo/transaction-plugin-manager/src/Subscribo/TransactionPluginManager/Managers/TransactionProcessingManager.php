@@ -3,6 +3,7 @@
 namespace Subscribo\TransactionPluginManager\Managers;
 
 use RuntimeException;
+use Subscribo\TransactionPluginManager\Bases\TransactionProcessingResultBase;
 use Subscribo\TransactionPluginManager\Interfaces\PluginResourceManagerInterface;
 use Subscribo\TransactionPluginManager\Interfaces\TransactionPluginChargeDriverInterface;
 use Subscribo\TransactionPluginManager\Facades\TransactionFacade;
@@ -70,6 +71,16 @@ class TransactionProcessingManager
         if ( ! $transactionFacade->isChargeTransaction()) {
 
             throw new RuntimeException('Provided transaction is not charge');
+        }
+        switch (strval($transaction->result)) {
+            case Transaction::RESULT_SUCCESS:
+            case Transaction::RESULT_CANCELLED:
+            case Transaction::RESULT_FAILURE:
+
+                return TransactionProcessingResultBase::makeSkippedResult(
+                    $transactionFacade,
+                    TransactionProcessingResultBase::SKIPPED_PROCESSED
+                );
         }
 
         return $this->driver->makeProcessor($transactionFacade)->process();
