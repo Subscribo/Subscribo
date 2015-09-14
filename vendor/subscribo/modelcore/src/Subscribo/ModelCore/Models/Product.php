@@ -143,6 +143,25 @@ class Product extends \Subscribo\ModelCore\Bases\Product
     }
 
     /**
+     * @param Price $price
+     * @param int|string|Country|null $country
+     * @param int|string $amount
+     * @return array|null
+     * @throws \InvalidArgumentException
+     */
+    public function toArrayWithPriceAndAmount(Price $price, $country = null, $amount = 1)
+    {
+        $result = $this->toArrayWithPrice($price, $country);
+        $amount = strval($amount);
+        $result['amount'] = $amount;
+        $precision = $price->currency->precision;
+        $result['total_price_net'] = bcmul($amount, $result['price_net'], $precision);
+        $result['total_price_gross'] = bcmul($amount, $result['price_gross'], $precision);
+
+        return $result;
+    }
+
+    /**
      * @param int $currencyId
      * @param int|null $countryId
      * @return array|null
