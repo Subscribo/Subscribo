@@ -24,7 +24,7 @@ use Subscribo\ModelCore\Models\SubscriptionFilter;
 use Subscribo\ModelCore\Exceptions\ArgumentValidationException;
 use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
-use Subscribo\ApiServerJob\Jobs\Triggered\SalesOrder\SendConfirmationEmail;
+use Subscribo\ApiServerJob\Jobs\Triggered\SalesOrder\SendConfirmationMessage;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
 /**
@@ -191,7 +191,7 @@ class BusinessController extends AbstractBusinessController
         $validated = $this->validateRequestBody($messageValidationRules);
         $salesOrder = $this->retrieveSalesOrder($validated);
         if ($salesOrder) {
-            $salesOrderNotificationJob = new SendConfirmationEmail($salesOrder);
+            $salesOrderNotificationJob = new SendConfirmationMessage($salesOrder);
             $this->dispatch($salesOrderNotificationJob);
             if ($salesOrder->status === SalesOrder::STATUS_ORDERING) {
                 $salesOrder->status = SalesOrder::STATUS_ORDERED;
