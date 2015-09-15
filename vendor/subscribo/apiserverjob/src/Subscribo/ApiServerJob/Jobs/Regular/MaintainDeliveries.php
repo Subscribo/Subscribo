@@ -5,6 +5,8 @@ namespace Subscribo\ApiServerJob\Jobs\Regular;
 use Subscribo\ApiServerJob\Jobs\AbstractJob;
 use Subscribo\ModelCore\Models\Service;
 use Subscribo\ModelCore\Models\Delivery;
+use Subscribo\ModelCore\Models\DeliveryWindow;
+use Subscribo\ModelCore\Models\DeliveryWindowType;
 use Subscribo\ModelCore\Models\Realization;
 use Subscribo\Support\DateTimeUtils;
 use Psr\Log\LoggerInterface;
@@ -35,9 +37,15 @@ class MaintainDeliveries extends AbstractJob
         $log->info("Maintaining Deliveries for service '".$this->service->identifier."' started");
 
         $addedDeliveries = Delivery::autoAdd($this->service);
+        $usualDeliveryWindowTypes = DeliveryWindowType::getAllUsualByService($this->service);
 
         foreach ($addedDeliveries as $delivery) {
             $log->notice('Added delivery starting from '.DateTimeUtils::exportDateTime($delivery->start));
+            $deliveryWindows = [];
+            foreach ($usualDeliveryWindowTypes as $deliveryWindowType) {
+                $deliveryWindows[] = DeliveryWindow::generate($delivery, $deliveryWindowType);
+            }
+            $log->info("Delivery windows added: ". count($deliveryWindows));
         }
         $log->info("Deliveries added: ". count($addedDeliveries));
 

@@ -8,6 +8,10 @@ You have ordered following items:
 @endforeach
 
 Total price: {!! $currencySymbol !!}{{ $totalNetSum }} (without tax) / {!! $currencySymbol !!}{{ $totalGrossSum }} (with tax)
+@if($anticipatedDeliveryStart and $anticipatedDeliveryEnd)
+
+Your order should be delivered between {{ $anticipatedDeliveryStart->format('l jS \\o\\f F Y G:i') }} and {{ $anticipatedDeliveryEnd->format('l jS \\o\\f F Y G:i') }}.
+@endif
 
 Kind regards
 

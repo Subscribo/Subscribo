@@ -39,6 +39,11 @@
                 </tr>
             </tfoot>
         </table>
+        @if($anticipatedDeliveryStart and $anticipatedDeliveryEnd)
+        <p></p>
+        <p>Your order should be delivered between {{ $anticipatedDeliveryStart->format('l jS \\o\\f F Y G:i') }}
+            and {{ $anticipatedDeliveryEnd->format('l jS \\o\\f F Y G:i') }}.</p>
+        @endif
         <p></p>
         <p>Kind regards</p>
         <p>Subscribo</p>

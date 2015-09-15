@@ -80,6 +80,8 @@ class SendConfirmationMessage extends AbstractMessageHandlingJob
             'discounts' => $this->salesOrder->discounts,
             'totalNetSum' => $this->salesOrder->netSum,
             'totalGrossSum' => $this->salesOrder->grossSum,
+            'anticipatedDeliveryStart' => $this->salesOrder->anticipatedDeliveryStart,
+            'anticipatedDeliveryEnd' => $this->salesOrder->anticipatedDeliveryEnd,
         ];
         $emailSent = $this->sendEmail($mailer, $message, $templatePath, $viewData);
         if ($emailSent) {
