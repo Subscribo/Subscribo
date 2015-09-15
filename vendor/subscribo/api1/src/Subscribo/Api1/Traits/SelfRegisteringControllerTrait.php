@@ -123,7 +123,7 @@ trait SelfRegisteringControllerTrait
         if ('index' === end($parts)) {
             array_pop($parts);
         }
-        $uri = implode('/', $parts);
+        $uri = implode('_', $parts);
         $params = static::analyseParams($action);
         if ('ANY' === $verb) {
             $verb = true;

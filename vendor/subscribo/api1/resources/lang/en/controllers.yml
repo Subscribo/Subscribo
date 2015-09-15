@@ -36,7 +36,10 @@ business:
         noRealization: No realization found for specified product and delivery
         invalidSubscriptionPeriod: Invalid subscription period
         deliveryNotFound: Specified delivery not found
-        deliveryWindowNotFound: Specified delivery window not found
+        deliveryWrongService: Specified delivery is not for this service
+        deliveryWindowNotFound: Delivery window of requested type not found for specified delivery
+        deliveryWindowStartLate: It is too late to order within this delivery for this delivery window
+        deliveryWindowEndLate: It is too late to order within this delivery for this delivery window
         shippingCountryNotFound: Unrecognized shipping country
         billingCountryNotFound: Unrecognized billing country
         billingCountryInvalid: Billing country does not agree with shipping country

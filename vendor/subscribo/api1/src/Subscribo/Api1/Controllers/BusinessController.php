@@ -10,6 +10,7 @@ use Subscribo\Api1\AbstractBusinessController;
 use Subscribo\Exception\Exceptions\InvalidInputHttpException;
 use Subscribo\Exception\Exceptions\NoAccountHttpException;
 use Subscribo\Exception\Exceptions\ServerErrorHttpException;
+use Subscribo\ModelCore\Models\DeliveryWindowType;
 use Subscribo\ModelCore\Models\Person;
 use Subscribo\ModelCore\Models\Address;
 use Subscribo\ModelCore\Models\Customer;
@@ -26,6 +27,7 @@ use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
 use Subscribo\ApiServerJob\Jobs\Triggered\SalesOrder\SendConfirmationMessage;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Subscribo\Support\DateTimeUtils;
 
 /**
  * Class BusinessController
@@ -93,6 +95,34 @@ class BusinessController extends AbstractBusinessController
     }
 
 
+    public function actionGetDeliveryWindowType($id = null)
+    {
+        $queryValidationRules = [
+            'usual' => 'boolean',
+        ];
+        $validated = $this->validateRequestQuery($queryValidationRules);
+        $serviceId = $this->context->getServiceId();
+        if (is_null($id)) {
+            if (isset($validated['usual'])) {
+
+                return ['collection' => DeliveryWindowType::getAllUsualByService($serviceId, $validated['usual'])];
+            } else {
+
+                return ['collection' => DeliveryWindowType::getAllByService($serviceId)];
+            }
+        }
+        $instance = DeliveryWindowType::find($id);
+        if (empty($instance)) {
+            throw new InstanceNotFoundHttpException();
+        }
+        if ($instance->serviceId !== $serviceId) {
+            throw new WrongServiceHttpException();
+        }
+
+        return ['instance' => $instance];
+    }
+
+
     public function actionGetPeriod()
     {
         $subscriptionPeriods = Subscription::getAvailableSubscriptionPeriods($this->context->getService());
@@ -115,7 +145,7 @@ class BusinessController extends AbstractBusinessController
             'prices' => 'required|array',
             'discount_codes' => 'array',
             'delivery_id' => 'required|integer',
-            'delivery_window_id' => 'integer',
+            'delivery_window_type_id' => 'integer',
             'address_id' => 'integer',
             'billing_address_id' => 'integer',
             'shipping_address_id' => 'integer,'
@@ -125,8 +155,8 @@ class BusinessController extends AbstractBusinessController
         $validated = $this->validateRequestBody($validationRules);
         $service = $this->context->getService();
         $discountIds = []; //todo implement
-        $delivery = $this->retrieveDelivery($validated['delivery_id']);
-        $deliveryWindow = $this->retrieveDeliveryWindow($validated);
+        $delivery = $this->retrieveDelivery($validated['delivery_id'], $this->context->getServiceId());
+        $deliveryWindow = $this->retrieveDeliveryWindow($validated, $this->context->getService(), $delivery);
         $account = $this->context->getAccount();
         if (empty($account)) {
             throw new NoAccountHttpException();
@@ -308,14 +338,20 @@ class BusinessController extends AbstractBusinessController
 
     /**
      * @param int $deliveryId
+     * @param int $serviceId
      * @return Delivery
      * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException
      */
-    private function retrieveDelivery($deliveryId)
+    private function retrieveDelivery($deliveryId, $serviceId)
     {
         $delivery = Delivery::find($deliveryId);
         if (empty($delivery)) {
             $messageId = 'business.errors.prepareOrder.deliveryNotFound';
+            $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+            throw new InvalidInputHttpException(['delivery_id' => $message]);
+        }
+        if (strval($delivery->serviceId) !== strval($serviceId)) {
+            $messageId = 'business.errors.prepareOrder.deliveryWrongService';
             $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
             throw new InvalidInputHttpException(['delivery_id' => $message]);
         }
@@ -325,19 +361,39 @@ class BusinessController extends AbstractBusinessController
 
     /**
      * @param array $input
+     * @param Service $service
+     * @param Delivery $delivery
      * @return DeliveryWindow|null
      * @throws \Subscribo\Exception\Exceptions\InvalidInputHttpException
      */
-    private function retrieveDeliveryWindow(array $input)
+    private function retrieveDeliveryWindow(array $input, Service $service, Delivery $delivery = null)
     {
-        if (empty($input['delivery_window_id'])) {
+        if (empty($input['delivery_window_type_id']) or empty($delivery)) {
+
             return null;
         }
-        $deliveryWindow = DeliveryWindow::find($input['delivery_window_id']);
+        $deliveryWindowTypeId = $input['delivery_window_type_id'];
+        $deliveryWindow = DeliveryWindow::findByDeliveryAndDeliveryWindowType($delivery, $deliveryWindowTypeId);
         if (empty($deliveryWindow)) {
             $messageId = 'business.errors.prepareOrder.deliveryWindowNotFound';
             $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
-            throw new InvalidInputHttpException(['delivery_window_id' => $message]);
+            throw new InvalidInputHttpException(['delivery_id' => $message, 'delivery_window_type_id' => $message]);
+        }
+        if ($service->deliveryWindowStartLimit) {
+            $startLimit = DateTimeUtils::makeDateTime($service->deliveryWindowStartLimit);
+            if ($deliveryWindow->start < $startLimit) {
+                $messageId = 'business.errors.prepareOrder.deliveryWindowStartLate';
+                $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+                throw new InvalidInputHttpException(['delivery_id' => $message, 'delivery_window_type_id' => $message]);
+            }
+        }
+        if ($service->deliveryWindowEndLimit) {
+            $endLimit = DateTimeUtils::makeDateTime($service->deliveryWindowEndLimit);
+            if ($deliveryWindow->end < $endLimit) {
+                $messageId = 'business.errors.prepareOrder.deliveryWindowEndLate';
+                $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+                throw new InvalidInputHttpException(['delivery_id' => $message, 'delivery_window_type_id' => $message]);
+            }
         }
 
         return $deliveryWindow;
