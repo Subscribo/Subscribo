@@ -62,7 +62,9 @@ forms:
         delivery.select:
             title: Select your first delivery
             text: Deliveries starting from {start}
-        subscriptionPeriod.select.title: How often would you like to receive this delivery?
+        subscriptionPeriod.select:
+            title: How often would you like to receive this delivery?
+            noSubscription: Just one time delivery (no subscription)
         deliveryWindowType.select.title: When would you like to receive this delivery?
 # WebshopController.php
 errors:

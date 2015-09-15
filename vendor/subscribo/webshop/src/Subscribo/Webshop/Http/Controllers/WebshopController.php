@@ -40,6 +40,8 @@ class WebshopController extends Controller
     const STAGE_CREATE_JOB_SENDING_ORDER_CONFIRMATION_MESSAGE = 6;
     const STAGE_FINAL_REDIRECT = 7;
 
+    const NO_SUBSCRIPTION_OPTION = 'no_subscription';
+
     protected $sessionKeyBuyProductStage = 'subscribo_webshop_buy_product_stage';
     protected $sessionKeyBuyProductValidatedInput = 'subscribo_webshop_buy_product_validated_input';
     protected $sessionKeyBuyProductProcessingData = 'subscribo_webshop_buy_product_processing_data';
@@ -91,7 +93,7 @@ class WebshopController extends Controller
         }
         try {
             $product = $businessConnector->getProduct($id);
-            $subscriptionPeriods = $businessConnector->getSubscriptionPeriods();
+            $subscriptionPeriods = $this->acquireSubscriptionPeriods($businessConnector, false, $localizer);
             $transactionGateways = $transactionConnector->getGateway();
             $addresses = $auth->user() ? $accountConnector->getAddress() : [];
             $deliveries = $businessConnector->getAvailableDeliveries();
@@ -136,11 +138,11 @@ class WebshopController extends Controller
      */
     public function postBuyProduct($id, BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger, Store $session)
     {
-        $subscriptionPeriods = $businessConnector->getSubscriptionPeriods();
+        $subscriptionPeriodKeys = $this->acquireSubscriptionPeriods($businessConnector, true);
         $orderValidationRules = [
             'transaction_gateway' => 'required|integer',
             'delivery_id' => 'integer',
-            'subscription_period' => 'in:'.implode(',', array_keys($subscriptionPeriods)),
+            'subscription_period' => 'required| in:'.implode(',', $subscriptionPeriodKeys),
             'address_id' => 'integer',
             'shipping_address_id' => 'integer',
             'billing_is_same' => 'boolean',
@@ -238,13 +240,17 @@ class WebshopController extends Controller
 
             $processingResult = $this->processPostBuyProductTransactionFinalization($previousProcessResultData, $inputForRedirect, $request->url());
         } elseif ($stage == self::STAGE_CREATE_SUBSCRIPTION) {
-            $data = $session->get($this->sessionKeyBuyProductProcessingData);
-            $data['subscription_period'] = $validatedData['subscription_period'];
-            $callback = [$businessConnector, 'postSubscription'];
-            $genericErrorMessage = function () use ($localizer) {
-                return $localizer->trans('errors.subscriptionFailed', [], 'webshop::messages');
-            };
-            $processingResult = $this->processRemoteCall($callback, [$data], $inputForRedirect, $request->url(), $genericErrorMessage, $logger);
+            if ($validatedData['subscription_period'] === self::NO_SUBSCRIPTION_OPTION) {
+                $processingResult = []; //Skipping creating subscription
+            } else {
+                $data = $session->get($this->sessionKeyBuyProductProcessingData);
+                $data['subscription_period'] = $validatedData['subscription_period'];
+                $callback = [$businessConnector, 'postSubscription'];
+                $genericErrorMessage = function () use ($localizer) {
+                    return $localizer->trans('errors.subscriptionFailed', [], 'webshop::messages');
+                };
+                $processingResult = $this->processRemoteCall($callback, [$data], $inputForRedirect, $request->url(), $genericErrorMessage, $logger);
+            }
         } elseif ($stage == self::STAGE_CREATE_JOB_SENDING_ORDER_CONFIRMATION_MESSAGE) {
             $data = $session->get($this->sessionKeyBuyProductProcessingData);
             $callback = [$businessConnector, 'postMessage'];
@@ -364,5 +370,27 @@ class WebshopController extends Controller
         }
 
         return $this->processPostBuyProduct($stage + 1, $data, $businessConnector, $transactionConnector, $localizer, $request, $auth, $registrar, $sessionDeposit, $cookieDeposit, $logger, $session);
+    }
+
+    /**
+     * @param BusinessConnector $businessConnector
+     * @param bool $keysOnly
+     * @param LocalizerInterface $localizer
+     * @return array
+     */
+    protected function acquireSubscriptionPeriods(BusinessConnector $businessConnector, $keysOnly, LocalizerInterface $localizer = null)
+    {
+        $subscriptionPeriods = $businessConnector->getSubscriptionPeriods();
+        if ($keysOnly) {
+            $result = array_keys($subscriptionPeriods);
+            $result[] = self::NO_SUBSCRIPTION_OPTION;
+
+            return $result;
+        }
+        $result = $subscriptionPeriods;
+        $noSubsTrId = 'forms.buy.subscriptionPeriod.select.noSubscription';
+        $result[self::NO_SUBSCRIPTION_OPTION] = $localizer->trans($noSubsTrId, [], 'webshop::messages');
+
+        return $result;
     }
 }
