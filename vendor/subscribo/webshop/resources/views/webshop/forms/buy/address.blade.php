@@ -6,7 +6,7 @@ $prefix = ($type ? ($type.'_') : '');
 <fieldset id="{{ $prefix.'address_fieldset'}}">
 
     <div class="form-group <?php if ($errors->get('gender')) { echo 'has-error';}?>">
-        {{ $localizer->trans('forms.buy.address.gender.title') }}
+        <strong class="control-label">{{ $localizer->trans('forms.buy.address.gender.title') }}</strong>
 
         <label class="control-label" for="{{ $prefix.'gender_man' }}">
             <input type="radio" name="{{ $prefix.'gender' }}" id="{{ $prefix.'gender_man' }}" value="man"

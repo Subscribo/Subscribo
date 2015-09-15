@@ -38,6 +38,18 @@ class BusinessConnector extends AbstractConnector
     }
 
 
+    public function getUsualDeliveryWindowTypes($signatureOptions = true)
+    {
+        $signatureOptions = $this->processSignatureOptions($signatureOptions);
+
+        $query = ['usual' => true];
+
+        $responseData = $this->restClient->process('business/delivery_window_type', 'GET', null, $query, null, $signatureOptions);
+
+        return $responseData['collection'];
+    }
+
+
     public function postOrder(array $content = null, array $query = null, $signatureOptions = true)
     {
         $signatureOptions = $this->processSignatureOptions($signatureOptions);

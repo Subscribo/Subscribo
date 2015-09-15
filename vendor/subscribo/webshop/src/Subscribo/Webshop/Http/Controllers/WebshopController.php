@@ -95,6 +95,12 @@ class WebshopController extends Controller
             $transactionGateways = $transactionConnector->getGateway();
             $addresses = $auth->user() ? $accountConnector->getAddress() : [];
             $deliveries = $businessConnector->getAvailableDeliveries();
+            $usualDeliveryWindowTypes = $businessConnector->getUsualDeliveryWindowTypes();
+            $deliveryWindowTypes = [];
+            foreach ($usualDeliveryWindowTypes as $deliveryWindowType)
+            {
+                $deliveryWindowTypes[$deliveryWindowType['id']] = $deliveryWindowType['name'];
+            }
         } catch (Exception $e) {
             throw new RuntimeException('Error in communication with API', 0, $e);
         }
@@ -108,6 +114,7 @@ class WebshopController extends Controller
             'addresses' => $addresses,
             'deliveries' => $deliveries,
             'subscriptionPeriods' => $subscriptionPeriods,
+            'deliveryWindowTypes' => $deliveryWindowTypes,
         ];
 
         return view('vendor/subscribo/webshop/product/buy', $data);
@@ -133,13 +140,20 @@ class WebshopController extends Controller
         $orderValidationRules = [
             'transaction_gateway' => 'required|integer',
             'delivery_id' => 'integer',
-            'delivery_window_id' => 'integer',
             'subscription_period' => 'in:'.implode(',', array_keys($subscriptionPeriods)),
             'address_id' => 'integer',
             'shipping_address_id' => 'integer',
             'billing_is_same' => 'boolean',
             'item_identifier' => 'required|numeric',
         ];
+        $usualDeliveryWindowTypes = $businessConnector->getUsualDeliveryWindowTypes();
+        if ($usualDeliveryWindowTypes) {
+            $windowTypeIds = [];
+            foreach($usualDeliveryWindowTypes as $deliveryWindowType) {
+                $windowTypeIds[] = $deliveryWindowType['id'];
+            }
+            $orderValidationRules['delivery_window_type_id'] = 'required|in:'.implode(',', $windowTypeIds);
+        }
         $validationRules = $orderValidationRules + Registrar::getAddressValidationRules('', 'address_id');
         $billingValidationRules =  Registrar::getAddressValidationRules('billing_', 'billing_address_id,billing_is_same', 'required_without_all');
         $billingValidationRules['billing_address_id'] = 'integer';

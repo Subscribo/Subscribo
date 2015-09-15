@@ -63,6 +63,7 @@ forms:
             title: Select your first delivery
             text: Deliveries starting from {start}
         subscriptionPeriod.select.title: How often would you like to receive this delivery?
+        deliveryWindowType.select.title: When would you like to receive this delivery?
 # WebshopController.php
 errors:
     orderFailed: Ordering has failed
