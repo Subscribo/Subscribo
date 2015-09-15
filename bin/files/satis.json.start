@@ -1,0 +1,8 @@
+{
+    "name": "Local Satis",
+    "output-dir": "public",
+    "require-all": true,
+    "archive": {
+        "directory": "downloads"
+    },
+    "repositories": [

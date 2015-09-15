@@ -67,3 +67,33 @@ In order to install into 'frontend' directory you may use this composer command
     > php artisan queue:listen
 ```
 
+## C. Satis configuration
+
+Running 'composer update' would not work, if packages resource is not configured, as there are private packages used.
+You may configure local packages resource using [Satis](https://github.com/composer/satis)
+
+### 1. [Install composer globally](https://getcomposer.org/doc/00-intro.md#globally)
+(or modify 'bin/configure_satis.sh' )
+
+### 2. Installing Satis using provided script 'bin/configure_satis.sh'
+
+```sh
+    $ cd /path/to/your/projects
+    $ chmod +x /path/to/Subscribo/bin/configure_satis.sh
+    $ /path/to/Subscribo/bin/configure_satis.sh
+```
+
+### 3. Configure your vagrant box / virtual server to serve Satis public directory and update your 'etc/hosts' file
+
+### 4. Add to your project's 'composer.json' file or create '~/.composer/config.json' with this content:
+```json
+    {
+        "repositories": [{"type": "composer", "url": "http://satis.url.you.provided.to.script"}]
+    }
+```
+
+### 5. Now you can run
+```sh
+    $ cd /path/to/Subscribo
+    $ composer update
+```

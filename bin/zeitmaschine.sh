@@ -15,5 +15,5 @@ date
 sudo date -s "$*"
 fi
 echo Starting queue listener
+php artisan schedule:run
 php artisan queue:listen > /dev/null 2>&1 &
-
