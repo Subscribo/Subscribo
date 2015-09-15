@@ -16,6 +16,8 @@ class BusinessSeeder extends Seeder
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\TransactionGatewaySeeder');
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\TaxSeeder');
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\TransactionGatewayConfigurationSeeder');
+        $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\DeliveryWindowTypeSeeder');
+        $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\DeliverySeeder');
         $this->call('Subscribo\\DevelopmentSeeder\\Seeds\\ProductSeeder');
     }
 
