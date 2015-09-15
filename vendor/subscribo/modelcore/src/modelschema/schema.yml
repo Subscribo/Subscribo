@@ -670,8 +670,8 @@ model_fields:
 
 
     subscription_vetos:
-    - start (date)
-    - end (date)
+    - start (date) null
+    - end (date) null
     - subscription_id → subscriptions
 
     products_in_subscriptions:
