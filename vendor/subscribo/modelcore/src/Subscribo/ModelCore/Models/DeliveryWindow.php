@@ -4,6 +4,7 @@ namespace Subscribo\ModelCore\Models;
 
 use Subscribo\ModelCore\Models\Delivery;
 use Subscribo\ModelCore\Models\DeliveryWindowType;
+use Subscribo\Support\DateTimeUtils;
 
 /**
  * Model DeliveryWindow
@@ -12,6 +13,23 @@ use Subscribo\ModelCore\Models\DeliveryWindowType;
  */
 class DeliveryWindow extends \Subscribo\ModelCore\Bases\DeliveryWindow
 {
+    /**
+     * @param Delivery $delivery
+     * @param DeliveryWindowType $deliveryWindowType
+     * @return DeliveryWindow
+     */
+    public static function generate(Delivery $delivery, DeliveryWindowType $deliveryWindowType)
+    {
+        $instance = new static();
+        $instance->delivery()->associate($delivery);
+        $instance->deliveryWindowType()->associate($deliveryWindowType);
+        $instance->start = DateTimeUtils::makeDateTime($deliveryWindowType->start.$delivery->start->format(' Y-m-d'));
+        $instance->end = DateTimeUtils::makeDateTime($deliveryWindowType->end.$instance->start->format(' Y-m-d'));
+        $instance->save();
+
+        return $instance;
+    }
+
     /**
      * @param Delivery|int $delivery
      * @param DeliveryWindowType|int $deliveryWindowType

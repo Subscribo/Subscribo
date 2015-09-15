@@ -57,14 +57,19 @@ class Delivery extends \Subscribo\ModelCore\Bases\Delivery
 
     /**
      * @param int|Service $service
+     * @param bool|string $seedStart
      * @return Delivery[]
      */
-    public static function autoAdd($service)
+    public static function autoAdd($service, $seedStart = false)
     {
         $added = [];
         $lastDelivery = static::byService($service)->lastDefined()->first();
         if (empty($lastDelivery)) {
-            $lastDelivery = static::generate($service);
+            if (empty($seedStart)) {
+
+                return [];
+            }
+            $lastDelivery = static::generate($service, $seedStart);
             $added[] = $lastDelivery;
         }
         if (empty($service->deliveryAutoAddLimit) or empty($service->deliveryPeriod)) {

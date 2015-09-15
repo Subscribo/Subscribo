@@ -73,10 +73,10 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
         $anticipatedDeliveryEnd = true
     ) {
         if (true === $anticipatedDeliveryStart) {
-            $anticipatedDeliveryStart = null; //todo calculate from Delivery and DeliveryWindow
+            $anticipatedDeliveryStart = $deliveryWindow ? $deliveryWindow->start : null;
         }
         if (true === $anticipatedDeliveryEnd) {
-            $anticipatedDeliveryEnd = null; //todo calculate from Delivery and DeliveryWindow
+            $anticipatedDeliveryEnd = $deliveryWindow ? $deliveryWindow->end : null;
         }
         $salesOrder = static::makeWithHash();
         $salesOrder->currency()->associate($currency);

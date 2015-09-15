@@ -367,6 +367,8 @@ model_fields:
         - delivery_auto_available_end null //string understandable by DateTime
         - subscription_add_sales_order_start null default word today //string understandable by DateTime
         - subscription_add_sales_order_end null default words 3 days //string understandable by DateTime
+        - delivery_window_start_limit null default word now //string understanadble by DateTime
+        - delivery_window_end_limit null //string understanadble by DateTime
         - operator_id default 1 → operators (type none) //operators table does not exist in current version of the schema, so the relation type is no_relation
 
     service_pools: # auxiliary table, allowing grouping of services, allowing user to use same user for different services
@@ -626,15 +628,17 @@ model_fields:
     - is_available_for_ordering (bool) default true
 
     delivery_window_types:
-    - day_of_week (unsigned tiny int)
-    - start (time)
-    - duration (period)
+    - identifier (identifier) representative
+    - name translate
+    - start (string) //relative date string understandable by strtotime() (combined with delivery date)
+    - end (string) //relative date string understandable by strtotime() (combined with delivery date)
+    - is_usual(bool) //Whether this delivery window type is usual for delivery, so whether it should be added automatically
     - service_id → services
 
     delivery_windows:
-    - start (date)
-    - end (date)
-    - delivery_window_type_id → delivery_window_types
+    - start (datetime)
+    - end (datetime)
+    - delivery_window_type_id null → delivery_window_types
     - delivery_id → deliveries
 
 
