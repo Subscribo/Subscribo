@@ -33,7 +33,7 @@
         </tbody>
         <tfoot>
         <tr>
-            <td colspan="6"  style="border:1px solid"><strong>Total</strong></td>
+            <td colspan="6" style="border:1px solid"><strong>Total</strong></td>
             <td style="border:1px solid">{{ $currencySymbol }}{{ $totalNetSum }}</td>
             <td style="border:1px solid"><strong>{{ $currencySymbol }}{{ $totalGrossSum }}</strong></td>
         </tr>
@@ -41,8 +41,15 @@
     </table>
     @if($anticipatedDeliveryStart and $anticipatedDeliveryEnd)
     <p></p>
-    <p>Your order should be delivered between {{ $anticipatedDeliveryStart->format('l jS \\o\\f F Y G:i') }}
-        and {{ $anticipatedDeliveryEnd->format('l jS \\o\\f F Y G:i') }}.</p>
+    <p>
+        @if($anticipatedDeliveryStart->format('Y-m-d') === $anticipatedDeliveryEnd->format('Y-m-d'))
+            Your order should be delivered on {{ $anticipatedDeliveryStart->format('l jS \\o\\f F Y') }}
+            between {{ $anticipatedDeliveryStart->format('G:i') }} and {{ $anticipatedDeliveryEnd->format('G:i') }}.
+        @else
+            Your order should be delivered between {{ $anticipatedDeliveryStart->format('l jS \\o\\f F Y G:i') }}
+            and {{ $anticipatedDeliveryEnd->format('l jS \\o\\f F Y G:i') }}.
+        @endif
+    </p>
     @endif
     <p></p>
     <p>Kind regards</p>

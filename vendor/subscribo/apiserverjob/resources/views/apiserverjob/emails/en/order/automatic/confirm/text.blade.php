@@ -10,7 +10,11 @@ The order contain following items:
 Total price: {!! $currencySymbol !!}{{ $totalNetSum }} (without tax) / {!! $currencySymbol !!}{{ $totalGrossSum }} (with tax)
 @if($anticipatedDeliveryStart and $anticipatedDeliveryEnd)
 
+@if($anticipatedDeliveryStart->format('Y-m-d') === $anticipatedDeliveryEnd->format('Y-m-d'))
+Your order should be delivered on {{ $anticipatedDeliveryStart->format('l jS \\o\\f F Y') }} between {{ $anticipatedDeliveryStart->format('G:i') }} and {{ $anticipatedDeliveryEnd->format('G:i') }}.
+@else
 Your order should be delivered between {{ $anticipatedDeliveryStart->format('l jS \\o\\f F Y G:i') }} and {{ $anticipatedDeliveryEnd->format('l jS \\o\\f F Y G:i') }}.
+@endif
 @endif
 
 Kind regards
