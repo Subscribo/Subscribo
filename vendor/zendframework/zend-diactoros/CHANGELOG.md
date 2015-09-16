@@ -6,7 +6,11 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#77](https://github.com/zendframework/zend-diactoros/pull/77) adds a new
+  response type, `Zend\Diactoros\Response\TextResponse`, for returning plain
+  text responses. By default, it sets the content type to `text/plain;
+  charset=utf-8`; per the other response types, the signature is `new
+  TextResponse($text, $status = 200, array $headers = []`.
 
 ### Deprecated
 
@@ -18,9 +22,11 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#77](https://github.com/zendframework/zend-diactoros/pull/77) updates the
+  `HtmlResponse` to set the charset to utf-8 by default (if no content type
+  header is provided at instantiation).
 
-## 1.1.3 - TBD
+## 1.1.4 - TBD
 
 ### Added
 
@@ -37,6 +43,39 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Fixed
 
 - Nothing.
+
+## 1.1.3 - 2015-08-10
+
+### Added
+
+- [#73](https://github.com/zendframework/zend-diactoros/pull/73) adds caching of
+  the vendor directory to the Travis-CI configuration, to speed up builds.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#71](https://github.com/zendframework/zend-diactoros/pull/71) fixes the
+  docblock of the `JsonResponse` constructor to typehint the `$data` argument
+  as `mixed`.
+- [#73](https://github.com/zendframework/zend-diactoros/pull/73) changes the
+  behavior in `Request` such that if it marshals a stream during instantiation,
+  the stream is marked as writeable (specifically, mode `wb+`).
+- [#85](https://github.com/zendframework/zend-diactoros/pull/85) updates the
+  behavior of `Zend\Diactoros\Uri`'s various `with*()` methods that are
+  documented as accepting strings to raise exceptions on non-string input.
+  Previously, several simply passed non-string input on verbatim, others
+  normalized the input, and a few correctly raised the exceptions. Behavior is
+  now consistent across each.
+- [#87](https://github.com/zendframework/zend-diactoros/pull/87) fixes
+  `UploadedFile` to ensure that `moveTo()` works correctly in non-SAPI
+  environments when the file provided to the constructor is a path.
 
 ## 1.1.2 - 2015-07-12
 

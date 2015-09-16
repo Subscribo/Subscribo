@@ -48,26 +48,48 @@ use Ivory\HttpAdapter\FopenHttpAdapter;
 $httpAdapter = new FopenHttpAdapter();
 ```
 
-## Guzzle
+## Guzzle 3
 
 ``` php
 use Guzzle\Http\Client;
-use Ivory\HttpAdapter\GuzzleHttpAdapter;
+use Ivory\HttpAdapter\Guzzle3HttpAdapter;
 
-$httpAdapter = new GuzzleHttpAdapter();
+$httpAdapter = new Guzzle3HttpAdapter();
 // or
-$httpAdapter = new GuzzleHttpAdapter(new Client());
+$httpAdapter = new Guzzle3HttpAdapter(new Client());
 ```
 
-## Guzzle http
+## Guzzle 4
 
 ``` php
 use GuzzleHttp\Client;
-use Ivory\HttpAdapter\GuzzleHttpHttpAdapter;
+use Ivory\HttpAdapter\Guzzle4HttpAdapter;
 
-$httpAdapter = new GuzzleHttpHttpAdapter();
+$httpAdapter = new Guzzle4HttpAdapter();
 // or
-$httpAdapter = new GuzzleHttpHttpAdapter(new Client());
+$httpAdapter = new Guzzle4HttpAdapter(new Client());
+```
+
+## Guzzle 5
+
+``` php
+use GuzzleHttp\Client;
+use Ivory\HttpAdapter\Guzzle5HttpAdapter;
+
+$httpAdapter = new Guzzle5HttpAdapter();
+// or
+$httpAdapter = new Guzzle5HttpAdapter(new Client());
+```
+
+## Guzzle 6
+
+``` php
+use GuzzleHttp\Client;
+use Ivory\HttpAdapter\Guzzle6HttpAdapter;
+
+$httpAdapter = new Guzzle6HttpAdapter();
+// or
+$httpAdapter = new Guzzle6HttpAdapter(new Client());
 ```
 
 ## Httpful
@@ -76,6 +98,27 @@ $httpAdapter = new GuzzleHttpHttpAdapter(new Client());
 use Ivory\HttpAdapter\HttpfulHttpAdapter;
 
 $httpAdapter = new HttpfulHttpAdapter();
+```
+
+## Mock
+
+``` php
+use Ivory\HttpAdapter\MockHttpAdapter;
+use Ivory\HttpAdapter\Message\RequestInterface;
+
+$mockHttpAdapter = new MockHttpAdapter();
+
+$expectedResponse = $mockHttpAdapter->getConfiguration()->getMessageFactory()->createResponse(
+    200,
+    RequestInterface::PROTOCOL_VERSION_1_1,
+    ['Content-Type: application/json'],
+    '{"hello":"world"}'
+);
+
+$mockHttpAdapter->appendResponse($expectedResponse);
+
+$response = $mockHttpAdapter->send('http://www.google.com');
+// $response === $expectedResponse
 ```
 
 ## Pecl Http

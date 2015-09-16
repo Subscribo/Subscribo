@@ -23,6 +23,16 @@ class BaseTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(BaseProvider::randomDigitNotNull() < 10);
     }
 
+
+    public function testRandomDigitNotReturnsValidDigit()
+    {
+        for ($i = 0; $i <= 9; $i++) {
+            $this->assertTrue(BaseProvider::randomDigitNot($i) >= 0);
+            $this->assertTrue(BaseProvider::randomDigitNot($i) < 10);
+            $this->assertTrue(BaseProvider::randomDigitNot($i) !== $i);
+        }
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      */
@@ -264,6 +274,17 @@ class BaseTest extends \PHPUnit_Framework_TestCase
     public function testBothifyCombinesNumerifyAndLexify()
     {
         $this->assertRegExp('/foo[a-z]Ba\dr/', BaseProvider::bothify('foo?Ba#r'));
+    }
+
+    public function testBothifyAsterisk()
+    {
+        $this->assertRegExp('/foo([a-z]|\d)Ba([a-z]|\d)r/', BaseProvider::bothify('foo*Ba*r'));
+    }
+
+    public function testBothifyUtf()
+    {
+        $utf = 'œ∑´®†¥¨ˆøπ“‘和製╯°□°╯︵ ┻━┻🐵 🙈 ﺚﻣ ﻦﻔﺳ ﺲﻘﻄﺗ ﻮﺑﺎﻠﺘﺣﺪﻳﺩ،, ﺝﺰﻳﺮﺘﻳ ﺏﺎﺴﺘﺧﺩﺎﻣ ﺄﻧ ﺪﻧﻭ. ﺇﺫ ﻪﻧﺍ؟ ﺎﻠﺴﺗﺍﺭ ﻮﺘ';
+        $this->assertRegExp('/'.$utf.'foo\dB[a-z]a([a-z]|\d)r/u', BaseProvider::bothify($utf.'foo#B?a*r'));
     }
 
     public function testAsciifyReturnsSameStringWhenItContainsNoStarSign()
