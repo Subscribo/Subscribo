@@ -1905,8 +1905,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                     $dbLength = array_shift($parts);
                 }
                 $dbScale = array_shift($parts);
-                $dbLength = is_null($dbLength) ? 10 : intval($dbLength);
-                $dbScale = is_null($dbScale) ? 2 : intval($dbScale);
+                $dbLength = is_null($dbLength) ? 12 : intval($dbLength);
+                $dbScale = is_null($dbScale) ? 3 : intval($dbScale);
                 if ($dbScale > $dbLength) {
                     throw new \Exception("Second parameter (scale: ".$dbScale.") of type should not be bigger then first parameter (length: ".$dbLength.") (Field name: '".$field['name']."')");
                 }
@@ -1921,8 +1921,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                     $dbLength = array_shift($parts);
                 }
                 $dbScale = array_shift($parts);
-                $dbLength = is_null($dbLength) ? 10 : intval($dbLength);
-                $dbScale = is_null($dbScale) ? 2 : intval($dbScale);
+                $dbLength = is_null($dbLength) ? 12 : intval($dbLength);
+                $dbScale = is_null($dbScale) ? 3 : intval($dbScale);
                 if ($dbScale > $dbLength) {
                     throw new \Exception("Second parameter (scale: ".$dbScale.") of type should not be bigger then first parameter (length: ".$dbLength.") (Field name: '".$field['name']."')");
                 }
