@@ -60,11 +60,11 @@ abstract class Kernel implements KernelInterface, TerminableInterface
     protected $startTime;
     protected $loadClassCache;
 
-    const VERSION = '2.7.4-DEV';
-    const VERSION_ID = '20704';
-    const MAJOR_VERSION = '2';
-    const MINOR_VERSION = '7';
-    const RELEASE_VERSION = '4';
+    const VERSION = '2.7.5-DEV';
+    const VERSION_ID = 20705;
+    const MAJOR_VERSION = 2;
+    const MINOR_VERSION = 7;
+    const RELEASE_VERSION = 5;
     const EXTRA_VERSION = 'DEV';
 
     const END_OF_MAINTENANCE = '05/2018';
@@ -356,7 +356,7 @@ abstract class Kernel implements KernelInterface, TerminableInterface
     {
         if (null === $this->rootDir) {
             $r = new \ReflectionObject($this);
-            $this->rootDir = str_replace('\\', '/', dirname($r->getFileName()));
+            $this->rootDir = dirname($r->getFileName());
         }
 
         return $this->rootDir;
