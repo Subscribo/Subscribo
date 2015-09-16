@@ -2,11 +2,13 @@
 
 use RuntimeException;
 use Subscribo\Support\Str;
+use Subscribo\RestCommon\ServerRequest;
 
 /**
  * Model ActionInterruption
  *
  * Model class for being changed and used in the application
+ * @property array $processingData JSON encoded array - careful - can be saved only whole
  */
 class ActionInterruption extends \Subscribo\ModelCore\Bases\ActionInterruption
 {
@@ -53,7 +55,7 @@ class ActionInterruption extends \Subscribo\ModelCore\Bases\ActionInterruption
 
     public function setExtraDataAttribute($value)
     {
-        $this->attributes['extra_data'] = json_encode($value);
+        $this->attributes['extra_data'] = json_encode($value, JSON_BIGINT_AS_STRING);
     }
 
     public function getServerRequestAttribute($value)
@@ -63,7 +65,7 @@ class ActionInterruption extends \Subscribo\ModelCore\Bases\ActionInterruption
 
     public function setServerRequestAttribute($value)
     {
-        $this->attributes['server_request'] = json_encode($value);
+        $this->attributes['server_request'] = json_encode($value, JSON_BIGINT_AS_STRING);
     }
 
     public function getAnswerAttribute($value)
@@ -73,7 +75,7 @@ class ActionInterruption extends \Subscribo\ModelCore\Bases\ActionInterruption
 
     public function setAnswerAttribute($value)
     {
-        $this->attributes['answer'] = json_encode($value);
+        $this->attributes['answer'] = json_encode($value, JSON_BIGINT_AS_STRING);
     }
 
     public function markAsProcessed($answer = null)
@@ -86,4 +88,13 @@ class ActionInterruption extends \Subscribo\ModelCore\Bases\ActionInterruption
         return $this;
     }
 
+    public function syncWithServerRequest(ServerRequest $serverRequest, $endpointBase)
+    {
+        $serverRequest->hash = $this->hash;
+        $serverRequest->endpoint = $endpointBase.$serverRequest->hash;
+        $this->serverRequest = $serverRequest;
+        $this->type = $serverRequest->getType();
+
+        return $this;
+    }
 }

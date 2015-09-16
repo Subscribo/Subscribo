@@ -40,6 +40,8 @@ class ApiClientCommonServiceProvider extends ServiceProvider
             'subscribo.serverRequest.clientRedirect' => '/redirectback/{hash?}',
             'subscribo.generic.questionary' => '/question/{type}',
             'subscribo.generic.redirection' => '/redirection/{type}',
+            'subscribo.serverRequest.widget.display' => '/widget/display',
+            'subscribo.serverRequest.widget.return' => '/widget/return/{hash?}',
         ];
         $paths = Arr::mergeNatural($defaultPaths, $paths);
         $router = $this->getRouter($router);
@@ -75,6 +77,21 @@ class ApiClientCommonServiceProvider extends ServiceProvider
             'middleware' => $middleware,
             'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\ClientRedirectionController@getRedirectionByType'
         ])->where(['type' => '[A-Za-z0-9]+']);
+
+        $router->get($paths['subscribo.serverRequest.widget.display'], [
+            'as' => 'subscribo.serverRequest.widget.display',
+            'middleware' => $middleware,
+            'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\WidgetController@getWidgetFromSession',
+        ]);
+        $router->get($paths['subscribo.serverRequest.widget.return'], [
+            'as' => 'subscribo.serverRequest.widget.return',
+            'middleware' => $middleware,
+            'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\WidgetController@actionWidgetReturn',
+        ])->where(['hash' => '[A-Za-z0-9]+']);
+        $router->post($paths['subscribo.serverRequest.widget.return'], [
+            'middleware' => $middleware,
+            'uses' => '\\Subscribo\\ApiClientCommon\\Controllers\\WidgetController@actionWidgetReturn',
+        ])->where(['hash' => '[A-Za-z0-9]+']);
 
         $this->routesRegistered = true;
     }

@@ -11,6 +11,8 @@ use Subscribo\Support\Arr;
 class ServiceModule extends \Subscribo\ModelCore\Bases\ServiceModule
 {
     const MODULE_ACCOUNT_MERGING = 'account_merging';
+    const MODULE_WIDGET = 'widget';
+    const GENERIC_MODULE = 'generic_module';
 
     const STATUS_ENABLED = 'enabled';
     const STATUS_DISABLED = 'disabled';
@@ -34,6 +36,27 @@ class ServiceModule extends \Subscribo\ModelCore\Bases\ServiceModule
                 ],
             ],
         ],
+        self::MODULE_WIDGET => [
+            'client' => [
+                'main' => [
+                    'uri' => [
+                        'path' => '/widget/return',
+                        'query' => [
+                            'required' => [
+                                'hash'          => '{hash}',
+                            ],
+                            'optional' => [
+                                'locale' => '{locale}',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+
+    ];
+
+    static $defaultSettingsMap = [
     ];
 
     /**
@@ -49,7 +72,9 @@ class ServiceModule extends \Subscribo\ModelCore\Bases\ServiceModule
         $instance = static::query()->where($attributes)->first();
         if ( ! $instance) {
             $instance = new static($attributes);
-            $defaults = isset(static::$defaultSettings[$module]) ? static::$defaultSettings[$module] : null;
+            $instance->serviceId = $serviceId;
+            $key = isset(static::$defaultSettingsMap[$module]) ? static::$defaultSettingsMap[$module] : $module;
+            $defaults = isset(static::$defaultSettings[$key]) ? static::$defaultSettings[$key] : null;
             $settings = is_null($settings) ? $defaults : $settings;
         }
         if ( ! is_null($settings)) {
@@ -68,7 +93,7 @@ class ServiceModule extends \Subscribo\ModelCore\Bases\ServiceModule
     public static function disableModule($service, $module)
     {
         $serviceId = ($service instanceof Service) ? $service->id : $service;
-        $instance = static::firstByAttributes(['service_id' => $serviceId, 'module' => $module]);
+        $instance = static::query()->where(['service_id' => $serviceId, 'module' => $module])->first();
         if (empty($instance)) {
             return null;
         }
@@ -85,7 +110,11 @@ class ServiceModule extends \Subscribo\ModelCore\Bases\ServiceModule
     public static function findEnabledModule($service, $module)
     {
         $serviceId = ($service instanceof Service) ? $service->id : $service;
-        $instance = static::firstByAttributes(['service_id' => $serviceId, 'module' => $module, 'status' => static::STATUS_ENABLED]);
+        $instance = static::query()->where([
+            'service_id' => $serviceId,
+            'module' => $module,
+            'status' => static::STATUS_ENABLED
+        ])->first();
         return $instance;
     }
 
@@ -130,7 +159,7 @@ class ServiceModule extends \Subscribo\ModelCore\Bases\ServiceModule
 
     public function setSettingsAttribute($value)
     {
-        $this->attributes['settings'] = json_encode($value);
+        $this->attributes['settings'] = json_encode($value, JSON_BIGINT_AS_STRING);
     }
 
     public static function retrieveUri($service, $module, array $parameters = array(), $key = 'main')

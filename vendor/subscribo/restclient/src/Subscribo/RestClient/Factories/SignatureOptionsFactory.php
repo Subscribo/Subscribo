@@ -19,11 +19,15 @@ class SignatureOptionsFactory
     }
 
     /**
-     * @param array|bool $options true for defaults
+     * @param array|bool|SignatureOptions $options true for defaults
      * @return SignatureOptions
      */
     public function generate($options = true)
     {
+        if ($options instanceof SignatureOptions) {
+
+            return $options;
+        }
         $options = is_array($options) ? $options : array();
         $defaults = [
             'accountId' => true,

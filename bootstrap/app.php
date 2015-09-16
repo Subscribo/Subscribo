@@ -52,11 +52,19 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
-$app->singleton(
-    Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Exceptions\Handler::class
-);
+if (class_exists('\\Subscribo\\Exception\\Integration\\Laravel\\ApiExceptionHandlerServiceProvider')) {
+    $app->register('\\Subscribo\\Exception\\Integration\\Laravel\\ApiExceptionHandlerServiceProvider');
+    $app->singleton(
+        'Illuminate\Contracts\Debug\ExceptionHandler',
+        'Subscribo\\Exception\\Interfaces\\ExceptionHandlerInterface'
+    );
+} else {
 
+    $app->singleton(
+        Illuminate\Contracts\Debug\ExceptionHandler::class,
+        App\Exceptions\Handler::class
+    );
+}
 if (class_exists('\\Subscribo\\SchemaBuilder\\SchemaBuilderServiceProvider')) {
     $app->register('\\Subscribo\\SchemaBuilder\\SchemaBuilderServiceProvider');
 }
@@ -67,6 +75,10 @@ if (class_exists('\\Subscribo\\ApiChecker\\ApiCheckerServiceProvider')) {
 
 if (class_exists('\\Subscribo\\ClientChecker\\ClientCheckerServiceProvider')) {
     $app->register('\\Subscribo\\ClientChecker\\ClientCheckerServiceProvider');
+}
+
+if (class_exists('\\Subscribo\\Webshop\\Integration\\Laravel\\WebshopServiceProvider')) {
+    $app->register('\\Subscribo\\Webshop\\Integration\\Laravel\\WebshopServiceProvider');
 }
 
 /*

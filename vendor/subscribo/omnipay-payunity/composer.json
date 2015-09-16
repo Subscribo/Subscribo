@@ -1,0 +1,63 @@
+{
+    "name": "subscribo/omnipay-payunity",
+    "type": "library",
+    "description": "PayUnity driver for the Omnipay payment processing library",
+    "keywords": [
+        "PayUnity",
+        "gateway",
+        "merchant",
+        "omnipay",
+        "pay",
+        "payment"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Subscribo",
+            "email": "packages@subscribo.io",
+            "homepage": "http://www.subscribo.io"
+        },
+        {
+            "name": "Adrian Macneil",
+            "email": "adrian@adrianmacneil.com"
+        },
+        {
+            "name": "Omnipay Contributors",
+            "homepage": "https://github.com/thephpleague/omnipay-dummy/contributors"
+        },
+        {
+            "name": "Slavo"
+        },
+        {
+            "name": "KochAbo GmbH"
+        }
+    ],
+    "support": {
+        "email": "packages@subscribo.io",
+        "issues": "https://github.com/Subscribo/omnipay-payunity/issues",
+        "source": "https://github.com/Subscribo/omnipay-payunity"
+    },
+    "autoload": {
+        "psr-4": {"Omnipay\\PayUnity\\": "src/"}
+    },
+    "require": {
+        "php": "^5.4 || 7.0@dev",
+        "omnipay/common": "^2.3.4",
+        "psr/http-message": "^1.0",
+        "egeloen/http-adapter": "^0.8@dev",
+        "subscribo/omnipay-subscribo-shared": "^0.3.5",
+        "subscribo/psr-http-message-tools": ">=0.3.2 <0.5"
+    },
+    "require-dev": {
+        "omnipay/tests": "^2.0",
+        "monolog/monolog": "^1.13.1",
+        "symfony/http-foundation": "~2.1"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.4.x-dev"
+        }
+    },
+    "prefer-stable": true
+}

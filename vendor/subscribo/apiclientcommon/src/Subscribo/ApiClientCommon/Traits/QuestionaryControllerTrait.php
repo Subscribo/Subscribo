@@ -35,11 +35,11 @@ trait QuestionaryControllerTrait
      */
     public function getQuestionaryFromSession(Store $session, ApplicationLocaleManagerInterface $localeManager)
     {
-        $questionary = $session->get($this->sessionKeyQuestionary);
+        $questionary = $session->get($this->sessionKeyQuestionaryServerRequest);
         if (empty($questionary)) {
             throw new SessionVariableNotFoundHttpException;
         }
-        $session->keep([$this->sessionKeyQuestionary, $this->sessionKeyRedirectFromQuestionary]);
+        $session->keep([$this->sessionKeyQuestionaryServerRequest, $this->sessionKeyRedirectFromQuestionary]);
         if ( ! empty($questionary->locale)) {
             $localeManager->setLocale($questionary->locale);
         }
@@ -71,7 +71,7 @@ trait QuestionaryControllerTrait
             $errorMessage = $localizer->trans('traits.questionary.getQuestionary.errors.fallback', [], 'apiclientcommon::messages');
             return view('subscribo::apiclientcommon.errorsonly', ['errorList' => [$errorMessage]]);
         }
-        $session->flash($this->sessionKeyQuestionary, $questionary);
+        $session->flash($this->sessionKeyQuestionaryServerRequest, $questionary);
         if ( ! empty($questionary->locale)) {
             $localeManager->setLocale($questionary->locale);
         }
@@ -94,23 +94,28 @@ trait QuestionaryControllerTrait
     public function postQuestionary(Request $request, Store $session, ServerRequestConnector $connector, LocalizerInterface $localizer, ApplicationLocaleManagerInterface $localeManager)
     {
         /** @var Questionary $questionary */
-        $questionary = $session->get($this->sessionKeyQuestionary);
+        $questionary = $session->get($this->sessionKeyQuestionaryServerRequest);
         if (empty($questionary)) {
             throw new SessionVariableNotFoundHttpException;
         }
         if ( ! empty($questionary->locale)) {
             $localeManager->setLocale($questionary->locale);
         }
-        $session->keep([$this->sessionKeyQuestionary, $this->sessionKeyRedirectFromQuestionary]);
+        $session->keep([$this->sessionKeyQuestionaryServerRequest, $this->sessionKeyRedirectFromQuestionary]);
         $rules = $questionary->getValidationRules();
-        $this->validate($request, $rules, $questionary->getValidationMessages());
+        $this->validate(
+            $request,
+            $rules,
+            $questionary->getValidationMessages(),
+            $questionary->getValidationAttributes()
+        );
         $data = $request->only(array_keys($rules));
         $inputToRemember = Arr::only($data, $questionary->getFieldsToRememberOnError());
         try {
             $response = $connector->postAnswer($questionary, $data, true);
         } catch (ServerRequestException $e) {
             $redirectUrl = $session->pull($this->sessionKeyRedirectFromQuestionary);
-            $questionary = $session->pull($this->sessionKeyQuestionary);
+            $questionary = $session->pull($this->sessionKeyQuestionaryServerRequest);
             return $this->handleServerRequestException($e, $redirectUrl);
         } catch (ValidationErrorsException $e) {
             return redirect()
@@ -126,7 +131,7 @@ trait QuestionaryControllerTrait
                 ->withErrors([$errorMessage]);
         }
         $redirectUrl = $session->pull($this->sessionKeyRedirectFromQuestionary);
-        $questionary = $session->pull($this->sessionKeyQuestionary);
+        $questionary = $session->pull($this->sessionKeyQuestionaryServerRequest);
         if ($redirectUrl) {
             return redirect($redirectUrl)->with($this->sessionKeyServerRequestHandledResult, $response);
         }

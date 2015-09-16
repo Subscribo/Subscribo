@@ -1,0 +1,30 @@
+{
+    "name": "subscribo/apiserverjob",
+    "description": "Jobs and jobs related functionality for API Server",
+    "keywords": [
+        "laravel",
+        "subscribo",
+        "api",
+        "server",
+        "work",
+        "worker",
+        "scheduled",
+        "jobs"
+    ],
+    "license": "proprietary",
+    "homepage": "http://www.subscribo.io",
+    "require": {
+        "php": "~5.4",
+        "illuminate/contracts": "~5.1",
+        "illuminate/bus": "~5.1",
+        "illuminate/queue": "~5.1",
+        "subscribo/modelcore": "@dev",
+        "subscribo/localization": "@dev",
+        "subscribo/support": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\ApiServerJob\\": "src/Subscribo/ApiServerJob/"
+        }
+    }
+}

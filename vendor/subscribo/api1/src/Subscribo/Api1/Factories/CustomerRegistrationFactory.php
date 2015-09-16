@@ -3,6 +3,8 @@
 use Illuminate\Contracts\Hashing\Hasher;
 use Subscribo\ModelCore\Models\CustomerRegistration;
 use Subscribo\ModelCore\Models\AccountToken;
+use Subscribo\ModelCore\Models\Address;
+use Subscribo\ModelCore\Models\Person;
 use Subscribo\Support\Arr;
 
 /**
@@ -33,9 +35,6 @@ class CustomerRegistrationFactory
         if ( ! empty($data['password'])) {
             $customerRegistration->password = $this->hasher->make($data['password']);
         }
-        if ( ! empty($data['name'])) {
-            $customerRegistration->name = $data['name'];
-        }
         if ( ! empty($data['email'])) {
             $customerRegistration->email = $data['email'];
         }
@@ -43,6 +42,10 @@ class CustomerRegistrationFactory
             $token = AccountToken::generate($data['oauth'], null);
             $customerRegistration->accountTokenId = $token->id;
         }
+        $person = Person::generate($data);
+        $customerRegistration->personId = $person->id;
+        $address = Address::ifDataContainsAddressFindSimilarOrGenerate($data);
+        $customerRegistration->addressId = $address ? $address->id : null;
         $customerRegistration->save();
         return $customerRegistration;
     }

@@ -9,6 +9,7 @@ use Subscribo\RestCommon\Exceptions\ClientRedirectionServerRequestHttpException;
 use Subscribo\Api1\Factories\QuestionaryFactory;
 use Subscribo\Api1\Factories\ClientRedirectionFactory;
 use Subscribo\Api1\Context;
+use Subscribo\ModelCore\Factories\ActionInterruptionFactory;
 
 /**
  * Trait ServerRequestEnabledControllerTrait
@@ -19,6 +20,20 @@ use Subscribo\Api1\Context;
  */
 trait ServerRequestEnabledControllerTrait
 {
+    /**
+     * @param bool|string $className
+     * @return ActionInterruptionFactory
+     */
+    protected function provideActionInterruptionFactory($className = true)
+    {
+        if (true === $className) {
+            $className = get_class($this);
+        }
+        /** @var \Subscribo\Api1\Context $context */
+        $context = $this->context;
+
+        return new ActionInterruptionFactory($className, $context->getServiceId(), $context->getAccountId());
+    }
 
     /**
      * Wrapper for makeQuestionaryServerRequestHttpException with a shorter name

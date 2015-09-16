@@ -7,7 +7,7 @@ use Subscribo\Support\Arr;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Contracts\Events\Dispatcher;
-use Subscribo\ApiClientAuth\Connectors\AccountConnector;
+use Subscribo\ApiClientAuth\Connectors\AccountSimplifiedConnector;
 use Psr\Log\LoggerInterface;
 
 class RemoteAccountProvider implements UserProvider
@@ -24,7 +24,7 @@ class RemoteAccountProvider implements UserProvider
 
     protected $logger;
 
-    public function __construct(SessionInterface $session, AccountConnector $accountConnector, Hasher $hasher, Dispatcher $dispatcher, LoggerInterface $logger, $model = '\\Subscribo\\ApiClientAuth\\Account', $sessionKeyName = true)
+    public function __construct(SessionInterface $session, AccountSimplifiedConnector $accountConnector, Hasher $hasher, Dispatcher $dispatcher, LoggerInterface $logger, $model = '\\Subscribo\\ApiClientAuth\\Account', $sessionKeyName = true)
     {
         if (true === $sessionKeyName) {
             $sessionKeyName = 'account_session_provider_'.md5(get_class($this));

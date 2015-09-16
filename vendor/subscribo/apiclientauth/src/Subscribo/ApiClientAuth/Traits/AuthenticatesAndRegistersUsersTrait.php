@@ -6,7 +6,7 @@ use Illuminate\Session\Store;
 use Illuminate\Http\Request;
 use Exception;
 use Subscribo\ApiClientAuth\Registrar;
-use Subscribo\RestClient\Exceptions\ServerRequestException;
+use Subscribo\ApiClientAuth\Traits\HandleUserRegistrationTrait;
 use Subscribo\RestClient\Exceptions\ValidationErrorsException;
 use Subscribo\ApiClientCommon\Traits\HandleServerRequestExceptionTrait;
 use Subscribo\Localization\Deposits\SessionDeposit;
@@ -25,14 +25,14 @@ trait AuthenticatesAndRegistersUsersTrait
 {
     use AuthenticatesAndRegistersUsers;
     use HandleServerRequestExceptionTrait;
+    use HandleUserRegistrationTrait;
 
     public function getRegister(Guard $auth, Registrar $registrar, Store $session, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit)
     {
         $resultInSession = $session->pull($this->sessionKeyServerRequestHandledResult);
-        $account = $resultInSession ? $registrar->resumeAttempt($resultInSession) : null;
-        if ($account) {
-            $auth->login($account);
-            LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);
+        $handled = $this->handleUserRegistrationResume($resultInSession, $auth, $registrar, $sessionDeposit, $cookieDeposit);
+        if ($handled) {
+
             return redirect($this->redirectPath());
         }
         return view('auth.register');
@@ -41,32 +41,12 @@ trait AuthenticatesAndRegistersUsersTrait
 
     public function postRegister(Guard $auth, Registrar $registrar, Request $request, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LocalizerInterface $localizer)
     {
-        $rules = $registrar->getValidationRules();
-        $this->validate($request, $rules);
+        $registrationResult = $this->handleUserRegistration($auth, $registrar, $request, $sessionDeposit, $cookieDeposit, $localizer);
+        if (isset($registrationResult['redirect'])) {
 
-        try {
-            $account = $registrar->attempt($request->only(array_keys($rules)));
-            if (empty($account)) {
-                throw new Exception('Empty account.');
-            }
-        } catch (ServerRequestException $e) {
-            return $this->handleServerRequestException($e, $request->url());
-
-        } catch (ValidationErrorsException $e) {
-            return redirect()
-                ->refresh()
-                ->withInput($request->only('email', 'name'))
-                ->withErrors($e->getValidationErrors());
-        } catch (Exception $e) {
-            $this->logException($e);
-            $errorMessage = $localizer->trans('errors.registrationFailed', [], 'apiclientauth::messages');
-            return redirect()
-                ->refresh()
-                ->withInput($request->only('email', 'name'))
-                ->withErrors($errorMessage);
+            return $registrationResult['redirect'];
         }
-        $auth->login($account);
-        LocaleUtils::rememberLocaleForUser($account, $sessionDeposit, $cookieDeposit);
+
         return redirect($this->redirectPath());
     }
 

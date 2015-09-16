@@ -1,0 +1,84 @@
+# English translations resource file
+# view paths for translated templates and parts of messages
+order.manual.confirm:
+    templatePath: subscribo::apiserverjob.emails.en.order.manual.confirm
+    subject: Order confimation email
+order.automatic.confirm:
+    templatePath: subscribo::apiserverjob.emails.en.order.automatic.confirm
+    subject: Order information email
+generic:
+    heading: Dear %salutation%
+    ending: Kind regards
+transaction.detail.templatePath: subscribo::apiserverjob.emails.en.transaction.detail
+transaction.atomic.manual.content:
+    success: Thank you for your money transfer.
+    failure: Your transaction has not been processed. Please try other payment method.
+    error: There was an error during processing of your transaction. Please try other payment method.
+    cancelled: Your transaction has been cancelled on your request.
+    undetermined: Your transaction is in undetermined state. Please contact our support.
+    waiting:
+        customerInput: Please provide additional data needed.
+        customerConfirmation: Please confirm the transaction. (You might need to check your email box.)
+transaction.invoice.manual.content:
+    success: Thank you for your order. You should receive an invoice from our partner.
+    failure: Your request has not been processed. Please try other payment method.
+    error: There was an error during processing of your request. Please try other payment method.
+    cancelled: Your request has been cancelled on your request.
+    undetermined: Your request is in undetermined state. Please contact our support.
+    waiting:
+        customerInput: Please provide additional data needed.
+        customerConfirmation: Please confirm the request. (You might need to check your email box.)
+transaction.atomic.manual.subject:
+    success: Confirmation
+    failure: Transaction failed
+    error: Transaction error
+    cancelled: Transaction cancelled
+    undetermined: Transaction error
+    waiting:
+        customerInput: Waiting
+        customerConfirmation: Waiting
+transaction.invoice.manual.subject:
+    success: Confirmation
+    failure: Request failed
+    error: Request error
+    cancelled: Request cancelled
+    undetermined: Request error
+    waiting:
+            customerInput: Waiting
+            customerConfirmation: Waiting
+transaction.atomic.system.content:
+    success: Thank you for your money transfer, that have been automatically triggered by your running subscription.
+    failure: Transaction, that have been automatically triggered by your running subscription, has not been processed. Please check your settings (especially default transaction gateway and token).
+    error: There was an error during processing of your transaction, that have been automatically triggered by your running subscription, has not been processed. Please check your settings (especially default transaction gateway and token).
+    cancelled: Transaction, that have been automatically triggered by your running subscription, has been cancelled.
+    undetermined: Transaction, that have been automatically triggered by your running subscription, is in undetermined state. Please contact our support.
+    waiting:
+        customerInput: Transaction, that have been automatically triggered by your running subscription, is waiting for additional data. Please check your settings.
+        customerConfirmation: Please confirm the transaction, that have been automatically triggered by your running subscription. (You might need to check your email box.)
+transaction.invoice.system.content:
+    success: Thank you for your running subscription. You should receive an invoice from our partner.
+    failure: Invoice request, that have been automatically triggered by your running subscription, has not been processed. Please check (and if needed change) your settings (especially default transaction gateway).
+    error: There was an error during processing of your invoice request, that have been automatically triggered by your running subscription. Please check (and if needed change) your settings (especially default transaction gateway).
+    cancelled: Invoice request, that have been automatically triggered by your running subscription, has been cancelled.
+    undetermined: Invoice request, that have been automatically triggered by your running subscription, is in undetermined state. Please contact our support.
+    waiting:
+        customerInput: Invoice request, that have been automatically triggered by your running subscription, is waiting for additional data. Please check your settings.
+        customerConfirmation: Please confirm the invoice request, that have been automatically triggered by your running subscription. (You might need to check your email box.)
+transaction.atomic.system.subject:
+    success: Confirmation
+    failure: Transaction failed
+    error: Transaction error
+    cancelled: Transaction cancelled
+    undetermined: Transaction error
+    waiting:
+        customerInput: Waiting
+        customerConfirmation: Waiting
+transaction.invoice.system.subject:
+    success: Confirmation
+    failure: Request failed
+    error: Request error
+    cancelled: Request cancelled
+    undetermined: Request error
+    waiting:
+        customerInput: Waiting
+        customerConfirmation: Waiting

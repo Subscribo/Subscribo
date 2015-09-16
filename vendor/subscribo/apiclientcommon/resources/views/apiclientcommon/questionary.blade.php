@@ -1,6 +1,6 @@
 @extends('app')
 
-@if( ! empty($heading))
+@if ( ! empty($heading))
     @section('pageTitle')
         @parent
         | {{ $heading }}
@@ -12,15 +12,19 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                @if ($heading)
+                @if ( ! empty($heading))
                 <div class="panel-heading">{{ $heading }}</div>
                 @endif
                 <div class="panel-body">
                     @include('subscribo::apiclientcommon.formerrors', ['errorTitle' => $errorTitle])
                     <form method="POST" class="form-horizontal" role="form">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        @foreach ($questions as $key => $question)
-                            @include('subscribo::apiclientcommon.question', ['key' => $key, 'question' => $question])
+                        @foreach ($items as $key => $item)
+                            @if ($item->type === 'group')
+                                @include('subscribo::apiclientcommon.questionGroup', ['questionGroup' => $item])
+                            @else
+                                @include('subscribo::apiclientcommon.singlequestion', ['key' => $key, 'question' => $item])
+                            @endif
                         @endforeach
                         @if ($submit)
                         <div class="form-group">

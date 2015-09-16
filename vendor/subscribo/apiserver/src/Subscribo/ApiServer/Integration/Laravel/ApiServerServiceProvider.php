@@ -1,7 +1,6 @@
 <?php namespace Subscribo\ApiServer\Integration\Laravel;
 
-use Illuminate\Support\ServiceProvider;
-
+use Subscribo\Support\ServiceProvider;
 
 /**
  * Class ApiServerServiceProvider
@@ -17,8 +16,14 @@ class ApiServerServiceProvider extends ServiceProvider {
         $this->app->register('\\Subscribo\\Api1\\Integration\\Laravel\\Api1ServiceProvider');
         $this->app->register('\\Subscribo\\Exception\\Integration\\Laravel\\ApiExceptionHandlerServiceProvider');
         $this->app->register('\\Subscribo\\ModelCore\\Integration\\Laravel\\ModelCoreServiceProvider');
-
+        $this->app->register('\\Subscribo\\Billing\\Integration\\Laravel\\BillingServiceProvider');
+        $this->registerServiceProvider('\\Subscribo\\ApiServerJob\\Integration\\Laravel\\ApiServerJobServiceProvider')
+            ->registerScheduleManager();
     }
 
+    public function boot()
+    {
+      //  $this->scheduleTasks();
 
+    }
 }

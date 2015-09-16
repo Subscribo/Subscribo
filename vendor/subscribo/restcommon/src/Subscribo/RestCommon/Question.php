@@ -2,11 +2,33 @@
 
 class Question
 {
-    const TYPE_SELECT = 'select';
+    const TYPE_GROUP = 'group'; //Not actually a type of question, but reserved for denoting array content being QuestionGroup
+
+    const TYPE_TEXT = 'text';
 
     const TYPE_EMAIL = 'email';
 
     const TYPE_PASSWORD = 'password';
+
+    const TYPE_CHECKBOX = 'checkbox';
+
+    const TYPE_RADIO = 'radio';
+
+    const TYPE_SELECT = 'select';
+
+    const TYPE_NUMBER_SELECT = 'number_select';
+
+    const TYPE_RANGE = 'range';
+
+    const TYPE_NUMBER = 'number';
+
+    const TYPE_DATE = 'date';
+
+    const TYPE_DAY = 'day';
+
+    const TYPE_MONTH = 'month';
+
+    const TYPE_YEAR = 'year';
 
     const CODE_NEW_CUSTOMER_EMAIL_EMAIL = 1010;
 
@@ -20,6 +42,25 @@ class Question
 
     const CODE_CONFIRM_MERGE_ACCOUNT_PASSWORD = 4020;
 
+    const CODE_GENERIC_QUESTION = 10000;
+
+    const CODE_DATE_DAY = 20010;
+
+    const CODE_DATE_MONTH = 20020;
+
+    const CODE_DATE_YEAR = 20030;
+
+    const CODE_CUSTOMER_BIRTH_DATE_DAY = 21010;
+
+    const CODE_CUSTOMER_BIRTH_DATE_MONTH = 21020;
+
+    const CODE_CUSTOMER_BIRTH_DATE_YEAR = 21030;
+
+    const CODE_CUSTOMER_BIRTH_DATE_DATE = 21050;
+
+    const CODE_CUSTOMER_NATIONAL_IDENTIFICATION_NUMBER_NUMBER = 22010;
+
+    const CODE_CUSTOMER_GENDER_GENDER                         = 23010;
 
     /** @var string */
     public $type;
@@ -27,29 +68,48 @@ class Question
     /** @var int */
     public $code = 0;
 
-    /** @var string */
+    /** @var string|null */
     public $text;
+
+    /** @var int|string */
+    public $checkboxValue = 1;
+
+    /** @var  int|string  */
+    public $defaultValue;
+
+    /** @var  int|null */
+    public $minimumValue;
+
+    /** @var  int|null */
+    public $maximumValue;
+
+    /** @var int|null */
+    public $incrementStep;
 
     /** @var  string|null */
     public $validationAttributeName;
 
-    /** @var array  */
+    /** @var array */
     protected $validationCustomValues = array();
 
-    /** @var bool  */
+    /** @var bool */
     public $addValidationCustomValuesFromSelect = true;
 
-    /** @var array */
+    /** @var string|array */
     protected $validationRules = array();
 
-    /** @var array|string  */
+    /** @var array|string */
     protected $validationMessages = array();
 
+    /** @var array */
     protected $selectOptions = array();
 
     /** @var  bool|null */
     protected $rememberValueOnError;
 
+    /**
+     * @param array $data
+     */
     public function __construct(array $data = array())
     {
         if (is_array($data)) {
@@ -57,6 +117,9 @@ class Question
         }
     }
 
+    /**
+     * @param array $data
+     */
     public function import(array $data)
     {
         if ( ! empty($data['type'])) {
@@ -65,7 +128,7 @@ class Question
         if (array_key_exists('code', $data)) {
             $this->code = $data['code'];
         }
-        if ( ! empty($data['text'])) {
+        if (isset($data['text'])) {
             $this->text = $data['text'];
         }
         if ( ! empty($data['validationRules'])) {
@@ -89,8 +152,26 @@ class Question
         if ( array_key_exists('rememberValueOnError', $data)) {
             $this->setRememberValueOnError($data['rememberValueOnError']);
         }
+        if ( ! empty($data['checkboxValue'])) {
+            $this->checkboxValue = $data['checkboxValue'];
+        }
+        if ( array_key_exists('defaultValue', $data)) {
+            $this->defaultValue = $data['defaultValue'];
+        }
+        if ( array_key_exists('minimumValue', $data)) {
+            $this->minimumValue = $data['minimumValue'];
+        }
+        if ( array_key_exists('maximumValue', $data)) {
+            $this->maximumValue = $data['maximumValue'];
+        }
+        if ( array_key_exists('incrementStep', $data)) {
+            $this->incrementStep = $data['incrementStep'];
+        }
     }
 
+    /**
+     * @return array
+     */
     public function export()
     {
         $result = [
@@ -103,10 +184,22 @@ class Question
             'validationCustomValues' => $this->validationCustomValues,
             'addValidationCustomValuesFromSelect' => $this->addValidationCustomValuesFromSelect,
             'rememberValueOnError' => $this->rememberValueOnError,
+            'checkboxValue' => $this->checkboxValue,
+            'defaultValue' => $this->defaultValue,
         ];
+        if (is_numeric($this->minimumValue)) {
+            $result['minimumValue'] = $this->minimumValue;
+        }
+        if (is_numeric($this->maximumValue)) {
+            $result['maximumValue'] = $this->maximumValue;
+        }
+        if (is_numeric($this->incrementStep)) {
+            $result['incrementStep'] = $this->incrementStep;
+        }
         if ($this->selectOptions) {
             $result['selectOptions'] = $this->selectOptions;
         }
+
         return $result;
     }
 
@@ -117,6 +210,8 @@ class Question
     {
         $rules = is_string($this->validationRules) ? explode('|', $this->validationRules) : $this->validationRules;
         $rules = $this->addValidationRulesBasedOnType($rules);
+        $rules = $this->addValidationRulesBasedOnConstraints($rules);
+
         return $rules;
     }
 
@@ -139,6 +234,7 @@ class Question
             $ruleName = reset($rule);
             $result[$ruleName] = $message;
         }
+
         return $result;
     }
 
@@ -151,6 +247,7 @@ class Question
         if ($this->addValidationCustomValuesFromSelect) {
             $result = array_replace($this->selectOptions, $result);
         }
+
         return $result;
     }
 
@@ -162,6 +259,10 @@ class Question
         return $this->selectOptions;
     }
 
+    /**
+     * @param array $additionalSelectOptions
+     * @return $this
+     */
     public function prependSelectOptions(array $additionalSelectOptions)
     {
         $oldSelectOptions = $this->getSelectOptions();
@@ -183,6 +284,7 @@ class Question
             $newSelectOptions[$key] = $value;
         }
         $this->setSelectOptions($newSelectOptions);
+
         return $this;
     }
 
@@ -192,21 +294,80 @@ class Question
     public function getRememberValueOnError()
     {
         if (is_bool($this->rememberValueOnError)) {
+
             return $this->rememberValueOnError;
         }
-        switch ($this->type) {
+        switch (strval($this->type)) {
             case static::TYPE_PASSWORD:
+
                 return false;
+            case static::TYPE_TEXT:
             case static::TYPE_EMAIL:
+            case static::TYPE_CHECKBOX:
             case static::TYPE_SELECT:
+            case static::TYPE_RADIO:
+            case static::TYPE_NUMBER_SELECT:
+            case static::TYPE_RANGE:
+            case static::TYPE_NUMBER:
+            case static::TYPE_DATE:
+            case static::TYPE_DAY:
+            case static::TYPE_MONTH:
+            case static::TYPE_YEAR:
+
                 return true;
         }
+
         return false;
     }
 
+    /**
+     * @return int|null
+     */
+    public function getMinimumValue()
+    {
+        if (isset($this->minimumValue)) {
+
+            return $this->minimumValue;
+        }
+        switch (strval($this->type)) {
+            case static::TYPE_DAY:
+            case static::TYPE_MONTH:
+
+                return 1;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMaximumValue()
+    {
+        if (isset($this->maximumValue)) {
+
+            return $this->maximumValue;
+        }
+        switch (strval($this->type)) {
+            case static::TYPE_DAY:
+
+                return 31;
+            case static::TYPE_MONTH:
+
+                return 12;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string|array $validationRules
+     * @return $this
+     */
     protected function setValidationRules($validationRules)
     {
         $this->validationRules = $validationRules;
+
         return $this;
     }
 
@@ -217,6 +378,7 @@ class Question
     protected function setSelectOptions(array $selectOptions)
     {
         $this->selectOptions = $selectOptions;
+
         return $this;
     }
 
@@ -227,6 +389,7 @@ class Question
     protected function setValidationMessages($validationMessages)
     {
         $this->validationMessages = $validationMessages;
+
         return $this;
     }
 
@@ -237,6 +400,7 @@ class Question
     protected function setValidationCustomValues(array $validationCustomValues)
     {
         $this->validationCustomValues = $validationCustomValues;
+
         return $this;
     }
 
@@ -247,22 +411,76 @@ class Question
     protected function setRememberValueOnError($rememberValueOnError)
     {
         $this->rememberValueOnError = $rememberValueOnError;
+
         return $this;
     }
 
+    /**
+     * @param array $rules
+     * @return array
+     */
     protected function addValidationRulesBasedOnType(array $rules = array())
     {
-        $type = $this->type;
-        if ($this::TYPE_EMAIL === $type) {
-            if (false === array_search('email', $rules, true)) {
-                $rules[] = 'email';
-            }
-        } elseif ($this::TYPE_SELECT === $type) {
-            $optionKeys = array_keys($this->getSelectOptions());
-            $rule = array_filter($optionKeys, 'strlen');
-            array_unshift($rule, 'in');
-            $rules[] = $rule;
+        switch (strval($this->type))
+        {
+            case static::TYPE_EMAIL:
+                if (false === array_search('email', $rules, true)) {
+                    $rules[] = 'email';
+                }
+                break;
+            case static::TYPE_SELECT:
+            case static::TYPE_RADIO:
+                $optionKeys = array_keys($this->getSelectOptions());
+                $rule = array_filter($optionKeys, 'strlen');
+                array_unshift($rule, 'in');
+                $rules[] = $rule;
+                break;
+            case static::TYPE_CHECKBOX:
+                $rule = 'in:'.$this->checkboxValue;
+                if (false === array_search($rule, $rules, true)) {
+                    $rules[] = $rule;
+                }
+                break;
+            case static::TYPE_NUMBER_SELECT:
+            case static::TYPE_RANGE:
+            case static::TYPE_DAY:
+            case static::TYPE_MONTH:
+            case static::TYPE_YEAR:
+                if (false === array_search('integer', $rules, true)) {
+                    $rules[] = 'integer';
+                }
+                break;
+            case static::TYPE_NUMBER:
+                if (false === array_search('numeric', $rules, true)) {
+                    $rules[] = 'numeric';
+                }
+                break;
+            case static::TYPE_DATE:
+                if (false === array_search('date', $rules, true)) {
+                    $rules[] = 'date';
+                }
+                break;
         }
+
+        return $rules;
+    }
+
+    /**
+     * @param array $rules
+     * @return array
+     */
+    protected function addValidationRulesBasedOnConstraints(array $rules = array())
+    {
+        $min = $this->getMinimumValue();
+        $max = $this->getMaximumValue();
+        if (is_numeric($min) and is_numeric($max)) {
+            $rules[] = 'between:'.$min.','.$max;
+        } elseif (is_numeric($min)) {
+            $rules[] = 'min:'.$min;
+        } elseif (is_numeric($max)) {
+            $rules[] = 'max:'.$max;
+        }
+
         return $rules;
     }
 }

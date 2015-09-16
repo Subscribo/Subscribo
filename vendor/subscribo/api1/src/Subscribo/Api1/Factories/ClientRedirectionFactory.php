@@ -66,7 +66,7 @@ class ClientRedirectionFactory
                 break;
             case ClientRedirection::CODE_CONFIRM_MERGE_RESPONSE:
                 if (empty($additionalData['url'])) {
-                    throw new InvalidArgumentException('ClientRedirectionFactory::assembleFromCode() index serviceId in additionalData is missing (CODE_CONFIRM_MERGE_RESPONSE).');
+                    throw new InvalidArgumentException('ClientRedirectionFactory::assembleFromCode() index url in additionalData is missing (CODE_CONFIRM_MERGE_RESPONSE).');
                 }
                 $url = $additionalData['url'];
                 $url = empty($additionalData['query']) ? $url : static::addQueryToUrl($url, $additionalData['query']);

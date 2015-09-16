@@ -39,7 +39,7 @@
         "symfony/http-foundation": "~2.6"
     },
     "suggest": {
-        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
+        "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0 and 5.1"
     },
     "autoload": {
         "psr-4": {

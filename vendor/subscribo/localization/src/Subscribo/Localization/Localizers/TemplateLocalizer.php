@@ -34,6 +34,16 @@ class TemplateLocalizer extends Localizer implements TemplateLocalizerInterface
         return parent::transChoice($id, $number, $parameters, $domain, $locale);
     }
 
+
+    public function canTranslate($id, $domain = null, $locale = null, $mode = self::CAN_TRANSLATE_MODE_SAME_LANGUAGE)
+    {
+        if (is_null($domain) and $this->prefix) {
+            $id = $this->prefix.$id;
+        }
+
+        return parent::canTranslate($id, $domain, $locale, $mode);
+    }
+
     /**
      * Sets prefix to be prepended to trans() and transChoice() id, when domain is null
      *

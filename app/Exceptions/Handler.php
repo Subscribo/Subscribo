@@ -26,6 +26,11 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
+        \Log::debug($e->getMessage());
+        if (method_exists($e, 'getData')) {
+            \Log::debug(var_export($e->getData(), true));
+        }
+
         return parent::report($e);
     }
 

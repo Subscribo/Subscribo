@@ -17,4 +17,22 @@ class Customer extends \Subscribo\ModelCore\Bases\Customer {
         $result = $query->get();
         return $result;
     }
+
+    /**
+     * @return int|null
+     */
+    public function getDefaultShippingAddressId()
+    {
+        return $this->customerConfiguration->defaultShippingAddressId;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getDefaultBillingAddressId()
+    {
+        $billingDetail = $this->customerConfiguration->defaultBillingDetail;
+
+        return $billingDetail ? $billingDetail->addressId : null;
+    }
 }

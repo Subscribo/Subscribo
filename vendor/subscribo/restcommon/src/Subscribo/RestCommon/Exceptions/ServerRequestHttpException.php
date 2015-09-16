@@ -78,7 +78,4 @@ class ServerRequestHttpException extends RedirectionHttpException implements Htt
         $this->serverRequest = $serverRequestInstance;
         return $this;
     }
-
-
-
 }

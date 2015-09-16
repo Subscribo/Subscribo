@@ -35,54 +35,61 @@ class BuildSchemaCommand extends BuildCommandAbstract {
      */
     public function fire()
     {
-        $inputFileName = $this->argument('input_file');
-        $outputFileName = $this->argument('output_file');
-        $this->info('Schema build starting. Using input file: '. $inputFileName.' output file: '.$outputFileName);
-        $this->info('Environment: '. App::environment());
-        Config::loadFileForPackage('schemabuilder', $inputFileName, 'schema', true, null);
-        $input = Config::getForPackage('schemabuilder', 'schema');
-        $doctype = $input['doctype'];
-        if (false === in_array($doctype, array('MODEL_SCHEMA-v1.0', 'PARSED_MODEL_SCHEMA-v1.0'))) {
-            throw new \Exception ("Unsupported doctype. You can use for example: 'MODEL_SCHEMA-v1.0'");
+        try {
+            $inputFileName = $this->argument('input_file');
+            $outputFileName = $this->argument('output_file');
+            $this->info('Schema build starting. Using input file: '. $inputFileName.' output file: '.$outputFileName);
+            $this->info('Environment: '. App::environment());
+            Config::loadFileForPackage('schemabuilder', $inputFileName, 'schema', true, null);
+            $input = Config::getForPackage('schemabuilder', 'schema');
+            $doctype = $input['doctype'];
+            if (false === in_array($doctype, array('MODEL_SCHEMA-v1.0', 'PARSED_MODEL_SCHEMA-v1.0'))) {
+                throw new \Exception ("Unsupported doctype. You can use for example: 'MODEL_SCHEMA-v1.0'");
+            }
+            $modelFields = $this->_parseModelFields($input['model_fields']);
+            $defaultModelOptions = $input['default_model_options'] ?: array();
+            $defaultTranslationModelOptions = $input['default_translation_model_options'] ?: array();
+            $translationModelDefaults = Arr::merge($defaultModelOptions, $defaultTranslationModelOptions);
+            $defaultFieldOptions = $input['default_field_options'] ?: array();
+
+            $modelOptions = $this->_parseModelOptions($input['model_options'] ?: array(), $modelFields, $defaultModelOptions);
+            $modelFields = $this->_addPrimaryKeys($modelFields, $modelOptions);
+            $modelFields = $this->_addFieldsFromOptions($modelFields, $modelOptions);
+            $modelOptions = $this->_addOptionsFromTranslatableFields($modelFields, $modelOptions);
+            $translationModels = $this->_assembleTranslationModels($modelFields, $modelOptions, $translationModelDefaults);
+            $modelOptions = Arr::merge($translationModels['model_options'], $modelOptions);
+            $modelFields = $this->_addProcessedFields($modelFields, $modelOptions);
+            $modelFields = $this->_addProcessedFields($translationModels['model_fields'], $modelOptions, $modelFields);
+
+            $relations = $this->_collectRelations($modelFields, $modelOptions);
+            $modelFields = $this->_addRelationsToModelFields($modelFields, $modelOptions, $relations);
+            $modelFields = $this->_addRulesToModelFields($modelFields, $modelOptions);
+
+            $modelFields = $this->_addDefaultFieldOptions($modelFields, $defaultFieldOptions);
+            $modelOptions = $this->_addForeignObjects($modelFields, $modelOptions, $relations);
+            $modelOptions = $this->_addOptionsFromFields($modelFields, $modelOptions);
+            $this->_checkConsistency($modelFields, $modelOptions);
+            $modelFields = $this->_addTimestamps($modelFields, $modelOptions);
+            $modelOptions = $this->_collectRules($modelFields, $modelOptions);
+            $modelOptions = $this->_addDatesFromFields($modelFields, $modelOptions);
+            $pivotTables = $this->_assemblePivotTables($modelFields, $modelOptions, $relations);
+
+            $data = array(
+                'doctype'       => 'PARSED_MODEL_SCHEMA-v1.0',
+                'model_options' => $modelOptions,
+                'model_fields'  => $modelFields,
+                'model_relations' => $relations,
+                'pivot_tables' => $pivotTables,
+            );
+            $content = Yaml::dump($data, 3, 4, true, false);
+            $this->_createFile($outputFileName, $content, 'overwrite');
+
+            $this->info('Schema build finished.');
+        } catch (Exception $e) {
+            $this->error($e->getMessage());
+            $this->error($e);
+            exit(1);
         }
-        $modelFields = $this->_parseModelFields($input['model_fields']);
-        $defaultModelOptions = $input['default_model_options'] ?: array();
-        $defaultTranslationModelOptions = $input['default_translation_model_options'] ?: array();
-        $translationModelDefaults = Arr::merge($defaultModelOptions, $defaultTranslationModelOptions);
-        $defaultFieldOptions = $input['default_field_options'] ?: array();
-
-        $modelOptions = $this->_parseModelOptions($input['model_options'] ?: array(), $modelFields, $defaultModelOptions);
-        $modelFields = $this->_addPrimaryKeys($modelFields, $modelOptions);
-        $modelFields = $this->_addFieldsFromOptions($modelFields, $modelOptions);
-        $modelOptions = $this->_addOptionsFromTranslatableFields($modelFields, $modelOptions);
-        $translationModels = $this->_assembleTranslationModels($modelFields, $modelOptions, $translationModelDefaults);
-        $modelOptions = Arr::merge($translationModels['model_options'], $modelOptions);
-        $modelFields = $this->_addProcessedFields($modelFields, $modelOptions);
-        $modelFields = $this->_addProcessedFields($translationModels['model_fields'], $modelOptions, $modelFields);
-
-        $relations = $this->_collectRelations($modelFields, $modelOptions);
-        $modelFields = $this->_addRelationsToModelFields($modelFields, $modelOptions, $relations);
-        $modelFields = $this->_addRulesToModelFields($modelFields, $modelOptions);
-
-        $modelFields = $this->_addDefaultFieldOptions($modelFields, $defaultFieldOptions);
-        $modelOptions = $this->_addForeignObjects($modelFields, $modelOptions, $relations);
-        $modelOptions = $this->_addOptionsFromFields($modelFields, $modelOptions);
-        $this->_checkConsistency($modelFields, $modelOptions);
-        $modelFields = $this->_addTimestamps($modelFields, $modelOptions);
-        $modelOptions = $this->_collectRules($modelFields, $modelOptions);
-        $pivotTables = $this->_assemblePivotTables($modelFields, $modelOptions, $relations);
-
-        $data = array(
-            'doctype'       => 'PARSED_MODEL_SCHEMA-v1.0',
-            'model_options' => $modelOptions,
-            'model_fields'  => $modelFields,
-            'model_relations' => $relations,
-            'pivot_tables' => $pivotTables,
-        );
-        $content = Yaml::dump($data, 3, 4, true, false);
-        $this->_createFile($outputFileName, $content, 'overwrite');
-
-        $this->info('Schema build finished.');
     }
 
     private function _assembleTranslationModels(array $modelFields, array $modelOptions, array $defaultModelOptions)
@@ -904,8 +911,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             $result = $this->_parseRelationAttributes($field['relation_attributes'], $result);
         }
         if ( ! empty($field['hidden'])) {
-            $result['hidden_from'] = Arr::get('hidden_from', $result, true);
-            $result['hidden_to'] = Arr::get('hidden_to', $result, true);
+            $result['hidden_from'] = Arr::get($result, 'hidden_from', true);
+            $result['hidden_to'] = Arr::get($result, 'hidden_to', true);
         }
         $result = $this->_addRelationDefaults($result);
         return $result;
@@ -1352,13 +1359,28 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         if (( ! empty($field['hidden'])) and ( ! isset($field['administrator']['filter']))) {
             $field['administrator']['filter'] = false;
         }
+        $automaticEnumConstantsForModel = Arr::get($modelOptions, $tableName.'.automatic_enum_constants', null);
+        $automaticEnumConstantsForField = Arr::get($field, 'automatic_enum_constants', $automaticEnumConstantsForModel);
+        if ($automaticEnumConstantsForField and ($field['db_type'] === 'enum') and ( ! empty($field['enum_list']))) {
+            $constants = Arr::get($field, 'constants', []);
+            foreach ($field['enum_list'] as $enumKey => $enumValue) {
+                if (is_numeric($enumKey)) {
+                    $constantKey = strtoupper(snake_case($field['attribute_name']).'_'.snake_case($enumValue));
+                } else {
+                    $constantKey = $enumKey;
+                }
+                $constants[$constantKey] = $enumValue;
+            }
+            $field['constants'] =  $constants;
+        }
+
         return $field;
     }
 
-    private function _addOptionsFromTranslatableFields($ModelFields, $modelOptions)
+    private function _addOptionsFromTranslatableFields($modelFields, $modelOptions)
     {
         $result = $modelOptions;
-        foreach ($ModelFields as $modelKey => $fields) {
+        foreach ($modelFields as $modelKey => $fields) {
             $options = Arr::get($modelOptions, $modelKey, array());
             $result[$modelKey] = $this->_addOptionsFromTranslatableFieldsToModel($fields, $options);
         }
@@ -1419,15 +1441,17 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         $result = $options;
         $hiddenFields = Arr::get($options, 'hidden', array());
         $fillableFields = Arr::get($options, 'fillable', array());
+        $modelConstants = Arr::get($options, 'constants', array());
         foreach ($fields as $fieldName => $field) {
             $isHidden = Arr::get($field, 'hidden', false);
             if ($isHidden) {
                 $hiddenFields[] = $fieldName;
             }
-            $isFillable = Arr::get($field, 'fillable', true);
-            if ($isFillable) {
+            if ($this->_isFieldFillable($field)) {
                 $fillableFields[] = $fieldName;
             }
+            $fieldConstants = Arr::get($field, 'constants', array());
+            $modelConstants = $modelConstants + $fieldConstants;
         }
         foreach($options['foreign_objects'] as $foreignObject) {
             if ($foreignObject['hidden']) {
@@ -1436,6 +1460,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         }
         $result['hidden'] = array_unique($hiddenFields);
         $result['fillable'] = array_unique($fillableFields);
+        $result['constants'] = $modelConstants;
         //For now we are purposefully ignoring guarded fields (keeping default array('*') )
         $hiddenWrapped = array();
         foreach ($result['hidden'] as $hiddenFieldName) {
@@ -1447,6 +1472,56 @@ class BuildSchemaCommand extends BuildCommandAbstract {
             $result['representative'] = $representativeField ? $representativeField['name'] : null;
         }
         return $result;
+    }
+
+    private function _addDatesFromFields($modelFields, $modelOptions)
+    {
+        $result = $modelOptions;
+        foreach ($modelFields as $tableName => $fields) {
+            $options = Arr::get($modelOptions, $tableName, array());
+            $result[$tableName] = $this->_addDatesFromFieldsToModel($fields, $options);
+        }
+
+        return $result;
+    }
+
+    private function _addDatesFromFieldsToModel($fields, $options)
+    {
+        $result = $options;
+        $dates = Arr::get($options, 'dates', array());
+        foreach ($fields as $fieldName => $field) {
+            $type = Arr::get($field, 'type');
+            if (('datetime' === $type) or ('date' === $type)) {
+                $dates[] = $fieldName;
+            }
+        }
+        $result['dates'] = array_unique($dates);
+
+        return $result;
+    }
+
+
+    /**
+     * Do some heuristics, whether field should be fillable via mass assignement
+     * @param array $field
+     * @return bool
+     */
+    private function _isFieldFillable(array $field)
+    {
+        if (isset($field['fillable'])) {
+            return $field['fillable'];
+        }
+        if (preg_match('#id$#', $field['name'])) {
+            return false;
+        }
+        if (( ! empty($field['related_to'])) or ( ! empty($field['relation_attributes']))) {
+            return false;
+        }
+        $typeSpecial = Arr::get($field, 'type_special');
+        if ($typeSpecial === 'identifier') {
+            return false;
+        }
+        return true;
     }
 
     private function _findRepresentative(array $fields, $default = null)
@@ -1830,8 +1905,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                     $dbLength = array_shift($parts);
                 }
                 $dbScale = array_shift($parts);
-                $dbLength = is_null($dbLength) ? 10 : intval($dbLength);
-                $dbScale = is_null($dbScale) ? 2 : intval($dbScale);
+                $dbLength = is_null($dbLength) ? 12 : intval($dbLength);
+                $dbScale = is_null($dbScale) ? 3 : intval($dbScale);
                 if ($dbScale > $dbLength) {
                     throw new \Exception("Second parameter (scale: ".$dbScale.") of type should not be bigger then first parameter (length: ".$dbLength.") (Field name: '".$field['name']."')");
                 }
@@ -1846,8 +1921,8 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                     $dbLength = array_shift($parts);
                 }
                 $dbScale = array_shift($parts);
-                $dbLength = is_null($dbLength) ? 10 : intval($dbLength);
-                $dbScale = is_null($dbScale) ? 2 : intval($dbScale);
+                $dbLength = is_null($dbLength) ? 12 : intval($dbLength);
+                $dbScale = is_null($dbScale) ? 3 : intval($dbScale);
                 if ($dbScale > $dbLength) {
                     throw new \Exception("Second parameter (scale: ".$dbScale.") of type should not be bigger then first parameter (length: ".$dbLength.") (Field name: '".$field['name']."')");
                 }
@@ -1883,12 +1958,12 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                 }
             break;
             case 'datetime':
-                $typeHint   = 'string';
+                $typeHint   = '\\Carbon\\Carbon';
                 $dbTypeBase = 'datetime';
                 $description = '(datetime)';
             break;
             case 'date':
-                $typeHint   = 'string';
+                $typeHint   = '\\Carbon\\Carbon';
                 $dbTypeBase = 'date';
                 $description = '(date)';
             break;
@@ -2106,8 +2181,11 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         {
             $tableName = $options['table_name'];
             $fields = Arr::get($modelFields, $modelKey, array());
-            $timestamps = Arr::get($options, 'timestamps');
-            if (is_array($timestamps))
+            $timestamps = Arr::get($options, 'timestamps', []);
+            if ( ! empty($options['soft_delete'])) {
+                $timestamps = $timestamps + Arr::get($options, 'soft_delete_timestamps', []);
+            }
+            if ($timestamps)
             {
                 try {
                     $result[$modelKey] = $this->_addFields($fields, $timestamps, true, $tableName, $modelFields, $modelOptions);
@@ -2728,6 +2806,7 @@ class BuildSchemaCommand extends BuildCommandAbstract {
         if (empty($matches)) {
             throw new \Exception('Field line in incorrect format: '.$line);
         }
+        $result = [];
         $result['name'] = array_key_exists(1, $matches) ? trim($matches[1]) : null;
         $result['type'] = array_key_exists(3, $matches) ? trim($matches[3]) : null;
         $optionsString = array_key_exists(4, $matches) ? trim($matches[4]) : '';
@@ -2776,6 +2855,16 @@ class BuildSchemaCommand extends BuildCommandAbstract {
                     break;
                 case 'default':
                     $result['default'] = $this->_parseDefaultLine($options);
+                break;
+                case 'constants':
+                    $value = strtolower(trim(array_shift($options)));
+                    if ($value === 'on') {
+                        $result['automatic_enum_constants'] = true;
+                    } elseif ($value === 'off') {
+                        $result['automatic_enum_constants'] = false;
+                    } else {
+                        throw new \Exception("Unrecognized constants value '".$value."' in line: ".$line);
+                    }
                 break;
                 case 'migration':
                 case 'migration_setup':

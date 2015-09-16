@@ -1,6 +1,7 @@
 <?php echo "<?php"; ?>
- namespace <?php echo $options['model_namespace']; ?>;
 
+
+namespace <?php echo $options['model_namespace']; ?>;
 
 /**
  * Model <?php echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($modelName); ?>

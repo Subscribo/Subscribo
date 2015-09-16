@@ -19,6 +19,9 @@ class Api1ServiceProvider extends ServiceProvider
 
     public function register()
     {
+        if (class_exists('\\Subscribo\\TransactionPluginManager\\Integration\\Laravel\\TransactionPluginManagerServiceProvider')) {
+            $this->app->register('\\Subscribo\\TransactionPluginManager\\Integration\\Laravel\\TransactionPluginManagerServiceProvider');
+        }
         $this->app->register('\\Subscribo\\Auth\\Integration\\Laravel\\AuthServiceProvider');
         /** @var LocalizationServiceProvider $localizationServiceProvider */
         $localizationServiceProvider = $this->app->register('\\Subscribo\\Localization\\Integration\\Laravel\\LocalizationServiceProvider');
@@ -27,6 +30,7 @@ class Api1ServiceProvider extends ServiceProvider
         }
         $localizationServiceProvider->registerLocaleSettingsManager(array(), null, '\\Subscribo\\Api1\\Factories\\LocaleSettingsFactory', true);
         $this->app->register('\\Subscribo\\ValidationLocalization\\Integration\\Laravel\\ValidationLocalizationServiceProvider');
+        $this->app->register('\\Subscribo\\ApiServerJob\\Integration\\Laravel\\ApiServerJobServiceProvider');
     }
 
     public function boot()
@@ -50,6 +54,8 @@ class Api1ServiceProvider extends ServiceProvider
             'Subscribo\\Api1\\Controllers\\AccountController',
             'Subscribo\\Api1\\Controllers\\OAuthController',
             'Subscribo\\Api1\\Controllers\\AnswerController',
+            'Subscribo\\Api1\\Controllers\\BusinessController',
+            'Subscribo\\Api1\\Controllers\\TransactionController',
         ];
         $controllerRegistrar->registerControllers($controllers);
         $controllerRegistrar->addInfoRoute(['version' => 1]);

@@ -1,0 +1,44 @@
+{
+    "name": "subscribo/klarna-invoice-sdk-wrapped",
+    "description": "Klarna Invoice and Part payment SDK modified and wrapped for use with Composer",
+    "keywords": ["Klarna", "Invoice", "Part payment", "SDK"],
+    "homepage": "https://github.com/Subscribo/klarna-invoice-sdk-wrapped",
+    "license": "BSD-2-Clause",
+    "authors": [
+        {
+            "name": "Klarna AB",
+            "email": "opensource@klarna.com",
+            "role": "Original SDK developing company",
+            "homepage": "https://developers.klarna.com"
+        },
+        {
+            "name": "MS Dev",
+            "email": "ms.modules@klarna.com",
+            "role": "Original SDK development team",
+            "homepage": "https://developers.klarna.com/en/at+php/kpm/download"
+        },
+        {
+            "name": "Slavo",
+            "role": "Package developer"
+        },
+        {
+            "name": "Subscribo",
+            "role": "Packager",
+            "email": "packages@subscribo.io",
+            "homepage": "http://subscribo.io"
+        },
+        {
+            "name": "Contributors",
+            "role": "Package developers and contributors",
+            "homepage": "https://github.com/Subscribo/klarna-invoice-sdk-wrapped/graphs/contributors"
+        }
+    ],
+    "autoload": {
+        "classmap": ["src/Klarna.php", "src/Exceptions.php", "src/Flags.php",
+            "src/Country.php", "src/Currency.php", "src/Encoding.php",  "src/Language.php",
+            "src/klarnaaddr.php", "src/klarnacalc.php", "src/klarnaconfig.php", "src/klarnapclass.php"]
+    },
+    "require": {
+        "phpxmlrpc/phpxmlrpc": "^3.0.0"
+    }
+}

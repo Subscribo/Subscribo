@@ -2,6 +2,7 @@
 
 use Subscribo\RestClient\Exceptions\QuestionaryException;
 use Subscribo\RestClient\Exceptions\ClientRedirectionException;
+use Subscribo\RestClient\Exceptions\WidgetException;
 use Subscribo\RestClient\Exceptions\InvalidArgumentException;
 use Subscribo\RestClient\Exceptions\ServerRequestException;
 use Subscribo\RestCommon\ServerRequest;
@@ -12,6 +13,7 @@ class ServerRequestExceptionFactory
     protected static $statusCodeMap = [
         QuestionaryException::STATUS_CODE => 'Subscribo\\RestClient\\Exceptions\\QuestionaryException',
         ClientRedirectionException::STATUS_CODE => 'Subscribo\\RestClient\\Exceptions\\ClientRedirectionException',
+        WidgetException::STATUS_CODE => 'Subscribo\\RestClient\\Exceptions\\WidgetException',
     ];
 
     /**

@@ -1,6 +1,21 @@
 <?php echo "<?php"; ?>
- namespace <?php echo $options['model_base_namespace']; ?>;
 
+namespace <?php echo $options['model_base_namespace']; ?>;
+
+<?php
+$addLineBreak = false;
+if ( ! empty($options['translatable'])):
+    echo 'use Subscribo\\ModelBase\\Traits\\CustomizedTranslatableModelTrait;'."\n";
+    $addLineBreak = true;
+endif;
+if ( ! empty($options['soft_delete'])):
+    echo 'use Illuminate\\Database\\Eloquent\\SoftDeletes;'."\n";
+    $addLineBreak = true;
+endif;
+if ($addLineBreak):
+    echo "\n";
+endif;
+?>
 /**
  * Model <?php echo $modelName; ?>
 
@@ -44,7 +59,7 @@ foreach ($options['foreign_objects'] as $foreignObject):
         echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($foreignObject['foreign_model_name']);
         echo $foreignObject['returns_array'] ? '[]' : '|null';
     }
-    echo " ".\Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($foreignObject['name']);
+    echo " $".\Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment($foreignObject['name']);
     echo $foreignObject['returns_array'] ? ' A collection of foreign models' : ' Foreign model';
     echo " related via ";
     echo \Subscribo\SchemaBuilder\Helpers\MyStr::sanitizeForComment(strtr($foreignObject['relation']['type'], '_', ' '));
@@ -62,10 +77,24 @@ if ( ! empty($options['base_model_extends'])) {
 ?>
 
 {
-
-<?php if ( ! empty($options['translatable'])):
-echo 'use \\Subscribo\\ModelBase\\Traits\\CustomizedTranslatableModelTrait;'."\n\n";
+<?php
+$addLineBreak = false;
+if ( ! empty($options['translatable'])):
+    echo '    use CustomizedTranslatableModelTrait;'."\n";
+    $addLineBreak = true;
 endif;
+if ( ! empty($options['soft_delete'])):
+    echo '    use SoftDeletes;'."\n";
+    $addLineBreak = true;
+endif;
+if ($addLineBreak):
+    echo "\n";
+endif;
+
+foreach ($options['constants'] as $constantIdentifier => $constantValue) {
+    echo '    const '.$constantIdentifier.' = '.View::make('schemabuilder::helpers.php_value', array('value' => $constantValue)).";\n";
+}
+echo ($options['constants']) ? "\n" : "";
 
 if ( ! empty($options['table_name'])): ?>
     /**
@@ -74,6 +103,17 @@ if ( ! empty($options['table_name'])): ?>
      * @property string
      */
     protected $table = '<?php echo addslashes($options['table_name']); ?>';
+
+<?php endif;
+
+if ( ! empty($options['dates'])): ?>
+
+    /**
+     * Fields automatically converted to date
+     *
+     * @property array
+     */
+    protected $dates = <?php echo View::make('schemabuilder::helpers.php_value', array('value' => $options['dates'], 'indent' => 7)); ?>;
 
 <?php endif; ?>
 

@@ -34,10 +34,25 @@ default_model_options:
             administrator:
                 list: true
                 edit: false
+    soft_delete_timestamps:
+        deleted_at:
+            type: datetime
+            description: Timestamp (datetime) when model was soft deleted
+            migration_setup: false
+            required: false
+            fillable: false
+            guarded: true
+            administrator:
+                list: true
+                edit: false
     migration_timestamps: true
+    soft_delete: false
+    automatic_enum_constants: true
     title: null
     description: null
+    dates: []
     comments: []
+    constants: []
     rules: []
     modification_rules_before_validation: []
     modification_rules_after_validation: []
@@ -58,7 +73,7 @@ default_model_options:
         model:
             base: overwrite
             draft: skip
-        administrator: false
+        administrator: overwrite
     administrator_menu: Other
     administrator_menu_order: null
     is_pivot_table: null
@@ -66,6 +81,8 @@ default_model_options:
 
 default_translation_model_options:
     is_translation_model: true
+    automatic_enum_constants: false
+    administrator_menu: Translations
     generate:
         model:
             draft: false
@@ -100,10 +117,12 @@ default_field_options:
     comments: []
     translate: null
     rules: []
+    constants: []
+    automatic_enum_constants: null
     modification_rules_before_validation: []
     modification_rules_after_validation: []
-    fillable: true
-    guarded: false
+    fillable: null
+    guarded: null
     administrator:
         list: true
         edit: true
@@ -121,6 +140,7 @@ model_options:
                 - service_pools
                 - apis
                 - locales (method_name_for services availableLocales)
+                - countries (method_name_for services availableCountries)
             has_many:
                 - users
                 - accounts
@@ -217,6 +237,13 @@ model_options:
     products:
        administrator_menu: Delivery
 
+    prices:
+        administrator_menu: Delivery
+        soft_delete: true
+        relations:
+            many_to_many:
+              - countries
+
     deliveries:
        administrator_menu: Delivery
 
@@ -228,28 +255,45 @@ model_options:
        administrator_menu: Delivery
 
     realizations:
-       administrator_menu: Delivery
+        soft_delete: true
+        administrator_menu: Delivery
 
     subscriptions:
-       administrator_menu: Delivery
+        administrator_menu: Delivery
 
-    vetos:
-       administrator_menu: Delivery
+    subscription_filters:
+        administrator_menu: Delivery
+        soft_delete: true
+
+    subscription_vetos:
+        administrator_menu: Delivery
 
     products_in_subscriptions:
        administrator_menu: Delivery
 
-    orders:
+    sales_orders:
        administrator_menu: Delivery
 
-    realizations_in_orders:
+    realizations_in_sales_orders:
        administrator_menu: Delivery
 
-    payments:
+    discounts:
+        administrator_menu: Delivery
+        relations:
+            many_to_many:
+                - sales_orders
+                - subscriptions
+                - accounts
+
+
+    transactions:
        administrator_menu: Billing
 
     currencies: #    (possibly a “virtual” table)
        administrator_menu: Billing
+
+    messages:
+        administrator_menu: General
 
     pictures:
         administrator_menu: Media
@@ -315,7 +359,16 @@ model_fields:
         - comment null // some technical comment to particular row, such as “do not use now, just for testing”
         - url null
         - default_locale_id → locales (hide to)
+        - default_country_id → countries (hide to)
         - remember_locale (int) default 10080
+        - delivery_period null default words 1 week //string understandable by DateInterval - createFromDateString()
+        - delivery_auto_add_limit null //string understandable by DateTime
+        - delivery_auto_available_start null default word today //string understandable by DateTime
+        - delivery_auto_available_end null //string understandable by DateTime
+        - subscription_add_sales_order_start null default word today //string understandable by DateTime
+        - subscription_add_sales_order_end null default words 3 days //string understandable by DateTime
+        - delivery_window_start_limit null default word now //string understanadble by DateTime
+        - delivery_window_end_limit null //string understanadble by DateTime
         - operator_id default 1 → operators (type none) //operators table does not exist in current version of the schema, so the relation type is no_relation
 
     service_pools: # auxiliary table, allowing grouping of services, allowing user to use same user for different services
@@ -367,10 +420,10 @@ model_fields:
         - username
         - email null #guest superadmin does not have to have email address; moreover email addresses are not necessarily unique - to know which user is requested, we need service_id
         - password (password) null hidden #guest does not have to have password
-        - type (enum from guest server administrator superadmin) // (we should have here the basic separation between administrators and customers)
+        - type (enum from guest server administrator superadmin) // (we should have here the basic separation between administrators and clients)
         - remember_token null hidden // (and other possible technical fields allowing logging in)
         - email_confirmed (bool) null
-        - person_id null → persons
+        - person_id null hidden → persons (show_from)
 
     user_tokens:
         - user_id -> users
@@ -386,14 +439,20 @@ model_fields:
 
 
     customers:
-        - username null
-        - email null
+        - id hidden
+        - email null representative
         - password (password) null hidden
-        - person_id null → persons
-        - default_delivery_address_id null → addresses
-        - default_billing_details_id null → billing_details
+        - person_id null hidden → persons (show_from)
         - preferred_locale_id null -> locales
         - remember_locale (int) default 43200
+        - default_transaction_gateway_configuration_id null hidden -> transaction_gateway_configurations
+
+    customer_configurations:
+        - id hidden
+        - customer_id hidden -> customers (type one_belongs_to_one show_from show_to)
+        - default_contact_id null hidden -> contacts (show_from)
+        - default_shipping_address_id null → addresses
+        - default_billing_detail_id null hidden → billing_details (show_from)
 
     customer_registrations:
         - hash null
@@ -402,11 +461,12 @@ model_fields:
         - status null
         - hash unique null
         - account_id null
-        - customer_id null
-        - name null
+        - customer_id null hidden -> customers
         - email null
         - password (password) null hidden
         - account_token_id null
+        - address_id null
+        - person_id null hidden -> persons (show_to)
 
     account_tokens:
         - account_id null
@@ -416,9 +476,14 @@ model_fields:
         - secret null
         - comment null
 
-
+    account_transaction_gateway_tokens:
+        - account_id
+        - transaction_gateway_configuration_id
+        - token
+        - is_default (bool) default false
 
     persons:
+    - id hidden
     - salutation null
     - prefix null
     - first_name null
@@ -428,36 +493,46 @@ model_fields:
     - suffix null
     - gender (enum from man woman) null
     - date_of_birth (date) null
-    - contact_id null → contacts
+    - national_identification_number (string) null hidden //Note - not recommended to collect these if not necessary
 
     contacts:
-    - mobile_phone_number (unsigned big integer) null // Phone number in international format without leading + or 00 (another possibility would be to save it as string
-    - landline_phone_number (unsigned big integer) null
-    - home_address_id null → addresses
-    - work_address_id null → addresses
+    - phone (string) null
+    - mobile (string) null
 
     addresses:
-    - type (unsigned tiny int) default 1 # (different countries has different address compilation customs)
-    - first_line null // //usually compiled from gender, prefix and suffix
-    - second_line null // //usually compiled from names
+    - customer_id null hidden -> customers (show_to) //customer owning the address
+    - person_id null hidden -> persons (show_from) //person whose name is part of address
+    - organisation_id null //organisation whose name is part of address
+    - type (unsigned tiny int) guarded default 1 # (different countries has different address compilation customs)
+    - descriptor guarded //Title of address
+    - salutation null // //usually compiled from gender, prefix and suffix
+    - person_name null // //usually compiled from names
+    - care_of null
+    - company_name null
+    - company_departement null
     - street null
     - house (string) null
+    - gate (string) null
     - stairway (string) null
     - floor (string) null
     - apartment (string) null
+    - p_o_box (string) null
     - post_code (string) null
     - city //Settlement name //It may be also a name of a town, village, if they are generally recognized by post company // If address has only one string term, it should be put here
     - district (string) null // district of a city
     - province (string) null // state/country subdivision
     - state_id null → states //e.g. US state
     - country_id → countries
-    - country_union (enum from EU) null
+    - country_union (enum from EU) null guarded
     - gps_longitude (string) null
     - gps_latitude (string) null
-    - contact_phone (unsigned big integer) null // Phone number in international format without leading + or 00 (another possibility would be to save it as string
-    - delivery_information (text)
+    - delivery_information (text) null
+    - phone (string) null
+    - mobile (string) null
+    - flags (int) guarded default 0
 
     billing_details:
+    - id hidden
     - type (unsigned tiny int) default 1
     - address_id null → addresses
     - account_no null
@@ -500,6 +575,7 @@ model_fields:
     - remember_token null hidden
     - locale
     - remember_locale (int) default 0
+    - customer_id hidden -> customers (show_from)
 
 
     locales:
@@ -509,32 +585,66 @@ model_fields:
     - name translate
 
     products:
-    - identifier (identifier) unique representative // unique string used in API
+    - identifier (identifier) representative // unique per service string used in API
     - service_id → services
     - standalone (bool) default false
     - name translate
+    - description translate null
+    - tax_category_id -> tax_categories
+    - flags (int) default 0
+    - available_from (datetime) null
+    - available_until (datetime) null
 
+    prices: #Prices should not be changed (if has been already used) but a new price (or better new product) should be made instead
+    - service_id → services
+    - product_id -> products
+    - amount (currency)
+    - price_type (enum from net gross) default word net
+    - currency_id
+    - everywhere (bool) default false
+
+    tax_categories:
+    - identifier (identifier) representative // unique per service string used in API
+    - service_id null → services
+    - parent_id null -> tax_categories
+    - is_default (bool) default false
+    - name translate
+    - short_name translate
+    - description null
+    - note null
+
+    tax_groups:
+    - service_id null → services
+    - parent_id null -> tax_groups
+    - country_id null -> countries
+    - tax_category_id -> tax_categories
+    - tax_percent
+    - tax_type (enum from none vat sales excise expenditure) default word vat
 
     deliveries:
     - id #to emphasize the importance of id of this table
     - start (date) #first day of delivery
     - service_id → services
+    - is_available_for_ordering (bool) default true
 
     delivery_window_types:
-    - day_of_week (unsigned tiny int)
-    - start (time)
-    - duration (period)
+    - identifier (identifier) representative
+    - name translate
+    - start (string) //relative date string understandable by strtotime() (combined with delivery date)
+    - end (string) //relative date string understandable by strtotime() (combined with delivery date)
+    - is_usual(bool) //Whether this delivery window type is usual for delivery, so whether it should be added automatically
     - service_id → services
 
     delivery_windows:
     - start (datetime)
     - end (datetime)
-    - delivery_window_type_id → delivery_window_types
+    - delivery_window_type_id null → delivery_window_types
     - delivery_id → deliveries
 
 
     realizations: #Model denoting a particular product realization for particular delivery
-    - identifier (identifier) unique representative // unique string used in API
+    - identifier (identifier) representative // unique per service string used in API
+    - service_id
     - comment null
     - product_id → products
     - delivery_id → deliveries
@@ -543,54 +653,144 @@ model_fields:
 
 
     subscriptions:
+    - service_id -> services
     - account_id → accounts
-    - delivery_window_type_id → delivery_window_types
-    - period (unsigned tiny int) default 1 //1 - weekly, 2 - every two weeks, 4 - monthly - other periods could be defined (possibility to use enum, but tiny int used for more flexibility)
-    - status (unsigned tiny int) default 1 //1 - active, 2 - cancelled
+    - shipping_address_id null → addresses #(null if default)
+    - billing_address_id null → addresses #(null if same as shipping)
+    - currency_id -> currencies
+    - country_id null -> countries
+    - delivery_window_type_id null → delivery_window_types
+    - status (enum from active cancelled) default word active
     - start (date)
-    - end (date)
+    - end (date) null
+
+    subscription_filters:
+    - type (enum from monday tuesday wednesday thursday friday saturday sunday odd_week even_week)
+    - subscription_id -> subscriptions
 
 
-    vetos:
-    - start (date)
-    - end (date)
+    subscription_vetos:
+    - start (date) null
+    - end (date) null
     - subscription_id → subscriptions
 
     products_in_subscriptions:
     - subscription_id → subscriptions
-    - product_id → products
+    - price_id -> prices
     - amount (int)
 
-    orders:
+    sales_orders:
+    - service_id -> services
+    - account_id → accounts
     - type (enum from automatic manual)
-    - status (unsigned tiny int) //1 - ordering / 2 - ordered / 3 - prepared / 4 - send / 5 - delivered / 6 - returned, 7 -  cancelled...)
-    - payment_id null → payments
+    - status (enum from ordering ordered prepared sent delivered returned cancelled) null
+    - hash unique
     - delivery_id null → deliveries
     - delivery_window_id null → delivery_windows
     - anticipated_delivery_start (datetime) null
     - anticipated_delivery_end (datetime) null
+    - currency_id -> currencies
+    - country_id null -> countries
+    - net_sum (currency)
+    - gross_sum (currency)
     - subscription_id null → subscriptions #(null for manual)
-    - account_id null → accounts #(possibly null for automatic)
     - shipping_address_id null → addresses #(null if default)
+    - billing_address_id null → addresses #(null if same as shipping)
+    - confirmation_message_id null -> messages
 
-    realizations_in_orders:
-    - order_id → orders
+    realizations_in_sales_orders:
+    - sales_order_id → sales_orders
     - realization_id → realizations
-    - amount (unsigned int)
+    - price_id -> prices
+    - amount (int)
 
-    payments:
-    - type (unsigned tiny int)  // 1 - send_from_account / 2 - credit_card / 3 - direct_debit ...)
-    - status (unsigned tiny int) // 1 - planned / 2 - requested / 3 - paid / 4 - rejected / 5 - canceled / 6 - requested_back …)
+    discounts:
+    - service_id
+    - available (bool) default true
+    - identifier
+    - code null
+    - type (enum from once multiple period subscription limited) default word once //Discounts could be one-time only / multiple times / limited period / unlimited period //limited by both period and count
+    - reuse (enum from exclusive account order) default word account //whether this discount might be reused by the same customer (order) or different customer (account) or nobody at all (exclusive)
+    - combinable (bool) default false //whether this discount can be combined with other discounts
+    - discount_percent (int) null
+    - discount_amount (currency) null
+    - discount_currency null
+    - period (period) null //For how long it is used, when type is period
+    - multiple_count (int) null //How many times it may be used, when type is multiple
+    - flags (int) default 0
+
+    transactions:
+    - service_id
+    - direction (enum from receive send) default word receive
+    - type (enum from standard refund) default word standard
+    - origin (enum from system user customer guest outside)
+    - parent_id null -> transactions
+    - user_id null
+    - account_id null
+    - sales_order_id null
+    - processing_data (text) null
+    - transaction_gateway_configuration_id null hidden
+    - hash unique
+    - reference null
+    - message null
+    - code null
+    - method (enum from other invoice credit_card debit_card voucher inner_credit direct_debit bank_transfer mediated_bank_transfer) null
+    - stage (enum from planned initialized additional_data_requested additional_data_received data_collected preparation_requested preparation_response_received prepared authorization_requested authorization_response_received authorization_completing_requested authorization_completing_response_received authorized capture_requested capture_response_received captured charge_requested charge_response_received charge_completing_requested charge_completing_response_received charged waiting_for_async_resolution async_resolution_received finished cancelled failed unknown reversion_requested reversion_request_answered reverted) default word planned
+    - status (enum from no_response_yet accepted waiting_for_customer_input waiting_for_customer_confirmation waiting_for_merchant_processing waiting_for_gateway_processing own_risk client_error server_error connection_error response_error denied failed widget_provided redirected redirected_back) default word no_response_yet //status of last operation
+    - result (enum from success failure error cancelled undetermined waiting) null //final result of transaction
     - amount (currency)
-    - vat (currency)
-    - currency_id (int)
-    - billing_detail_id null → billing_details
+    - payment_fee (currency) null
+    - currency_id
+    - description null
+    - payment_fee_paid_by (enum from receiver sender) null
+    - confirmation_message_id null -> messages
+    - first_request_sent_on (datetime) null
+    - first_response_received_on (datetime) null
+    - last_request_sent_on (datetime) null
+    - last_response_received_on (datetime) null
+    - finalized_on (datetime) null
+    - revisited_on (datetime) null
+    - note null
 
     currencies: #    (possibly a “virtual” table)
     - identifier (identifier) unique representative
     - name translate
     - code
     - symbol
+    - precision (int) default 2
+
+    currency_possibilities_per_countries:
+    - service_id
+    - currency_id
+    - country_id null
+    - is_default (bool) default false
+
+    transaction_gateways:
+    - identifier (identifier) unique representative
+    - driver
+    - name translate
+    - description translate
+
+    transaction_gateway_configurations:
+    - parent_id null -> transaction_gateway_configurations
+    - service_id
+    - transaction_gateway_id
+    - for_receiving_payments (bool) default true
+    - country_id null
+    - currency_id null
+    - is_default (bool) default false
+    - ordering (int) null
+    - configuration (text)
+
+    messages:
+    - service_id null
+    - account_id null
+    - type (enum from email) default word email
+    - status (enum from planned prepared sent failed cancelled) default word planned
+    - subject null
+    - content null
+    - content_type (enum from text html) null
+    - message_data (text) null
 
     pictures:
     - comment null
@@ -606,14 +806,15 @@ model_fields:
 
 
     tags:
-    - identifier (identifier) unique representative // unique string used in API
+    - identifier (identifier) representative // unique per service string used in API
+    - service_id null
     - name translate
     - tag_group_id
 
     tag_groups:
-    - identifier (identifier) unique representative // unique string used in API
-    - name translate
+    - identifier (identifier) representative // unique string used in API
     - service_id null
+    - name translate
 
 
     kochabo_recipes:

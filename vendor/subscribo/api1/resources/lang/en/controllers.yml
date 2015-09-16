@@ -20,5 +20,46 @@ account.errors:
 answer.errors:
         getQuestion.wrongType: Unrecognized type
         getRedirection.wrongType: Unrecognized type
+# BusinessController
+business:
+    getPeriod.subscriptionPeriods:
+        weekly: Every week
+        biweekly: Every other week
+    errors.prepareOrder:
+        priceNotFound: Specified price not found
+        taxGroupNotFound: Tax group not found for given country and category (Specified price is not for specified country)
+        invalidCurrency: Specified price has different currency
+        invalidCountry: Specified price is not for specified country
+        invalidService: Specified price is for different service
+        productNotFound: Product not found for this price
+        amountInvalid: Specified amount (%amount%) of product is invalid
+        noRealization: No realization found for specified product and delivery
+        invalidSubscriptionPeriod: Invalid subscription period
+        deliveryNotFound: Specified delivery not found
+        deliveryWrongService: Specified delivery is not for this service
+        deliveryWindowNotFound: Delivery window of requested type not found for specified delivery
+        deliveryWindowStartLate: It is too late to order within this delivery for this delivery window
+        deliveryWindowEndLate: It is too late to order within this delivery for this delivery window
+        shippingCountryNotFound: Unrecognized shipping country
+        billingCountryNotFound: Unrecognized billing country
+        billingCountryInvalid: Billing country does not agree with shipping country
+        shippingCountryInvalid: Service is not operating in selected shipping country
+        shippingAddressNotFound: Selected shipping address not found
+        billingAddressNotFound: Selected billing address not found
+        shippingAddressCustomerMismatch: Selected shipping address is not connected to your account
+        billingAddressCustomerMismatch: Selected billing address is not connected to your account
+    errors.postSubscription:
+        salesOrderNotFound: Selected sales order not found
+# TransactionController
+transaction:
+    errors.postCharge:
+        transactionGatewayNotFound: Specified transaction gateway has not been found
+        salesOrderNotFound: Specified sales order has not been found
+        countryNotFound: Specified country has not been found
+        currencyNotFound: Specified currency has not been found
+        invalidAmount: Specified amount has invalid format
+        currencyDoesNotMatchWithSalesOrder: Specified currency does not match with that in specified sales order
+        countryDoesNotMatchWithSalesOrder: Specified country does not match with that in specified sales order
+        amountDoesNotMatchWithSalesOrder: Specified amount does not match with that in specified sales order
 # ContextRequestValidationTrait
 contextRequestValidationTrait.errors.wrongIdentifier: Identifier have to be a positive integer
