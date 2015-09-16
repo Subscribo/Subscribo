@@ -85,6 +85,8 @@ You may configure local packages resource using [Satis](https://github.com/compo
 
 ### 3. Configure your vagrant box / virtual server to serve Satis public directory and update your 'etc/hosts' file
 
+    Important: You might need to run vagrant 'reload --provision' to let vagrant box find your new sites
+
 ### 4. Add to your project's 'composer.json' file or create '~/.composer/config.json' with this content:
 ```json
     {
