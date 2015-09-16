@@ -205,6 +205,8 @@ class Arr
 
                 if (isset($array[$part]) && is_array($array[$part])) {
                     $array = &$array[$part];
+                } else {
+                    $parts = [];
                 }
             }
 
@@ -340,7 +342,7 @@ class Arr
      */
     protected static function explodePluckParameters($value, $key)
     {
-        $value = is_array($value) ? $value : explode('.', $value);
+        $value = is_string($value) ? explode('.', $value) : $value;
 
         $key = is_null($key) || is_array($key) ? $key : explode('.', $key);
 
