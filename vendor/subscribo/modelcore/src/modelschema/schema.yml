@@ -703,6 +703,8 @@ model_fields:
     - realization_id → realizations
     - price_id -> prices
     - amount (int)
+    - prorating_divider (int) default 1
+    - prorating_multiplier (int) default 1
 
     discounts:
     - service_id
