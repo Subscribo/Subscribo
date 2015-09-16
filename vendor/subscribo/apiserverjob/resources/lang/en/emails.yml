@@ -9,6 +9,7 @@ order.automatic.confirm:
 generic:
     heading: Dear %salutation%
     ending: Kind regards
+transaction.detail.templatePath: subscribo::apiserverjob.emails.en.transaction.detail
 transaction.atomic.manual.content:
     success: Thank you for your money transfer.
     failure: Your transaction has not been processed. Please try other payment method.

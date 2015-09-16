@@ -73,11 +73,19 @@ class SendConfirmationMessage extends AbstractMessageHandlingJob
             $message->subject = $localizer->transOrDefault($idBase.'subject'.$idEnd);
         }
         $content = $localizer->transOrDefault($idBase.'content'.$idEnd);
+        $detailData = [
+            'transaction' => $this->transaction,
+            'currencySymbol' => $this->transaction->currency->symbol,
+            'gatewayName' => $this->transaction->transactionGatewayConfiguration->transactionGateway->name,
+            'processingDate' => $this->transaction->lastRequestSentOn,
+        ];
+        $detail = view($localizer->transOrDefault('transaction.detail.templatePath'), $detailData);
+        $paragraphs = [$content, $detail];
         $heading = $localizer->transOrDefault('generic.heading', ['%salutation%' => $salutation]);
         $ending = $localizer->transOrDefault('generic.ending');
         $viewData = [
             'heading' => $heading,
-            'content' => $content,
+            'paragraphs' => $paragraphs,
             'ending' => $ending,
         ];
         $templatePath = 'subscribo::apiserverjob.emails.generic';

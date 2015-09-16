@@ -2,7 +2,9 @@
     <head></head>
     <body>
         <p>{{ $heading or ''}}</p>
-        <p>{{ $content }}</p>
+        @foreach($paragraphs as $paragraph)
+        <p>{{ $paragraph }}</p>
+        @endforeach
         <p>{{ $ending or ''}}</p>
 
         Subscribo
