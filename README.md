@@ -54,6 +54,9 @@ In order to install into 'frontend' directory you may use this composer command
     $ php artisan build --publish
 ```
 
+<---- NOTE: Why does this create a "subscribo/" folder? 
+
+
 #### 1.10 Run migrations and seed
 ```sh
     $ php artisan migrate:refresh --seed
