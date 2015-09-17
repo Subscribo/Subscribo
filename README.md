@@ -43,7 +43,7 @@ In order to install into 'frontend' directory you may use this composer command
 
 #### 1.8 Build generated files
 ```sh
-    $ php artisan build
+    $ php artisan build --publish
 ```
 
 #### 1.9 Run migrations and seed
