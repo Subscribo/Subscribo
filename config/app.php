@@ -141,7 +141,7 @@ return [
          * Administration interface service provider
          * (conditional registration results in error, so we are listing it here)
          */
-        '\\Frozennode\\Administrator\\AdministratorServiceProvider',
+        # '\\Frozennode\\Administrator\\AdministratorServiceProvider',
 
         /*
          * IDE Helper Service provider
