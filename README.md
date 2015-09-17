@@ -23,13 +23,17 @@ In order to install into 'frontend' directory you may use this composer command
 
 ### 1. Installation
 
-#### 1.1 Clone git project
+#### 1.1 Change to directory where you want to install and clone the git project
 
-#### 1.2 Install Homestead / Vagrant box
+```sh
+    git clone https://github.com/Subscribo/Subscribo .
+```
 
-#### 1.3 Setup Homestead configuration
+#### 1.2 Install Homestead / Vagrant box (optional for production)
 
-#### 1.4 Run Vagrant box
+#### 1.3 Setup Homestead configuration (optional for production)
+
+#### 1.4 Run Vagrant box (optional for production)
 
 #### 1.5 Create (copy from .env.example) and configure .env and .env.commandline files
 
