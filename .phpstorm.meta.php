@@ -3,7 +3,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2015-09-16.
+    * Generated on 2015-09-22.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -134,10 +134,8 @@ namespace PHPSTORM_META {
             'command.controller.make' instanceof \Illuminate\Routing\Console\ControllerMakeCommand,
             'command.middleware.make' instanceof \Illuminate\Routing\Console\MiddlewareMakeCommand,
             'command.session.database' instanceof \Illuminate\Session\Console\SessionTableCommand,
-            'mailer' instanceof \Illuminate\Mail\Mailer,
             'Illuminate\Contracts\Pipeline\Hub' instanceof \Illuminate\Pipeline\Hub,
             'queue' instanceof \Illuminate\Queue\QueueManager,
-            'queue.connection' instanceof \Illuminate\Queue\DatabaseQueue,
             'command.queue.work' instanceof \Illuminate\Queue\Console\WorkCommand,
             'command.queue.restart' instanceof \Illuminate\Queue\Console\RestartCommand,
             'queue.worker' instanceof \Illuminate\Queue\Worker,
@@ -146,8 +144,6 @@ namespace PHPSTORM_META {
             'command.queue.subscribe' instanceof \Illuminate\Queue\Console\SubscribeCommand,
             'queue.failer' instanceof \Illuminate\Queue\Failed\DatabaseFailedJobProvider,
             'IlluminateQueueClosure' instanceof \IlluminateQueueClosure,
-            'auth.password' instanceof \Illuminate\Auth\Passwords\PasswordBroker,
-            'auth.password.tokens' instanceof \Illuminate\Auth\Passwords\DatabaseTokenRepository,
             'translation.loader' instanceof \Illuminate\Translation\FileLoader,
             'translator' instanceof \Illuminate\Translation\Translator,
             'command.ide-helper.generate' instanceof \Barryvdh\LaravelIdeHelper\Console\GeneratorCommand,
@@ -279,10 +275,8 @@ namespace PHPSTORM_META {
             'command.controller.make' instanceof \Illuminate\Routing\Console\ControllerMakeCommand,
             'command.middleware.make' instanceof \Illuminate\Routing\Console\MiddlewareMakeCommand,
             'command.session.database' instanceof \Illuminate\Session\Console\SessionTableCommand,
-            'mailer' instanceof \Illuminate\Mail\Mailer,
             'Illuminate\Contracts\Pipeline\Hub' instanceof \Illuminate\Pipeline\Hub,
             'queue' instanceof \Illuminate\Queue\QueueManager,
-            'queue.connection' instanceof \Illuminate\Queue\DatabaseQueue,
             'command.queue.work' instanceof \Illuminate\Queue\Console\WorkCommand,
             'command.queue.restart' instanceof \Illuminate\Queue\Console\RestartCommand,
             'queue.worker' instanceof \Illuminate\Queue\Worker,
@@ -291,8 +285,6 @@ namespace PHPSTORM_META {
             'command.queue.subscribe' instanceof \Illuminate\Queue\Console\SubscribeCommand,
             'queue.failer' instanceof \Illuminate\Queue\Failed\DatabaseFailedJobProvider,
             'IlluminateQueueClosure' instanceof \IlluminateQueueClosure,
-            'auth.password' instanceof \Illuminate\Auth\Passwords\PasswordBroker,
-            'auth.password.tokens' instanceof \Illuminate\Auth\Passwords\DatabaseTokenRepository,
             'translation.loader' instanceof \Illuminate\Translation\FileLoader,
             'translator' instanceof \Illuminate\Translation\Translator,
             'command.ide-helper.generate' instanceof \Barryvdh\LaravelIdeHelper\Console\GeneratorCommand,
@@ -424,10 +416,8 @@ namespace PHPSTORM_META {
             'command.controller.make' instanceof \Illuminate\Routing\Console\ControllerMakeCommand,
             'command.middleware.make' instanceof \Illuminate\Routing\Console\MiddlewareMakeCommand,
             'command.session.database' instanceof \Illuminate\Session\Console\SessionTableCommand,
-            'mailer' instanceof \Illuminate\Mail\Mailer,
             'Illuminate\Contracts\Pipeline\Hub' instanceof \Illuminate\Pipeline\Hub,
             'queue' instanceof \Illuminate\Queue\QueueManager,
-            'queue.connection' instanceof \Illuminate\Queue\DatabaseQueue,
             'command.queue.work' instanceof \Illuminate\Queue\Console\WorkCommand,
             'command.queue.restart' instanceof \Illuminate\Queue\Console\RestartCommand,
             'queue.worker' instanceof \Illuminate\Queue\Worker,
@@ -436,8 +426,6 @@ namespace PHPSTORM_META {
             'command.queue.subscribe' instanceof \Illuminate\Queue\Console\SubscribeCommand,
             'queue.failer' instanceof \Illuminate\Queue\Failed\DatabaseFailedJobProvider,
             'IlluminateQueueClosure' instanceof \IlluminateQueueClosure,
-            'auth.password' instanceof \Illuminate\Auth\Passwords\PasswordBroker,
-            'auth.password.tokens' instanceof \Illuminate\Auth\Passwords\DatabaseTokenRepository,
             'translation.loader' instanceof \Illuminate\Translation\FileLoader,
             'translator' instanceof \Illuminate\Translation\Translator,
             'command.ide-helper.generate' instanceof \Barryvdh\LaravelIdeHelper\Console\GeneratorCommand,
@@ -569,10 +557,8 @@ namespace PHPSTORM_META {
             'command.controller.make' instanceof \Illuminate\Routing\Console\ControllerMakeCommand,
             'command.middleware.make' instanceof \Illuminate\Routing\Console\MiddlewareMakeCommand,
             'command.session.database' instanceof \Illuminate\Session\Console\SessionTableCommand,
-            'mailer' instanceof \Illuminate\Mail\Mailer,
             'Illuminate\Contracts\Pipeline\Hub' instanceof \Illuminate\Pipeline\Hub,
             'queue' instanceof \Illuminate\Queue\QueueManager,
-            'queue.connection' instanceof \Illuminate\Queue\DatabaseQueue,
             'command.queue.work' instanceof \Illuminate\Queue\Console\WorkCommand,
             'command.queue.restart' instanceof \Illuminate\Queue\Console\RestartCommand,
             'queue.worker' instanceof \Illuminate\Queue\Worker,
@@ -581,8 +567,6 @@ namespace PHPSTORM_META {
             'command.queue.subscribe' instanceof \Illuminate\Queue\Console\SubscribeCommand,
             'queue.failer' instanceof \Illuminate\Queue\Failed\DatabaseFailedJobProvider,
             'IlluminateQueueClosure' instanceof \IlluminateQueueClosure,
-            'auth.password' instanceof \Illuminate\Auth\Passwords\PasswordBroker,
-            'auth.password.tokens' instanceof \Illuminate\Auth\Passwords\DatabaseTokenRepository,
             'translation.loader' instanceof \Illuminate\Translation\FileLoader,
             'translator' instanceof \Illuminate\Translation\Translator,
             'command.ide-helper.generate' instanceof \Barryvdh\LaravelIdeHelper\Console\GeneratorCommand,
