@@ -2,8 +2,9 @@
 
 ### 0.8.1 (????-??-??)
 
+ * bc4c186 - Add caching support
  * b6e4bdf - [Socket] Fix https connection
- 
+
 ### 0.8.0 (2015-08-12)
 
  * 2d8061b - Add guzzle 6 support

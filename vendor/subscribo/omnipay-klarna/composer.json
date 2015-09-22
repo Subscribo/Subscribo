@@ -45,17 +45,11 @@
     "require": {
         "php": "^5.4 || 7.0@dev",
         "omnipay/common": "^2.3.4",
-        "subscribo/omnipay-subscribo-shared": "^0.3.5",
+        "subscribo/omnipay-subscribo-shared": "~0.3.6",
         "subscribo/klarna-invoice-sdk-wrapped": "^1.0.3"
     },
     "require-dev": {
-        "omnipay/tests": "^2.0",
-        "klarna/checkout": "1.2",
-        "subscribo/psr-http-message-tools": ">=0.3.1 <0.5"
-    },
-    "suggest": {
-        "klarna/checkout": "(1.2) For Klarna Checkout",
-        "subscribo/psr-http-message-tools": "(>=0.3.1 <0.5) For Klarna Checkout"
+        "omnipay/tests": "^2.0.2"
     },
     "extra": {
         "branch-alias": {

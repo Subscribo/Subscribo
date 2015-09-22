@@ -25,7 +25,7 @@ return array(
     'Symfony\\Component\\Config\\' => array($vendorDir . '/symfony/config'),
     'Symfony\\Component\\ClassLoader\\' => array($vendorDir . '/symfony/class-loader'),
     'SuperClosure\\' => array($vendorDir . '/jeremeamia/SuperClosure/src'),
-    'Subscribo\\Webshop\\' => array($vendorDir . '/Subscribo/webshop/src/Subscribo/Webshop'),
+    'Subscribo\\Webshop\\' => array($vendorDir . '/subscribo/webshop/src/Subscribo/Webshop'),
     'Subscribo\\ValidationLocalization\\' => array($vendorDir . '/subscribo/validationlocalization/src/Subscribo/ValidationLocalization'),
     'Subscribo\\TranslatableModel\\' => array($vendorDir . '/subscribo/translatablemodel/src/Subscribo/TranslatableModel'),
     'Subscribo\\TransactionPluginPayUnity\\' => array($vendorDir . '/subscribo/transaction-plugin-payunity/src/Subscribo/TransactionPluginPayUnity'),

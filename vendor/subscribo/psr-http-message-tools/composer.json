@@ -27,9 +27,9 @@
         "source": "https://github.com/Subscribo/psr-http-message-tools"
     },
     "require": {
-        "php": ">=5.5",
+        "php": ">=5.4",
         "psr/http-message": "^1.0",
-        "zendframework/zend-diactoros": "^1.0"
+        "zendframework/zend-diactoros": "~1.1.3"
     },
     "require-dev": {
         "phpunit/phpunit": "<5.0"

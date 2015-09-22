@@ -36,6 +36,8 @@ In order to install into 'frontend' directory you may use this composer command
 #### 1.4 Run Vagrant box (optional for production)
 
 #### 1.5 Create (copy from .env.example) and configure .env and .env.commandline files
+Note: Do not forget to setup 'SUBSCRIBO_REST_CLIENT_HOST' to hostname accessible from host,
+if you are using both frontend and backend functionality
 
 #### 1.6 Setup database configurations and passwords (both at Vagrant box and in your .env and .env.commandline files)
 
@@ -62,9 +64,10 @@ In order to install into 'frontend' directory you may use this composer command
     $ php artisan migrate:refresh --seed
 ```
 
-
-#### 1.11 [Setup scheduler](http://laravel.com/docs/5.1/scheduling) in users crontab on Vagrant box
-(you need to 'vagrant ssh' first in your vagrant directory)
+### 1.11 Force running hourly job for the first time outside of schedule:
+```sh
+    $ php artisan maintain:hourly
+```
 
 #### 1.12 Setup job listener on your Vagrant box
 ```sh
@@ -73,6 +76,10 @@ In order to install into 'frontend' directory you may use this composer command
     > cd to/your/project
     > php artisan queue:listen
 ```
+
+#### 1.13 [Setup scheduler](http://laravel.com/docs/5.1/scheduling) in users crontab on Vagrant box
+(you need to 'vagrant ssh' first in your vagrant directory)
+(Note: this is needed only for production / longer time staging set-ups, not necessary for short-term install-and-try installations)
 
 ## C. Satis configuration
 

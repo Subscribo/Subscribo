@@ -9,7 +9,7 @@ use Subscribo\Omnipay\Shared\Exception\ServerErrorResponseHttpMessageSendingExce
 use Subscribo\Omnipay\Shared\Exception\NotSuccessfulResponseHttpMessageSendingException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Ivory\HttpAdapter\GuzzleHttpAdapter;
+use Ivory\HttpAdapter\Guzzle3HttpAdapter;
 
 /**
  * Trait HttpMessageSendingTrait intended for use with Message/SomeRequest type of classes
@@ -32,7 +32,7 @@ trait HttpMessageSendingTrait
     {
         try {
             $client = $this->httpClient;
-            $adapter = new GuzzleHttpAdapter($client);
+            $adapter = new Guzzle3HttpAdapter($client);
             $response = $adapter->sendRequest($request);
         } catch (Exception $e) {
             throw new TransportErrorHttpMessageSendingException($e->getMessage(), $e->getCode(), $e);

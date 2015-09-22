@@ -21,15 +21,14 @@
 
 Add dependency on this package to your Omnipay driver composer.json.
 
-You might need to add also dependencies to packages psr/http-message and development version of egeloen/http-adapter
-both to your driver and your project, if you are using protected method HttpMessageSendingTrait::sendHttpMessage()
-(and add recommendation for others to do so in your driver's README.md):
+You might need to add also dependencies to packages psr/http-message and egeloen/http-adapter,
+if you are using protected method HttpMessageSendingTrait::sendHttpMessage()
 
 ```json
     "require": {
-        "subscribo/omnipay-subscribo-shared": "^0.3.5",
-        "egeloen/http-adapter": "^0.8@dev",
-        "psr/http-message": "^1.0"
+        "subscribo/omnipay-subscribo-shared": "^0.3.6",
+        "egeloen/http-adapter": "~0.8.0",
+        "psr/http-message": "~1.0"
     }
 ```
 

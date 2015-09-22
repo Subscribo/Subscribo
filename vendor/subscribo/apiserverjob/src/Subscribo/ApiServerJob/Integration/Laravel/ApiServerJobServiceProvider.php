@@ -27,6 +27,7 @@ class ApiServerJobServiceProvider extends ServiceProvider
         if ($this->toRegisterSchedule) {
             $this->registerSchedule();
         }
+        $this->commands(['\\Subscribo\\ApiServerJob\\Commands\\MaintainHourly']);
     }
 
     /**
