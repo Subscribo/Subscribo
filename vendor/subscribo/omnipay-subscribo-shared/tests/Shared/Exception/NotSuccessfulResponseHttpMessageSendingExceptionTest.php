@@ -3,7 +3,7 @@
 namespace Subscribo\Omnipay\Shared\Exception;
 
 use PHPUnit_Framework_TestCase;
-use Phly\Http\Response;
+use Zend\Diactoros\Response;
 use Subscribo\Omnipay\Shared\Exception\NotSuccessfulResponseHttpMessageSendingException;
 
 class NotSuccessfulResponseHttpMessageSendingExceptionTest extends PHPUnit_Framework_TestCase
