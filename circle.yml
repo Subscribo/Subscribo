@@ -5,3 +5,6 @@ checkout:
   post:
     - php artisan vendor:publish --force
     - php artisan build
+test:
+  pre:
+    - php artisan serve --port=80
