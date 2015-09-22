@@ -5,6 +5,7 @@ use Subscribo\ModelCore\Models\User;
 use Subscribo\ModelCore\Models\UserToken;
 use Subscribo\ModelCore\Models\Service;
 use Subscribo\Auth\Factories\UserFactory;
+use Subscribo\DevelopmentSeeder\Tools\EnvFileTools;
 use App;
 use Subscribo\Support\Str;
 
@@ -31,7 +32,7 @@ class UserSeeder extends Seeder
         $tokens = $userFactory->addTokens($frontendSystemUser, UserToken::TYPE_SUBSCRIBO_DIGEST);
         /** @var UserToken $token */
         $token = reset($tokens);
-        $this->updateEnvFile('SUBSCRIBO_REST_CLIENT_TOKEN_RING', $token->tokenRing, '.env.frontend');
+        EnvFileTools::updateEnvFile('SUBSCRIBO_REST_CLIENT_TOKEN_RING', $token->tokenRing, '.env.frontend', $this->command->getOutput());
 
 
         $administrator = $this->generateUser('administrator');
@@ -52,8 +53,7 @@ class UserSeeder extends Seeder
         $mainTokens = $userFactory->addTokens($mainSystemUser, UserToken::TYPE_SUBSCRIBO_DIGEST);
         /** @var UserToken $token */
         $tokenForMain = reset($mainTokens);
-        $this->updateEnvFile('SUBSCRIBO_REST_CLIENT_TOKEN_RING', $tokenForMain->tokenRing);
-
+        EnvFileTools::updateEnvFile('SUBSCRIBO_REST_CLIENT_TOKEN_RING', $tokenForMain->tokenRing, '.env', $this->command->getOutput());
 
         $anotherService = Service::where(['identifier' => 'ANOTHER'])->first();
         $anotherDeveloper = $this->generateUser('developer5');
@@ -74,27 +74,4 @@ class UserSeeder extends Seeder
         }
         return $user;
     }
-
-    protected function updateEnvFile($key, $value, $fileName = '.env')
-    {
-        $envFilePath = base_path($fileName);
-        if (file_exists($envFilePath)) {
-            $oldContent = file_get_contents($fileName);
-            $count = 0;
-            $newContent = preg_replace('/^([ \\t]*)'.$key.'=.*$/m', $key.'='.$value, $oldContent, 1, $count);
-            if (empty($count)) {
-                $newContent = $oldContent."\n\n".$key.'='.$value."\n";
-            }
-            file_put_contents($fileName, $newContent);
-            if ($this->command) {
-                $this->command->getOutput()->writeln(sprintf('Environment file %s updated', $fileName));
-            }
-        } else {
-            if ($this->command) {
-                $this->command->getOutput()->writeln(sprintf('Environment file %s not found - skipped', $fileName));
-            }
-        }
-
-    }
-
 }

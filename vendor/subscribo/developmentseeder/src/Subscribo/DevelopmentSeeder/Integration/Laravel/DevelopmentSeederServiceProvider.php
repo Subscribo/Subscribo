@@ -21,5 +21,6 @@ class DevelopmentSeederServiceProvider extends ServiceProvider {
     {
         $packagePath = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
         $this->publishes([$packagePath.'/install/laravel/database/seeds/DatabaseSeeder.php' => base_path('database/seeds/DatabaseSeeder.php')], 'seeds');
+        $this->commands(['\\Subscribo\\DevelopmentSeeder\\Commands\\SubscriboCommonSecretGenerate']);
     }
 }
