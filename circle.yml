@@ -11,4 +11,4 @@ database:
 test:
   pre:
     - php artisan serve --port=80:
-      background: true
+        background: true
