@@ -64,9 +64,10 @@ if you are using both frontend and backend functionality
     $ php artisan migrate:refresh --seed
 ```
 
-
-#### 1.11 [Setup scheduler](http://laravel.com/docs/5.1/scheduling) in users crontab on Vagrant box
-(you need to 'vagrant ssh' first in your vagrant directory)
+### 1.11 Force running hourly job for the first time outside of schedule:
+```sh
+    $ php artisan maintain:hourly
+```
 
 #### 1.12 Setup job listener on your Vagrant box
 ```sh
@@ -75,6 +76,10 @@ if you are using both frontend and backend functionality
     > cd to/your/project
     > php artisan queue:listen
 ```
+
+#### 1.13 [Setup scheduler](http://laravel.com/docs/5.1/scheduling) in users crontab on Vagrant box
+(you need to 'vagrant ssh' first in your vagrant directory)
+(Note: this is needed only for production / longer time staging set-ups, not necessary for short-term install-and-try installations)
 
 ## C. Satis configuration
 
