@@ -36,6 +36,8 @@ In order to install into 'frontend' directory you may use this composer command
 #### 1.4 Run Vagrant box (optional for production)
 
 #### 1.5 Create (copy from .env.example) and configure .env and .env.commandline files
+Note: Do not forget to setup 'SUBSCRIBO_REST_CLIENT_HOST' to hostname accessible from host,
+if you are using both frontend and backend functionality
 
 #### 1.6 Setup database configurations and passwords (both at Vagrant box and in your .env and .env.commandline files)
 
