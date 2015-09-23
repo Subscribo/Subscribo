@@ -6,18 +6,70 @@ Contains packages and other files for building Subscribo API backend as well as 
 
 ### A.1. Installation
 
-#### A.1.1 [Install](http://laravel.com/docs/5.1/installation) Laravel 5.1
+##### A.1.1 [Install](http://laravel.com/docs/5.1/installation) Laravel 5.1
 
 In order to install into 'frontend' directory you may use this composer command
 (provided you have [composer](http://getcomposer.org) installed and current Laravel version is 5.1):
 
 ```sh
-    composer create-project laravel/laravel --prefer-dist frontend
+    composer create-project laravel/laravel --prefer-dist your_frontend_project_subdirectory_name
 ```
 
-#### A.1.2 [Install and configure](/vendor/subscribo/apiclient/README.md) package Subscribo ApiClient
+##### A.1.2 [Install and configure](/vendor/subscribo/apiclient/README.md) package Subscribo ApiClient
 
-#### A.1.3 For development you can optionally [install](/vendor/subscribo/clientchecker/README.md) package Subscribo ClientChecker
+##### A.1.3 For development you can optionally [install](/vendor/subscribo/clientchecker/README.md) package Subscribo ClientChecker
+
+##### A.1.4 In development you may use .env.frontend file generated during Backend Installation (below)
+for setting up environment variables:
+
+```sh
+    $ cp /path/to/your/backend/project/.env.frontend /path/to/your/frontend/project/.env
+    $ vi /path/to/your/frontend/project/.env # Modify as needed (see below)
+```
+
+Only following environment keys are needed for frontend (you may delete the rest):
+
+```sh
+    APP_ENV=local
+    APP_DEBUG=true
+    APP_KEY=SomeRandomString32CharactersLong # you may reset this via php artisan key:generate
+
+    SUBSCRIBO_REST_CLIENT_PROTOCOL=http
+    SUBSCRIBO_REST_CLIENT_HOST=frontend.hostname
+    SUBSCRIBO_REST_CLIENT_TOKEN_RING=simple_some_long_hash
+
+    CACHE_DRIVER=file
+    SESSION_DRIVER=file
+    QUEUE_DRIVER=sync
+```
+
+Frontend server does not use database, so database setting are not needed.
+
+It takes needed information from backend, for which it needs to have set connection correctly:
+`SUBSCRIBO_REST_CLIENT_PROTOCOL`, `SUBSCRIBO_REST_CLIENT_HOST` and especially `SUBSCRIBO_REST_CLIENT_TOKEN_RING`.
+
+####### Finding out your Token ring
+
+If `SUBSCRIBO_REST_CLIENT_TOKEN_RING` is not set to string starting with 'simple_'
+or you are getting `Internal Server Error` when trying to access any frontend page communicating with backend
+and log connected to that particular error is having something like 'Unauthorized' or 'TokenConfigurationException'
+you need to set this value properly.
+
+You might find the proper token ring in Backend server database,
+table `user_tokens`, field `token_ring`.
+Be sure you select correct row, i.e. row having type `SubscriboDigest`
+connected to correct user - i.e. user having type `server` and connected to your service.
+
+(First find ID of your service in `services` table - check that `url` of your service agrees with `frontend.hostname`,
+then find ID of user of type `server` connected to your service ID,
+finally find appropriate user token in table `user_tokens` having type SubscriboDigest and connected to your user,
+and copy over token_ring to `.env` file.)
+
+You may also use following sql (modify its end for service with different identifier):
+
+```sql
+    SELECT `token_ring` FROM `user_tokens` JOIN `users` ON `user_tokens`.`user_id` = `users`.`id` JOIN `services` ON `users`.`service_id` = `services`.`id` WHERE `user_tokens`.`type` = "SubscriboDigest" AND `users`.`type` = "server" AND `services`.`identifier` = "FRONTEND"
+```
 
 ## B. Backend
 
@@ -27,17 +79,17 @@ In order to install into 'frontend' directory you may use this composer command
 
 You need to decide following:
 
- * where you want to put your project: path/to/your/project = path/to/your/project/parent/your_project_subdirectory_name
- * where you want to put your Homestead configuration: path/to/your/homestead/configuration
- * host name of your project: backend.hostname
+ * where you want to put your project: `path/to/your/project` = `path/to/your/project/parent/your_project_subdirectory_name`
+ * where you want to put your Homestead configuration: `path/to/your/homestead/configuration`
+ * host name of your project: `backend.hostname`
 
 Optionally:
  * Do you want to also make additional frontend?
- * If so, host name of additional frontend: frontend.hostname
+ * If so, host name of additional frontend: `frontend.hostname`
 
 ##### B.1.i.1 Install [Vagrant](https://www.vagrantup.com) and [Homestead](http://laravel.com/docs/5.1/homestead)
 
-##### B.1.i.2 Configure and run your Homestead box (and modify your `/etc/hosts if needed)
+##### B.1.i.2 Configure and run your Homestead box (and modify your `/etc/hosts` if needed)
 
 ```sh
     $ cd path/to/your/homestead/configuration
@@ -53,13 +105,13 @@ Optionally:
     $ cd path/to/your/project/parent
 ```
 
-#### B.1.i.4 Clone the git project into a new (nonexistent) or empty subdirectory
+##### B.1.i.4 Clone the git project into a new (nonexistent) or empty subdirectory
 
 ```sh
     $ git clone https://github.com/Subscribo/Subscribo your_project_subdirectory_name
 ```
 
-#### B.1.i.5 Create `.env` file using `.env.example` as a template
+##### B.1.i.5 Create `.env` file using `.env.example` as a template
 
 ```sh
     $ cd path/to/your/project/
@@ -72,7 +124,7 @@ Notes:
 * Do not forget to setup 'SUBSCRIBO_REST_CLIENT_HOST' to hostname accessible from host
 
 
-#### B.1.i.6 Run `install_backend.sh` from within your Homestead box
+##### B.1.i.6 Run `install_backend.sh` from within your Homestead box
 
 ```sh
     $ cd path/to/your/homestead/configuration
@@ -90,7 +142,7 @@ To do so, run these commands **instead** of last line in previous script:
     vagrant@homestead:$ bin/install_backend.sh test
 ```
 
-#### B.1.i.7 Running artisan commands from terminal running on host machine
+##### B.1.i.7 Running artisan commands from terminal running on host machine
 
 When using Homestead box and have compatible php installed on your host machine,
 you may also run some of artisan command directly from terminal of your host machine (i.e. not via `vagrant ssh`)
@@ -125,28 +177,28 @@ related to DB operations, run first following:
 Note: if you want to run DB related artisan commands from your IDE, you also might need to set environment variable
 'SUBSCRIBO_ENV' to value 'commandline'
 
-### B.1.ii Installing and configuring for staging or production using web server
+#### B.1.ii Installing and configuring for staging or production using web server
 
 
-#### B.1.ii.1 Install and setup Web server (and optionally also database, queue server, mail server, etc.)
+##### B.1.ii.1 Install and setup Web server (and optionally also database, queue server, mail server, etc.)
 
-#### B.1.ii.2 Set up [environment variables](/.env.example) in a way appropriate for that service
+##### B.1.ii.2 Set up [environment variables](/.env.example) in a way appropriate for that service
 
 * Setup DB access, Mail driver and access etc.
 * Do not forget to setup 'SUBSCRIBO_REST_CLIENT_HOST' to hostname accessible from host
 
-#### B.1.ii.3 Login to your Web server via ssh
+##### B.1.ii.3 Login to your Web server via ssh
 
-#### B.1.ii.4 Clone the git project into a new (nonexistent) or empty subdirectory
+##### B.1.ii.4 Clone the git project into a new (nonexistent) or empty subdirectory
 
-##### B.1.ii.4.a If your project directory does not exist yet:
+###### B.1.ii.4.a If your project directory does not exist yet:
 
 ```sh
     $ cd path/to/your/project/parent
     $ git clone https://github.com/Subscribo/Subscribo your_project_subdirectory_name
 ```
 
-##### B.1.ii.4.b Alternatively, if your project directory does already exist:
+###### B.1.ii.4.b Alternatively, if your project directory does already exist:
 
 ```sh
     $ cd path/to/your/project/
@@ -160,7 +212,7 @@ Note: if you want to run DB related artisan commands from your IDE, you also mig
     $ cd path/to/your/project/
 ```
 
-#### B.1.ii.6 Modify and run `install_backend.sh`
+##### B.1.ii.6 Modify and run `install_backend.sh`
 
 ```sh
     $ vi bin/install_backend.sh         # Modify as needed (e.g. remove things you do not want script would do)
@@ -173,10 +225,10 @@ Note: if you want to run DB related artisan commands from your IDE, you also mig
 Running 'composer update' would not work, if packages resource is not configured, as there are private packages used.
 You may configure local packages resource using [Satis](https://github.com/composer/satis)
 
-### 1. [Install composer globally](https://getcomposer.org/doc/00-intro.md#globally)
+##### C.1. [Install composer globally](https://getcomposer.org/doc/00-intro.md#globally)
 (or modify 'bin/configure_satis.sh' )
 
-### 2. Installing Satis using provided script 'bin/configure_satis.sh'
+##### C.2. Installing Satis using provided script 'bin/configure_satis.sh'
 
 ```sh
     $ cd /path/to/your/projects
@@ -184,18 +236,22 @@ You may configure local packages resource using [Satis](https://github.com/compo
     $ /path/to/Subscribo/bin/configure_satis.sh
 ```
 
-### 3. Configure your vagrant box / virtual server to serve Satis public directory and update your 'etc/hosts' file
+Note: This script is not suitable for refreshing satis configuration, only for first-time install
+
+##### C.3. Configure your vagrant box / virtual server to serve Satis public directory and update your 'etc/hosts' file
 
     Important: You might need to run vagrant 'reload --provision' to let vagrant box find your new sites
 
-### 4. Add to your project's 'composer.json' file or create '~/.composer/config.json' with this content:
+##### C.4. Add to your project's 'composer.json' file or create '~/.composer/config.json' with this content:
+
 ```json
     {
         "repositories": [{"type": "composer", "url": "http://satis.url.you.provided.to.script"}]
     }
 ```
 
-### 5. Now you can run
+##### C.5. Now you can run:
+
 ```sh
     $ cd /path/to/Subscribo
     $ composer update
