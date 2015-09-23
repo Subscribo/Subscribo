@@ -6,7 +6,19 @@ Contains packages and other files for building Subscribo API backend as well as 
 
 ### A.1. Installation
 
-##### A.1.1 [Install](http://laravel.com/docs/5.1/installation) Laravel 5.1
+You need to decide following:
+
+ * where you want to put your frontend project: `/path/to/your/frontend/project/` = `path/to/your/project/parent/your_frontend_project_subdirectory_name`
+ * host name of your frontend: `frontend.hostname`
+
+##### A.1.1 Setup and/or configure your Web Server, Virtual Server or [Homestead box](http://laravel.com/docs/5.1/homestead)
+
+Notes:
+ * You do not need DB for frontend.
+ * If you already have had Vagrant box configured and updated its configuration, you might need to run `vagrant reload --provision` to let vagrant box find your new sites
+ * Add new record with `frontend.hostname` to your `/etc/hosts` if needed (you might find IP address needed for new record in `path/to/your/homestead/configuration/Homestead.yaml` under key `ip`)
+
+##### A.1.2 [Install](http://laravel.com/docs/5.1/installation) Laravel 5.1
 
 In order to install into 'frontend' directory you may use this composer command
 (provided you have [composer](http://getcomposer.org) installed and current Laravel version is 5.1):
@@ -15,11 +27,13 @@ In order to install into 'frontend' directory you may use this composer command
     composer create-project laravel/laravel --prefer-dist your_frontend_project_subdirectory_name
 ```
 
-##### A.1.2 [Install and configure](/vendor/subscribo/apiclient/README.md) package Subscribo ApiClient
+##### A.1.3 [Install and configure](/vendor/subscribo/apiclient/README.md) package Subscribo ApiClient
 
-##### A.1.3 For development you can optionally [install](/vendor/subscribo/clientchecker/README.md) package Subscribo ClientChecker
+##### A.1.4 For development you can optionally [install](/vendor/subscribo/clientchecker/README.md) package Subscribo ClientChecker
 
-##### A.1.4 In development you may use .env.frontend file generated during Backend Installation (below)
+##### A.1.5 Set environment variables
+
+In development you may use .env.frontend file generated during Backend Installation (below)
 for setting up environment variables:
 
 ```sh
