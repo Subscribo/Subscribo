@@ -26,6 +26,16 @@ cd `dirname "$BASH_SOURCE"`/..
 PROJECT_DIR=`pwd -P`
 
 php artisan vendor:publish --force
+
+if [ ! -f .env ]; then
+    cp .env.example .env
+fi
+
+if [ ! -f .env.frontend ]; then
+    php artisan key:generate
+    cp .env .env.frontend
+fi
+
 php artisan key:generate
 php artisan subscribo-common-secret:generate
 php artisan build
@@ -35,7 +45,7 @@ echo "* * * * * php $PROJECT_DIR/artisan schedule:run >> /dev/null 2>&1" | cront
 php artisan queue:listen > /dev/null 2>&1  &
 
 if [ "$1" = "test" ]; then
-    phpunit;
+    phpunit
 fi
 
 cd "$CURRENT_DIR"
