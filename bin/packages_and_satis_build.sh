@@ -1,0 +1,64 @@
+#!/bin/sh
+
+#########################################################
+#                                                       #
+# Auxiliary script to be called from other scripts      #
+# to rebuild packages directory and Satis configuration #
+#                                                       #
+#########################################################
+
+echo "Cleaning $SUBSCRIBO_PACKAGES_DIR"
+
+cd "$SUBSCRIBO_PACKAGES_DIR"
+for ONE_PACKAGE_SUBDIR in */; do
+    if [ -f "${ONE_PACKAGE_SUBDIR}composer.json" ]; then
+        rm -rf "$ONE_PACKAGE_SUBDIR/*";
+    fi
+done
+
+echo "Copying over new content from $SCRIPT_PATH/../vendor/subscribo"
+
+cp -R "$SCRIPT_PATH/../vendor/subscribo" "$SUBSCRIBO_PACKAGES_DIR/.."
+
+echo "Commiting to git and updating satis.json"
+
+cp "$SCRIPT_PATH/files/satis.json.start" "$SATIS_DIR/satis.json"
+
+FIRST_ITEM=YES
+cd "$SUBSCRIBO_PACKAGES_DIR"
+for ONE_PACKAGE_SUBDIR in */; do
+    if [ -f "${ONE_PACKAGE_SUBDIR}composer.json" ]; then
+        cd "$ONE_PACKAGE_SUBDIR"
+        PACKAGE_SUBDIR_PATH=`pwd -P`
+        if [ ! -d .git ]; then
+            git init
+            git add .
+            git commit -m "Initial commit"
+        else
+            git add .
+            if `git diff-index --quiet --cached HEAD`; then
+                echo "No differences for $ONE_PACKAGE_SUBDIR"
+            else
+                echo "Commiting $ONE_PACKAGE_SUBDIR"
+                git commit -m "Package update"
+            fi
+        fi
+        if [ $FIRST_ITEM = "NO" ]; then
+            echo "," >> $SATIS_DIR/satis.json
+        fi
+        FIRST_ITEM="NO"
+        echo "{" >> $SATIS_DIR/satis.json
+            echo "\"type\": \"vcs\"," >> $SATIS_DIR/satis.json
+            echo "\"url\": \"$PACKAGE_SUBDIR_PATH\"" >> $SATIS_DIR/satis.json
+        echo "}" >> $SATIS_DIR/satis.json
+        cd ..
+    fi
+done
+echo "]," >> $SATIS_DIR/satis.json
+echo "\"homepage\": \"$SATIS_URL\"" >> $SATIS_DIR/satis.json
+echo "}" >> $SATIS_DIR/satis.json
+
+echo "Updating Satis"
+
+cd "$SATIS_DIR"
+php bin/satis build

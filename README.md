@@ -2,6 +2,13 @@
 
 Contains packages and other files for building Subscribo API backend as well as Subscribo Frontend servers
 
+## Outline
+
+ * A.1 [Frontend server installation](#a-frontend)
+ * B.1.i [Backend server installation on Homestead](#b1i-installation-for-development-using-homestead-box-on-vagrant)
+ * B.1.ii [Backend server installation on web server](#b1ii-installing-and-configuring-for-staging-or-production-using-web-server)
+ * C.1 [Local Satis server configuration](#c-satis)
+
 ## A. Frontend
 
 ### A.1. Installation
@@ -234,29 +241,31 @@ Note: if you want to run DB related artisan commands from your IDE, you also mig
     $ bin/install_backend.sh test       # Run it
 ```
 
-## C. Satis configuration
+## C. Satis
 
 Running 'composer update' would not work, if packages resource is not configured, as there are private packages used.
 You may configure local packages resource using [Satis](https://github.com/composer/satis)
 
-##### C.1. [Install composer globally](https://getcomposer.org/doc/00-intro.md#globally)
+### C.1 Satis setup and configuration
+
+##### C.1.1 [Install composer globally](https://getcomposer.org/doc/00-intro.md#globally)
 (or modify 'bin/configure_satis.sh' )
 
-##### C.2. Installing Satis using provided script 'bin/configure_satis.sh'
+##### C.1.2. Installing Satis using provided script 'bin/configure_satis.sh'
 
 ```sh
-    $ cd /path/to/your/projects
+    $ cd /path/to/your/project/parent
     $ chmod +x /path/to/Subscribo/bin/configure_satis.sh
     $ /path/to/Subscribo/bin/configure_satis.sh
 ```
 
 Note: This script is not suitable for refreshing satis configuration, only for first-time install
 
-##### C.3. Configure your vagrant box / virtual server to serve Satis public directory and update your 'etc/hosts' file
+##### C.1.3. Configure your vagrant box / virtual server to serve Satis public directory and update your 'etc/hosts' file
 
     Important: You might need to run vagrant 'reload --provision' to let vagrant box find your new sites
 
-##### C.4. Add to your project's 'composer.json' file or create '~/.composer/config.json' with this content:
+##### C.1.4. Add to your project's 'composer.json' file or create '~/.composer/config.json' with this content:
 
 ```json
     {
@@ -264,9 +273,22 @@ Note: This script is not suitable for refreshing satis configuration, only for f
     }
 ```
 
-##### C.5. Now you can run:
+### C.2 Satis update
+
+Usually you may use script generated during installing Satis for updating Satis
+
+```sh
+    $ /path/to/Subscribo/bin/update_satis.sh
+```
+
+### C.3 Usage
+
+When your Satis server is up to date and running, you can run:
 
 ```sh
     $ cd /path/to/Subscribo
     $ composer update
 ```
+
+Note: These scripts are made ad-hoc. If you experience problems, you might need to do things manually.
+Studying provided scripts might give you some guidance.

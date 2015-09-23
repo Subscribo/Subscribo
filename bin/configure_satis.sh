@@ -1,57 +1,62 @@
-#!/bin/sh
+#!/bin/bash -x
 
 set -e
 
+DEFAULT_SATIS_URL="satis.localhost"
+DEFAULT_SATIS_SUBDIR="satis10"
+DEFAULT_PACKAGES_SUBDIR="packages10"
+
 CURRENT_DIR=`pwd -P`
-cd `dirname $0`
+cd `dirname $BASH_SOURCE`
 SCRIPT_PATH=`pwd -P`
-cd $CURRENT_DIR
+cd "$CURRENT_DIR"
 
-read -p "Provide an url for Satis:" SATIS_URL
-read -p "Provide a subdirectory, where you want to install Satis:" SATIS_SUBDIR
-read -p "Provide a subdirectory, where you want to put packages:" PACKAGES_SUBDIR
+read -p "Provide an url for Satis[$DEFAULT_SATIS_URL]:" SATIS_URL
+if [ -z "$SATIS_URL" ]; then
+    SATIS_URL="$DEFAULT_SATIS_URL"
+fi
+read -p "Provide a subdirectory, where you want to install Satis[$DEFAULT_SATIS_SUBDIR]:" SATIS_SUBDIR
+if [ -z "$SATIS_SUBDIR" ]; then
+    SATIS_SUBDIR="$DEFAULT_SATIS_SUBDIR"
+fi
+read -p "Provide a subdirectory, where you want to put packages[$DEFAULT_PACKAGES_SUBDIR]:" PACKAGES_SUBDIR
+if [ -z "$PACKAGES_SUBDIR" ]; then
+    PACKAGES_SUBDIR="$DEFAULT_PACKAGES_SUBDIR"
+fi
 
-composer create-project --stability=dev --keep-vcs composer/satis $SATIS_SUBDIR
+echo "Satis URL: $SATIS_URL"
+echo "Satis subdirectory: $SATIS_SUBDIR"
+echo "Packages subdirectory: $PACKAGES_SUBDIR"
+echo
+echo "Installing Satis..."
 
-cd $SATIS_SUBDIR
+composer create-project --stability=dev --keep-vcs composer/satis "$SATIS_SUBDIR"
 
+cd "$SATIS_SUBDIR"
 SATIS_DIR=`pwd -P`
 
-cp $SCRIPT_PATH/files/satis.json.start satis.json
-
 cd $CURRENT_DIR
+mkdir -p "$PACKAGES_SUBDIR/subscribo"
+cd "$PACKAGES_SUBDIR/subscribo"
+SUBSCRIBO_PACKAGES_DIR=`pwd -P`
 
-mkdir -p $PACKAGES_SUBDIR
+source "$SCRIPT_PATH/packages_and_satis_build.sh"
 
-cp -R $SCRIPT_PATH/../vendor/subscribo $PACKAGES_SUBDIR
+echo "Generating update script bin/update_satis.sh"
 
-cd $PACKAGES_SUBDIR/subscribo
+cd $SCRIPT_PATH
+echo "#!/bin/bash" > update_satis.sh
+echo "SUBSCRIBO_PACKAGES_DIR=\"$SUBSCRIBO_PACKAGES_DIR\"" >> update_satis.sh
+echo "SATIS_DIR=\"$SATIS_DIR\"" >> update_satis.sh
+echo "SATIS_URL=\"$SATIS_URL\"" >> update_satis.sh
 
-FIRST_ITEM=YES
-for ONE_PACKAGE_SUBDIR in */; do
-    if [ -d "${ONE_PACKAGE_SUBDIR}" ]; then
-        cd $ONE_PACKAGE_SUBDIR;
-        PACKAGE_SUBDIR_PATH=`pwd -P`
-        git init
-        git add .
-        git commit -m "Initial commit"
-        if [ $FIRST_ITEM = "NO" ]; then
-            echo "," >> $SATIS_DIR/satis.json
-        fi
-        FIRST_ITEM="NO"
-        echo "{" >> $SATIS_DIR/satis.json
-            echo "\"type\": \"vcs\"," >> $SATIS_DIR/satis.json
-            echo "\"url\": \"$PACKAGE_SUBDIR_PATH\"" >> $SATIS_DIR/satis.json
-        echo "}" >> $SATIS_DIR/satis.json
-        cd ..
-    fi
-done
-echo "]," >> $SATIS_DIR/satis.json
-echo "\"homepage\": \"$SATIS_URL\"" >> $SATIS_DIR/satis.json
-echo "}" >> $SATIS_DIR/satis.json
+cat files/update_satis.sh.end >> update_satis.sh
 
-cd $SATIS_DIR
+chmod +x update_satis.sh
 
-php bin/satis build
+echo "Summary:"
+echo "Satis URL: $SATIS_URL"
+echo "Satis directory: $SATIS_DIR"
+echo "Packages directory: $SUBSCRIBO_PACKAGES_DIR"
 
-cd $CURRENT_DIR
+cd "$CURRENT_DIR"
