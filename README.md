@@ -40,7 +40,8 @@ In order to install into 'frontend' directory you may use this composer command
 
 ##### A.1.5 Set environment variables
 
-In development you may use .env.frontend file generated during Backend Installation (below)
+In development you may use .env.frontend file generated during
+[Backend Installation](#b1i-installation-for-development-using-homestead-box-on-vagrant)
 for setting up environment variables:
 
 ```sh
@@ -244,7 +245,7 @@ Note: if you want to run DB related artisan commands from your IDE, you also mig
 ## C. Satis
 
 Running 'composer update' would not work, if packages resource is not configured, as there are private packages used.
-You may configure local packages resource using [Satis](https://github.com/composer/satis)
+For development you may configure local packages resource using [Satis](https://github.com/composer/satis)
 
 ### C.1 Satis setup and configuration
 
@@ -269,26 +270,48 @@ Note: This script is not suitable for refreshing satis configuration, only for f
 
 ```json
     {
-        "repositories": [{"type": "composer", "url": "http://satis.url.you.provided.to.script"}]
+        "repositories": [
+            {
+                "type": "composer",
+                "url": "http://satis.url.you.provided.to.script"
+            }
+        ]
     }
 ```
 
+Note: `configure_satis.sh` script provides similar file for you in `bin/files/composer`
+directory and provides you with a hint how to copy it over your previous configuration (if any).
+It is recommended that you first check the content of your current configuration before you overwrite it.
+
 ### C.2 Satis update
 
-Usually you may use script generated during installing Satis for updating Satis
+Usually you may use script generated during installing Satis for updating Satis with current content
+of your project's `vendor/subscribo` directory.
 
 ```sh
     $ /path/to/Subscribo/bin/update_satis.sh
 ```
 
+Notes:
+
+ * Hook to `update_satis.sh` has been added as pre-install and pre-update script,
+   because if your would running `composer update` or `composer install` without your Local Satis server been up-to-date,
+   you might overwrite your (recent) changes.
+ * When running `update_satis.sh` subdirectories of `packages` directory is cleaned from previous content, but `.git`
+   subdirectory is not deleted. This is true for all files and directories starting with dot. If you rename / remove any
+   file / directory in some package root starting with dot (e.g. `.gitignore`) you need to replicate your change
+   in corresponding copy in `packages` directory manually.
+
 ### C.3 Usage
 
-When your Satis server is up to date and running, you can run:
+When your Satis server is running, you can run:
 
 ```sh
     $ cd /path/to/Subscribo
     $ composer update
 ```
 
-Note: These scripts are made ad-hoc. If you experience problems, you might need to do things manually.
-Studying provided scripts might give you some guidance.
+## General notes:
+
+ * These scripts are made ad-hoc. If you experience problems, you might need to do things manually.
+   Studying provided scripts might give you some guidance.

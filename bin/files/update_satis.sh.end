@@ -5,8 +5,6 @@
 #                                                  #
 ####################################################
 
-set -e -x
-
 CURRENT_DIR=`pwd -P`
 cd `dirname $BASH_SOURCE`
 SCRIPT_PATH=`pwd -P`

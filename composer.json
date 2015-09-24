@@ -40,12 +40,22 @@
         ]
     },
     "scripts": {
+        "pre-install-cmd": [
+            "bin/update_satis.sh"
+        ],
+        "pre-update-cmd": [
+            "bin/update_satis.sh"
+        ],
         "post-install-cmd": [
             "php artisan clear-compiled",
+            "php artisan build --publish",
+            "php artisan ide-helper:generate",
+            "php artisan ide-helper:meta",
             "php artisan optimize"
         ],
         "post-update-cmd": [
             "php artisan clear-compiled",
+            "php artisan build --publish",
             "php artisan ide-helper:generate",
             "php artisan ide-helper:meta",
             "php artisan optimize"

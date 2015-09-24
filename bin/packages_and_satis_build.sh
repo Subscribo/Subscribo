@@ -12,7 +12,7 @@ echo "Cleaning $SUBSCRIBO_PACKAGES_DIR"
 cd "$SUBSCRIBO_PACKAGES_DIR"
 for ONE_PACKAGE_SUBDIR in */; do
     if [ -f "${ONE_PACKAGE_SUBDIR}composer.json" ]; then
-        rm -rf "$ONE_PACKAGE_SUBDIR/*";
+        rm -rf ./$ONE_PACKAGE_SUBDIR/*;
     fi
 done
 
@@ -31,6 +31,7 @@ for ONE_PACKAGE_SUBDIR in */; do
         cd "$ONE_PACKAGE_SUBDIR"
         PACKAGE_SUBDIR_PATH=`pwd -P`
         if [ ! -d .git ]; then
+            echo "Initializing new repository for $ONE_PACKAGE_SUBDIR"
             git init
             git add .
             git commit -m "Initial commit"
@@ -44,18 +45,20 @@ for ONE_PACKAGE_SUBDIR in */; do
             fi
         fi
         if [ $FIRST_ITEM = "NO" ]; then
-            echo "," >> $SATIS_DIR/satis.json
+            echo "        }," >> $SATIS_DIR/satis.json
         fi
         FIRST_ITEM="NO"
-        echo "{" >> $SATIS_DIR/satis.json
-            echo "\"type\": \"vcs\"," >> $SATIS_DIR/satis.json
-            echo "\"url\": \"$PACKAGE_SUBDIR_PATH\"" >> $SATIS_DIR/satis.json
-        echo "}" >> $SATIS_DIR/satis.json
+        echo "        {" >> $SATIS_DIR/satis.json
+        echo "            \"type\": \"git\"," >> $SATIS_DIR/satis.json
+        echo "            \"url\": \"$PACKAGE_SUBDIR_PATH\"" >> $SATIS_DIR/satis.json
         cd ..
     fi
 done
-echo "]," >> $SATIS_DIR/satis.json
-echo "\"homepage\": \"$SATIS_URL\"" >> $SATIS_DIR/satis.json
+if [ $FIRST_ITEM = "NO" ]; then
+    echo "        }" >> $SATIS_DIR/satis.json
+fi
+echo "    ]," >> $SATIS_DIR/satis.json
+echo "    \"homepage\": \"$SATIS_URL\"" >> $SATIS_DIR/satis.json
 echo "}" >> $SATIS_DIR/satis.json
 
 echo "Updating Satis"
