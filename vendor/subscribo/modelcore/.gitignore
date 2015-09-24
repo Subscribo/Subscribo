@@ -1,5 +1,5 @@
 /vendor
 DS_Store
 Thumbs.db
-/src/Subscribo/ModelCore/Bases
-/src/Subscribo/ModelCore/Translations
+/src/Subscribo/ModelCore/Bases/
+/src/Subscribo/ModelCore/Translations/
