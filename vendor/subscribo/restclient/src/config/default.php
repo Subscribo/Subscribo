@@ -9,4 +9,5 @@ return array(
 
     'token_ring' => env('SUBSCRIBO_REST_CLIENT_TOKEN_RING', null),
 
+    'port'      => env('SUBSCRIBO_REST_CLIENT_PORT', null),
 );
