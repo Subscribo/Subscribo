@@ -14,6 +14,21 @@ if [ "${CURRENT_DIR##$PROJECT_DIR}" != "$CURRENT_DIR" ]; then
     exit 1
 fi
 
+if [ -f "$SCRIPT_PATH/update_satis.sh" ]; then
+    DEFAULT_TO_INSTALL_SATIS="No"
+    echo "$SCRIPT_PATH/update_satis.sh already exists."
+    read -p "Are you sure you want to run $BASH_SOURCE again  [No]? [Y/N]:" TO_RUN_SCRIPT_AGAIN
+    if [ -z "$TO_RUN_SCRIPT_AGAIN" ]; then
+        TO_RUN_SCRIPT_AGAIN="N"
+    fi
+    TO_RUN_SCRIPT_AGAIN=`echo ${TO_RUN_SCRIPT_AGAIN:0:1} | tr [a-z] [A-Z]`
+    if [ $TO_RUN_SCRIPT_AGAIN != "Y" ]; then
+        echo "If you want to update your Local Satis instance, run $SCRIPT_PATH/update_satis.sh"
+        echo "Exiting.."
+        exit 0
+    fi
+fi
+
 cd "$CURRENT_DIR"
 
 read -p "Should this script try to download and install a new instance of Satis [$DEFAULT_TO_INSTALL_SATIS]? [Y/N]:" TO_INSTALL_SATIS
@@ -86,9 +101,18 @@ echo "Satis URL: $SATIS_URL"
 echo "Satis directory: $SATIS_DIR"
 echo "Packages directory: $SUBSCRIBO_PACKAGES_DIR"
 echo
-echo "To check your current composer configuration you may you may use the following command:"
-echo "cat  ~/.composer/config.json"
-echo "New composer configuration $SCRIPT_PATH/files/composer/config.json has been generated."
-echo "To overwrite your current composer configuration (if any) with a new one you may use the following command:"
-echo "cp $SCRIPT_PATH/files/composer/config.json ~/.composer/config.json"
+
+if [ -f ~/.composer/config.json ]; then
+    echo "You have some global composer configuration already present."
+    echo "To check its content you may you may use the following command:"
+    echo "cat  ~/.composer/config.json"
+    echo "New composer configuration $SCRIPT_PATH/files/composer/config.json has been generated."
+    echo "To overwrite your current composer configuration with a new one you may use the following command:"
+    echo "cp $SCRIPT_PATH/files/composer/config.json ~/.composer/config.json"
+else
+    echo "You seem not to have any global composer configuration already present."
+    echo "New composer configuration $SCRIPT_PATH/files/composer/config.json has been generated."
+    echo "To install new composer configuration you may use the following command:"
+    echo "cp -nv $SCRIPT_PATH/files/composer/config.json ~/.composer/config.json"
+fi
 echo
