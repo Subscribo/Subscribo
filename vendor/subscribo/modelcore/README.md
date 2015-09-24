@@ -82,3 +82,7 @@ or (to automatically force all files tagged with modelschema to be published) ru
 ```
 
 
+### 3. Important note:
+
+ * `Bases` and `Translations` subdirectories of `src/Subscribo/ModelCore` have been added to package's `.gitignore`,
+   so if you would like to actually commit those, remove respective lines from package's `.gitignore` first.
