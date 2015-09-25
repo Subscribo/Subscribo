@@ -7,9 +7,11 @@
 #                                                       #
 #########################################################
 
-echo "Cleaning $SUBSCRIBO_PACKAGES_DIR"
 
-cd "$SUBSCRIBO_PACKAGES_DIR"
+cd "$PROJECT_DIR"
+cd "$SUBSCRIBO_PACKAGES_RELATIVE_DIR"
+SUBSCRIBO_PACKAGES_DIR=`pwd -P`
+echo "Cleaning $SUBSCRIBO_PACKAGES_DIR"
 for ONE_PACKAGE_SUBDIR in */; do
     if [ -f "${ONE_PACKAGE_SUBDIR}composer.json" ]; then
         rm -rf ./$ONE_PACKAGE_SUBDIR/*;
@@ -22,6 +24,9 @@ cp -R "$SCRIPT_PATH/../vendor/subscribo" "$SUBSCRIBO_PACKAGES_DIR/.."
 
 echo "Commiting to git and updating satis.json"
 
+cd "$PROJECT_DIR"
+cd "$SATIS_RELATIVE_DIR"
+SATIS_DIR=`pwd -P`
 cp "$SCRIPT_PATH/files/satis.json.start" "$SATIS_DIR/satis.json"
 
 FIRST_ITEM=YES
@@ -29,7 +34,7 @@ cd "$SUBSCRIBO_PACKAGES_DIR"
 for ONE_PACKAGE_SUBDIR in */; do
     if [ -f "${ONE_PACKAGE_SUBDIR}composer.json" ]; then
         cd "$ONE_PACKAGE_SUBDIR"
-        PACKAGE_SUBDIR_PATH=`pwd -P`
+        PACKAGE_SUBDIR_PATH=`python -c 'import sys, os.path; print os.path.relpath(sys.argv[1], sys.argv[2])' "$(pwd -P)" "$SATIS_DIR"`
         if [ ! -d .git ]; then
             echo "Initializing new repository for $ONE_PACKAGE_SUBDIR"
             git init

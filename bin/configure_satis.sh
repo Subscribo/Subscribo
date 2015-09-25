@@ -1,18 +1,15 @@
 #!/bin/bash -e
 
-DEFAULT_SATIS_URL="http://satis.localhost"
-DEFAULT_SATIS_SUBDIR="satis"
-DEFAULT_PACKAGES_SUBDIR="packages"
-DEFAULT_TO_INSTALL_SATIS="Yes"
-
 CURRENT_DIR=`pwd -P`
 cd `dirname $BASH_SOURCE`
 SCRIPT_PATH=`pwd -P`
 PROJECT_DIR=`dirname $SCRIPT_PATH`
-if [ "${CURRENT_DIR##$PROJECT_DIR}" != "$CURRENT_DIR" ]; then
-    echo "You should not run this command from within the project, but rather from some parent directory of some level"
-    exit 1
-fi
+
+DEFAULT_SATIS_URL="http://satis.localhost"
+DEFAULT_TO_INSTALL_SATIS="Yes"
+DEFAULT_SATIS_SUBDIR=`python -c 'import sys, os.path; print os.path.relpath(sys.argv[1], sys.argv[2])' "$PROJECT_DIR/../satis" "$CURRENT_DIR"`
+DEFAULT_PACKAGES_SUBDIR=`python -c 'import sys, os.path; print os.path.relpath(sys.argv[1], sys.argv[2])' "$PROJECT_DIR/tmp/packages" "$CURRENT_DIR"`
+
 
 if [ -f "$SCRIPT_PATH/update_satis.sh" ]; then
     DEFAULT_TO_INSTALL_SATIS="No"
@@ -29,7 +26,6 @@ if [ -f "$SCRIPT_PATH/update_satis.sh" ]; then
     fi
 fi
 
-cd "$CURRENT_DIR"
 
 read -p "Should this script try to download and install a new instance of Satis [$DEFAULT_TO_INSTALL_SATIS]? [Y/N]:" TO_INSTALL_SATIS
 if [ -z "$TO_INSTALL_SATIS" ]; then
@@ -45,11 +41,11 @@ read -p "Provide an url for Satis [$DEFAULT_SATIS_URL]:" SATIS_URL
 if [ -z "$SATIS_URL" ]; then
     SATIS_URL="$DEFAULT_SATIS_URL"
 fi
-read -p "Provide a subdirectory, where you $PART_OF_SENTENCE Satis [$DEFAULT_SATIS_SUBDIR]:" SATIS_SUBDIR
+read -p "Provide a directory, relative to $CURRENT_DIR, where you $PART_OF_SENTENCE Satis [$DEFAULT_SATIS_SUBDIR]:" SATIS_SUBDIR
 if [ -z "$SATIS_SUBDIR" ]; then
     SATIS_SUBDIR="$DEFAULT_SATIS_SUBDIR"
 fi
-read -p "Provide a subdirectory, where you want to put packages [$DEFAULT_PACKAGES_SUBDIR]:" PACKAGES_SUBDIR
+read -p "Provide a directory, relative to $CURRENT_DIR, where you want to put packages [$DEFAULT_PACKAGES_SUBDIR]:" PACKAGES_SUBDIR
 if [ -z "$PACKAGES_SUBDIR" ]; then
     PACKAGES_SUBDIR="$DEFAULT_PACKAGES_SUBDIR"
 fi
@@ -57,23 +53,25 @@ fi
 echo "Satis URL: $SATIS_URL"
 echo "Satis subdirectory: $SATIS_SUBDIR"
 echo "Packages subdirectory: $PACKAGES_SUBDIR"
+
+cd "$CURRENT_DIR"
+mkdir -p "$SATIS_SUBDIR"
+cd "$SATIS_SUBDIR"
+SATIS_DIR=`pwd -P`
+SATIS_RELATIVE_DIR=`python -c 'import sys, os.path; print os.path.relpath(sys.argv[1], sys.argv[2])' "$SATIS_DIR" "$PROJECT_DIR"`
 echo
 if [ "$TO_INSTALL_SATIS" = "Y" ]; then
     echo "Installing Satis..."
-    composer create-project --stability=dev --keep-vcs composer/satis "$SATIS_SUBDIR"
+    composer create-project --stability=dev --keep-vcs composer/satis .
 else
-    echo "Satis is not being installed, just making sure the directory is present..."
-    mkdir -p "$SATIS_SUBDIR"
+    echo "Satis is not being installed..."
 fi
-
-
-cd "$SATIS_SUBDIR"
-SATIS_DIR=`pwd -P`
 
 cd $CURRENT_DIR
 mkdir -p "$PACKAGES_SUBDIR/subscribo"
 cd "$PACKAGES_SUBDIR/subscribo"
 SUBSCRIBO_PACKAGES_DIR=`pwd -P`
+SUBSCRIBO_PACKAGES_RELATIVE_DIR=`python -c 'import sys, os.path; print os.path.relpath(sys.argv[1], sys.argv[2])' "$SUBSCRIBO_PACKAGES_DIR" "$PROJECT_DIR"`
 
 source "$SCRIPT_PATH/packages_and_satis_build.sh"
 
@@ -81,8 +79,8 @@ echo "Generating update script bin/update_satis.sh"
 
 cd $SCRIPT_PATH
 echo "#!/bin/bash -e" > update_satis.sh
-echo "SUBSCRIBO_PACKAGES_DIR=\"$SUBSCRIBO_PACKAGES_DIR\"" >> update_satis.sh
-echo "SATIS_DIR=\"$SATIS_DIR\"" >> update_satis.sh
+echo "SUBSCRIBO_PACKAGES_RELATIVE_DIR=\"$SUBSCRIBO_PACKAGES_RELATIVE_DIR\"" >> update_satis.sh
+echo "SATIS_RELATIVE_DIR=\"$SATIS_RELATIVE_DIR\"" >> update_satis.sh
 echo "SATIS_URL=\"$SATIS_URL\"" >> update_satis.sh
 
 cat files/update_satis.sh.end >> update_satis.sh

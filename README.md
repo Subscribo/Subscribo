@@ -305,8 +305,6 @@ of your project's `vendor/subscribo` directory.
 ```
 
 Notes:
- * This script would work only from the same terminal type (i.e. host terminal as opposed to `vagrant ssh` terminal)
-   as `configure_satis.sh` has been run from, as it contains full directory paths
  * Hook to `update_satis.sh` has been added as pre-install and pre-update script,
    because if your would running `composer update` or `composer install` without your Local Satis server been up-to-date,
    you might overwrite your (recent) changes.
@@ -323,11 +321,6 @@ When your Satis server is running, you can run:
     $ cd /path/to/Subscribo
     $ composer update
 ```
-
-Note:
- * `composer update` and `composer install` should be run only from the same terminal type
-   (i.e. host terminal as opposed to `vagrant ssh` terminal)
-   as `configure_satis.sh` has been run from, as it contains hooks to `update_satis.sh`
 
 ## General notes:
 
