@@ -97,7 +97,7 @@ You may also use following sql (modify its end for service with different identi
 
 ### B.1. Installation
 
-#### B.1.i Installation for development using Homestead box on Vagrant
+#### B.1.i Installation for development using [Homestead box](http://laravel.com/docs/5.1/homestead) on Vagrant
 
 You need to decide following:
 
@@ -109,31 +109,19 @@ Optionally:
  * Do you want to also make additional frontend?
  * If so, host name of additional frontend: `frontend.hostname`
 
-##### B.1.i.1 Install [Vagrant](https://www.vagrantup.com) and [Homestead](http://laravel.com/docs/5.1/homestead)
-
-##### B.1.i.2 Configure and run your Homestead box (and modify your `/etc/hosts` if needed)
-
-```sh
-    $ cd path/to/your/homestead/configuration
-    $ vi Homestead.yaml
-    $ vagrant up
-    $ sudo vi /etc/hosts
-```
-
-
-##### B.1.i.3 Change to directory, which should be parent directory of your project
+##### B.1.i.1 Change to directory, which should be parent directory of your project
 
 ```sh
     $ cd path/to/your/project/parent
 ```
 
-##### B.1.i.4 Clone the git project into a new (nonexistent) or empty subdirectory
+##### B.1.i.2 Clone the git project into a new (nonexistent) or empty subdirectory
 
 ```sh
     $ git clone https://github.com/Subscribo/Subscribo your_project_subdirectory_name
 ```
 
-##### B.1.i.5 Create `.env` file using `.env.example` as a template
+##### B.1.i.3 Create `.env` file using `.env.example` as a template
 
 ```sh
     $ cd path/to/your/project/
@@ -145,6 +133,16 @@ Notes:
 * Setup DB access details, if you have changed them in your vagrant box or created a special DB for this project
 * Do not forget to setup 'SUBSCRIBO_REST_CLIENT_HOST' to hostname accessible from host
 
+##### B.1.i.4 Install [Vagrant](https://www.vagrantup.com) and [Homestead](http://laravel.com/docs/5.1/homestead)
+
+##### B.1.i.5 Configure and run your Homestead box (and modify your `/etc/hosts` if needed)
+
+```sh
+    $ cd path/to/your/homestead/configuration
+    $ vi Homestead.yaml
+    $ vagrant up
+    $ sudo vi /etc/hosts
+```
 
 ##### B.1.i.6 Run `install_backend.sh` from within your Homestead box
 
