@@ -42,6 +42,8 @@ php artisan maintain:hourly
 echo "* * * * * php $PROJECT_DIR/artisan schedule:run >> /dev/null 2>&1" | crontab -
 php artisan queue:listen > /dev/null 2>&1  &
 
+chmod +x ./bin/configure_satis.sh
+
 if [ "$1" = "test" ]; then
     phpunit
 fi
