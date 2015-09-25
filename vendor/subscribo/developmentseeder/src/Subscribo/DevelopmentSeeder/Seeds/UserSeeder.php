@@ -32,7 +32,12 @@ class UserSeeder extends Seeder
         $tokens = $userFactory->addTokens($frontendSystemUser, UserToken::TYPE_SUBSCRIBO_DIGEST);
         /** @var UserToken $token */
         $token = reset($tokens);
-        EnvFileTools::updateEnvFile('SUBSCRIBO_REST_CLIENT_TOKEN_RING', $token->tokenRing, '.env.frontend', $this->command->getOutput());
+        EnvFileTools::updateEnvFile(
+            'SUBSCRIBO_REST_CLIENT_TOKEN_RING',
+            $token->tokenRing,
+            '.env.frontend',
+            $this->command->getOutput()
+        );
 
 
         $administrator = $this->generateUser('administrator');
@@ -53,7 +58,12 @@ class UserSeeder extends Seeder
         $mainTokens = $userFactory->addTokens($mainSystemUser, UserToken::TYPE_SUBSCRIBO_DIGEST);
         /** @var UserToken $token */
         $tokenForMain = reset($mainTokens);
-        EnvFileTools::updateEnvFile('SUBSCRIBO_REST_CLIENT_TOKEN_RING', $tokenForMain->tokenRing, '.env', $this->command->getOutput());
+        EnvFileTools::updateEnvFile(
+            'SUBSCRIBO_REST_CLIENT_TOKEN_RING',
+            $tokenForMain->tokenRing,
+            ['.env', '.env.commandline'],
+            $this->command->getOutput()
+        );
 
         $anotherService = Service::where(['identifier' => 'ANOTHER'])->first();
         $anotherDeveloper = $this->generateUser('developer5');

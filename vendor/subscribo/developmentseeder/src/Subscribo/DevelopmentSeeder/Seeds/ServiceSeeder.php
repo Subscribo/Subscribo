@@ -28,7 +28,7 @@ class ServiceSeeder extends Seeder {
         $frontendGerman = Locale::firstOrCreate(['identifier' => 'de_AT-FRONTEND']);
         $frontendSlovak = Locale::firstOrCreate(['identifier' => 'sk_SK-FRONTEND']);
         $frontendService = Service::firstOrNew(['identifier' => 'FRONTEND']);
-        $frontendService->url = 'http://frontend.sio.kochabo.at';
+        $frontendService->url = 'http://'.env('SEED_TESTING_FRONTEND_HOST', 'frontend.localhost');
         $frontendService->name = 'Frontend';
         $frontendService->deliveryPeriod = '1 week';
         $frontendService->deliveryAutoAddLimit = '2 months';
@@ -73,7 +73,7 @@ class ServiceSeeder extends Seeder {
         $british = Locale::firstOrNew(['identifier' => 'en_GB']);
         $german = Locale::firstOrNew(['identifier' => 'de']);
         $test2Service = Service::firstOrNew(['identifier' => 'MAIN']);
-        $test2Service->url = 'http://subscribo.localhost';
+        $test2Service->url = 'http://'.env('SUBSCRIBO_REST_CLIENT_HOST','subscribo.localhost');
         $test2Service->name = 'Main';
         $test2Service->deliveryAutoAddLimit = '2 months';
         $test2Service->deliveryAutoAvailableEnd = '1 month';

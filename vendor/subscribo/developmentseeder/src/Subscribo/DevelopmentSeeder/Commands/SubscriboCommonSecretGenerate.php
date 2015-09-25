@@ -15,7 +15,7 @@ class SubscriboCommonSecretGenerate extends Command
     public function handle()
     {
         $newCommonSecret = Str::random(32);
-        $envFiles = ['.env', '.env.frontend'];
+        $envFiles = ['.env', '.env.frontend', '.env.commandline'];
         foreach ($envFiles as $envFile) {
             EnvFileTools::updateEnvFile('SUBSCRIBO_COMMON_SECRET', $newCommonSecret, $envFile, $this->getOutput());
         }
