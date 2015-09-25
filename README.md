@@ -132,6 +132,8 @@ Optionally:
 Notes:
 * Setup DB access details, if you have changed them in your vagrant box or created a special DB for this project
 * Do not forget to setup 'SUBSCRIBO_REST_CLIENT_HOST' to hostname accessible from host
+  (this is actually the host name of your backend server - `backend.hostname`;
+   you need to put this also under key `sites:` in your `Homestead.yaml`)
 
 ##### B.1.i.4 Install [Vagrant](https://www.vagrantup.com) and [Homestead](http://laravel.com/docs/5.1/homestead)
 
@@ -187,6 +189,9 @@ DB_HOST=127.0.0.1
 DB_PORT=33060
 ```
 
+Note: make sure, that whenever you change important settings in `.env` file (such as `SUBSCRIBO_COMMON_SECRET`)
+     you need to change it in `.env.commandline` as well
+
 Now, whenever you open new terminal window on your host machine and plan to run artisan commands
 related to DB operations, run first following:
 ```sh
@@ -194,8 +199,15 @@ related to DB operations, run first following:
     $ export SUBSCRIBO_ENV
 ```
 
-Note: if you want to run DB related artisan commands from your IDE, you also might need to set environment variable
-'SUBSCRIBO_ENV' to value 'commandline'
+Notes:
+
+ * if you want to run DB related artisan commands from your IDE, you also might need to set environment variable
+   'SUBSCRIBO_ENV' to value 'commandline'
+ * usual error which is displayed, when you did not so, and meaning there is a problem with a connection to your DB, is:
+```
+    [PDOException]
+    SQLSTATE[HY00] [2002] No such file or directory
+```
 
 #### B.1.ii Installing and configuring for staging or production using web server
 
@@ -258,11 +270,13 @@ For development you may configure local packages resource using [Satis](https://
     $ /path/to/Subscribo/bin/configure_satis.sh
 ```
 
-Note: This script is not suitable for refreshing satis configuration, only for first-time install
+Notes:
+ * This script is not suitable for refreshing satis configuration, only for first-time install
+ * It might be faster and easier to run this script from your host terminal (as opposed to `vagrant ssh`)
 
 ##### C.1.3. Configure your vagrant box / virtual server to serve Satis public directory and update your 'etc/hosts' file
 
-    Important: You might need to run vagrant 'reload --provision' to let vagrant box find your new sites
+**Important:** You might need to run vagrant 'reload --provision' to let vagrant box find your new sites
 
 ##### C.1.4. Add to your project's 'composer.json' file or create '~/.composer/config.json' with this content:
 
@@ -291,7 +305,8 @@ of your project's `vendor/subscribo` directory.
 ```
 
 Notes:
-
+ * This script would work only from the same terminal type (i.e. host terminal as opposed to `vagrant ssh` terminal)
+   as `configure_satis.sh` has been run from, as it contains full directory paths
  * Hook to `update_satis.sh` has been added as pre-install and pre-update script,
    because if your would running `composer update` or `composer install` without your Local Satis server been up-to-date,
    you might overwrite your (recent) changes.
@@ -308,6 +323,11 @@ When your Satis server is running, you can run:
     $ cd /path/to/Subscribo
     $ composer update
 ```
+
+Note:
+ * `composer update` and `composer install` should be run only from the same terminal type
+   (i.e. host terminal as opposed to `vagrant ssh` terminal)
+   as `configure_satis.sh` has been run from, as it contains hooks to `update_satis.sh`
 
 ## General notes:
 
