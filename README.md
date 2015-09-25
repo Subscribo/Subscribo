@@ -265,14 +265,15 @@ For development you may configure local packages resource using [Satis](https://
 ##### C.1.2. Installing Satis using provided script 'bin/configure_satis.sh'
 
 ```sh
-    $ cd /path/to/your/project/parent
-    $ chmod +x /path/to/Subscribo/bin/configure_satis.sh
     $ /path/to/Subscribo/bin/configure_satis.sh
 ```
 
 Notes:
  * This script is not suitable for refreshing satis configuration, only for first-time install
  * It might be faster and easier to run this script from your host terminal (as opposed to `vagrant ssh`)
+ * If you want to run this script via `vagrant ssh` you need to make sure,
+   that directory for `satis` exists prior to running a script or that script is able to create such directory
+   (this is true also for directory for `packages` if it is not part of your backend project)
 
 ##### C.1.3. Configure your vagrant box / virtual server to serve Satis public directory and update your 'etc/hosts' file
 
@@ -291,9 +292,13 @@ Notes:
     }
 ```
 
-Note: `configure_satis.sh` script provides similar file for you in `bin/files/composer`
-directory and provides you with a hint how to copy it over your previous configuration (if any).
-It is recommended that you first check the content of your current configuration before you overwrite it.
+Notes:
+ * `configure_satis.sh` script provides similar file for you in `bin/files/composer`
+   directory and provides you with a hint how to copy it over your previous configuration (if any).
+   It is recommended that you first check the content of your current configuration before you overwrite it.
+ * If you intend to use `composer update` etc., both from your host terminal as well as from `vagrant ssh`,
+   then you need to put this file into `~/.composer` directory of your user
+   on both vagrant machine as well as on host machine
 
 ### C.2 Satis update
 
