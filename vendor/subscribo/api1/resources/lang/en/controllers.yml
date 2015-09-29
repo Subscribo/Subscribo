@@ -25,6 +25,9 @@ business:
     getPeriod.subscriptionPeriods:
         weekly: Every week
         biweekly: Every other week
+    errors.getDelivery:
+        deliveryPlanNotFound: Specified delivery plan is not found
+        deliveryPlanWrongService: Specified delivery plan is not for this service
     errors.prepareOrder:
         priceNotFound: Specified price not found
         taxGroupNotFound: Tax group not found for given country and category (Specified price is not for specified country)

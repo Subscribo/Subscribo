@@ -16,6 +16,7 @@ use Subscribo\ModelCore\Models\Address;
 use Subscribo\ModelCore\Models\Customer;
 use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\Delivery;
+use Subscribo\ModelCore\Models\DeliveryPlan;
 use Subscribo\ModelCore\Models\DeliveryWindow;
 use Subscribo\ModelCore\Models\Product;
 use Subscribo\ModelCore\Models\SalesOrder;
@@ -49,9 +50,9 @@ class BusinessController extends AbstractBusinessController
             return ['result' => Product::findAllByServiceIdWithPrices($serviceId, $currencyId, $countryId)];
         }
         if (is_numeric($id)) {
-            $product = Product::withTranslations()->find($id);
+            $product = Product::withTranslations()->with('subscriptionPlan')->find($id);
         } else {
-            $product = Product::withTranslations()
+            $product = Product::withTranslations()->with('subscriptionPlan.deliveryPlan')
                 ->where('identifier', $id)
                 ->where('service_id', $serviceId)
                 ->first();
@@ -69,29 +70,52 @@ class BusinessController extends AbstractBusinessController
     public function actionGetDelivery($id = null)
     {
         $queryValidationRules = [
-            'available' => 'integer',
+            'available_only' => 'boolean',
+            'limit'     => 'integer',
+            'delivery_plan_id' => 'integer',
         ];
         $validated = $this->validateRequestQuery($queryValidationRules);
         $serviceId = $this->context->getServiceId();
-        if (is_null($id)) {
-            if (empty($validated['available'])) {
+        if ($id) {
+            $delivery = Delivery::find($id);
+            if (empty($delivery)) {
+                throw new InstanceNotFoundHttpException();
+            }
+            if ($delivery->serviceId !== $serviceId) {
+                throw new WrongServiceHttpException();
+            }
+
+            return ['instance' => $delivery];
+        }
+        if (empty($validated['delivery_plan_id'])) {
+            if (empty($validated['available_only'])) {
 
                 return ['collection' => Delivery::getAllByService($serviceId)];
             } else {
-                $limit = intval($validated['available']);
+                $limit = isset($validated['limit']) ? intval($validated['limit']) : null;
 
                 return ['collection' => Delivery::getAvailableForOrderingByService($serviceId, $limit)];
             }
         }
-        $delivery = Delivery::find($id);
-        if (empty($delivery)) {
-            throw new InstanceNotFoundHttpException();
+        $deliveryPlan = DeliveryPlan::find($validated['delivery_plan_id']);
+        if (empty($deliveryPlan)) {
+            $messageId = 'business.errors.getDelivery.deliveryPlanNotFound';
+            $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+            throw new InvalidInputHttpException(['delivery_plan_id' => $message]);
         }
-        if ($delivery->serviceId !== $serviceId) {
-            throw new WrongServiceHttpException();
+        if (strval($deliveryPlan->serviceId) !== strval($serviceId)) {
+            $messageId = 'business.errors.getDelivery.deliveryPlanWrongService';
+            $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
+            throw new InvalidInputHttpException(['delivery_plan_id' => $message]);
         }
+        if (empty($validated['available_only'])) {
 
-        return ['instance' => $delivery];
+            return ['collection' => Delivery::byDeliveryPlan($deliveryPlan)->get()];
+        } else {
+            $limit = isset($validated['limit']) ? intval($validated['limit']) : null;
+
+            return ['collection' => Delivery::getAvailableForOrderingByService($serviceId, $limit)];
+        }
     }
 
 
