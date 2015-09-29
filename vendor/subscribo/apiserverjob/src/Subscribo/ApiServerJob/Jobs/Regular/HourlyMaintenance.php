@@ -23,6 +23,7 @@ class HourlyMaintenance extends AbstractJob
     public function handle(LoggerInterface $log)
     {
         $log->info('Hourly maintenance job starting');
+        ini_set('xdebug.max_nesting_level',200);
 
         $services = Service::all();
         foreach ($services as $service) {
