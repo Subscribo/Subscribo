@@ -1,0 +1,15 @@
+machine:
+  php:
+    version: 5.5.21
+checkout:
+  post:
+    - cp .env.circle .env
+dependencies:
+  override:
+    - source bin/install_backend.sh
+database:
+  override:
+test:
+  pre:
+    - php artisan serve --port=3000:
+        background: true

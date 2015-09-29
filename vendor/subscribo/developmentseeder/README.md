@@ -48,7 +48,13 @@ or (for conditional registration) you can add following to bootstrap/app.php:
     }
 ```
 
-### 1.4 You also need to properly configure SUBSCRIBO_COMMON_SECRET environment variable, for more details you can see (Subscribo RestCommon Install docs, point 1.4)[../restcommon/README.md#14-subscribo-common-secret]
+### 1.4 Make sure you have set needed environment variables.
+
+`docs/.env.example` may give you hint on which variables to set.
+ Seeding and command `subscribo-common-secret:generate` provided by this package actually rewrites
+ `.env`, `.env.frontend` and `.env.commandline` files.
+You also need to properly configure SUBSCRIBO_COMMON_SECRET environment variable,
+for more details you can see (Subscribo RestCommon Install docs, point 1.4)[../restcommon/README.md#14-subscribo-common-secret]
 
 ### 1.5 To publish seeders (possibly also seeders tagged files from other packages) to application run
 

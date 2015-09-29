@@ -40,6 +40,9 @@ class RestClient {
     /** @var  string $host */
     protected $host;
 
+    /** @var  null|int $port */
+    protected $port;
+
     /** @var  string $uriBase */
     protected $uriBase;
 
@@ -82,6 +85,9 @@ class RestClient {
         }
         if (isset($settings['token_ring'])) {
             $this->tokenRing = $settings['token_ring'];
+        }
+        if (isset($settings['port'])) {
+            $this->port = $settings['port'];
         }
         if ( ! empty($settings['uri_parameters'])) {
             if (is_array($settings['uri_parameters'])) {
@@ -296,7 +302,7 @@ class RestClient {
         if ($this->client) {
             return $this->client;
         }
-        $baseUrl = new \GuzzleHttp\Url($this->protocol, $this->host, null, null, null, $this->uriBase);
+        $baseUrl = new \GuzzleHttp\Url($this->protocol, $this->host, null, null, $this->port, $this->uriBase);
         $this->client = new Client(['base_url' => $baseUrl]);
         return $this->client;
     }

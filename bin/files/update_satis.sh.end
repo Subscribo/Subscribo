@@ -1,0 +1,15 @@
+
+####################################################
+#                                                  #
+# Generated script for updating local Satis server #
+#                                                  #
+####################################################
+
+CURRENT_DIR=`pwd -P`
+cd `dirname $BASH_SOURCE`
+SCRIPT_PATH=`pwd -P`
+PROJECT_DIR=`dirname $SCRIPT_PATH`
+
+source "$SCRIPT_PATH/packages_and_satis_build.sh"
+
+cd $CURRENT_DIR

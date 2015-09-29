@@ -1,5 +1,6 @@
 <?php namespace Subscribo\DevelopmentSeeder\Seeds;
 
+use Exception;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
 use Subscribo\Api1\Factories\AccountFactory;
@@ -66,7 +67,8 @@ class CustomerAccountSeeder extends Seeder
                     : $faker->lastName,
                 'gender' => $male ? 'man' : 'woman',
             ];
-            $data['email'] = iconv('UTF-8', 'ASCII//IGNORE', $data['last_name']).'@subscribo.io';
+            $data['email'] = strtr(mb_convert_encoding( $data['last_name'], 'ASCII', 'UTF-8'), ['?' => ''])
+                            .'@subscribo.io';
         }
         $data['password'] = Str::random(10);
         $data['street'] = $faker->streetAddress;
