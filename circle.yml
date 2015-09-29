@@ -6,7 +6,8 @@ checkout:
     - cp .env.circle .env
 dependencies:
   override:
-    - source bin/install_backend.sh
+    - chmod +x bin/install_backend.sh
+    - bin/install_backend.sh
 database:
   override:
 test:
