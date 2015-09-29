@@ -258,23 +258,44 @@ model_options:
         soft_delete: true
         administrator_menu: Delivery
 
+    subscription_plans:
+        administrator_menu: Subscription
+
+    delivery_plans:
+        administrator_menu: Subscription
+
+    billing_plans:
+        administrator_menu: Subscription
+
+    individual_plans:
+        administrator_menu: Subscription
+
     subscriptions:
-        administrator_menu: Delivery
+        administrator_menu: Subscription
 
     subscription_filters:
-        administrator_menu: Delivery
+        administrator_menu: Subscription
         soft_delete: true
 
     subscription_vetos:
-        administrator_menu: Delivery
+        administrator_menu: Subscription
 
     products_in_subscriptions:
-       administrator_menu: Delivery
+      administrator_menu: Subscription
 
     sales_orders:
-       administrator_menu: Delivery
+      administrator_menu: Subscription
 
-    realizations_in_sales_orders:
+    billing_orders:
+      administrator_menu: Subscription
+
+    delivery_orders:
+      administrator_menu: Subscription
+
+    products_in_sales_orders:
+      administrator_menu: Subscription
+
+    realizations_in_delivery_orders:
        administrator_menu: Delivery
 
     discounts:
@@ -361,14 +382,6 @@ model_fields:
         - default_locale_id → locales (hide to)
         - default_country_id → countries (hide to)
         - remember_locale (int) default 10080
-        - delivery_period null default words 1 week //string understandable by DateInterval - createFromDateString()
-        - delivery_auto_add_limit null //string understandable by DateTime
-        - delivery_auto_available_start null default word today //string understandable by DateTime
-        - delivery_auto_available_end null //string understandable by DateTime
-        - subscription_add_sales_order_start null default word today //string understandable by DateTime
-        - subscription_add_sales_order_end null default words 3 days //string understandable by DateTime
-        - delivery_window_start_limit null default word now //string understanadble by DateTime
-        - delivery_window_end_limit null //string understanadble by DateTime
         - operator_id default 1 → operators (type none) //operators table does not exist in current version of the schema, so the relation type is no_relation
 
     service_pools: # auxiliary table, allowing grouping of services, allowing user to use same user for different services
@@ -587,6 +600,7 @@ model_fields:
     products:
     - identifier (identifier) representative // unique per service string used in API
     - service_id → services
+    - subscription_plan_id null -> subscription_plans
     - standalone (bool) default false
     - name translate
     - description translate null
@@ -601,6 +615,7 @@ model_fields:
     - amount (currency)
     - price_type (enum from net gross) default word net
     - currency_id
+    - precision (int) null #default null means, that precision is same as currency precision. Added for possibility of under-cent precision for price-per-unit
     - everywhere (bool) default false
 
     tax_categories:
@@ -651,9 +666,41 @@ model_fields:
     - name translate
     - description translate
 
+    subscription_plans:
+    - service_id -> services
+    - identifier (identifier)
+    - delivery_plan_id -> delivery_plans
+    - billing_plan_id -> billing_plans
+    - name translate
+    - description translate
+
+    delivery_plans:
+    - service_id -> services
+    - delivery_period null default words 1 week //string understandable by DateInterval - createFromDateString()
+    - delivery_auto_add_limit null //string understandable by DateTime
+    - delivery_auto_available_start null default word today //string understandable by DateTime
+    - delivery_auto_available_end null //string understandable by DateTime
+    - delivery_window_start_limit null default word now //string understandable by DateTime
+    - delivery_window_end_limit null //string understadable by DateTime
+
+    billing_plans:
+    - service_id -> services
+    - sales_order_period null default words 1 month //string understandable by DateInterval - createFromDateString()
+    - billing_period null //string understandable by DateInterval - createFromDateString()
+    - subscription_add_sales_order_start null default word today //string understandable by DateTime
+    - subscription_add_sales_order_end null default words 3 days //string understandable by DateTime
+    - bill_on_from_start null default words 1 week ago //string understandable by DateTime
+    - bill_on_add_gateway (bool) default true //whether to add information depending on selected gateway, when customer should actually be billed
+    - delivery_after_payment (bool) default true //whether to deliver only after payment has been processed (e.g. invoice issue has been requested)
+
+    individual_plans:
+    - account_id → accounts
+    - subscription_plan_id null -> subscription_plans
+    - billing_plan_id -> billing_plans
 
     subscriptions:
-    - service_id -> services
+    - subscription_plan_id -> subscription_plans
+    - individual_plan_id -> individual_plans
     - account_id → accounts
     - shipping_address_id null → addresses #(null if default)
     - billing_address_id null → addresses #(null if same as shipping)
@@ -679,16 +726,31 @@ model_fields:
     - price_id -> prices
     - amount (int)
 
-    sales_orders:
-    - service_id -> services
-    - account_id → accounts
-    - type (enum from automatic manual)
-    - status (enum from ordering ordered prepared sent delivered returned cancelled) null
-    - hash unique
+    billing_orders:
+    - sales_order_id -> sales_orders
+    - billing_address_id null → addresses
+    - currency_id -> currencies
+    - net_sum (currency)
+    - gross_sum (currency)
+    - description null
+
+    delivery_orders:
+    - sales_order_id -> sales_orders
+    - status (enum from planned prepared sent delivered returned cancelled) null
     - delivery_id null → deliveries
     - delivery_window_id null → delivery_windows
     - anticipated_delivery_start (datetime) null
     - anticipated_delivery_end (datetime) null
+
+    sales_orders:
+    - service_id -> services
+    - account_id → accounts
+    - type (enum from automatic manual)
+    - hash unique
+    - start (datetime) null
+    - end (datetime) null
+    - bill_on (date) null
+    - billed (boolean) null
     - currency_id -> currencies
     - country_id null -> countries
     - net_sum (currency)
@@ -698,8 +760,22 @@ model_fields:
     - billing_address_id null → addresses #(null if same as shipping)
     - confirmation_message_id null -> messages
 
-    realizations_in_sales_orders:
+    products_in_sales_orders:
     - sales_order_id → sales_orders
+    - product_id → products
+    - price_id -> prices
+    - amount (int)
+    - prorating_divider (int) default 1
+    - prorating_multiplier (int) default 1
+    - price_per_unit_id null -> prices
+    - free_units (int) null
+    - moved_units (int) null
+    - used_units (int) null
+    - units_usage_finished (bool) null
+
+
+    realizations_in_delivery_orders:
+    - delivery_order_id → delivery_orders
     - realization_id → realizations
     - price_id -> prices
     - amount (int)
@@ -729,7 +805,7 @@ model_fields:
     - parent_id null -> transactions
     - user_id null
     - account_id null
-    - sales_order_id null
+    - billing_order_id null
     - processing_data (text) null
     - transaction_gateway_configuration_id null hidden
     - hash unique
