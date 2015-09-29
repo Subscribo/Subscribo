@@ -16,9 +16,9 @@ class BusinessConnector extends AbstractConnector
     }
 
 
-    public function getAvailableDeliveries($limit = 5, $signatureOptions = true)
+    public function getAvailableDeliveries($deliveryPlanId, $limit = 5, $signatureOptions = true)
     {
-        $query = ['available' => $limit];
+        $query = ['available_only' => true, 'delivery_plan_id' => $deliveryPlanId, 'limit' => $limit];
 
         $signatureOptions = $this->processSignatureOptions($signatureOptions);
 

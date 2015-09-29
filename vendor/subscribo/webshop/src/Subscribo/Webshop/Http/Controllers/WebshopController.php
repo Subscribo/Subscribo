@@ -96,7 +96,7 @@ class WebshopController extends Controller
             $subscriptionPeriods = $this->acquireSubscriptionPeriods($businessConnector, false, $localizer);
             $transactionGateways = $transactionConnector->getGateway();
             $addresses = $auth->user() ? $accountConnector->getAddress() : [];
-            $deliveries = $businessConnector->getAvailableDeliveries();
+            $deliveries = $businessConnector->getAvailableDeliveries($product['subscription_plan']['delivery_plan']['id']);
             $usualDeliveryWindowTypes = $businessConnector->getUsualDeliveryWindowTypes();
             $deliveryWindowTypes = [];
             foreach ($usualDeliveryWindowTypes as $deliveryWindowType)
