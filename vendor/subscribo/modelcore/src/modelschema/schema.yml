@@ -637,9 +637,9 @@ model_fields:
     - tax_type (enum from none vat sales excise expenditure) default word vat
 
     deliveries:
-    - id #to emphasize the importance of id of this table
-    - start (date) #first day of delivery
     - service_id → services
+    - delivery_plan_id null -> delivery_plans
+    - start (date) #first day of delivery
     - is_available_for_ordering (bool) default true
 
     delivery_window_types:
@@ -648,6 +648,7 @@ model_fields:
     - start (string) //relative date string understandable by strtotime() (combined with delivery date)
     - end (string) //relative date string understandable by strtotime() (combined with delivery date)
     - is_usual(bool) //Whether this delivery window type is usual for delivery, so whether it should be added automatically
+    - delivery_plan_id null -> delivery_plans
     - service_id → services
 
     delivery_windows:
@@ -681,7 +682,8 @@ model_fields:
     - delivery_auto_available_start null default word today //string understandable by DateTime
     - delivery_auto_available_end null //string understandable by DateTime
     - delivery_window_start_limit null default word now //string understandable by DateTime
-    - delivery_window_end_limit null //string understadable by DateTime
+    - delivery_window_end_limit null //string understandable by DateTime
+    - seed_start null //string understandable by DateTime
 
     billing_plans:
     - service_id -> services
@@ -699,6 +701,7 @@ model_fields:
     - billing_plan_id -> billing_plans
 
     subscriptions:
+    - service_id -> services
     - subscription_plan_id -> subscription_plans
     - individual_plan_id -> individual_plans
     - account_id → accounts

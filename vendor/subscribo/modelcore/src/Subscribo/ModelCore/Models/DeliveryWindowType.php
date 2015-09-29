@@ -3,6 +3,7 @@
 namespace Subscribo\ModelCore\Models;
 
 use Subscribo\ModelCore\Models\Service;
+use Subscribo\ModelCore\Models\DeliveryPlan;
 use Subscribo\ModelCore\Traits\SearchableByIdentifierAndServiceTrait;
 
 /**
@@ -22,6 +23,29 @@ class DeliveryWindowType extends \Subscribo\ModelCore\Bases\DeliveryWindowType
     public static function getAllUsualByService($service, $isUsual = true)
     {
         return static::byService($service)->onlyUsual($isUsual)->get();
+    }
+
+    /**
+     * @param DeliveryPlan|int $deliveryPlan
+     * @param bool $isUsual
+     * @return DeliveryWindowType[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public static function getAllUsualByDeliveryPlan($deliveryPlan, $isUsual = true)
+    {
+        return static::byDeliveryPlan($deliveryPlan)->onlyUsual($isUsual)->get();
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param DeliveryPlan|int $deliveryPlan
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeByDeliveryPlan($query, $deliveryPlan)
+    {
+        $deliveryPlanId = ($deliveryPlan instanceof DeliveryPlan) ? $deliveryPlan->id : $deliveryPlan;
+        $query->where('delivery_plan_id', $deliveryPlanId);
+
+        return $query;
     }
 
     /**
