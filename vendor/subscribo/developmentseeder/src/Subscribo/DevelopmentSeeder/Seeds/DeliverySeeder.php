@@ -4,6 +4,7 @@ namespace Subscribo\DevelopmentSeeder\Seeds;
 
 use Illuminate\Database\Seeder;
 use Subscribo\ModelCore\Models\Service;
+use Subscribo\ModelCore\Models\DeliveryPlan;
 use Subscribo\ModelCore\Models\Delivery;
 use Subscribo\ModelCore\Models\DeliveryWindow;
 use Subscribo\ModelCore\Models\DeliveryWindowType;
@@ -17,20 +18,24 @@ class DeliverySeeder extends Seeder
 {
     public function run()
     {
+        /** @var Service $frontendService */
         $frontendService = Service::query()->where(['identifier' => 'FRONTEND'])->first();
-        $this->addDeliveryAndWindows($frontendService, 'Tuesday');
+        foreach ($frontendService->deliveryPlans as $plan) {
+            $this->addDeliveryAndWindows($plan);
+        }
         $mainService = Service::query()->where(['identifier' => 'MAIN'])->first();
-        $this->addDeliveryAndWindows($mainService, 'Monday');
+        foreach ($mainService->deliveryPlans as $plan) {
+            $this->addDeliveryAndWindows($plan);
+        }
     }
 
     /**
-     * @param Service $service
-     * @param string $seedStart
+     * @param DeliveryPlan $deliveryPlan
      */
-    protected function addDeliveryAndWindows(Service $service, $seedStart)
+    protected function addDeliveryAndWindows(DeliveryPlan $deliveryPlan)
     {
-        $usualDeliveryWindowTypes = DeliveryWindowType::getAllUsualByService($service);
-        $addedDeliveries = Delivery::autoAdd($service, $seedStart);
+        $usualDeliveryWindowTypes = DeliveryWindowType::getAllUsualByDeliveryPlan($deliveryPlan);
+        $addedDeliveries = Delivery::autoAdd($deliveryPlan);
         foreach ($addedDeliveries as $delivery) {
             $deliveryWindows = [];
             foreach ($usualDeliveryWindowTypes as $deliveryWindowType) {

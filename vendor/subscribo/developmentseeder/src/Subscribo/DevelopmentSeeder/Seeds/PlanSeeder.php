@@ -24,6 +24,7 @@ class PlanSeeder extends Seeder
         $frontendWeeklyDeliveryPlan->deliveryAutoAddLimit = '2 months';
         $frontendWeeklyDeliveryPlan->deliveryAutoAvailableStart = 'today';
         $frontendWeeklyDeliveryPlan->deliveryAutoAvailableEnd = '1 month';
+        $frontendWeeklyDeliveryPlan->seedStart = 'Tuesday';
         $frontendWeeklyDeliveryPlan->service()->associate($frontendService);
         $frontendWeeklyDeliveryPlan->save();
         $frontendWeeklyBillingPlan =  new BillingPlan();
@@ -42,6 +43,7 @@ class PlanSeeder extends Seeder
         $mainWeeklyDeliveryPlan = new DeliveryPlan();
         $mainWeeklyDeliveryPlan->deliveryAutoAddLimit = '2 months';
         $mainWeeklyDeliveryPlan->deliveryAutoAvailableEnd = '1 month';
+        $mainWeeklyDeliveryPlan->seedStart = 'Monday';
         $mainWeeklyDeliveryPlan->service()->associate($mainService);
         $mainWeeklyDeliveryPlan->save();
         $mainWeeklyBillingPlan =  new BillingPlan();
