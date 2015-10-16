@@ -46,7 +46,8 @@ class Price extends \Subscribo\ModelCore\Bases\Price
         }
         $stringAmount = strval($this->amount);
         if ($this->priceType === 'net') {
-            return $stringAmount;
+
+            return Math::bcround($stringAmount, $this->currency->precision);
         }
         $multiplier = $this->calculateTaxMultiplier($taxPercent);
         $netAmount = bcdiv($stringAmount, $multiplier, $this->currency->precision + 2);
