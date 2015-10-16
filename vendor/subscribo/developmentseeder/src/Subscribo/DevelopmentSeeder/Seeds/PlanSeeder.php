@@ -58,6 +58,30 @@ class PlanSeeder extends Seeder
         $mainWeeklyPlan->billingPlan()->associate($mainWeeklyBillingPlan);
         $mainWeeklyPlan->save();
 
+        $mainMonthlyBillingPlan =  new BillingPlan();
+        $mainMonthlyBillingPlan->service()->associate($mainService);
+        $mainMonthlyBillingPlan->save();
+
+        $mainMonthlyPlan = SubscriptionPlan::firstOrNew([
+            'identifier' => 'MONTHLY',
+            'service_id' => $mainService->id
+        ]);
+        $mainMonthlyPlan->deliveryPlan()->associate($mainWeeklyDeliveryPlan);
+        $mainMonthlyPlan->billingPlan()->associate($mainMonthlyBillingPlan);
+        $mainMonthlyPlan->save();
+
+        $mainYearlyBillingPlan =  new BillingPlan();
+        $mainYearlyBillingPlan->service()->associate($mainService);
+        $mainYearlyBillingPlan->save();
+
+        $mainYearlyPlan = SubscriptionPlan::firstOrNew([
+            'identifier' => 'YEARLY',
+            'service_id' => $mainService->id
+        ]);
+        $mainYearlyPlan->deliveryPlan()->associate($mainWeeklyDeliveryPlan);
+        $mainYearlyPlan->billingPlan()->associate($mainYearlyBillingPlan);
+        $mainYearlyPlan->save();
+
         $test3Service = Service::query()->where(['identifier' => 'TEST3'])->first();
         $test3MonthlyDeliveryPlan = new DeliveryPlan();
         $test3MonthlyDeliveryPlan->deliveryPeriod = '1 month';
