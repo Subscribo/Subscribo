@@ -28,6 +28,7 @@ use Subscribo\Exception\Exceptions\InstanceNotFoundHttpException;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
 use Subscribo\ApiServerJob\Jobs\Triggered\SalesOrder\SendConfirmationMessage;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Subscribo\ModelCore\Models\SubscriptionPlan;
 use Subscribo\Support\DateTimeUtils;
 
 /**
@@ -162,6 +163,42 @@ class BusinessController extends AbstractBusinessController
         return ['result' => $result];
     }
 
+    public function actionGetPlan($id = null)
+    {
+        $countryId = $this->acquireCountryId();
+        $currencyId = $this->acquireCurrencyId($countryId);
+
+        $queryValidationRules = [
+            'with' => 'regex:/[a-z.]+/',
+        ];
+        $validated = $this->validateRequestQuery($queryValidationRules);
+        $with = isset($validated['with']) ? explode('.', $validated['with']) : [];
+        $serviceId = $this->context->getServiceId();
+        if (is_null($id)) {
+            $collection = SubscriptionPlan::getForServiceWith($serviceId, $with);
+
+            if (in_array('prices', $with, true)) {
+                $collection->transform(function ($item, $key) use ($currencyId, $countryId) {
+
+                    return $this->addPricesForSubscriptionPlan($item, $currencyId, $countryId);
+                });
+            }
+
+            return ['collection' => $collection];
+        }
+        $instance = SubscriptionPlan::findByIdentifierWith($id, $with);
+        if (empty($instance)) {
+            throw new InstanceNotFoundHttpException();
+        }
+        if ($instance->serviceId !== $serviceId) {
+            throw new WrongServiceHttpException();
+        }
+        if (in_array('prices', $with, true)) {
+            $instance = $this->addPricesForSubscriptionPlan($instance, $currencyId, $countryId);
+        }
+
+        return ['instance' => $instance];
+    }
 
     public function actionPostOrder()
     {
@@ -530,5 +567,12 @@ class BusinessController extends AbstractBusinessController
             $message = $this->context->getLocalizer()->trans($messageId, [], 'api1::controllers');
             throw new InvalidInputHttpException([$key => $message]);
         }
+    }
+
+    private function addPricesForSubscriptionPlan(SubscriptionPlan $subscriptionPlan, $currencyId, $countryId)
+    {
+        $subscriptionPlan->products = collect(Product::findAllBySubscriptionPlanWithPrices($subscriptionPlan, $currencyId, $countryId));
+
+        return $subscriptionPlan;
     }
 }
