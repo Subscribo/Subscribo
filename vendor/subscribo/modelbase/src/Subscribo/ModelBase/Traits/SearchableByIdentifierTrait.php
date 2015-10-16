@@ -30,4 +30,20 @@ trait SearchableByIdentifierTrait
 
         return $query->first();
     }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int|string $identifier ID or identifier
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeByIdentifier($query, $identifier)
+    {
+        if (is_numeric($identifier)) {
+            $query->where($this->getQualifiedKeyName(), '=', $identifier);
+        } else {
+            $query->where('identifier', '=', $identifier);
+        }
+
+        return $query;
+    }
 }
