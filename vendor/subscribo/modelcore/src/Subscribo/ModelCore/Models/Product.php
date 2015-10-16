@@ -4,6 +4,7 @@ namespace Subscribo\ModelCore\Models;
 
 use Subscribo\ModelCore\Models\Country;
 use Subscribo\ModelCore\Models\Price;
+use Subscribo\ModelCore\Models\SubscriptionPlan;
 use Subscribo\ModelCore\Models\TaxGroup;
 use InvalidArgumentException;
 use Subscribo\ModelCore\Traits\SearchableByIdentifierAndServiceTrait;
@@ -52,6 +53,57 @@ class Product extends \Subscribo\ModelCore\Bases\Product
             'taxCategory',
             'taxCategory.taxGroups' => $taxGroupSubQuery,
         ])->where('service_id', $serviceId)
+            ->whereHas('prices', $priceSubQuery);
+        $queryResult = $mainQuery->get();
+
+        $result = [];
+        /** @var Product $item */
+        foreach ($queryResult as $item) {
+            $itemWithPrices = $item->toArrayWithAppropriatePrice($currencyId, $countryId);
+            if ($itemWithPrices) {
+                $result[] = $itemWithPrices;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param int|SubscriptionPlan $subscriptionPlan
+     * @param int|null $countryId
+     * @param int|null $currencyId
+     * @return array
+     */
+    public static function findAllBySubscriptionPlanWithPrices($subscriptionPlan, $currencyId, $countryId = null)
+    {
+        $subscriptionPlanId = ($subscriptionPlan instanceof SubscriptionPlan)
+            ? $subscriptionPlan->id : $subscriptionPlan;
+        if ($countryId) {
+            $taxGroupSubQuery =  function ($query) use ($countryId) {
+                $query->where('country_id', $countryId)
+                    ->orWhereNull('country_id');
+            };
+        } else {
+            $taxGroupSubQuery =  function ($query) { $query->whereNull('country_id'); };
+        }
+        $priceSubQuery = function ($query) use ($currencyId, $countryId) {
+            $query->where('currency_id', $currencyId);
+            if ($countryId) {
+                $query->where(function ($subQuery) use ($countryId) {
+                    $subQuery->whereHas('countries', function ($subSubQuery) use ($countryId) {
+                        $subSubQuery->where('countries.id', $countryId);
+                    });
+                    $subQuery->orWhere('everywhere', true);
+                });
+            } else {
+                $query->where('everywhere', true);
+            }
+        };
+        $mainQuery = static::withTranslations()->with([
+            'prices',
+            'taxCategory',
+            'taxCategory.taxGroups' => $taxGroupSubQuery,
+        ])->where('subscription_plan_id', $subscriptionPlanId)
             ->whereHas('prices', $priceSubQuery);
         $queryResult = $mainQuery->get();
 
