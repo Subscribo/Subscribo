@@ -173,11 +173,25 @@ class BusinessController extends AbstractBusinessController
         ];
         $validated = $this->validateRequestQuery($queryValidationRules);
         $with = isset($validated['with']) ? explode('.', $validated['with']) : [];
+        $dbWith = [];
+        $withTranslations = in_array('translations', $with, true);
+        $withProducts = in_array('products', $with, true);
+        $withPrices = in_array('prices', $with, true);
+        $withBillingPlan = (in_array('billing_plans', $with, true) or in_array('billing_plan', $with, true));
+        if ($withTranslations) {
+            $dbWith[] = 'translations';
+        }
+        if ($withBillingPlan) {
+            $dbWith[] = 'billing_plan';
+        }
+        if ($withProducts and ( ! $withPrices)) {
+            $dbWith[] = 'products';
+        }
         $serviceId = $this->context->getServiceId();
         if (is_null($id)) {
-            $collection = SubscriptionPlan::getForServiceWith($serviceId, $with);
+            $collection = SubscriptionPlan::getForServiceWith($serviceId, $dbWith);
 
-            if (in_array('prices', $with, true)) {
+            if ($withPrices) {
                 $collection->transform(function ($item, $key) use ($currencyId, $countryId) {
 
                     return $this->addPricesForSubscriptionPlan($item, $currencyId, $countryId);
@@ -186,14 +200,14 @@ class BusinessController extends AbstractBusinessController
 
             return ['collection' => $collection];
         }
-        $instance = SubscriptionPlan::findByIdentifierWith($id, $with);
+        $instance = SubscriptionPlan::findByIdentifierWith($id, $dbWith);
         if (empty($instance)) {
             throw new InstanceNotFoundHttpException();
         }
         if ($instance->serviceId !== $serviceId) {
             throw new WrongServiceHttpException();
         }
-        if (in_array('prices', $with, true)) {
+        if ($withPrices) {
             $instance = $this->addPricesForSubscriptionPlan($instance, $currencyId, $countryId);
         }
 
@@ -571,8 +585,9 @@ class BusinessController extends AbstractBusinessController
 
     private function addPricesForSubscriptionPlan(SubscriptionPlan $subscriptionPlan, $currencyId, $countryId)
     {
-        $subscriptionPlan->products = collect(Product::findAllBySubscriptionPlanWithPrices($subscriptionPlan, $currencyId, $countryId));
+        $result = $subscriptionPlan->toArray();
+        $result['products'] = Product::findAllBySubscriptionPlanWithPrices($subscriptionPlan, $currencyId, $countryId);
 
-        return $subscriptionPlan;
+        return $result;
     }
 }
