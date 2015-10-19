@@ -484,6 +484,8 @@ model_fields:
 
     persons:
     - id hidden
+    - preimage_id null -> persons
+    - service_id null -> services
     - salutation null
     - prefix null
     - first_name null
@@ -500,6 +502,9 @@ model_fields:
     - mobile (string) null
 
     addresses:
+    - id hidden
+    - preimage_id null -> addresses
+    - service_id null -> services
     - customer_id null hidden -> customers (show_to) //customer owning the address
     - person_id null hidden -> persons (show_from) //person whose name is part of address
     - organisation_id null //organisation whose name is part of address

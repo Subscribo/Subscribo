@@ -1,5 +1,9 @@
-<?php namespace Subscribo\ModelCore\Models;
+<?php
 
+namespace Subscribo\ModelCore\Models;
+
+use Subscribo\ModelCore\Models\Service;
+use Illuminate\Support\Arr;
 
 /**
  * Model Person
@@ -62,6 +66,29 @@ class Person extends \Subscribo\ModelCore\Bases\Person
         }
 
         return $instance;
+    }
+
+    /**
+     * @param Service|int $service
+     * @return Person
+     */
+    public function replicateForService($service)
+    {
+        $except = [
+            $this->getKeyName(),
+            $this->getCreatedAtColumn(),
+            $this->getUpdatedAtColumn(),
+            'service_id',
+            'preimage_id',
+        ];
+        $attributes = Arr::except($this->attributes, $except);
+        $newInstance = new static();
+        $newInstance->setRawAttributes($attributes);
+        $newInstance->preimage()->associate($this);
+        $newInstance->service()->associate($service);
+        $newInstance->save();
+
+        return $newInstance;
     }
 
     /**
