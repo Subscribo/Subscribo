@@ -50,6 +50,18 @@ class BusinessConnector extends AbstractConnector
     }
 
 
+    public function getPlansWithPrices($signatureOptions = true)
+    {
+        $signatureOptions = $this->processSignatureOptions($signatureOptions);
+
+        $query = ['with' => 'translations.billing_plan.products.prices'];
+
+        $responseData = $this->restClient->process('business/plan', 'GET', null, $query, null, $signatureOptions);
+
+        return $responseData['collection'];
+    }
+
+
     public function postOrder(array $content = null, array $query = null, $signatureOptions = true)
     {
         $signatureOptions = $this->processSignatureOptions($signatureOptions);

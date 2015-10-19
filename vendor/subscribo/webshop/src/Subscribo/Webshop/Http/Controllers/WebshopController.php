@@ -54,14 +54,8 @@ class WebshopController extends Controller
      */
     public function listProducts(BusinessConnector $connector, LocalizerInterface $localizer)
     {
-        $products = $connector->getProduct();
-        foreach ($products as $key => $product) {
-            if (empty($product['name'])) {
-                $products[$key]['name'] = $product['identifier'];
-            }
-        }
         $data = [
-            'products' => $products,
+            'plans' => $connector->getPlansWithPrices(),
             'localizer' => $localizer->template('messages', 'webshop')->setPrefix('template.product.list'),
         ];
 
