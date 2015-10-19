@@ -53,6 +53,9 @@ class SubscriptionPlan extends \Subscribo\ModelCore\Bases\SubscriptionPlan
         if (in_array('products', $with, true)) {
             $query = $query->with('products');
         }
+        if (in_array('billing_plans', $with, true) or in_array('billing_plan', $with, true)) {
+            $query = $query->with('billingPlan');
+        }
 
         return $query;
     }

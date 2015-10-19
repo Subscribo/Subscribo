@@ -687,6 +687,7 @@ model_fields:
 
     billing_plans:
     - service_id -> services
+    - period_denotation translate
     - sales_order_period null default words 1 month //string understandable by DateInterval - createFromDateString()
     - billing_period null //string understandable by DateInterval - createFromDateString()
     - subscription_add_sales_order_start null default word today //string understandable by DateTime
