@@ -62,6 +62,31 @@ class Address extends \Subscribo\ModelCore\Bases\Address
     }
 
     /**
+     * @param Service|int$service
+     * @param Address|int|null $address
+     * @return null|Address
+     */
+    public static function provideForService($service, $address)
+    {
+        if (is_null($address)) {
+
+            return null;
+        }
+        $instance = ($address instanceof Address) ? $address : static::find($address);
+        if (empty($instance)) {
+
+            return null;
+        }
+        $serviceId = ($service instanceof Service) ? $service->id : $service;
+        if ($instance->serviceId === $serviceId) {
+
+            return $instance;
+        }
+
+        return $instance->replicateForService($service);
+    }
+
+    /**
      * @param array $data
      * @return bool
      */
