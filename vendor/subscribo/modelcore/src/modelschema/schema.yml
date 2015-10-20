@@ -445,13 +445,13 @@ model_fields:
         - person_id null hidden → persons (show_from)
         - preferred_locale_id null -> locales
         - remember_locale (int) default 43200
-        - default_transaction_gateway_configuration_id null hidden -> transaction_gateway_configurations
+        - default_transaction_gateway_configuration_id null hidden -> transaction_gateway_configurations //todo remove in favour of default billing detail
 
     customer_configurations:
         - id hidden
         - customer_id hidden -> customers (type one_belongs_to_one show_from show_to)
         - default_contact_id null hidden -> contacts (show_from)
-        - default_shipping_address_id null → addresses
+        - default_shipping_detail_id null hidden → shipping_details (show_from)
         - default_billing_detail_id null hidden → billing_details (show_from)
 
     customer_registrations:
@@ -465,7 +465,6 @@ model_fields:
         - email null
         - password (password) null hidden
         - account_token_id null
-        - address_id null
         - person_id null hidden -> persons (show_to)
 
     account_tokens:
@@ -480,11 +479,11 @@ model_fields:
         - account_id
         - transaction_gateway_configuration_id
         - token
-        - is_default (bool) default false
+        - is_default (bool) default false //todo remove in favour of default billing detail
 
     persons:
     - id hidden
-    - preimage_id null -> persons
+    - preimage_id null hidden -> persons
     - service_id null -> services
     - salutation null
     - prefix null
@@ -498,12 +497,20 @@ model_fields:
     - national_identification_number (string) null hidden //Note - not recommended to collect these if not necessary
 
     contacts:
+    - id hidden
+    - preimage_id null hidden -> contacts
+    - service_id null -> services
+    - customer_id null hidden -> customers (show_to) //customer owning the contact
+    - descriptor guarded //Title of contact
     - phone (string) null
     - mobile (string) null
+    - email (string) null
+    - person_id null -> persons
+    - address_id null -> addresses
 
     addresses:
     - id hidden
-    - preimage_id null -> addresses
+    - preimage_id null hidden -> addresses
     - service_id null -> services
     - customer_id null hidden -> customers (show_to) //customer owning the address
     - person_id null hidden -> persons (show_from) //person whose name is part of address
@@ -531,30 +538,39 @@ model_fields:
     - country_union (enum from EU) null guarded
     - gps_longitude (string) null
     - gps_latitude (string) null
-    - delivery_information (text) null
-    - phone (string) null
-    - mobile (string) null
     - flags (int) guarded default 0
+
+    shipping_details:
+    - id hidden
+    - preimage_id null hidden -> shipping_details
+    - service_id null -> services
+    - customer_id null hidden -> customers (show_to) //customer owning the shipping detail
+    - contact_id -> contacts
+    - delivery_information (text) null
+
 
     billing_details:
     - id hidden
-    - type (unsigned tiny int) default 1
-    - address_id null → addresses
-    - account_no null
+    - preimage_id null hidden -> billing_details
+    - service_id null -> services
+    - customer_id null hidden -> customers (show_to) //customer owning the billing detail
+    - type (enum from none token bank address) default word none
+    - account_transaction_gateway_token_id null -> account_transaction_gateway_tokens
+    - contact_id null -> contacts
     - bank_id null → banks
+    - account_number null
     - iban null
     - bic null
 
-
-
     banks:
+    - parent_id null -> banks //E.g. Headquater for branch
     - identifier (identifier) unique
     - official_name representative
     - name translate
     - bic
     - bank_code null // //bank_number for some countries
     - country_id → countries
-    - address_id null //Address of the bank
+    - contact_id null -> contacts //Address of the bank
 
 
     countries: #    (basic common political division – i. e. Austria, Germany, Switzerland, USA...)
@@ -660,8 +676,8 @@ model_fields:
     subscriptions:
     - service_id -> services
     - account_id → accounts
-    - shipping_address_id null → addresses #(null if default)
-    - billing_address_id null → addresses #(null if same as shipping)
+    - shipping_detail_id → shipping_details
+    - billing_detail_id → billing_details
     - currency_id -> currencies
     - country_id null -> countries
     - delivery_window_type_id null → delivery_window_types
@@ -699,8 +715,8 @@ model_fields:
     - net_sum (currency)
     - gross_sum (currency)
     - subscription_id null → subscriptions #(null for manual)
-    - shipping_address_id null → addresses #(null if default)
-    - billing_address_id null → addresses #(null if same as shipping)
+    - shipping_detail_id → shipping_details
+    - billing_detail_id → billing_details
     - confirmation_message_id null -> messages
 
     realizations_in_sales_orders:

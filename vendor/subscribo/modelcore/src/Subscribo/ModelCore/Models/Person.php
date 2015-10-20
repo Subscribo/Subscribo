@@ -39,11 +39,11 @@ class Person extends \Subscribo\ModelCore\Bases\Person
 
     /**
      * @param array $data
-     * @return Person
+     * @return Person|null
      */
     public static function make(array $data)
     {
-        $instance = new self();
+        $instance = new static();
         if ( ! empty($data['gender'])) {
             $instance->gender = $data['gender'];
         }
@@ -69,19 +69,38 @@ class Person extends \Subscribo\ModelCore\Bases\Person
     }
 
     /**
+     * @param array $data
+     * @return bool
+     */
+    public function dataContainsSimilarPerson(array $data)
+    {
+        return $this->personsAreSimilar(static::make($data));
+    }
+
+    /**
+     * @param Person $person
+     * @return bool
+     */
+    public function personsAreSimilar(Person $person = null)
+    {
+        if (empty($person)) {
+
+            return false;
+        }
+        $exceptions = $this->getExceptColumns();
+        $exportedThis = Arr::except($this->attributesToArray(), $exceptions);
+        $exportedThat = Arr::except($person->attributesToArray(), $exceptions);
+
+        return $exportedThis == $exportedThat;
+    }
+
+    /**
      * @param Service|int $service
      * @return Person
      */
     public function replicateForService($service)
     {
-        $except = [
-            $this->getKeyName(),
-            $this->getCreatedAtColumn(),
-            $this->getUpdatedAtColumn(),
-            'service_id',
-            'preimage_id',
-        ];
-        $attributes = Arr::except($this->attributes, $except);
+        $attributes = Arr::except($this->attributes, $this->getExceptColumns());
         $newInstance = new static();
         $newInstance->setRawAttributes($attributes);
         $newInstance->preimage()->associate($this);
@@ -189,5 +208,19 @@ class Person extends \Subscribo\ModelCore\Bases\Person
         $result = trim($result, ', ');
         $result = preg_replace('/ +/', ' ', $result);
         return $result;
+    }
+
+    /**
+     * @return array
+     */
+    private function getExceptColumns()
+    {
+        return [
+            $this->getKeyName(),
+            $this->getCreatedAtColumn(),
+            $this->getUpdatedAtColumn(),
+            'preimage_id',
+            'service_id',
+        ];
     }
 }

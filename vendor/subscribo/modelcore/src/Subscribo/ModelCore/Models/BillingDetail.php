@@ -16,6 +16,8 @@ class BillingDetail extends \Subscribo\ModelCore\Bases\BillingDetail
     /**
      * @param int|Address $address
      * @return BillingDetail
+     * @todo remove or refactor
+     * @deprecated
      */
     public static function generate($address)
     {
@@ -31,6 +33,8 @@ class BillingDetail extends \Subscribo\ModelCore\Bases\BillingDetail
      * @param Address $address
      * @param BillingDetail|null $billingDetail
      * @return BillingDetail
+     * @todo remove or refactor
+     * @deprecated
      */
     public static function addAddressOrGenerate(Address $address, BillingDetail $billingDetail = null)
     {
@@ -40,6 +44,8 @@ class BillingDetail extends \Subscribo\ModelCore\Bases\BillingDetail
     /**
      * @param int|Address $address
      * @return $this
+     * @todo remove or refactor
+     * @deprecated
      */
     public function addAddress($address)
     {

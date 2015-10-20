@@ -107,6 +107,8 @@ class Address extends \Subscribo\ModelCore\Bases\Address
      * @param array|Address $data
      * @param Customer|null $customer
      * @return \Illuminate\Database\Eloquent\Model|null|Address|static
+     * @todo remove?
+     * @deprecated
      */
     public static function ifDataContainsAddressFindSimilarOrGenerate($data, Customer $customer = null)
     {
@@ -143,6 +145,8 @@ class Address extends \Subscribo\ModelCore\Bases\Address
      * @param Customer|null $customer
      * @return \Illuminate\Database\Eloquent\Model|null|static
      * @throws \InvalidArgumentException
+     * @todo remove?
+     * @deprecated
      */
     public static function customerHaveAddress($data, Customer $customer = null)
     {
@@ -162,6 +166,36 @@ class Address extends \Subscribo\ModelCore\Bases\Address
     }
 
     /**
+     * @param array $data
+     * @return bool
+     */
+    public function dataContainsSimilarAddress(array $data)
+    {
+        if ( ! self::dataContainsAddress($data)) {
+
+            return false;
+        }
+        return $this->addressesAreSimilar(static::make($data));
+    }
+
+    /**
+     * @param Address $address
+     * @return bool
+     */
+    public function addressesAreSimilar(Address $address = null)
+    {
+        if (empty($address)) {
+
+            return false;
+        }
+        $exceptions = $this->getExceptColumns();
+        $exportedThis = Arr::except($this->attributesToArray(), $exceptions);
+        $exportedThat = Arr::except($address->attributesToArray(), $exceptions);
+
+        return $exportedThis == $exportedThat;
+    }
+
+    /**
      * @return $this
      */
     public function refreshDescriptor()
@@ -177,11 +211,17 @@ class Address extends \Subscribo\ModelCore\Bases\Address
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function compileStreetLine()
     {
         return trim($this->street.' '.$this->compileFlatDesignator());
     }
 
+    /**
+     * @return string
+     */
     public function compileFlatDesignator()
     {
         $parts = [];
@@ -206,26 +246,19 @@ class Address extends \Subscribo\ModelCore\Bases\Address
 
     /**
      * @param Service|int $service
+     * @param Person|null $person
      * @return Address
      */
-    public function replicateForService($service)
+    public function replicateForService($service, Person $person = null)
     {
-        $except = [
-            $this->getKeyName(),
-            $this->getCreatedAtColumn(),
-            $this->getUpdatedAtColumn(),
-            'service_id',
-            'preimage_id',
-            'customer_id',
-            'person_id',
-            'organisation_id',
-        ];
-        $attributes = Arr::except($this->attributes, $except);
+        $attributes = Arr::except($this->attributes, $this->getExceptColumns());
         $newInstance = new static();
         $newInstance->setRawAttributes($attributes);
         $newInstance->preimage()->associate($this);
         $newInstance->service()->associate($service);
-        if ($this->personId) {
+        if ($person) {
+            $newInstance->person()->associate($person);
+        } elseif ($this->personId) {
             $newInstance->person()->associate($this->person->replicateForService($service));
         }
         $newInstance->save();
@@ -329,4 +362,20 @@ class Address extends \Subscribo\ModelCore\Bases\Address
         return  $result.($person->name);
     }
 
+    /**
+     * @return array
+     */
+    private function getExceptColumns()
+    {
+        return [
+            $this->getKeyName(),
+            $this->getCreatedAtColumn(),
+            $this->getUpdatedAtColumn(),
+            'preimage_id',
+            'customer_id',
+            'service_id',
+            'person_id',
+            'organisation_id',
+        ];
+    }
 }
