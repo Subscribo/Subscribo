@@ -4,7 +4,7 @@ namespace Subscribo\Api1\Controllers;
 
 use DateTime;
 use InvalidArgumentException;
-use Subscribo\Api1\Factories\AddressFactory;
+use Subscribo\Api1\Factories\ContactFactory;
 use Subscribo\Api1\Factories\AccountFactory;
 use Subscribo\Api1\AbstractBusinessController;
 use Subscribo\Exception\Exceptions\InvalidInputHttpException;
@@ -150,8 +150,8 @@ class BusinessController extends AbstractBusinessController
             'billing_address_id' => 'integer',
             'shipping_address_id' => 'integer,'
         ];
-        $validationRules = $orderValidationRules + AddressFactory::getValidationRules()
-            + AddressFactory::getValidationRules('shipping_') + AddressFactory::getValidationRules('billing_');
+        $validationRules = $orderValidationRules + ContactFactory::getValidationRules()
+            + ContactFactory::getValidationRules('shipping_') + ContactFactory::getValidationRules('billing_');
         $validated = $this->validateRequestBody($validationRules);
         $service = $this->context->getService();
         $discountIds = []; //todo implement
@@ -162,18 +162,18 @@ class BusinessController extends AbstractBusinessController
             throw new NoAccountHttpException();
         }
         $customer = $account->customer;
-        $shippingAddress = $this->retrieveShippingAddress($validated, $customer);
-        $billingAddress = $this->retrieveBillingAddress($validated, $customer);
-        $this->checkAddresses($validated, $service, $shippingAddress, $billingAddress);
-        AccountFactory::addAddressesIfNotPresent($customer, $shippingAddress, $billingAddress);
+        $shippingDetail = $this->retrieveShippingDetail($validated, $customer);
+        $billingDetail = $this->retrieveBillingDetail($validated, $customer);
+        $this->checkAddresses($validated, $service, $shippingDetail, $billingDetail);
+        AccountFactory::addAddressesIfNotPresent($customer, $shippingDetail, $billingDetail);
         $result = $this->prepareOrder(
             $account,
             $validated['prices'],
             $discountIds,
             $delivery,
             $deliveryWindow,
-            $shippingAddress,
-            $billingAddress
+            $shippingDetail,
+            $billingDetail
         );
 
         return ['result' => $result];
@@ -449,7 +449,7 @@ class BusinessController extends AbstractBusinessController
                 return $address;
             }
             try {
-                $address = AddressFactory::findOrGenerate($input, $prefix, $customer);
+                $address = ContactFactory::findOrGenerate($input, $prefix, $customer);
                 if ($address) {
 
                     return $address;
@@ -466,7 +466,7 @@ class BusinessController extends AbstractBusinessController
     }
 
 
-    private function retrieveShippingAddress(array $input, Customer $customer)
+    private function retrieveShippingDetail(array $input, Customer $customer)
     {
         $address = $this->tryToRetrieveAddress($input, ['shipping_', ''], $customer, 'shipping');
         if ($address) {
@@ -474,11 +474,11 @@ class BusinessController extends AbstractBusinessController
             return $address;
         }
 
-        return $customer->customerConfiguration->defaultShippingAddress;
+        return $customer->customerConfiguration->defaultShippingDetail;
     }
 
 
-    private function retrieveBillingAddress(array $input, Customer $customer)
+    private function retrieveBillingDetail(array $input, Customer $customer)
     {
         $address = $this->tryToRetrieveAddress($input, ['billing_', ''], $customer, 'billing');
         if ($address) {
@@ -486,9 +486,7 @@ class BusinessController extends AbstractBusinessController
             return $address;
         }
 
-        $billingDetail = $customer->customerConfiguration->defaultBillingDetail;
-
-        return $billingDetail ? $billingDetail->address : null;
+        return $customer->customerConfiguration->defaultBillingDetail;
     }
 
 

@@ -6,7 +6,7 @@ use Subscribo\ModelCore\Models\Address;
 use Subscribo\ModelCore\Models\Customer;
 
 
-class AddressFactory
+class ContactFactory
 {
     protected static $addressValidationRules = [
         'gender' => 'in:man,woman',
@@ -70,6 +70,28 @@ class AddressFactory
         }
 
         return null;
+    }
+
+    protected static function customerHaveSimilarContact(Customer $customer, $data)
+    {
+        foreach ($customer->contacts as $contact)
+        {
+
+        }
+    }
+
+    protected static function dataContainsShippingAddress($data)
+    {
+        $prefixed = static::getPrefixed($data, 'shipping_');
+
+        return Address::dataContainsAddress($prefixed);
+    }
+
+    protected static function dataContainsBillingAddress($data)
+    {
+        $prefixed = static::getPrefixed($data, 'billing_');
+
+        return Address::dataContainsAddress($prefixed);
     }
 
     /**

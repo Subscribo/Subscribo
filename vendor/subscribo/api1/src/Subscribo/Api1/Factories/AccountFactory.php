@@ -167,6 +167,8 @@ class AccountFactory
      * @param Address $shippingAddress
      * @param Address|null $billingAddress
      * @throws \Subscribo\Api1\Exceptions\InvalidArgumentException
+     * @deprecated
+     * @todo remove
      */
     public static function addAddressesIfNotPresent(Customer $customer, Address $shippingAddress = null, Address $billingAddress = null)
     {
