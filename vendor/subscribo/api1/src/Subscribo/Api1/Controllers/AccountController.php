@@ -17,6 +17,7 @@ use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\Address;
 use Subscribo\ModelCore\Models\AccountToken;
 use Subscribo\ModelCore\Models\ActionInterruption;
+use Subscribo\ModelCore\Models\Contact;
 use Subscribo\ModelCore\Models\Customer;
 use Subscribo\ModelCore\Models\CustomerRegistration;
 use Subscribo\ModelCore\Models\Service;
@@ -155,11 +156,49 @@ class AccountController extends AbstractController
     /**
      * GET Action method to get address(es) for logged in customer
      *
+     * @param int|null $id
+     * @return array
+     * @throws \Subscribo\Exception\Exceptions\NoAccountHttpException
+     * @throws \Subscribo\Exception\Exceptions\WrongAccountHttpException
+     * @throws \Subscribo\Exception\Exceptions\InstanceNotFoundHttpException
+     */
+    public function actionGetContact($id = null)
+    {
+        $account = $this->context->getAccount();
+        if (empty($account)) {
+            throw new NoAccountHttpException();
+        }
+        $customer = $account->customer;
+
+        if (empty($id)) {
+            $collection = [];
+            foreach ($customer->contacts as $contact) {
+                $collection[] = $this->enhanceContact($contact, $customer);
+            }
+
+            return ['collection' => $collection];
+        }
+        $contact = Contact::find($id);
+        if (empty($contact)) {
+            throw new InstanceNotFoundHttpException();
+        }
+        if ($contact->customerId !== $customer->id) {
+            throw new WrongAccountHttpException();
+        }
+
+        return ['instance' => $this->enhanceContact($contact, $customer)];
+    }
+
+    /**
+     * GET Action method to get address(es) for logged in customer
+     *
      * @param int|null $addressId
      * @return array
      * @throws \Subscribo\Exception\Exceptions\NoAccountHttpException
      * @throws \Subscribo\Exception\Exceptions\WrongAccountHttpException
      * @throws \Subscribo\Exception\Exceptions\InstanceNotFoundHttpException
+     * @deprecated
+     * @todo remove
      */
     public function actionGetAddress($addressId = null)
     {
@@ -350,6 +389,22 @@ class AccountController extends AbstractController
         }
         $actionInterruption->answer = $answer;
         return $this->performRegistration($validatedData, $serviceId, $actionInterruption);
+    }
+
+    /**
+     * @param Contact $contact
+     * @param Customer $customer
+     * @return array
+     */
+    private function enhanceContact(Contact $contact, Customer $customer)
+    {
+        $result = $contact->toArray();
+        $item['is_default_shipping'] = ($customer->customerConfiguration->defaultShippingDetail
+            and ($contact->id === $customer->customerConfiguration->defaultShippingDetail->contactId));
+        $item['is_default_billing'] = ($customer->customerConfiguration->defaultBillingDetail
+            and ($contact->id === $customer->customerConfiguration->defaultBillingDetail->contactId));
+
+        return $result;
     }
 
     /**
