@@ -2,7 +2,7 @@
 
 use Subscribo\Api1\AbstractController;
 use Subscribo\Api1\Factories\AccountFactory;
-use Subscribo\Api1\Factories\AddressFactory;
+use Subscribo\Api1\Factories\ContactFactory;
 use Subscribo\Api1\Factories\CustomerRegistrationFactory;
 use Subscribo\Api1\Factories\ClientRedirectionFactory;
 use Subscribo\Api1\Exceptions\RuntimeException;
@@ -46,6 +46,9 @@ class AccountController extends AbstractController
 
     private $registrationValidationRules = [
         'name'  => 'max:255',
+        'gender' => 'in:man,woman',
+        'first_name' => 'max:100',
+        'last_name' => 'required_with:city|max:100',
         'email' => 'required_without:oauth|email|max:255',
         'password' => 'required_without:oauth|min:5',
         'oauth' => 'array',
@@ -54,7 +57,7 @@ class AccountController extends AbstractController
 
     public function actionPostRegistration()
     {
-        $rules = $this->registrationValidationRules + AddressFactory::getValidationRules();
+        $rules = $this->registrationValidationRules;
         $validated = $this->validateRequestBody($rules);
         $serviceId = $this->context->getServiceId();
         if ( ! empty($validated['oauth'])) {

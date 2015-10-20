@@ -29,11 +29,9 @@ class AccountFactory
 
     /**
      * @param CustomerRegistration|array $data
-     * @param Address|null $shippingAddress
-     * @param Address|null $billingAddress
      * @return Customer
      */
-    public function generateCustomer($data = array(), Address $shippingAddress = null, Address $billingAddress = null)
+    public function generateCustomer($data = array())
     {
         if ($data instanceof CustomerRegistration) {
             $customer = new Customer();
@@ -51,18 +49,7 @@ class AccountFactory
         $customer->person()->associate($person);
         $customer->save();
         $configuration = new CustomerConfiguration();
-        $configuration->customerId = $customer->id;
-        if ($shippingAddress) {
-            $shippingAddress->customerId = $customer->id;
-            $shippingAddress->save();
-            $configuration->defaultShippingAddress()->associate($shippingAddress);
-        }
-        if ($billingAddress) {
-            $billingAddress->customerId = $customer->id;
-            $billingAddress->save();
-            $billingDetail = BillingDetail::generate($billingAddress);
-            $configuration->defaultBillingDetail()->associate($billingDetail);
-        }
+        $configuration->customer()->associate($customer);
         $configuration->save();
 
         return $customer;
@@ -83,10 +70,8 @@ class AccountFactory
             $customerRegistration = $data;
             $email = $customerRegistration->email;
             $existingCustomerId = $customerRegistration->customerId;
-            $dataPossiblyWithAddress = $customerRegistration->address;
         } elseif (is_array($data)) {
             $email = $data['email'];
-            $dataPossiblyWithAddress = $data;
         } else {
             throw new InvalidArgumentException('AccountFactory::register() data have to be either array or instance of CustomerRegistration');
         }
@@ -94,7 +79,6 @@ class AccountFactory
         if ($account) {
             $status = CustomerRegistration::STATUS_EXISTING_ACCOUNT_USED;
             $customer = $account->customer;
-            $address = Address::ifDataContainsAddressFindSimilarOrGenerate($dataPossiblyWithAddress, $customer);
         } else {
             if ($existingCustomerId) {
                 $status = CustomerRegistration::STATUS_MERGED;
@@ -109,9 +93,8 @@ class AccountFactory
             /** @var Service $service */
             $service = Service::with('availableLocales', 'defaultLocale')->find($serviceId);
             $locale = $service->chooseLocale($preferredLocale);
-            $address = Address::ifDataContainsAddressFindSimilarOrGenerate($dataPossiblyWithAddress, $customer);
             if (empty($customer)) {
-                $customer = $this->generateCustomer($data, $address);
+                $customer = $this->generateCustomer($data);
                 $customer->preferredLocale()->associate($locale->uncustomize());
                 $customer->save();
             }
@@ -131,7 +114,6 @@ class AccountFactory
             'customer' => $customer,
             'account' => $account,
             'person' => $customer->person,
-            'address' => $address,
         ];
         return $result;
     }

@@ -3,7 +3,6 @@
 use Illuminate\Contracts\Hashing\Hasher;
 use Subscribo\ModelCore\Models\CustomerRegistration;
 use Subscribo\ModelCore\Models\AccountToken;
-use Subscribo\ModelCore\Models\Address;
 use Subscribo\ModelCore\Models\Person;
 use Subscribo\Support\Arr;
 
@@ -44,8 +43,6 @@ class CustomerRegistrationFactory
         }
         $person = Person::generate($data);
         $customerRegistration->personId = $person->id;
-        $address = Address::ifDataContainsAddressFindSimilarOrGenerate($data);
-        $customerRegistration->addressId = $address ? $address->id : null;
         $customerRegistration->save();
         return $customerRegistration;
     }
