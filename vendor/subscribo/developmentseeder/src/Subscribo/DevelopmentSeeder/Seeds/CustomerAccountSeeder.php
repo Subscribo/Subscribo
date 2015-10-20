@@ -81,7 +81,8 @@ class CustomerAccountSeeder extends Seeder
 
         $data['country'] = $country->identifier;
 
-        $result = $accountFactory->register($data, $service->id, '');
+        $result = $accountFactory->register($data, $service->id, $locale);
+        $result['customer']->addContactIfNeeded($data);
 
         if ($this->command) {
             $this->command->getOutput()->writeln(sprintf('[Service: %s] Customer %s : %s', $service->name, $data['email'], $data['password']));
