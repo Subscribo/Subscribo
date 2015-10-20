@@ -72,6 +72,9 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
         $anticipatedDeliveryStart = true,
         $anticipatedDeliveryEnd = true
     ) {
+        $serviceId = $account->serviceId;
+        $shippingAddress = Address::provideForService($serviceId, $shippingAddress);
+        $billingAddress = Address::provideForService($serviceId, $billingAddress);
         if (true === $anticipatedDeliveryStart) {
             $anticipatedDeliveryStart = $deliveryWindow ? $deliveryWindow->start : null;
         }
@@ -81,7 +84,7 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
         $salesOrder = static::makeWithHash();
         $salesOrder->currency()->associate($currency);
         $salesOrder->countryId = $countryId;
-        $salesOrder->serviceId = $account->serviceId;
+        $salesOrder->serviceId = $serviceId;
         $salesOrder->account()->associate($account);
         $salesOrder->type = $type;
         $salesOrder->status = $status;
@@ -136,13 +139,15 @@ class SalesOrder extends \Subscribo\ModelCore\Bases\SalesOrder
         $anticipatedDeliveryStart = true,
         $anticipatedDeliveryEnd = true
     ) {
+        $serviceId = $account->serviceId;
+        $shippingAddress = Address::provideForService($serviceId, $shippingAddress);
+        $billingAddress = Address::provideForService($serviceId, $billingAddress);
         if (true === $type) {
             $type = ($subscription instanceof Subscription) ? static::TYPE_AUTOMATIC : static::TYPE_MANUAL;
         }
         if (true === $countryId) {
             $countryId = $shippingAddress ? $shippingAddress->countryId : null;
         }
-        $serviceId = $account->serviceId;
         $deliveryId = $delivery ? $delivery->id : null;
         $prices = static::checkPrices($serviceId, $amountsPerPriceId, $currencyId, $countryId);
         if (empty($countryId) and $shippingAddress) {

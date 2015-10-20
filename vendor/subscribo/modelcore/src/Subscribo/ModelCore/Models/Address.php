@@ -6,6 +6,8 @@ use InvalidArgumentException;
 use Subscribo\ModelCore\Models\Country;
 use Subscribo\ModelCore\Models\Person;
 use Subscribo\ModelCore\Models\Customer;
+use Subscribo\ModelCore\Models\Service;
+use Illuminate\Support\Arr;
 
 /**
  * Model Address
@@ -57,6 +59,31 @@ class Address extends \Subscribo\ModelCore\Bases\Address
         $instance->refreshDescriptor();
 
         return $instance;
+    }
+
+    /**
+     * @param Service|int$service
+     * @param Address|int|null $address
+     * @return null|Address
+     */
+    public static function provideForService($service, $address)
+    {
+        if (is_null($address)) {
+
+            return null;
+        }
+        $instance = ($address instanceof Address) ? $address : static::find($address);
+        if (empty($instance)) {
+
+            return null;
+        }
+        $serviceId = ($service instanceof Service) ? $service->id : $service;
+        if ($instance->serviceId === $serviceId) {
+
+            return $instance;
+        }
+
+        return $instance->replicateForService($service);
     }
 
     /**
@@ -175,6 +202,35 @@ class Address extends \Subscribo\ModelCore\Bases\Address
         }
 
         return implode('/', $parts);
+    }
+
+    /**
+     * @param Service|int $service
+     * @return Address
+     */
+    public function replicateForService($service)
+    {
+        $except = [
+            $this->getKeyName(),
+            $this->getCreatedAtColumn(),
+            $this->getUpdatedAtColumn(),
+            'service_id',
+            'preimage_id',
+            'customer_id',
+            'person_id',
+            'organisation_id',
+        ];
+        $attributes = Arr::except($this->attributes, $except);
+        $newInstance = new static();
+        $newInstance->setRawAttributes($attributes);
+        $newInstance->preimage()->associate($this);
+        $newInstance->service()->associate($service);
+        if ($this->personId) {
+            $newInstance->person()->associate($this->person->replicateForService($service));
+        }
+        $newInstance->save();
+
+        return $newInstance;
     }
 
     /**

@@ -39,13 +39,16 @@ class Subscription extends \Subscribo\ModelCore\Bases\Subscription
         $deliveryWindowType = null,
         $status = self::STATUS_ACTIVE
     ) {
+        $serviceId = $account->serviceId;
+        $shippingAddress = Address::provideForService($serviceId, $shippingAddress);
         if (true === $billingAddress) {
             $billingAddress = $shippingAddress;
         }
+        $billingAddress = Address::provideForService($serviceId, $billingAddress);
         $startDate = DateTimeUtils::makeDate($start);
 
         $subscription = new Subscription();
-        $subscription->serviceId = $account->serviceId;
+        $subscription->serviceId = $serviceId;
         $subscription->account()->associate($account);
         $subscription->currency()->associate($currency);
         $subscription->country()->associate($country);
@@ -70,6 +73,7 @@ class Subscription extends \Subscribo\ModelCore\Bases\Subscription
      * @param DeliveryWindowType|int|null $deliveryWindowType
      * @param string $status
      * @return Subscription
+     * @todo Refactoring: Merge with generate()
      */
     public static function generateSubscription(
         Account $account,
@@ -82,9 +86,12 @@ class Subscription extends \Subscribo\ModelCore\Bases\Subscription
         $deliveryWindowType = null,
         $status = self::STATUS_ACTIVE
     ) {
+        $serviceId = $account->serviceId;
+        $shippingAddress = Address::provideForService($serviceId, $shippingAddress);
         if (true === $billingAddress) {
             $billingAddress = $shippingAddress;
         }
+        $billingAddress = Address::provideForService($serviceId, $billingAddress);
         $startDate = DateTimeUtils::makeDate($start);
 
         $subscription = new Subscription();
