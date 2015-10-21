@@ -15,6 +15,7 @@
         "subscribo/webshop": "@dev"
     },
     "require-dev": {
+        "subscribo/transaction-plugin-dummy": "@dev",
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "~4.0",
