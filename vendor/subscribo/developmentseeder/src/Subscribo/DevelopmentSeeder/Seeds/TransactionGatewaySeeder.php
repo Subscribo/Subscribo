@@ -7,6 +7,7 @@ use Subscribo\ModelCore\Models\TransactionGateway;
 use Subscribo\TransactionPluginKlarna\Drivers\InvoiceDriver;
 use Subscribo\TransactionPluginPayUnity\Drivers\CopyAndPayDriver;
 use Subscribo\TransactionPluginPayUnity\Drivers\PostDriver;
+use Subscribo\TransactionPluginDummy\Drivers\SuccessForAllDriver;
 
 
 class TransactionGatewaySeeder extends Seeder
@@ -37,5 +38,11 @@ class TransactionGatewaySeeder extends Seeder
         $klarnaInvoice->driver = InvoiceDriver::getDriverIdentifier();
         $klarnaInvoice->description = 'To be invoiced by Klarna';
         $klarnaInvoice->save();
+
+        $dummySuccess = TransactionGateway::firstOrCreate(['identifier' => 'DUMMY-SUCCESS_FOR_ALL']);
+        $dummySuccess->driver = SuccessForAllDriver::getDriverIdentifier();
+        $dummySuccess->translateOrNew('en')->name = 'Development Dummy';
+        $dummySuccess->translateOrNew('en')->description = 'Dummy - all transaction passed';
+        $dummySuccess->save();
     }
 }
