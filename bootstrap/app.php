@@ -1,5 +1,7 @@
 <?php
 
+ini_set('xdebug.max_nesting_level', 200);
+
 /*
 |--------------------------------------------------------------------------
 | Create The Application
@@ -79,6 +81,10 @@ if (class_exists('\\Subscribo\\ClientChecker\\ClientCheckerServiceProvider')) {
 
 if (class_exists('\\Subscribo\\Webshop\\Integration\\Laravel\\WebshopServiceProvider')) {
     $app->register('\\Subscribo\\Webshop\\Integration\\Laravel\\WebshopServiceProvider');
+}
+
+if (class_exists('\\Subscribo\\TransactionPluginDummy\\Integration\\Laravel\\TransactionPluginDummyServiceProvider')) {
+    $app->register('\\Subscribo\\TransactionPluginDummy\\Integration\\Laravel\\TransactionPluginDummyServiceProvider');
 }
 
 /*
