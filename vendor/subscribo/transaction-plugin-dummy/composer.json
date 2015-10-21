@@ -1,0 +1,21 @@
+{
+    "name": "subscribo/transaction-plugin-dummy",
+    "description": "Dummy plugin for Subscribo transaction plugin manager - for testing and development",
+    "keywords": [
+        "Subscribo",
+        "transaction plugin",
+        "dummy"
+    ],
+    "homepage": "http://subscribo.io",
+    "license": "proprietary",
+    "require": {
+        "php": ">=5.4",
+        "subscribo/transaction-plugin-manager": "@dev",
+        "subscribo/support": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\TransactionPluginDummy\\": "src/Subscribo/TransactionPluginDummy/"
+        }
+    }
+}

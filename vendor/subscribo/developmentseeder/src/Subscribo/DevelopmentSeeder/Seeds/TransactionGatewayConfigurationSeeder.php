@@ -147,5 +147,15 @@ class TransactionGatewayConfigurationSeeder extends Seeder
         $klarnaConfigForMain->configuration = $klarnaConfigData;
         $klarnaConfigForMain->ordering = 1;
         $klarnaConfigForMain->save();
+
+        $dummySuccess = TransactionGateway::query()->where(['identifier' => 'DUMMY-SUCCESS_FOR_ALL'])->first();
+
+        $dummyConfigForMain = TransactionGatewayConfiguration::firstOrCreate([
+            'service_id' => $mainService->id,
+            'transaction_gateway_id' => $dummySuccess->id,
+        ]);
+        $dummyConfigForMain->configuration = [];
+        $dummyConfigForMain->ordering = 100;
+        $dummyConfigForMain->save();
     }
 }
