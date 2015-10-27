@@ -10,10 +10,7 @@ template.product:
         buyLink: Buy
 # Template resources/views/webshop/product/buy.blade.php
     buy:
-        heading: Do you want to buy {productName}?
-        grossPrice: 'Price:'
-        netPrice: 'Price without tax:'
-        tax: 'Tax:'
+        heading: Checkout
         backToListLink: Back to product list
 # Template resources/views/webshop/product/success.blade.php
     success:
@@ -21,6 +18,12 @@ template.product:
         text: Your order has been processed.
 forms:
     buy:
+        cart:
+            name: Name
+            grossPrice: Price
+            netPrice: Price without tax
+            tax: Tax
+            amount: Amount
 # Template resources/views/webshop/forms/buy/forguest.blade.php
         forguest.submitButton: Buy
 # Template resources/views/webshop/forms/buy/foruser.blade.php
@@ -68,6 +71,7 @@ forms:
         deliveryWindowType.select.title: When would you like to receive this delivery?
 # WebshopController.php
 errors:
+    cartEmpty: Your shopping cart is empty
     orderFailed: Ordering has failed
     transactionFailed: Transaction might have failed, but also might have been processed. Please, be careful before making a new request. Feel free to contact your bank or merchant for further details.
     subscriptionFailed: Subscription setting has failed
