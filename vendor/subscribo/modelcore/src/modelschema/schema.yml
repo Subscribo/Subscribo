@@ -300,39 +300,12 @@ model_options:
         relations:
             - polymorphic_many_belongs_to_many tags
 
-    kochabo_recipes:
-       administrator_menu: Kochabo
-       relations:
-          - polymorphic_one_has_one picture (key to picturable_id)
-
-    kochabo_recipe_steps:
-        administrator_menu: Kochabo
-        relations:
-            - polymorphic_one_has_one picture (key to picturable_id)
-
-    kochabo_measured_recipes:
-        administrator_menu: Kochabo
-
-    kochabo_ingredients:
-        administrator_menu: Kochabo
-        relations:
-           polymorphic_many_belongs_to_many:
-              -  tags
-
-    kochabo_measures:
-        administrator_menu: Kochabo
-
     tags:
         administrator_menu: General
 
     tag_groups:
           administrator_menu: General
 
-    kochabo_ingredients_in_measured_recipes:
-        administrator_menu: Kochabo
-
-    kochabo_measured_recipes_in_realizations:
-        administrator_menu: Kochabo
 
     acl_groups:
         administrator_menu: ACL
@@ -817,48 +790,6 @@ model_fields:
     - identifier (identifier) representative // unique string used in API
     - service_id null
     - name translate
-
-
-    kochabo_recipes:
-    - identifier (identifier) unique representative // unique string used in API
-    - country_id → countries
-    - source null
-    - comment null
-    - name translate
-    - original_name translate
-
-
-
-    kochabo_recipe_steps:
-    - identifier (identifier) unique representative // unique string used in API
-    - sequence (int)
-    - recipe_id → kochabo_recipes
-    - text translate
-
-    kochabo_measured_recipes:
-    - product_id null → products
-    - recipe_id → kochabo_recipes
-    - persons_count (unsigned tiny int)
-
-    kochabo_ingredients:
-    - identifier (identifier) unique representative // unique string used in API
-    - comment null
-    - name translate
-
-    kochabo_measures:
-    - identifier (identifier) unique representative // unique string used in API
-    - comment null
-    - name translate
-
-    kochabo_ingredients_in_measured_recipes:
-    - amount (rational number)
-    - measured_recipe_id → kochabo_measured_recipes
-    - ingredient_id → kochabo_ingredients
-    - measure_id → kochabo_measures
-
-    kochabo_measured_recipes_in_realizations:
-    - realization_id → realizations
-    - measured_recipe_id → kochabo_measured_recipes
 
 
     acl_groups:
