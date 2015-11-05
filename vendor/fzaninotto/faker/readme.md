@@ -327,7 +327,7 @@ for ($i=0; $i < 10; $i++) {
 print_r($values); // [1, 4, null, 9, 5, null, null, 4, 6, null]
 
 // optional() accepts a weight argument to specify the probability of receiving the default value.
-// 0 will always return the default value; 1 will always return the provider. Default weight is 0.5.
+// 0 will always return the default value; 1 will always return the provider. Default weight is 0.5 (50% chance).
 $faker->optional($weight = 0.1)->randomDigit; // 90% chance of NULL
 $faker->optional($weight = 0.9)->randomDigit; // 10% chance of NULL
 
@@ -834,6 +834,15 @@ echo $faker->siren; // 082 250 104
 echo $faker->siret; // 347 355 708 00224
 ```
 
+### `Faker\Provider\en_ZA\Company`
+
+```php
+<?php
+
+// Generates a random company registration number
+echo $faker->companyNumber; // 1999/789634/01
+```
+
 ### `Faker\Provider\fr_FR\Address`
 
 ```php
@@ -1162,6 +1171,7 @@ echo $faker->cityName;
 * [faker-cli](https://github.com/bit3/faker-cli): Command Line Tool for the Faker PHP library
 * [Factory Muffin](https://github.com/thephpleague/factory-muffin): enable the rapid creation of objects (PHP port of factory-girl)
 * [CompanyNameGenerator](https://github.com/fzaninotto/CompanyNameGenerator): Generate names for English tech companies with class
+* [PlaceholdItProvider](https://github.com/EmanueleMinotto/PlaceholdItProvider): Generate images using placehold.it
 * [datalea](https://github.com/spyrit/datalea) A highly customizable random test data generator web app
 * [newage-ipsum](https://github.com/frequenc1/newage-ipsum): A new aged ipsum provider for the faker library inspired by http://sebpearce.com/bullshit/
 * [xml-faker](https://github.com/prewk/xml-faker): Create fake XML with Faker
@@ -1170,6 +1180,7 @@ echo $faker->cityName;
 * [pragmafabrik/Pomm2Faker](https://github.com/pragmafabrik/Pomm2Faker): Faker client for Pomm ORM (PostgreSQL)
 * [nelmio/alice](https://packagist.org/packages/nelmio/alice): Fixtures/object generator with a yaml DSL that can use Faker as data generator.
 * [CakePHP 2.x Fake Seeder Plugin](https://github.com/ravage84/cakephp-fake-seeder) A CakePHP 2.x shell to seed your database with fake and/or fixed data.
+* [images-generator](https://github.com/bruceheller/images-generator): An image generator provider using GD for placeholder type pictures
 
 ## License
 

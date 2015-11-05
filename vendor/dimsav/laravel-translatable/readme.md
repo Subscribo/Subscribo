@@ -12,7 +12,8 @@ This is a Laravel package for translatable models. Its goal is to remove the com
 
 If you want to store translations of your models into the database, this package is for you.
 
-* [Demo](#what-is-this-package-doing)
+* [Demo](#demo)
+* [Tutorial](#tutorial)
 * [Installation](#installation-in-4-steps)
 * [Configuration](#configuration)
 * [Documentation](#documentation)
@@ -22,7 +23,7 @@ If you want to store translations of your models into the database, this package
 
  Laravel  | Translatable
 :---------|:----------
- 5.0.x    | 5.x
+ 5.x      | 5.x
  4.2.x    | 4.4.x
  4.1.x    | 4.4.x
  4.0.x    | 4.3.x
@@ -70,6 +71,10 @@ If you want to store translations of your models into the database, this package
   echo $greece->translate('fr')->name; // Grèce
 ```
 
+## Tutorial
+
+Check the tutorial about laravel-translatable in laravel-news: [*How To Add Multilingual Support to Eloquent*](https://laravel-news.com/2015/09/how-to-add-multilingual-support-to-eloquent/)
+
 ## Installation in 4 steps
 
 ### Step 1: Install package
@@ -83,7 +88,7 @@ composer require dimsav/laravel-translatable
 Next, add the service provider to `app/config/app.php`
 
 ```
-'Dimsav\Translatable\TranslatableServiceProvider',
+Dimsav\Translatable\TranslatableServiceProvider::class,
 ```
 
 ### Step 2: Migrations
@@ -124,6 +129,14 @@ class Country extends Eloquent {
     
     public $translatedAttributes = ['name'];
     protected $fillable = ['code', 'name'];
+    
+    /**
+     * The relations to eager load on every query.
+     *
+     * @var array
+     */
+    // (optionaly)
+    // protected $with = ['translations'];
 
 }
 
@@ -188,7 +201,7 @@ class Country extends Eloquent
 ### Available methods 
 
 ```php
-// This is how we determine the current locale.
+// Before we get started, this is how we determine the current locale.
 // It is set by laravel or other packages.
 App::getLocale(); // 'fr' 
 
@@ -238,6 +251,31 @@ $translation = $germany->getNewTranslation('it');
 $germany->translations();
 ```
 
+### Available scopes
+
+```php
+// Returns all countries having translations in english
+Country::translatedIn('en')->get();
+
+// Returns all countries having translations
+Country::translated()->get();
+
+// Eager loads translation relationship only for the default
+// and fallback (if enabled) locale
+Country::withTranslation()->get();
+
+// Returns an array containing pairs of country ids and the translated
+// name attribute. For example: 
+// [
+//     ['id' => 1, 'name' => 'Greece'], 
+//     ['id' => 2, 'name' => 'Belgium']
+// ]
+Country::listsTranslations('name')->get()->toArray();
+
+// Filters countries by checking the translation against the given value 
+Country::whereTranslation('name', 'Greece')->first();
+```
+
 ### Magic properties
 
 To use the magic properties, you have to define the property `$translatedAttributes` in your
@@ -269,7 +307,7 @@ $germany->{'name:de'} // 'Deutschland'
 If you want to fallback to a default translation when a translation has not been found, enable this in the configuration
 using the `use_fallback` key. And to select the default locale, use the `fallback_locale` key.
 
-Example:
+Configuration example:
 
 ```php
 return [
@@ -289,6 +327,40 @@ class Country {
 }
 ```
 
+#### Country based fallback
+
+Since version v5.3 it is possible to use country based locales. For example, you can have the following locales:
+
+- English: `en`
+- Spanish: `es`
+- Mexican Spanish: `es-MX`
+- Colombian Spanish: `es-CO`
+
+To configuration for these locales looks like this:
+
+```php
+    'locales' => [ 
+        'en',
+        'es' => [
+            'MX',
+            'CO',
+        ],
+    ];
+```
+
+We can also configure the "glue" between the language and country. If for instance we prefer the format `es_MX` instead of `es-MX`, 
+the configuration should look like this:
+
+```php
+   'locale_separator' => '_',
+```
+
+What applies for the fallback of the locales using the `en-MX` format? 
+
+Let's say our fallback locale is `en`. Now, when we try to fetch from the database the translation for the 
+locale `es-MX` but it doesn't exist,  we won't get as fallback the translation for `en`. Translatable will use as a 
+fallback `es` (the first part of `es-MX`) and only if nothing is found, the translation for `en` is returned.
+ 
 ## FAQ
 
 #### I need some example code!
@@ -306,6 +378,44 @@ You are awesome! Watched the repo and reply to the issues. You will help offerin
 #### I am getting collisions with other trait methods!
 
 Translatable is fully compatible with all kinds of Eloquent extensions, including Ardent. If you need help to implement Translatable with these extensions, see this [example](https://gist.github.com/dimsav/9659552).
+
+#### How do I sort by translations?
+
+A tip here is to make the MySQL query first and then do the Eloquent one.
+
+To fetch a list of records ordered by a translated field, you can do this: 
+
+```mysql
+SELECT * from countries
+JOIN country_translations as t on t.country_id = countries.id 
+WHERE locale = 'en'
+GROUP BY countries.id
+ORDER BY t.name desc
+```
+
+The corresponding eloquent query would be:
+
+```php
+Country::join('country_translations as t', 't.country_id', '=', 'countries.id')
+    ->where('locale', 'en')
+    ->groupBy('countries.id')
+    ->orderBy('t.name', 'desc')
+    ->with('translations')
+    ->get();
+```
+
+#### How can I select a country by a translated field?
+
+For example, let's image we want to find the Country having a CountryTranslation name equal to 'Portugal'.
+
+```php
+Country::whereHas('translations', function ($query) {
+    $query->where('locale', 'en')
+    ->where('name', 'Portugal');
+})->first();
+```
+
+You can find more info at the Laravel [Querying Relations docs](http://laravel.com/docs/5.1/eloquent-relationships#querying-relations).
 
 #### Why do I get a mysql error while running the migrations?
 
