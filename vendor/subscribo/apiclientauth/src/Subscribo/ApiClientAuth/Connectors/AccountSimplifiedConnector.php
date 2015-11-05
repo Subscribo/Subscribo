@@ -2,9 +2,8 @@
 
 namespace Subscribo\ApiClientAuth\Connectors;
 
-use Subscribo\Localization\Interfaces\LocalizerInterface;
+use Subscribo\ApiClientCommon\AbstractConnector;
 use Subscribo\RestClient\Exceptions\InvalidResponseException;
-use Subscribo\RestClient\RestClient;
 use Subscribo\RestCommon\SignatureOptions;
 
 /**
@@ -13,20 +12,8 @@ use Subscribo\RestCommon\SignatureOptions;
  *
  * @package Subscribo\ApiClientAuth\Connectors
  */
-class AccountSimplifiedConnector
+class AccountSimplifiedConnector extends AbstractConnector
 {
-    /** @var \Subscribo\RestClient\RestClient  */
-    protected $restClient;
-
-    /** @var  LocalizerInterface */
-    protected $localizer;
-
-    public function __construct(RestClient $restClient, LocalizerInterface $localizer)
-    {
-        $this->restClient = $restClient;
-        $this->localizer = $localizer;
-    }
-
     /**
      * @param int $id
      * @param SignatureOptions|array|bool $signatureOptions
@@ -154,25 +141,11 @@ class AccountSimplifiedConnector
         return $result;
     }
 
-    /**
-     * @param SignatureOptions|array|bool $signatureOptions
-     * @return SignatureOptions
-     */
-    protected function processSignatureOptions($signatureOptions)
+
+    protected function initialize()
     {
-        if ($signatureOptions instanceof SignatureOptions) {
-            return $signatureOptions;
-        }
-        $defaults = [
-            'locale'    => true,
-        ];
-        $options = is_array($signatureOptions) ? array_replace($defaults, $signatureOptions) : $defaults;
-
-        if ((true === $options['locale']) and ($this->localizer)) {
-            $options['locale'] = $this->localizer->getLocale();
-        }
-        $result = new SignatureOptions($options);
-        return $result;
+        $defaultOptions = $this->signatureOptionsFactory->getDefaultSignatureOptions();
+        unset($defaultOptions['accountId']);
+        $this->signatureOptionsFactory->setDefaultSignatureOptions($defaultOptions);
     }
-
 }
