@@ -1,0 +1,24 @@
+{
+    "name": "subscribo/thin-client-integration",
+    "description": "Integration package for Subscribo thin client",
+    "keywords": [
+        "Subscribo",
+        "thin client",
+        "client integration"
+    ],
+    "license": "proprietary",
+    "homepage": "http://subscribo.io",
+    "require": {
+        "php": ">=5.4",
+        "subscribo/client-integration-common": "@dev",
+        "subscribo/support": "@dev"
+    },
+    "provide": {
+        "subscribo/client-integration": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\ThinClientIntegration\\": "src/Subscribo/ThinClientIntegration"
+        }
+    }
+}
