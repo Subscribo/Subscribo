@@ -3,8 +3,6 @@
 namespace Subscribo\ApiClientAuth\Connectors;
 
 use Subscribo\ApiClientAuth\Connectors\AccountSimplifiedConnector;
-use Subscribo\RestClient\RestClient;
-use Subscribo\RestClient\Factories\SignatureOptionsFactory;
 use Subscribo\RestCommon\SignatureOptions;
 
 /**
@@ -14,17 +12,6 @@ use Subscribo\RestCommon\SignatureOptions;
  */
 class AccountConnector extends AccountSimplifiedConnector
 {
-    /**
-     * @var \Subscribo\RestClient\Factories\SignatureOptionsFactory
-     */
-    protected $signatureOptionsFactory;
-
-    public function __construct(RestClient $restClient, SignatureOptionsFactory $signatureOptionsFactory)
-    {
-        $this->restClient = $restClient;
-        $this->signatureOptionsFactory = $signatureOptionsFactory;
-    }
-
     /**
      * @param int $id
      * @param SignatureOptions|array|bool $signatureOptions
@@ -39,12 +26,8 @@ class AccountConnector extends AccountSimplifiedConnector
         return $responseData['result'];
     }
 
-    /**
-     * @param bool $signatureOptions
-     * @return SignatureOptions
-     */
-    protected function processSignatureOptions($signatureOptions = true)
+    protected function initialize()
     {
-        return $this->signatureOptionsFactory->generate($signatureOptions);
+        //Overriding (back to empty) overridden method in order that SignatureOptionsFactory have default defaults
     }
 }
