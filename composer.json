@@ -12,7 +12,8 @@
         "subscribo/modifier": "@dev",
         "subscribo/developmentseeder": "@dev",
         "twbs/bootstrap": "^3.3.5",
-        "subscribo/webshop": "@dev"
+        "subscribo/webshop": "@dev",
+        "subscribo/thin-client-integration": "@dev"
     },
     "require-dev": {
         "subscribo/transaction-plugin-dummy": "@dev",
