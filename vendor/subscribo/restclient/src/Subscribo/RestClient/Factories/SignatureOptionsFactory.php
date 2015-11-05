@@ -1,21 +1,44 @@
 <?php namespace Subscribo\RestClient\Factories;
 
-use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Subscribo\RestCommon\SignatureOptions;
-use Illuminate\Contracts\Auth\Guard;
+use Subscribo\ClientIntegrationCommon\Interfaces\ClientIntegrationManagerInterface;
 
 class SignatureOptionsFactory
 {
-    /** @var Guard  */
-    protected $auth;
+    /** @var \Subscribo\ClientIntegrationCommon\Interfaces\ClientIntegrationManagerInterface  */
+    protected $manager;
 
-    /** @var  LocalizerInterface */
-    protected $localizer;
+    /** @var array */
+    protected $defaultSignatureOptions = [
+        'accountId' => true,
+        'locale'    => true,
+    ];
 
-    public function __construct(Guard $auth, LocalizerInterface $localizer)
+    /**
+     * @param ClientIntegrationManagerInterface $manager
+     */
+    public function __construct(ClientIntegrationManagerInterface $manager)
     {
-        $this->auth = $auth;
-        $this->localizer = $localizer;
+        $this->manager = $manager;
+    }
+
+    /**
+     * @param array $options
+     * @return $this
+     */
+    public function setDefaultSignatureOptions(array $options)
+    {
+        $this->defaultSignatureOptions = $options;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultSignatureOptions()
+    {
+        return $this->defaultSignatureOptions;
     }
 
     /**
@@ -29,20 +52,15 @@ class SignatureOptionsFactory
             return $options;
         }
         $options = is_array($options) ? $options : array();
-        $defaults = [
-            'accountId' => true,
-            'locale'    => true,
-        ];
-        $options = array_replace($defaults, $options);
-        if (true === $options['accountId']) {
-            $user = ($this->auth) ? $this->auth->user() : null;
-            $options['accountId'] = $user ? $user->getAuthIdentifier() : false;
-        }
-        if ((true === $options['locale']) and ($this->localizer)) {
-            $options['locale'] = $this->localizer->getLocale();
-        }
-        $result = new SignatureOptions($options);
-        return $result;
-    }
+        $options = array_replace($this->defaultSignatureOptions, $options);
 
+        if (isset($options['accountId']) and (true === $options['accountId'])) {
+            $options['accountId'] = $this->manager->getAccountId();
+        }
+        if (isset($options['locale']) and (true === $options['locale'])) {
+            $options['locale'] = $this->manager->getLocale();
+        }
+
+        return new SignatureOptions($options);
+    }
 }
