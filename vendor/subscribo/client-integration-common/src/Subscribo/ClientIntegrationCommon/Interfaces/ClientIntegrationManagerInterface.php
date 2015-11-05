@@ -3,14 +3,19 @@
 namespace Subscribo\ClientIntegrationCommon\Interfaces;
 
 /**
- * Interface ClientIntegrationInterface
+ * Interface ClientIntegrationManagerInterface
  *
  * @package Subscribo\ClientIntegrationCommon
  */
-interface ClientIntegrationInterface
+interface ClientIntegrationManagerInterface
 {
     /**
      * @return int|null
      */
     public function getAccountId();
+
+    /**
+     * @return string|null
+     */
+    public function getLocale();
 }
