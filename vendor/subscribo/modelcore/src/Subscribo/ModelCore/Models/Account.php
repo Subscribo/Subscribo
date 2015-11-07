@@ -3,6 +3,7 @@
 use InvalidArgumentException;
 use Subscribo\ModelCore\Models\Customer;
 use Subscribo\ModelCore\Models\Service;
+use Subscribo\ModelBase\Traits\HasHashTrait;
 
 /**
  * Model Account
@@ -11,6 +12,8 @@ use Subscribo\ModelCore\Models\Service;
  */
 class Account extends \Subscribo\ModelCore\Bases\Account
 {
+    use HasHashTrait;
+
     /**
      * @param int|Customer $customer
      * @param int|Service $service
@@ -35,7 +38,7 @@ class Account extends \Subscribo\ModelCore\Bases\Account
         }
         $locale = $locale ?: $service->defaultLocale;
         /** @var Account $account */
-        $account = new static();
+        $account = static::makeWithHash();
         $account->customerId = $customerId;
         $account->serviceId = $service->id;
         $account->locale = $locale->identifier;
@@ -81,4 +84,11 @@ class Account extends \Subscribo\ModelCore\Bases\Account
         return null;
     }
 
+    /**
+     * @return string
+     */
+    protected static function getDefaultHashColumnName()
+    {
+        return 'access_token';
+    }
 }
