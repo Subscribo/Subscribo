@@ -159,6 +159,6 @@ class RemoteAccountProvider implements UserProvider
 
     private function assembleHashSource(array $credentials)
     {
-        return $credentials['email'].'_already_validated_'.$credentials['password'];
+        return $credentials['email'].'_already_validated';
     }
 }
