@@ -1,5 +1,14 @@
-<?php namespace Subscribo\RestCommon;
+<?php
 
+namespace Subscribo\RestCommon;
+
+use Subscribo\RestCommon\AccountAccessTokenTransport;
+
+/**
+ * Class SignatureOptions
+ *
+ * @package Subscribo\RestCommon
+ */
 class SignatureOptions
 {
     /** @var null|string */
@@ -57,9 +66,11 @@ class SignatureOptions
         if ( ! empty($data['locale'])) {
             $this->locale = $data['locale'];
         }
-        if ( ! empty($data['accountId'])) {
-            $this->descriptionAdds['accountId'] = $data['accountId'];
+        if ( ! empty($data['accountAccessToken'])) {
+            $this->descriptionAdds[AccountAccessTokenTransport::ACCOUNT_ACCESS_TOKEN_DESCRIPTION_FIELD] =
+                $data['accountAccessToken'];
         }
+
         return $this;
     }
 
