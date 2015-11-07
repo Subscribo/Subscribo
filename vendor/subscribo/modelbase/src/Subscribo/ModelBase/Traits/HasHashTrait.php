@@ -15,11 +15,15 @@ trait HasHashTrait
 {
     /**
      * @param string $hash
+     * @param string|bool $columnName string or true for getting it from getDefaultHashColumnName()
      * @return static
      */
-    public static function findByHash($hash)
+    public static function findByHash($hash, $columnName = true)
     {
-        $query = static::query()->where(['hash' => $hash]);
+        if (true === $columnName) {
+            $columnName = static::getDefaultHashColumnName();
+        }
+        $query = static::query()->where([$columnName => $hash]);
 
         return $query->first();
     }
@@ -28,11 +32,16 @@ trait HasHashTrait
      * @param int|bool $length false for UUID, true for getting it from getDefaultHashLength()
      * @param int|bool $attempts
      * @param bool $throwExceptionOnFailure Whether to throw exception on failure to find unused hash
+     * @param string|bool $columnName string or true for getting it from getDefaultHashColumnName()
      * @return string|null
      * @throws \RuntimeException
      */
-    public static function getUnusedHash($length = false, $attempts = true, $throwExceptionOnFailure = true)
-    {
+    public static function getUnusedHash(
+        $length = false,
+        $attempts = true,
+        $throwExceptionOnFailure = true,
+        $columnName = true
+    ) {
         if (true === $length) {
             $length = static::getDefaultHashLength();
         }
@@ -45,7 +54,7 @@ trait HasHashTrait
             $hash = (string) Uuid::generate(4);
         }
         for ($i = 0; $i < $attempts; $i++) {
-            $found = static::findByHash($hash);
+            $found = static::findByHash($hash, $columnName);
             if (empty($found)) {
 
                 return $hash;
@@ -63,12 +72,17 @@ trait HasHashTrait
      * @param array $attributes
      * @param int|bool $hashLength false for UUID, true for getting it from getDefaultHashLength()
      * @param bool $throwExceptionOnFailureToFindHash Whether to throw exception on failure to find unused hash
+     * @param string|bool $hashColumnName string or true for getting it from getDefaultHashColumnName()
      * @return static
      */
-    public static function makeWithHash(array $attributes = [], $hashLength = false, $throwExceptionOnFailureToFindHash = true)
-    {
+    public static function makeWithHash(
+        array $attributes = [],
+        $hashLength = false,
+        $throwExceptionOnFailureToFindHash = true,
+        $hashColumnName = true
+    ) {
         $instance = new static($attributes);
-        $instance->addHash($hashLength, true, $throwExceptionOnFailureToFindHash);
+        $instance->addHash($hashLength, true, $throwExceptionOnFailureToFindHash, $hashColumnName);
 
         return $instance;
     }
@@ -76,11 +90,12 @@ trait HasHashTrait
     /**
      * @param array $attributes
      * @param int|bool $hashLength false for UUID, true for getting it from getDefaultHashLength()
+     * @param string|bool $hashColumnName string or true for getting it from getDefaultHashColumnName()
      * @return static
      */
-    public static function generateWithHash(array $attributes = [], $hashLength = false)
+    public static function generateWithHash(array $attributes = [], $hashLength = false, $hashColumnName = true)
     {
-        $instance = static::makeWithHash($attributes, $hashLength, true);
+        $instance = static::makeWithHash($attributes, $hashLength, true, $hashColumnName);
         $instance->save();
 
         return $instance;
@@ -90,11 +105,15 @@ trait HasHashTrait
      * @param int|bool $length false for UUID, true for getting it from getDefaultHashLength()
      * @param int|bool $attempts
      * @param bool $throwExceptionOnFailure
+     * @param string|bool $columnName string or true for getting it from getDefaultHashColumnName()
      * @return $this
      */
-    public function addHash($length = false, $attempts = true, $throwExceptionOnFailure = true)
+    public function addHash($length = false, $attempts = true, $throwExceptionOnFailure = true, $columnName = true)
     {
-        $this->hash = static::getUnusedHash($length, $attempts, $throwExceptionOnFailure);
+        if (true === $columnName) {
+            $columnName = static::getDefaultHashColumnName();
+        }
+        $this->$columnName = static::getUnusedHash($length, $attempts, $throwExceptionOnFailure, $columnName);
 
         return $this;
     }
@@ -113,5 +132,13 @@ trait HasHashTrait
     protected static function getDefaultHashTryingAttempts()
     {
         return 10;
+    }
+
+    /**
+     * @return string
+     */
+    protected static function getDefaultHashColumnName()
+    {
+        return 'hash';
     }
 }
