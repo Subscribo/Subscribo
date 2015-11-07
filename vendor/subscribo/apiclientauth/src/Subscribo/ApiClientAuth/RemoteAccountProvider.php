@@ -1,4 +1,6 @@
-<?php namespace Subscribo\ApiClientAuth;
+<?php
+
+namespace Subscribo\ApiClientAuth;
 
 use Subscribo\ApiClientAuth\Exceptions\InvalidArgumentException;
 use Illuminate\Contracts\Auth\UserProvider;
@@ -10,6 +12,10 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Subscribo\ApiClientAuth\Connectors\AccountSimplifiedConnector;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Class RemoteAccountProvider
+ * @package Subscribo\ApiClientAuth
+ */
 class RemoteAccountProvider implements UserProvider
 {
     protected $session;
@@ -45,7 +51,7 @@ class RemoteAccountProvider implements UserProvider
     public function retrieveById($id)
     {
         if (empty($id)) {
-            throw new InvalidArgumentException('Id should not be empty');
+            throw new InvalidArgumentException('Id (account access token) should not be empty');
         }
         $entity = $this->load($id);
         if ($entity) {
@@ -89,7 +95,7 @@ class RemoteAccountProvider implements UserProvider
     public function retrieveByToken($id, $token)
     {
         if (empty($id)) {
-            throw new InvalidArgumentException('Id should not be empty');
+            throw new InvalidArgumentException('Id (account access token) should not be empty');
         }
 
         $data = $this->accountConnector->getRemembered($id, $token);
@@ -115,18 +121,22 @@ class RemoteAccountProvider implements UserProvider
 
     private function saveAsModelIfPossible(array $data = null, $logMethodName = false)
     {
-        if (empty($data['id'])) {
-            if ($logMethodName) {
-                $this->logger->notice(
-                    'RemoteAccountProvider: It was not possible to save the model.',
-                    ['methodName' => $logMethodName]
-                );
-            }
-            return null;
-        }
+        /** @var Authenticatable $entity */
         $entity = new $this->model($data);
-        $this->save($data['id'], $entity);
-        return $entity;
+        $key = $entity->getAuthIdentifier();
+        if ($key) {
+            $this->save($key, $entity);
+
+            return $entity;
+        }
+        if ($logMethodName) {
+            $this->logger->notice(
+                'RemoteAccountProvider: It was not possible to save the model.',
+                ['methodName' => $logMethodName]
+            );
+        }
+
+        return null;
     }
 
     protected function load($key)

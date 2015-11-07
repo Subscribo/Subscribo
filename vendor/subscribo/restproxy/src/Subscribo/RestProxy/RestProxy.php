@@ -1,12 +1,12 @@
-<?php namespace Subscribo\RestProxy;
+<?php
+
+namespace Subscribo\RestProxy;
 
 use Exception;
 use Illuminate\Http\Request;
 use Subscribo\RestClient\RestClient;
 use Subscribo\RestClient\Factories\SignatureOptionsFactory;
 use Subscribo\Exception\Interfaces\ExceptionHandlerInterface;
-use Illuminate\Contracts\Auth\Guard;
-use Subscribo\RestCommon\AccountIdTransport;
 
 /**
  * Class RestProxy

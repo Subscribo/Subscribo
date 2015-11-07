@@ -10,7 +10,7 @@ class SignatureOptionsFactory
 
     /** @var array */
     protected $defaultSignatureOptions = [
-        'accountId' => true,
+        'accountAccessToken' => true,
         'locale'    => true,
     ];
 
@@ -54,8 +54,8 @@ class SignatureOptionsFactory
         $options = is_array($options) ? $options : array();
         $options = array_replace($this->defaultSignatureOptions, $options);
 
-        if (isset($options['accountId']) and (true === $options['accountId'])) {
-            $options['accountId'] = $this->manager->getAccountId();
+        if (isset($options['accountAccessToken']) and (true === $options['accountAccessToken'])) {
+            $options['accountAccessToken'] = $this->manager->getAccountAccessToken();
         }
         if (isset($options['locale']) and (true === $options['locale'])) {
             $options['locale'] = $this->manager->getLocale();

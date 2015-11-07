@@ -33,7 +33,7 @@ class ThinClientIntegrationManager implements ClientIntegrationManagerInterface
     /**
      * @return int|null
      */
-    public function getAccountId()
+    public function getAccountAccessToken()
     {
         $user = $this->getGuard()->user();
 
