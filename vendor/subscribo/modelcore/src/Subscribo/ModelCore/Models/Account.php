@@ -15,6 +15,20 @@ class Account extends \Subscribo\ModelCore\Bases\Account
     use HasHashTrait;
 
     /**
+     * @param string $accountAccessToken
+     * @return Account|null
+     */
+    public static function findByAccountAccessToken($accountAccessToken)
+    {
+        if (empty($accountAccessToken)) {
+
+            return null;
+        }
+
+        return static::findByHash($accountAccessToken);
+    }
+
+    /**
      * @param int|Customer $customer
      * @param int|Service $service
      * @param Locale|null $locale
@@ -49,14 +63,14 @@ class Account extends \Subscribo\ModelCore\Bases\Account
 
     /**
      * @param string $rememberToken
-     * @param int|string $id
+     * @param string $accountAccessToken
      * @param int|string $serviceId
      * @return Account|null
      */
-    public static function findRemembered($rememberToken, $id, $serviceId)
+    public static function findRemembered($rememberToken, $accountAccessToken, $serviceId)
     {
         $query = static::query();
-        $query->where('id', $id)
+        $query->where('access_token', $accountAccessToken)
             ->where('remember_token', $rememberToken)
             ->where('service_id', $serviceId);
         return $query->first();
@@ -82,6 +96,20 @@ class Account extends \Subscribo\ModelCore\Bases\Account
             }
         }
         return null;
+    }
+
+    /**
+     * @param bool $withAccessToken
+     * @return array
+     */
+    public function export($withAccessToken = false)
+    {
+        $result = $this->toArray();
+        if ($withAccessToken) {
+            $result['access_token'] = $this->accessToken;
+        }
+
+        return $result;
     }
 
     /**
