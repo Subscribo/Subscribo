@@ -552,7 +552,7 @@ class AccountController extends AbstractController
     {
         $validatedOAuthData = $this->validateOAuthData($data);
         $data['oauth'] = $validatedOAuthData;
-        $alreadyRegistered = AccountToken::findByIdentifierAndServiceId($validatedOAuthData['identifier'], $serviceId);
+        $alreadyRegistered = AccountToken::findByOAuthDataAndServiceId($validatedOAuthData, $serviceId);
         if ($alreadyRegistered) {
             return ['registered' => true, 'result' => $this->assembleAccountResult($alreadyRegistered->account, true)];
         }
