@@ -12,7 +12,7 @@ interface ClientIntegrationManagerInterface
     /**
      * @return int|null
      */
-    public function getAccountId();
+    public function getAccountAccessToken();
 
     /**
      * @return string|null
