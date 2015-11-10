@@ -1,4 +1,6 @@
-<?php namespace Subscribo\Api1\Controllers;
+<?php
+
+namespace Subscribo\Api1\Controllers;
 
 use Subscribo\Api1\AbstractController;
 use Subscribo\Api1\Factories\AccountFactory;
@@ -95,58 +97,58 @@ class AccountController extends AbstractController
     /**
      * GET Action for retrieving remember-me token
      *
-     * @param int|string|null $accountId
+     * @param string|null $accountAccessToken
      * @return array
      * @throws InvalidIdentifierHttpException
      * @throws InvalidQueryHttpException
      */
-    public function actionGetRemembered($accountId = null)
+    public function actionGetRemembered($accountAccessToken = null)
     {
-        $accountId = is_null($accountId) ? $this->context->getAccountId() : $this->validatePositiveIdentifier($accountId);
+        $accountAccessToken = is_null($accountAccessToken) ? $this->context->getAccountAccessToken() : $accountAccessToken;
         $validated = $this->validateRequestQuery([
             'token' => 'required',
         ]);
         /** @var Account $account */
-        $account = Account::findRemembered($validated['token'], $accountId, $this->context->getServiceId());
+        $account = Account::findRemembered($validated['token'], $accountAccessToken, $this->context->getServiceId());
         if (empty($account)) {
             throw new InvalidQueryHttpException(['token' => $this->localizeError('getRemembered.accountNotFound')]);
         }
 
-        return ['found' => true, 'result' => $this->assembleAccountResult($account)];
+        return ['found' => true, 'result' => $this->assembleAccountResult($account, true)];
     }
 
     /**
      * PUT Action for setting remember-me token
      *
-     * @param int|string|null $accountId
+     * @param string|null $accountAccessToken
      * @return array
      * @throws InvalidInputHttpException
      */
-    public function actionPutRemembered($accountId = null)
+    public function actionPutRemembered($accountAccessToken = null)
     {
         $validated = $this->validateRequestBody([
             'token' => 'required_without:forget',
             'forget' => 'boolean',
         ]);
-        $account = $this->retrieveAccount($accountId);
+        $account = $this->retrieveAccount($accountAccessToken);
         $account->rememberToken = $validated['token'] ?: null;
         $account->save();
 
-        return ['remembered' => true, 'result' => $this->assembleAccountResult($account)];
+        return ['remembered' => true, 'result' => $this->assembleAccountResult($account, true)];
     }
 
     /**
      * GET Action method for getting customer account details
      *
-     * @param int|string|null $accountId
+     * @param string|null $accountAccessToken
      * @return array
      * @throws InstanceNotFoundHttpException
      */
-    public function actionGetDetail($accountId = null)
+    public function actionGetDetail($accountAccessToken = null)
     {
-        $account = $this->retrieveAccount($accountId);
+        $account = $this->retrieveAccount($accountAccessToken);
 
-        return ['found' => true, 'result' => $this->assembleAccountResult($account)];
+        return ['found' => true, 'result' => $this->assembleAccountResult($account, true)];
     }
 
     /**
@@ -488,30 +490,32 @@ class AccountController extends AbstractController
     }
 
     /**
-     * @param int|null $accountId
+     * @param string|null $accountAccessToken
      * @return Account
      * @throws InstanceNotFoundHttpException
      */
-    private function retrieveAccount($accountId)
+    private function retrieveAccount($accountAccessToken)
     {
-        $accountId = is_null($accountId) ? $this->context->getAccountId() : $this->validatePositiveIdentifier($accountId);
-        $account = Account::find($accountId);
+        $accountAccessToken = is_null($accountAccessToken) ? $this->context->getAccountAccessToken() : $accountAccessToken;
+        $account = Account::findByAccountAccessToken($accountAccessToken);
         if (empty($account)) {
             throw new InstanceNotFoundHttpException();
         }
         $this->context->checkServiceForAccount($account);
+
         return $account;
     }
 
     /**
      * @param Account $account
+     * @param bool $addAccessToken
      * @return array
      */
-    private function assembleAccountResult(Account $account)
+    private function assembleAccountResult(Account $account, $addAccessToken = false)
     {
         $person = $account->customer ? $account->customer->person : null;
         $result = [
-            'account' => $account,
+            'account' => $account->export($addAccessToken),
             'customer' => $account->customer,
             'person' => $person,
         ];
@@ -548,9 +552,9 @@ class AccountController extends AbstractController
     {
         $validatedOAuthData = $this->validateOAuthData($data);
         $data['oauth'] = $validatedOAuthData;
-        $alreadyRegistered = AccountToken::findByIdentifierAndServiceId($validatedOAuthData['identifier'], $serviceId);
+        $alreadyRegistered = AccountToken::findByOAuthDataAndServiceId($validatedOAuthData, $serviceId);
         if ($alreadyRegistered) {
-            return ['registered' => true, 'result' => $this->assembleAccountResult($alreadyRegistered->account)];
+            return ['registered' => true, 'result' => $this->assembleAccountResult($alreadyRegistered->account, true)];
         }
         if (empty($data['email']) or ( ! $this->isEmailAcceptable($data['email']))) {
             unset($data['password']);
@@ -689,7 +693,7 @@ class AccountController extends AbstractController
     {
         /** @var \Subscribo\Api1\Factories\AccountFactory $accountFactory */
         $accountFactory = $this->applicationMake('Subscribo\\Api1\\Factories\\AccountFactory');
-        $found = $accountFactory->findAccountByEmailAndServiceId($email, $serviceId);
+        $found = $accountFactory->findAccountByEmailAndServiceId($email, $serviceId, true);
         if (empty($found['customer'])) {
             return null;
         }

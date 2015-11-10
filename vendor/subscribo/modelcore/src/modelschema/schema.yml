@@ -441,7 +441,7 @@ model_fields:
         - address_id null
         - person_id null hidden -> persons (show_to)
 
-    account_tokens:
+    account_tokens: #it might be good to rename this into something like oauth_tokens, as this is to store 3rd party oauth tokens for an account, however refactoring on various places would be needed
         - account_id null
         - provider
         - identifier
@@ -544,8 +544,8 @@ model_fields:
 
 
     accounts: #    (former “accessors” - actually a pivot table - connection between a user account and a particular service – there is a possibility of one email to be linked to multiple users – to know with which actual user are we dealing with we need an information about service requested – this would give as an account)
-    - id #id is particularly important in this pivot table
     - remember_token null hidden
+    - access_token unique hidden
     - locale
     - remember_locale (int) default 0
     - customer_id hidden -> customers (show_from)

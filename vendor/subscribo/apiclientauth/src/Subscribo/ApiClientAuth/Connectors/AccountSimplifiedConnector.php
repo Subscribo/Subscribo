@@ -10,20 +10,20 @@ use Subscribo\RestCommon\SignatureOptions;
  * Class AccountSimplifiedConnector Reduced functionality connector without user information
  *                                  to be used by RemoteAccountProvider
  *
- * @package Subscribo\ApiClientAuth\Connectors
+ * @package Subscribo\ApiClientAuth
  */
 class AccountSimplifiedConnector extends AbstractConnector
 {
     /**
-     * @param int $id
+     * @param string $accountAccessToken
      * @param SignatureOptions|array|bool $signatureOptions
      * @return array|null
      */
-    public function getDetail($id, $signatureOptions = true)
+    public function getDetail($accountAccessToken, $signatureOptions = true)
     {
         $signatureOptions = $this->processSignatureOptions($signatureOptions);
 
-        $responseData = $this->restClient->process('account/detail/'.$id, 'GET', null, null, null, $signatureOptions, true);
+        $responseData = $this->restClient->process('account/detail/'.$accountAccessToken, 'GET', null, null, null, $signatureOptions, true);
 
         return $this->assembleResult($responseData, 'found');
     }
@@ -43,31 +43,31 @@ class AccountSimplifiedConnector extends AbstractConnector
     }
 
     /**
-     * @param int $id
-     * @param string $token
+     * @param string $accountAccessToken
+     * @param string $rememberMeToken
      * @param SignatureOptions|array|bool $signatureOptions
      * @return array|null
      */
-    public function getRemembered($id, $token, $signatureOptions = true)
+    public function getRemembered($accountAccessToken, $rememberMeToken, $signatureOptions = true)
     {
         $signatureOptions = $this->processSignatureOptions($signatureOptions);
 
-        $responseData = $this->restClient->process('account/remembered/'.$id, 'GET', null, ['token' => $token], null, $signatureOptions, true);
+        $responseData = $this->restClient->process('account/remembered/'.$accountAccessToken, 'GET', null, ['token' => $rememberMeToken], null, $signatureOptions, true);
 
         return $this->assembleResult($responseData, 'found');
     }
 
     /**
-     * @param int $id
-     * @param string $token
+     * @param string $accountAccessToken
+     * @param string $rememberMeToken
      * @param SignatureOptions|array|bool $signatureOptions
      * @return array|null
      */
-    public function putRemembered($id, $token, $signatureOptions = true)
+    public function putRemembered($accountAccessToken, $rememberMeToken, $signatureOptions = true)
     {
         $signatureOptions = $this->processSignatureOptions($signatureOptions);
 
-        $responseData = $this->restClient->process('account/remembered/'.$id, 'PUT', ['token' => $token], null, null, $signatureOptions, true);
+        $responseData = $this->restClient->process('account/remembered/'.$accountAccessToken, 'PUT', ['token' => $rememberMeToken], null, null, $signatureOptions, true);
 
         return $this->assembleResult($responseData, 'remembered');
     }
@@ -123,7 +123,7 @@ class AccountSimplifiedConnector extends AbstractConnector
                 return null;
             }
         }
-        if (empty($source['result']['account']['id'])
+        if (empty($source['result']['account']['access_token'])
           or empty($source['result']['customer']['email'])
           or ( ! isset($source['result']['person']['name']))
           or ( ! isset($source['result']['account']['locale']))
@@ -132,7 +132,7 @@ class AccountSimplifiedConnector extends AbstractConnector
             throw new InvalidResponseException(['response' => $source]);
         }
         $result = [
-            'id'    => $source['result']['account']['id'],
+            'accessToken' => $source['result']['account']['access_token'],
             'email' => $source['result']['customer']['email'],
             'name'  => $source['result']['person']['name'],
             'locale' => $source['result']['account']['locale'],
@@ -145,7 +145,7 @@ class AccountSimplifiedConnector extends AbstractConnector
     protected function initialize()
     {
         $defaultOptions = $this->signatureOptionsFactory->getDefaultSignatureOptions();
-        unset($defaultOptions['accountId']);
+        unset($defaultOptions['accountAccessToken']);
         $this->signatureOptionsFactory->setDefaultSignatureOptions($defaultOptions);
     }
 }
