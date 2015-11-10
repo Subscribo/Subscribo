@@ -1,0 +1,21 @@
+{
+    "name": "subscribo/thick-client",
+    "description": "Umbrella package for adding Subscribo thick client functionality to Laravel projects",
+    "keywords": [
+        "Subscribo",
+        "thick client"
+    ],
+    "license": "proprietary",
+    "homepage": "http://subscribo.io",
+    "require": {
+        "php": ">=5.4",
+        "subscribo/thick-client-integration": "@dev",
+        "subscribo/support": "@dev",
+        "doctrine/dbal": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\ThickClient\\": "src/Subscribo/ThickClient/"
+        }
+    }
+}
