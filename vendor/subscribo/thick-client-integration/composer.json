@@ -11,7 +11,10 @@
     "require": {
         "php": ">=5.4",
         "subscribo/client-integration-common": "@dev",
-        "subscribo/support": "@dev"
+        "subscribo/api1-connector": "@dev",
+        "subscribo/support": "@dev",
+        "subscribo/restcommon": "@dev",
+        "webpatser/laravel-uuid": "^2.0"
     },
     "provide": {
         "subscribo/client-integration": "@dev"

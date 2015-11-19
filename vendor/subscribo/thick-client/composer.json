@@ -11,7 +11,9 @@
         "php": ">=5.4",
         "subscribo/thick-client-integration": "@dev",
         "subscribo/support": "@dev",
-        "doctrine/dbal": "*"
+        "doctrine/dbal": "*",
+        "illuminate/support": "*",
+        "illuminate/database": "*"
     },
     "autoload": {
         "psr-4": {

@@ -8,7 +8,7 @@ class AddSubscriboAccessTokenToUsersTableMigration extends Migration
     public function up()
     {
         Schema::table('users', function(Blueprint $table) {
-            $columnName = 'subscribo_access_token';
+            $columnName = $this->getAccessTokenColumnName();
             $table->string($columnName)->nullable();
         });
     }
@@ -16,8 +16,19 @@ class AddSubscriboAccessTokenToUsersTableMigration extends Migration
     public function down()
     {
         Schema::table('users', function(Blueprint $table) {
-            $columnName = 'subscribo_access_token';
+            $columnName = $this->getAccessTokenColumnName();
             $table->dropColumn($columnName);
         });
+    }
+
+    /**
+     * @return string
+     */
+    protected function getAccessTokenColumnName()
+    {
+        /** @var \Subscribo\ThickClientIntegration\Managers\ThickClientIntegrationManager $manager */
+        $manager = app('\\Subscribo\\ThickClientIntegration\\Managers\\ThickClientIntegrationManager');
+
+        return Str::snake($manager->getAccessTokenAttributeName());
     }
 }

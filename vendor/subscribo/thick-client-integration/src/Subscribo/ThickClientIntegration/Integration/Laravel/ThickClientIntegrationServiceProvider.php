@@ -14,6 +14,7 @@ class ThickClientIntegrationServiceProvider extends ServiceProvider
 {
     public function register()
     {
+        $this->app->register('\\Subscribo\\Api1Connector\\Integration\\Laravel\\Api1ConnectorServiceProvider');
         $this->app->singleton('\\Subscribo\\ThickClientIntegration\\Managers\\ThickClientIntegrationManager',
             function ($app) {
 
