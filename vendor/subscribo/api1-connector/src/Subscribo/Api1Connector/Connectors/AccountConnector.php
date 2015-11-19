@@ -1,14 +1,14 @@
 <?php
 
-namespace Subscribo\ApiClientAuth\Connectors;
+namespace Subscribo\Api1Connector\Connectors;
 
-use Subscribo\ApiClientAuth\Connectors\AccountSimplifiedConnector;
+use Subscribo\Api1Connector\Connectors\AccountSimplifiedConnector;
 use Subscribo\RestCommon\SignatureOptions;
 
 /**
  * Class AccountConnector - Extended functionality Account connector
  *
- * @package Subscribo\ApiClientAuth
+ * @package Subscribo\Api1Connector
  */
 class AccountConnector extends AccountSimplifiedConnector
 {
