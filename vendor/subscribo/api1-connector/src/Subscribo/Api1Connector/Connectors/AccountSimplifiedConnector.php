@@ -141,6 +141,20 @@ class AccountSimplifiedConnector extends AbstractConnector
         return $result;
     }
 
+    /**
+     * @param $data
+     * @return null|string
+     */
+    public static function extractAccessTokenFromResult($data)
+    {
+        if (empty($data['accessToken'])) {
+
+            return null;
+        }
+
+        return $data['accessToken'];
+    }
+
 
     protected function initialize()
     {
