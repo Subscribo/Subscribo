@@ -30,6 +30,7 @@
         "subscribo/localization": "@dev",
         "subscribo/exception": "@dev",
         "subscribo/support": "@dev",
+        "subscribo/api1-connector": "@dev",
         "psr/log": "~1.0"
     },
     "suggest": {

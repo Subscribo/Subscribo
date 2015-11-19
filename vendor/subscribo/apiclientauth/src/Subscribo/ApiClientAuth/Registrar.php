@@ -1,6 +1,6 @@
 <?php namespace Subscribo\ApiClientAuth;
 
-use Subscribo\ApiClientAuth\Connectors\AccountConnector;
+use Subscribo\Api1Connector\Connectors\AccountConnector;
 
 class Registrar
 {
