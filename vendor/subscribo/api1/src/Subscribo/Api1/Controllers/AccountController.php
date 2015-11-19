@@ -29,6 +29,7 @@ use Subscribo\RestCommon\Questionary;
 use Subscribo\RestCommon\ClientRedirection;
 use Subscribo\RestCommon\Exceptions\QuestionaryServerRequestHttpException;
 use Subscribo\RestCommon\Exceptions\ClientRedirectionServerRequestHttpException;
+use Subscribo\RestCommon\RestCommon;
 use Subscribo\Support\Arr;
 
 /**
@@ -579,6 +580,8 @@ class AccountController extends AbstractController
             throw new InvalidInputHttpException(['oauth' => $this->localizeError('postRegistration.oAuthInvalid')]);
         }
         $availableProvidersRule = AbstractOAuthManager::getAvailableDrivers();
+        $availableProvidersRule[] = RestCommon::OAUTH_PROVIDER_NAME_FOR_SUBSCRIBO_THICK_CLIENT;
+        $availableProvidersRule = array_unique($availableProvidersRule);
         array_unshift($availableProvidersRule, 'in');
         $oAuthData = $data['oauth'];
         $rules = [
