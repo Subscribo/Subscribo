@@ -10,7 +10,38 @@ return [
     | Contains an array with the applications available locales.
     |
     */
-    'locales' => ['en', 'es'],
+    'locales' => [
+        'en',
+        'fr',
+        'es' => [
+            'MX', // mexican spanish
+            'CO', // colombian spanish
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Locale separator
+    |--------------------------------------------------------------------------
+    |
+    | This is a string used to glue the language and the country when defining
+    | the available locales. Example: if set to '-', then the locale for
+    | colombian spanish will be saved as 'es-CO' into the database.
+    |
+    */
+    'locale_separator' => '-',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default locale
+    |--------------------------------------------------------------------------
+    |
+    | As a default locale, Translatable takes the locale of Laravel's
+    | translator. If for some reason you want to override this,
+    | you can specify what default should be used here.
+    |
+    */
+    'locale' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -21,6 +52,7 @@ return [
     | more flexibility and configure this option per "translatable"
     | instance, this value will be overridden by the property
     | $useTranslationFallback when defined
+    |
     */
     'use_fallback' => false,
 

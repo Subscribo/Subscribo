@@ -314,7 +314,7 @@ class Base
         } else {
             $array = str_split($string, 1);
         }
-        return join('', static::shuffleArray($array));
+        return implode('', static::shuffleArray($array));
     }
 
     private static function replaceWildcard($string, $wildcard = '#', $callback = 'static::randomDigit')
@@ -462,7 +462,7 @@ class Base
         // All A-F inside of [] become ABCDEF
         $regex = preg_replace_callback('/\[([^\]]+)\]/', function ($matches) {
             return '[' . preg_replace_callback('/(\w|\d)\-(\w|\d)/', function ($range) {
-                return join(range($range[1], $range[2]), '');
+                return implode(range($range[1], $range[2]), '');
             }, $matches[1]) . ']';
         }, $regex);
         // All [ABC] become B (or A or C)
@@ -506,13 +506,22 @@ class Base
     /**
      * Chainable method for making any formatter optional.
      *
-     * @param float $weight Set the probability of receiving a null value.
-     *                            "0" will always return null, "1" will always return the generator.
-     * @return Generator|DefaultGenerator
+     * @param float|integer $weight Set the probability of receiving a null value.
+     *                              "0" will always return null, "1" will always return the generator.
+     *                              If $weight is an integer value, then the same system works
+     *                              between 0 (always get false) and 100 (always get true).
+     * @return mixed|null
      */
     public function optional($weight = 0.5, $default = null)
     {
-        if (mt_rand() / mt_getrandmax() <= $weight) {
+        // old system based on 0.1 <= $weight <= 0.9
+        // TODO: remove in v2
+        if ($weight > 0 && $weight < 1 && mt_rand() / mt_getrandmax() <= $weight) {
+            return $this->generator;
+        }
+        
+        // new system with percentage
+        if (is_int($weight) && mt_rand(1, 100) <= $weight) {
             return $this->generator;
         }
 

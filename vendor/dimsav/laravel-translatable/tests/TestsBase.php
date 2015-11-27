@@ -7,12 +7,51 @@ class TestsBase extends TestCase
 {
     protected $queriesCount;
 
+    const DB_NAME     = 'translatable_test';
+    const DB_USERNAME = 'homestead';
+    const DB_PASSWORD = 'secret';
+
     public function setUp()
     {
+        $this->dropDb();
+        $this->createDb();
+
         parent::setUp();
 
         $this->resetDatabase();
         $this->countQueries();
+    }
+
+    /**
+     * return void
+     */
+    private function dropDb()
+    {
+        $this->runQuery("DROP DATABASE IF EXISTS ".static::DB_NAME);
+    }
+
+    /**
+     * return void
+     */
+    private function createDb()
+    {
+        $this->runQuery("CREATE DATABASE ".static::DB_NAME);
+    }
+
+    /**
+     * @param $query
+     * return void
+     */
+    private function runQuery($query)
+    {
+        $dbUsername = static::DB_USERNAME;
+        $dbPassword = static::DB_PASSWORD;
+
+        $command = "mysql -u $dbUsername ";
+        $command.= $dbPassword ? " -p$dbPassword" : "";
+        $command.= " -e '$query'";
+
+        exec($command . " 2>/dev/null");
     }
 
     public function testRunningMigration()
@@ -33,9 +72,9 @@ class TestsBase extends TestCase
         $app['config']->set('database.connections.mysql', [
             'driver'   => 'mysql',
             'host' => 'localhost',
-            'database' => 'translatable_test',
-            'username' => 'homestead',
-            'password' => 'secret',
+            'database' => static::DB_NAME,
+            'username' => static::DB_USERNAME,
+            'password' => static::DB_PASSWORD,
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
         ]);
@@ -51,9 +90,31 @@ class TestsBase extends TestCase
     {
         $that = $this;
         $event = App::make('events');
-        $event->listen('illuminate.query', function () use ($that) {
+        $event->listen('illuminate.query', function ($query, $bindings) use ($that) {
             $that->queriesCount++;
+            $bindings = $this->formatBindingsForSqlInjection($bindings);
+            $query    = $this->insertBindingsIntoQuery($query, $bindings);
+            $query = $this->beautifyQuery($query);
+            // echo("\n--- Query {$that->queriesCount}--- $query\n");
         });
+    }
+
+    private function beautifyQuery($query)
+    {
+        $capitalizeWords = ['select ', ' from ', ' where ', ' on ', ' join '];
+        $newLineWords = ['select ', 'from ', 'where ', 'join '];
+        foreach ($capitalizeWords as $word) {
+            $query = str_replace($word, strtoupper($word), $query);
+        }
+
+        foreach ($newLineWords as $word) {
+            $query = str_replace($word, "\n$word", $query);
+            $word = strtoupper($word);
+            $query = str_replace($word, "\n$word", $query);
+        }
+
+
+        return $query;
     }
 
     private function resetDatabase()
@@ -78,5 +139,39 @@ class TestsBase extends TestCase
             '--database' => 'mysql',
             '--path'     => $migrationsPath,
         ]);
+    }
+
+    /**
+     * @param $bindings
+     *
+     * @return mixed
+     */
+    private function formatBindingsForSqlInjection($bindings)
+    {
+        foreach ($bindings as $i => $binding) {
+            if ($binding instanceof DateTime) {
+                $bindings[$i] = $binding->format('\'Y-m-d H:i:s\'');
+            } else {
+                if (is_string($binding)) {
+                    $bindings[$i] = "'$binding'";
+                }
+            }
+        }
+        return $bindings;
+    }
+    /**
+     * @param $query
+     * @param $bindings
+     *
+     * @return string
+     */
+    private function insertBindingsIntoQuery($query, $bindings)
+    {
+        if (empty($bindings)) {
+            return $query;
+        }
+
+        $query = str_replace(array('%', '?'), array('%%', '%s'), $query);
+        return vsprintf($query, $bindings);
     }
 }

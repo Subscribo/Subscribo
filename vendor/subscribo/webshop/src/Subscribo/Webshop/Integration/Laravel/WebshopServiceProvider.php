@@ -36,8 +36,8 @@ class WebshopServiceProvider extends ServiceProvider
         }
         $defaultPaths = [
             'subscribo.webshop.product.list' => 'webshop/products',
-            'subscribo.webshop.product.getBuy' => 'webshop/buy/{productId}',
-            'subscribo.webshop.product.postBuy' => 'webshop/buy/{productId}',
+            'subscribo.webshop.product.getBuy' => 'webshop/buy/{productId?}',
+            'subscribo.webshop.product.postBuy' => 'webshop/buy/{productId?}',
             'subscribo.webshop.success' => 'webshop/success',
 
         ];

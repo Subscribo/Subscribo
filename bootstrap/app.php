@@ -87,6 +87,10 @@ if (class_exists('\\Subscribo\\TransactionPluginDummy\\Integration\\Laravel\\Tra
     $app->register('\\Subscribo\\TransactionPluginDummy\\Integration\\Laravel\\TransactionPluginDummyServiceProvider');
 }
 
+if (class_exists('\\Subscribo\\ThinClientIntegration\\Integration\\Laravel\\ThinClientIntegrationServiceProvider')) {
+    $app->register('\\Subscribo\\ThinClientIntegration\\Integration\\Laravel\\ThinClientIntegrationServiceProvider');
+}
+
 /*
 |--------------------------------------------------------------------------
 | Return The Application

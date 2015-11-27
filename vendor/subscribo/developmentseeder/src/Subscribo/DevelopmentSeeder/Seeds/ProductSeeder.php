@@ -117,5 +117,61 @@ class ProductSeeder extends Seeder
         $breadPrice->currency()->associate($euro);
         $breadPrice->everywhere = true;
         $breadPrice->save();
+
+        $cheese = Product::firstOrNew(['identifier' => 'CHEESE']);
+        $cheese->standalone = true;
+
+        $cheese->service()->associate($mainService);
+        $cheese->taxCategory()->associate($foodCategory);
+        $cheese->save();
+        $cheese->translateOrNew('en')->name = 'Cheese';
+        $cheese->translateOrNew('de')->name = 'Käse';
+        $cheese->translateOrNew('sk')->name = 'Syr';
+        $cheese->translateOrNew('cz')->name = 'Sýr';
+        $cheese->save();
+        $cheesePrice = Price::firstOrNew(['product_id' => $cheese->id]);
+        $cheesePrice->service()->associate($mainService);
+        $cheesePrice->amount = '4.50';
+        $cheesePrice->currency()->associate($euro);
+        $cheesePrice->everywhere = true;
+        $cheesePrice->save();
+
+        $potatoes = Product::firstOrNew(['identifier' => 'POTATOES1KG']);
+        $potatoes->standalone = true;
+
+        $potatoes->service()->associate($mainService);
+        $potatoes->taxCategory()->associate($foodCategory);
+        $potatoes->save();
+        $potatoes->translateOrNew('en')->name = 'Potatoes - 1 Kg';
+        $potatoes->translateOrNew('de')->name = 'Erdaäpfel - 1 Kg';
+        $potatoes->translateOrNew('sk')->name = 'Zemiaky - 1 Kg';
+        $potatoes->translateOrNew('cz')->name = 'Brambory - 1 Kg';
+        $potatoes->save();
+        $potatoesPrice = Price::firstOrNew(['product_id' => $potatoes->id]);
+        $potatoesPrice->service()->associate($mainService);
+        $potatoesPrice->amount = '0.80';
+        $potatoesPrice->currency()->associate($euro);
+        $potatoesPrice->everywhere = true;
+        $potatoesPrice->save();
+
+
+
+        $rice = Product::firstOrNew(['identifier' => 'RICE1KG']);
+        $rice->standalone = true;
+
+        $rice->service()->associate($mainService);
+        $rice->taxCategory()->associate($foodCategory);
+        $rice->save();
+        $rice->translateOrNew('en')->name = 'Rice - 1 Kg';
+        $rice->translateOrNew('de')->name = 'Reis - 1 Kg';
+        $rice->translateOrNew('sk')->name = 'Ryža - 1 Kg';
+        $rice->translateOrNew('cz')->name = 'Rýže - 1 Kg';
+        $rice->save();
+        $ricePrice = Price::firstOrNew(['product_id' => $rice->id]);
+        $ricePrice->service()->associate($mainService);
+        $ricePrice->amount = '0.70';
+        $ricePrice->currency()->associate($euro);
+        $ricePrice->everywhere = true;
+        $ricePrice->save();
     }
 }

@@ -1,10 +1,12 @@
-<?php namespace Subscribo\Api1;
+<?php
+
+namespace Subscribo\Api1;
 
 use Subscribo\Auth\Interfaces\ApiGuardInterface;
 use Subscribo\ModelCore\Models\Account;
 use Subscribo\ModelCore\Models\Service;
 use Subscribo\Exception\Exceptions\WrongServiceHttpException;
-use Subscribo\RestCommon\AccountIdTransport;
+use Subscribo\RestCommon\AccountAccessTokenTransport;
 use Subscribo\Localization\Interfaces\LocalizerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -43,9 +45,9 @@ class Context
     protected $account = false;
 
     /**
-     * @var bool|null|int
+     * @var bool|string
      */
-    protected $accountId = false;
+    protected $accountAccessToken = false;
 
     /**
      * @var LocalizerInterface
@@ -155,38 +157,60 @@ class Context
     }
 
     /**
+     * @return string|null
+     */
+    public function getAccountAccessToken()
+    {
+        if (false === $this->accountAccessToken) {
+
+            return $this->retrieveAccountAccessToken();
+        }
+
+        return $this->accountAccessToken;
+    }
+
+    public function retrieveAccountAccessToken()
+    {
+        $this->account = false;
+
+        $this->accountAccessToken = $this->retrieveAccountAccessTokenFromRequestQuery()
+            ?: AccountAccessTokenTransport::extractAccountAccessTokenFromProcessIncomingRequestResult(
+                $this->auth->processingResult()
+            );
+
+        return $this->accountAccessToken;
+    }
+
+    /**
+     * @deprecated
      * @return int
      */
     public function getAccountId()
     {
-        if (false === $this->accountId)
-        {
-            return $this->retrieveAccountId();
+        $this->account = $this->getAccount();
+
+        if ($this->account) {
+
+            return intval($this->account->id);
         }
-        return $this->accountId;
+
+        return null;
     }
 
     /**
+     * @deprecated
      * @return int|null
      */
     public function retrieveAccountId()
     {
-        $this->account = false;
+        $this->account = $this->retrieveAccount();
 
-        $this->accountId = $this->retrieveAccountIdFromRequestQuery()
-            ?: AccountIdTransport::extractAccountIdFromProcessIncomingRequestResult($this->auth->processingResult());
+        if ($this->account) {
 
-        return $this->accountId;
-    }
-
-    protected function retrieveAccountIdFromRequestQuery()
-    {
-        $request = $this->getRequest();
-        $accountIdInQuery = $request->query('account_id', null);
-        if (empty($accountIdInQuery)) {
-            return null;
+            return intval($this->account->id);
         }
-        return intval($accountIdInQuery);
+
+        return null;
     }
 
     /**
@@ -196,11 +220,13 @@ class Context
     public function getAccount($autoCheck = true)
     {
         if (false === $this->account) {
+
             return $this->retrieveAccount($autoCheck);
         }
         if ($autoCheck) {
             $this->checkServiceForAccount($this->account);
         }
+
         return $this->account;
     }
 
@@ -210,15 +236,17 @@ class Context
      */
     public function retrieveAccount($autoCheck = true)
     {
-        $accountId = $this->retrieveAccountId();
-        if (empty($accountId)) {
+        $accountAccessToken = $this->retrieveAccountAccessToken();
+        if (empty($accountAccessToken)) {
             $this->account = null;
+
             return null;
         }
-        $this->account = Account::find($accountId);
+        $this->account = Account::findByAccountAccessToken($accountAccessToken);
         if ($autoCheck) {
             $this->checkServiceForAccount($this->account);
         }
+
         return $this->account;
     }
 
@@ -229,6 +257,7 @@ class Context
     public function checkServiceForAccount(Account $account = null)
     {
         if (is_null($account)) {
+
             return;
         }
         if ($account->serviceId !== $this->getServiceId()) {
@@ -262,5 +291,13 @@ class Context
     public function log($message, array $context = [], $level = LogLevel::NOTICE)
     {
         $this->logger->log($level, $message, $context);
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function retrieveAccountAccessTokenFromRequestQuery()
+    {
+        return $this->getRequest()->query('account_access_token', null);
     }
 }

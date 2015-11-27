@@ -69,7 +69,6 @@ class WebshopController extends Controller
     }
 
     /**
-     * @param $id
      * @param AccountConnector $accountConnector
      * @param BusinessConnector $businessConnector
      * @param TransactionConnector $transactionConnector
@@ -81,10 +80,11 @@ class WebshopController extends Controller
      * @param CookieDeposit $cookieDeposit
      * @param LoggerInterface $logger
      * @param Store $session
+     * @param null|int|string $id
      * @return \Illuminate\View\View
      * @throws \Subscribo\Exception\Exceptions\RuntimeException
      */
-    public function getBuyProduct($id, AccountConnector $accountConnector, BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger, Store $session)
+    public function getBuyProduct(AccountConnector $accountConnector, BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger, Store $session, $id = null)
     {
         $resultInSession = $session->pull($this->sessionKeyServerRequestHandledResult);
         if ($resultInSession) {
@@ -92,7 +92,12 @@ class WebshopController extends Controller
             return $this->handleResultInSession($resultInSession, $businessConnector, $transactionConnector, $localizer, $request, $auth, $registrar, $sessionDeposit, $cookieDeposit, $logger, $session);
         }
         try {
-            $product = $businessConnector->getProduct($id);
+            $products = $businessConnector->getProduct();
+            $oldItems = $request->old('item');
+            $selectedProduct = static::pickProductById($products, $id);
+            if ($selectedProduct and ! isset($oldItems[$selectedProduct['price_id']])) {
+                $oldItems[$selectedProduct['price_id']] = 1;
+            }
             $subscriptionPeriods = $this->acquireSubscriptionPeriods($businessConnector, false, $localizer);
             $transactionGateways = $transactionConnector->getGateway();
             $addresses = $auth->user() ? $accountConnector->getAddress() : [];
@@ -106,11 +111,9 @@ class WebshopController extends Controller
         } catch (Exception $e) {
             throw new RuntimeException('Error in communication with API', 0, $e);
         }
-        if (empty($product['name'])) {
-            $product['name'] = $product['identifier'];
-        }
         $data = [
-            'product' => $product,
+            'products' => $businessConnector->getProduct(),
+            'oldItems' => $oldItems,
             'transactionGateways' => $transactionGateways,
             'localizer' => $localizer->template('messages', 'webshop')->setPrefix('template.product.buy'),
             'addresses' => $addresses,
@@ -123,7 +126,6 @@ class WebshopController extends Controller
     }
 
     /**
-     * @param $id
      * @param BusinessConnector $businessConnector
      * @param TransactionConnector $transactionConnector
      * @param LocalizerInterface $localizer
@@ -134,9 +136,10 @@ class WebshopController extends Controller
      * @param CookieDeposit $cookieDeposit
      * @param LoggerInterface $logger
      * @param Store $session
+     * @param null|int|string $id
      * @return mixed
      */
-    public function postBuyProduct($id, BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger, Store $session)
+    public function postBuyProduct(BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger, Store $session, $id = null)
     {
         $subscriptionPeriodKeys = $this->acquireSubscriptionPeriods($businessConnector, true);
         $orderValidationRules = [
@@ -146,8 +149,12 @@ class WebshopController extends Controller
             'address_id' => 'integer',
             'shipping_address_id' => 'integer',
             'billing_is_same' => 'boolean',
-            'item_identifier' => 'required|numeric',
+            'item' => 'required|array',
         ];
+        $products = $businessConnector->getProduct();
+        foreach ($products as $product) {
+            $orderValidationRules['item.'.$product['price_id']] = 'integer|min:1';
+        }
         $usualDeliveryWindowTypes = $businessConnector->getUsualDeliveryWindowTypes();
         if ($usualDeliveryWindowTypes) {
             $windowTypeIds = [];
@@ -166,7 +173,16 @@ class WebshopController extends Controller
         $validatedData = array_intersect_key($request->request->all(), $validationRules);
         $exceptInput = ['password', 'password_confirmation', '_token'];
         $inputForRedirect = $request->except($exceptInput);
+        $totalAmount = 0;
+        foreach ($validatedData['item'] as $itemAmount) {
+            $totalAmount += $itemAmount;
+        }
+        if ($totalAmount < 1) {
 
+            return redirect()->back()->withInput($inputForRedirect)
+                ->withErrors(['cart' => $localizer->trans('errors.cartEmpty', [], 'webshop::messages')]);
+
+        }
         $session->set($this->sessionKeyBuyProductValidatedInput, $validatedData);
         $session->set($this->sessionKeyBuyProductInputForRedirect, $inputForRedirect);
 
@@ -212,13 +228,12 @@ class WebshopController extends Controller
                 $processingResult = [];
             }
         } elseif ($stage == self::STAGE_CREATE_ORDER) {
-            $priceId = $validatedData['item_identifier'];
             $data = $validatedData;
+            $data['prices'] = array_filter($data['item']);
+            unset($data['item']);
             unset($data['transaction_gateway']);
             unset($data['billing_is_same']);
-            unset($data['item_identifier']);
             unset($data['subscription_period']);
-            $data['prices'] = [$priceId => 1];
             $callback = [$businessConnector, 'postOrder'];
             $genericErrorMessage = function () use ($localizer) {
                 return $localizer->trans('errors.orderFailed', [], 'webshop::messages');
@@ -392,5 +407,27 @@ class WebshopController extends Controller
         $result[self::NO_SUBSCRIPTION_OPTION] = $localizer->trans($noSubsTrId, [], 'webshop::messages');
 
         return $result;
+    }
+
+    /**
+     * @param array $products
+     * @param $id
+     * @return null|array
+     */
+    protected static function pickProductById(array $products, $id)
+    {
+        if (empty($id)) {
+
+            return null;
+        }
+        $stringId = strval($id);
+        foreach ($products as $product) {
+            if (strval($product['id']) === $stringId) {
+
+                return $product;
+            }
+        }
+
+        return null;
     }
 }

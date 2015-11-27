@@ -690,14 +690,14 @@ class Router implements RegistrarContract
      */
     protected function runRouteWithinStack(Route $route, Request $request)
     {
-        $middleware = $this->gatherRouteMiddlewares($route);
-
         $shouldSkipMiddleware = $this->container->bound('middleware.disable') &&
                                 $this->container->make('middleware.disable') === true;
 
+        $middleware = $shouldSkipMiddleware ? [] : $this->gatherRouteMiddlewares($route);
+
         return (new Pipeline($this->container))
                         ->send($request)
-                        ->through($shouldSkipMiddleware ? [] : $middleware)
+                        ->through($middleware)
                         ->then(function ($request) use ($route) {
                             return $this->prepareResponse(
                                 $request,
@@ -723,7 +723,7 @@ class Router implements RegistrarContract
     /**
      * Resolve the middleware name to a class name preserving passed parameters.
      *
-     * @param $name
+     * @param  string  $name
      * @return string
      */
     public function resolveMiddlewareClassName($name)
@@ -928,7 +928,7 @@ class Router implements RegistrarContract
      * @param  \Closure|null  $callback
      * @return void
      *
-     * @throws NotFoundHttpException
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function model($key, $class, Closure $callback = null)
     {

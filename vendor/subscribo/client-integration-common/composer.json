@@ -1,0 +1,20 @@
+{
+    "name": "subscribo/client-integration-common",
+    "description": "Base package for integrating Subscribo API Client functionality",
+    "keywords":[
+        "Subscribo",
+        "client",
+        "frontend",
+        "integration"
+    ],
+    "license": "proprietary",
+    "homepage": "http://subscribo.io",
+    "require": {
+        "php": ">=5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\ClientIntegrationCommon\\": "src/Subscribo/ClientIntegrationCommon/"
+        }
+    }
+}
