@@ -1,0 +1,22 @@
+{
+    "name": "subscribo/client-checkout-common",
+    "description": "Common files for Subscribo Client Checkout",
+    "keywords": [
+        "checkout",
+        "common",
+        "Subscribo client"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "require": {
+        "php": "~5.4",
+        "subscribo/support": "@dev",
+        "subscribo/apiclient": "@dev",
+        "subscribo/api1-connector": "@dev"
+    },
+    "autoload": {
+        "psr-4":{
+            "Subscribo\\ClientCheckoutCommon\\": "src/Subscribo/ClientCheckoutCommon/"
+        }
+    }
+}

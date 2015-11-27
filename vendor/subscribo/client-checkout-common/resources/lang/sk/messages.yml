@@ -1,0 +1,65 @@
+# Slovak translations resource file for package Subscribo ClientCheckoutCommon - for templates
+# Translation work in progress: (100%)
+template.product.list.item:
+# Template resources/views/client-checkout-common/product/list/item.blade.php
+        heading: Zoznam produktov
+        grossPrice: 'Cena:'
+        netPrice: 'Cena bez dane:'
+        tax: 'Daň:'
+# Template resources/views/client-checkout-common/product/buy.blade.php
+    buy:
+        heading: Chcete kúpiť {productName}?
+        grossPrice: 'Cena:'
+        netPrice: 'Cena bez dane:'
+        tax: 'Daň:'
+        backToListLink: Späť na zoznam produktov
+# Template resources/views/client-checkout-common/product/success.blade.php
+    success:
+        heading: Objednané
+        text: Vaša objednávka bola spracovaná.
+forms:
+    buy:
+# Template resources/views/client-checkout-common/forms/buy/forguest.blade.php
+        forguest.submitButton: Kúpiť
+# Template resources/views/client-checkout-common/forms/buy/foruser.blade.php
+        foruser.submitButton: Kúpiť
+# Template resources/views/client-checkout-common/forms/buy/transactiongatewayselect.blade.php
+        transactiongatewayselect:
+            title: 'Vyberte spôsob platby:'
+        address:
+            gender.title: Pohlavie:
+            gender.man: Muž
+            gender.woman: Žena
+            firstName: Prvé meno (krstné meno / mená):
+            lastName: Posledné meno (priezvisko / priezviská):
+            street: Ulica (a číslo domu):
+            city: Mesto:
+            postCode: PSČ:
+            country: Krajina:
+            phone: Telefón:
+            deliveryInformation: Dodatočné informácie pre dodanie:
+# Template resources/views/client-checkout-common/forms/buy/addressselector.blade.php
+            select:
+                title:
+                    default: Vyberte adresu
+                    shipping: Vyberte adresu pre dodanie
+                    billing: Vyberte fakturačnú adresu
+                add:
+                    default: Zadajte novú adresu
+                    shipping: Zadajte novú adresu pre dodanie
+                    billing: Zadajte novú fakturačnú adresu
+# Template resources/views/client-checkout-common/forms/buy/billing.blade.php
+            billingIsSame: Fakturačná adresa je rovnaká
+# Template resources/views/client-checkout-common/forms/buy/register.blade.php
+        register:
+            email: E-mail:
+            password: Heslo:
+            passwordConfirmation: Potvrdenie hesla:
+# Template resources/views/client-checkout-common/forms/buy/deliveryselector.blade.php
+        delivery.select:
+            title: Select your first delivery
+            text: Deliveries starting from {start}
+# ClientCheckoutCommonControllerTrait.php
+errors:
+    orderFailed: Pokus o zadanie objednávky zlyhal
+    transactionFailed: Transakcia mohla zlyhať, ale mohla aj prebehnúť. Prosím, buďte opatrní pred zadaním novej požiadavky. Môžte kontaktovať svoju banku alebo obchodníka pre bližšie informácie.
