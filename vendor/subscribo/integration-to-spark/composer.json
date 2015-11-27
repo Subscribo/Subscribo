@@ -1,0 +1,23 @@
+{
+    "name": "subscribo/integration-to-spark",
+    "description": "Package for integrating Subscribo thick client to Laravel Spark",
+    "keywords": [
+        "Subscribo",
+        "subscription management",
+        "client",
+        "integration"
+    ],
+    "license": "proprietary",
+    "homepage": "http://subscribo.io",
+    "require": {
+        "php": ">=5.4",
+        "subscribo/thick-client": "@dev",
+        "subscribo/webshop": "@dev",
+        "subscribo/support": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\IntegrationToSpark\\": "src/Subscribo/IntegrationToSpark/"
+        }
+    }
+}

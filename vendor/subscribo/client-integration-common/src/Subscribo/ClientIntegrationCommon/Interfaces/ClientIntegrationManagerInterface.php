@@ -10,7 +10,7 @@ namespace Subscribo\ClientIntegrationCommon\Interfaces;
 interface ClientIntegrationManagerInterface
 {
     /**
-     * @return int|null
+     * @return string|null
      */
     public function getAccountAccessToken();
 

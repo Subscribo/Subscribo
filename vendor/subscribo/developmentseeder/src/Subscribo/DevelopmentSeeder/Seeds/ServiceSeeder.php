@@ -8,6 +8,7 @@ use Subscribo\ModelCore\Models\Locale;
 use Subscribo\ModelCore\Models\Currency;
 use Subscribo\ModelCore\Models\Country;
 use Subscribo\ModelCore\Models\OAuthConfiguration;
+use Subscribo\RestCommon\RestCommon;
 
 class ServiceSeeder extends Seeder {
 
@@ -47,6 +48,7 @@ class ServiceSeeder extends Seeder {
         $frontendService->availableLocales()->attach($frontendSlovak);
         ServiceModule::enableModule($frontendService, ServiceModule::MODULE_ACCOUNT_MERGING);
         ServiceModule::enableModule($frontendService, ServiceModule::MODULE_WIDGET);
+        $this->makeClientOAuthConfiguration($frontendService);
 
         if (env('FACEBOOK_APP_CLIENT_ID')) {
             $oAuthConfiguration = new OAuthConfiguration();
@@ -85,6 +87,7 @@ class ServiceSeeder extends Seeder {
         $test2Service->availableLocales()->attach($american);
         $test2Service->availableLocales()->attach($british);
         $test2Service->availableLocales()->attach($german);
+        $this->makeClientOAuthConfiguration($test2Service);
 
         ServiceModule::enableModule($test2Service, ServiceModule::MODULE_ACCOUNT_MERGING);
         ServiceModule::enableModule($test2Service, ServiceModule::MODULE_WIDGET);
@@ -101,6 +104,7 @@ class ServiceSeeder extends Seeder {
         $test3Service->save();
         $test3Service->availableLocales()->attach($american);
         $test3Service->availableLocales()->attach($british);
+        $this->makeClientOAuthConfiguration($test3Service);
 
         ServiceModule::enableModule($test3Service, ServiceModule::MODULE_ACCOUNT_MERGING);
         ServiceModule::enableModule($test3Service, ServiceModule::MODULE_WIDGET);
@@ -112,6 +116,7 @@ class ServiceSeeder extends Seeder {
         $anotherService->save();
         $anotherService->availableLocales()->attach($american);
         $anotherService->availableLocales()->attach($british);
+        $this->makeClientOAuthConfiguration($anotherService);
 
         ServiceModule::enableModule($anotherService, ServiceModule::MODULE_ACCOUNT_MERGING);
         ServiceModule::enableModule($anotherService, ServiceModule::MODULE_WIDGET);
@@ -125,5 +130,14 @@ class ServiceSeeder extends Seeder {
         $servicePool3->services()->attach($frontendService);
         $servicePool3->services()->attach($test3Service);
         $servicePool3->save();
+    }
+
+
+    protected function makeClientOAuthConfiguration(Service $service)
+    {
+        $configuration = new OAuthConfiguration();
+        $configuration->service()->associate($service);
+        $configuration->provider = RestCommon::OAUTH_PROVIDER_NAME_FOR_SUBSCRIBO_THICK_CLIENT;
+        $configuration->save();
     }
 }
