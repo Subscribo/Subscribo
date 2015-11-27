@@ -23,9 +23,10 @@ use Subscribo\RestCommon\Signer;
 use Subscribo\RestCommon\SignatureOptions;
 use Subscribo\Support\Arr;
 use GuzzleHttp\Client;
-use GuzzleHttp\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Uri;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class RestClient
@@ -102,7 +103,7 @@ class RestClient {
     /**
      * Forwards the request to given uri stub and format the result as Symfony Response
      *
-     * @param Request $request
+     * @param SymfonyRequest $request
      * @param string $uriStub
      * @param SignatureOptions|array|null $signatureOptions
      * @param bool $errorToException
@@ -114,7 +115,7 @@ class RestClient {
      * @throws Exceptions\TokenConfigurationHttpException
      * @throws Exceptions\RedirectionHttpException
      */
-    public function forward(Request $request, $uriStub, $signatureOptions = null, $errorToException = true)
+    public function forward(SymfonyRequest $request, $uriStub, $signatureOptions = null, $errorToException = true)
     {
         try {
             $callResponse = $this->call(
@@ -191,7 +192,7 @@ class RestClient {
      * @param array|null $headers
      * @param SignatureOptions|array|null $signatureOptions
      * @param bool $errorResponseToException
-     * @return \GuzzleHttp\Message\FutureResponse|ResponseInterface|\GuzzleHttp\Ring\Future\FutureInterface|mixed|null
+     * @return ResponseInterface
      * @throws Exceptions\ConnectionException
      * @throws Exceptions\ServerErrorException
      * @throws Exceptions\ClientErrorException
@@ -253,13 +254,13 @@ class RestClient {
      * @param array|null $query
      * @param array|null $headers
      * @param array $options
-     * @param bool|null $exceptions Whether to throw exceptions on 4xx and 5xx responses
-     * @return \GuzzleHttp\Message\FutureResponse|ResponseInterface|\GuzzleHttp\Ring\Future\FutureInterface|mixed|null
+     * @param bool|null $httpErrors Whether to throw exceptions on 4xx and 5xx responses
+     * @return ResponseInterface
      */
-    protected function callRaw($uri, $method = 'GET', $body = null, array $query = null, array $headers = null, array $options = array(), $exceptions = false)
+    protected function callRaw($uri, $method = 'GET', $body = null, array $query = null, array $headers = null, array $options = array(), $httpErrors = false)
     {
-        if ( ! is_null($exceptions)) {
-            $options['exceptions'] = $exceptions;
+        if ( ! is_null($httpErrors)) {
+            $options['http_errors'] = $httpErrors;
         }
         if ( ! is_null($headers)) {
             $options['headers'] = $headers;
@@ -271,21 +272,20 @@ class RestClient {
             $options['query'] = $query;
         }
         $client = $this->client();
-        $request = $client->createRequest($method, $uri, $options);
-        $response = $client->send($request);
+        $response = $client->request($method, $uri, $options);
         return $response;
     }
 
     /**
-     * @param ResponseInterface $callResponse
+     * @param ResponseInterface $response
      * @param bool $throwExceptions
      * @return array|null
      * @throws \Exception
      */
-    protected function extractResponseData(ResponseInterface $callResponse, $throwExceptions = true)
+    protected function extractResponseData(ResponseInterface $response, $throwExceptions = true)
     {
         try {
-            return $callResponse->json(['big_int_strings' => true, 'object' => false]);
+            return json_decode($response->getBody()->__toString(), true, 512, JSON_BIGINT_AS_STRING);
         } catch (Exception $e) {
             if ($throwExceptions) {
                 throw $e;
@@ -302,8 +302,12 @@ class RestClient {
         if ($this->client) {
             return $this->client;
         }
-        $baseUrl = new \GuzzleHttp\Url($this->protocol, $this->host, null, null, $this->port, $this->uriBase);
-        $this->client = new Client(['base_url' => $baseUrl]);
+        $baseUri = (new Uri())
+            ->withScheme($this->protocol)
+            ->withHost($this->host)
+            ->withPort($this->port)
+            ->withPath($this->uriBase);
+        $this->client = new Client(['base_uri' => $baseUri]);
         return $this->client;
     }
 
@@ -331,7 +335,7 @@ class RestClient {
             'headers' => $originalHeaders,
         ];
         try {
-            $dataFull = json_decode($responseContent, true);
+            $dataFull = json_decode($responseContent, true, 512, JSON_BIGINT_AS_STRING);
             $serverRequestException = ServerRequestExceptionFactory::make($statusCode, $dataFull);
         } catch (Exception $e) {
             throw new InvalidResponseException(['originalResponse' => $originalResponse], true, true, $e);
@@ -386,7 +390,7 @@ class RestClient {
 
         /* Processing 4xx errors */
 
-        $dataFull = json_decode($responseContent, true);
+        $dataFull = json_decode($responseContent, true, 512, JSON_BIGINT_AS_STRING);
         $keyName = ClientErrorException::getKey();
 
         $data = (empty($dataFull[$keyName]) or ( ! is_array($dataFull[$keyName]))) ? array() : $dataFull[$keyName];

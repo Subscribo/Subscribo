@@ -1,0 +1,27 @@
+{
+    "name": "subscribo/thick-client-integration",
+    "description": "Integration package for Subscribo thick client",
+    "keywords": [
+        "Subscribo",
+        "thick client",
+        "client integration"
+    ],
+    "license": "proprietary",
+    "homepage": "http://subscribo.io",
+    "require": {
+        "php": ">=5.4",
+        "subscribo/client-integration-common": "@dev",
+        "subscribo/api1-connector": "@dev",
+        "subscribo/support": "@dev",
+        "subscribo/restcommon": "@dev",
+        "webpatser/laravel-uuid": "^2.0"
+    },
+    "provide": {
+        "subscribo/client-integration": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\ThickClientIntegration\\": "src/Subscribo/ThickClientIntegration/"
+        }
+    }
+}

@@ -31,7 +31,7 @@ class ThinClientIntegrationManager implements ClientIntegrationManagerInterface
     }
 
     /**
-     * @return int|null
+     * @return string|null
      */
     public function getAccountAccessToken()
     {

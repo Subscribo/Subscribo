@@ -9,7 +9,7 @@ use Subscribo\Support\Arr;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Contracts\Events\Dispatcher;
-use Subscribo\ApiClientAuth\Connectors\AccountSimplifiedConnector;
+use Subscribo\Api1Connector\Connectors\AccountSimplifiedConnector;
 use Psr\Log\LoggerInterface;
 
 /**
