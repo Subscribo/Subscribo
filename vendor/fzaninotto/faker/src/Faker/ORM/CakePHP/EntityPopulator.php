@@ -17,11 +17,17 @@ class EntityPopulator
         $this->class = $class;
     }
 
+    /**
+     * @param string $name
+     */
     public function __get($name)
     {
         return $this->{$name};
     }
 
+    /**
+     * @param string $name
+     */
     public function __set($name, $value)
     {
         $this->{$name} = $value;
@@ -37,6 +43,9 @@ class EntityPopulator
         $this->modifiers = array_merge($this->modifiers, $modifiers);
     }
 
+    /**
+     * @return array
+     */
     public function guessColumnFormatters($populator)
     {
         $formatters = [];
@@ -71,7 +80,10 @@ class EntityPopulator
         return $formatters;
     }
 
-    public function guessModifiers($populator)
+    /**
+     * @return array
+     */
+    public function guessModifiers()
     {
         $modifiers = [];
         $table = $this->getTable($this->class);
@@ -99,7 +111,6 @@ class EntityPopulator
                 }
 
                 $foreignKey = $foreignKeys[array_rand($foreignKeys)];
-                $primaryKey = $table->primaryKey();
                 $data[$assoc->foreignKey()] = $foreignKey;
                 return $data;
             };
@@ -110,6 +121,9 @@ class EntityPopulator
         return $modifiers;
     }
 
+    /**
+     * @param array $options
+     */
     public function execute($class, $insertedEntities, $options = [])
     {
         $table = $this->getTable($class);

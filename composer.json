@@ -12,9 +12,11 @@
         "subscribo/modifier": "@dev",
         "subscribo/developmentseeder": "@dev",
         "twbs/bootstrap": "^3.3.5",
-        "subscribo/webshop": "@dev"
+        "subscribo/webshop": "@dev",
+        "subscribo/thin-client-integration": "@dev"
     },
     "require-dev": {
+        "subscribo/transaction-plugin-dummy": "@dev",
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "~4.0",

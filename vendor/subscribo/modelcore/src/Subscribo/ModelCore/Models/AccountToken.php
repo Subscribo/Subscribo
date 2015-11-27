@@ -1,25 +1,47 @@
-<?php namespace Subscribo\ModelCore\Models;
+<?php
+
+namespace Subscribo\ModelCore\Models;
 
 /**
  * Model AccountToken
  *
  * Model class for being changed and used in the application
  */
-class AccountToken extends \Subscribo\ModelCore\Bases\AccountToken {
-
+class AccountToken extends \Subscribo\ModelCore\Bases\AccountToken
+{
     /**
-     * @param $identifier
-     * @param $serviceId
-     * @return AccountToken|static|null
+     * todo - test
+     *
+     * @param array $oAuthData
+     * @param int $serviceId
+     * @return AccountToken|null|bool
      */
-    public static function findByIdentifierAndServiceId($identifier, $serviceId)
+    public static function findByOAuthDataAndServiceId(array $oAuthData, $serviceId)
     {
-        $result = static::query()
-            ->where('identifier', $identifier)
+        /** @var AccountToken $instance */
+        $instance = static::query()
+            ->where('identifier', $oAuthData['identifier'])
+            ->where('provider', $oAuthData['provider'])
             ->whereHas('account', function ($query) use ($serviceId) {
                 $query->where('service_id', $serviceId);
             })->first();
-        return $result;
+
+        if (empty($instance)) {
+
+            return null;
+        }
+        $token = isset($oAuthData['token']) ? strval($oAuthData['token']) : '';
+        $secret = isset($oAuthData['secret']) ? strval($oAuthData['secret']) : '';
+        if ($instance->token and (strval($instance->token) !== $token)) {
+
+            return false;
+        }
+        if ($instance->secret and (strval($instance->secret) !== $secret)) {
+
+            return false;
+        }
+
+        return $instance;
     }
 
     /**
@@ -34,5 +56,4 @@ class AccountToken extends \Subscribo\ModelCore\Bases\AccountToken {
         $accountToken->save();
         return $accountToken;
     }
-
 }

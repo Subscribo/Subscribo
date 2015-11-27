@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
+- [#88](https://github.com/zendframework/zend-diactoros/pull/88) updates the
+  `SapiEmitter` to emit a `Content-Length` header with the content length as
+  reported by the response body stream.
 - [#77](https://github.com/zendframework/zend-diactoros/pull/77) adds a new
   response type, `Zend\Diactoros\Response\TextResponse`, for returning plain
   text responses. By default, it sets the content type to `text/plain;
@@ -26,7 +29,7 @@ All notable changes to this project will be documented in this file, in reverse 
   `HtmlResponse` to set the charset to utf-8 by default (if no content type
   header is provided at instantiation).
 
-## 1.1.4 - TBD
+## 1.1.5 - TBD
 
 ### Added
 
@@ -43,6 +46,31 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Fixed
 
 - Nothing.
+
+## 1.1.4 - 2015-10-16
+
+### Added
+
+- [#98](https://github.com/zendframework/zend-diactoros/pull/98) adds
+  `JSON_UNESCAPED_SLASHES` to the default `json_encode` flags used by
+  `Zend\Diactoros\Response\JsonResponse`.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#96](https://github.com/zendframework/zend-diactoros/pull/96) updates
+  `withPort()` to allow `null` port values (indicating usage of default for
+  the given scheme).
+- [#91](https://github.com/zendframework/zend-diactoros/pull/91) fixes the
+  logic of `withUri()` to do a case-insensitive check for an existing `Host`
+  header, replacing it with the new one.
 
 ## 1.1.3 - 2015-08-10
 
@@ -224,7 +252,7 @@ immediately.
 - [#57](https://github.com/zendframework/zend-diactoros/pull/57) fixes the
   behavior of how the `ServerRequestFactory` marshals upload files when they are
   represented as a nested associative array.
-- [#49](https://github.com/zendframework/zend-diactoros/pull/49) provides several 
+- [#49](https://github.com/zendframework/zend-diactoros/pull/49) provides several
   fixes that ensure that Diactoros complies with the PSR-7 specification:
   - `MessageInterface::getHeaderLine()` MUST return a string (that string CAN be
     empty). Previously, Diactoros would return `null`.

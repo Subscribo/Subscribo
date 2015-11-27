@@ -1,4 +1,6 @@
-<?php namespace Subscribo\Api1\Factories;
+<?php
+
+namespace Subscribo\Api1\Factories;
 
 use Illuminate\Contracts\Hashing\Hasher;
 use Subscribo\Api1\Exceptions\InvalidArgumentException;
@@ -92,6 +94,9 @@ class AccountFactory
         }
         $account = Account::findByEmailAndServiceId($email, $serviceId);
         if ($account) {
+            //todo - is this path used at all? maybe we should just throw an exception and test usual workflows...
+            $accountData = $account->toArray(); //Note: ->export(true) is not used on purpose
+            // in case this breaks, we should investigate workflow, when this path is used
             $status = CustomerRegistration::STATUS_EXISTING_ACCOUNT_USED;
             $customer = $account->customer;
             $address = Address::ifDataContainsAddressFindSimilarOrGenerate($dataPossiblyWithAddress, $customer);
@@ -116,6 +121,7 @@ class AccountFactory
                 $customer->save();
             }
             $account = Account::generate($customer, $service, $locale);
+            $accountData = $account->export(true);
         }
         if ($customerRegistration) {
             $accountToken = $customerRegistration->accountToken;
@@ -129,7 +135,7 @@ class AccountFactory
         }
         $result = [
             'customer' => $customer,
-            'account' => $account,
+            'account' => $accountData,
             'person' => $customer->person,
             'address' => $address,
         ];
@@ -139,19 +145,26 @@ class AccountFactory
     /**
      * @param string $email
      * @param string|int $serviceId
+     * @param bool $addAccessToken
      * @return array|null
      */
-    public function findAccountByEmailAndServiceId($email, $serviceId)
+    public function findAccountByEmailAndServiceId($email, $serviceId, $addAccessToken = false)
     {
         $serviceId = strval($serviceId);
         $customers = Customer::findAllByEmail($email);
         foreach($customers as $customer) {
             foreach ($customer->accounts as $account) {
                 if (strval($account->serviceId) === $serviceId) {
-                    return ['customer' => $customer, 'account' => $account, 'person' => $customer->person];
+
+                    return [
+                        'customer' => $customer,
+                        'account' => $account->export($addAccessToken),
+                        'person' => $customer->person
+                    ];
                 }
             }
         }
+
         return null;
     }
 

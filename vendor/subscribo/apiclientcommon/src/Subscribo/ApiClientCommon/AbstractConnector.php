@@ -21,10 +21,23 @@ abstract class AbstractConnector
      */
     protected $signatureOptionsFactory;
 
+    /**
+     * @param RestClient $restClient
+     * @param SignatureOptionsFactory $signatureOptionsFactory
+     */
     public function __construct(RestClient $restClient, SignatureOptionsFactory $signatureOptionsFactory)
     {
         $this->restClient = $restClient;
         $this->signatureOptionsFactory = $signatureOptionsFactory;
+        $this->initialize();
+    }
+
+    /**
+     * Method to be overridden in subclasses if needed
+     */
+    protected function initialize()
+    {
+
     }
 
     /**
@@ -33,10 +46,6 @@ abstract class AbstractConnector
      */
     protected function processSignatureOptions($signatureOptions = true)
     {
-        if ($signatureOptions instanceof SignatureOptions) {
-            return $signatureOptions;
-        }
         return $this->signatureOptionsFactory->generate($signatureOptions);
     }
-
 }
