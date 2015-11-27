@@ -1,0 +1,25 @@
+{
+    "name": "subscribo/api1-connector",
+    "description": "Connectors to Subscribo API version 1",
+    "keywords": [
+        "API version 1",
+        "Subscribo API",
+        "connector"
+    ],
+    "license": "proprietary",
+    "homepage": "http://subscribo.io",
+    "require": {
+        "php": ">=5.4",
+        "subscribo/apiclientcommon": "@dev",
+        "subscribo/restclient": "@dev",
+        "subscribo/restcommon": "@dev"
+    },
+    "provide": {
+        "subscribo/api-connector": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Subscribo\\Api1Connector\\": "src/Subscribo/Api1Connector/"
+        }
+    }
+}

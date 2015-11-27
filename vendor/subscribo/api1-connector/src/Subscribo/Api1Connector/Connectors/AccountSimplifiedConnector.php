@@ -1,6 +1,6 @@
 <?php
 
-namespace Subscribo\ApiClientAuth\Connectors;
+namespace Subscribo\Api1Connector\Connectors;
 
 use Subscribo\ApiClientCommon\AbstractConnector;
 use Subscribo\RestClient\Exceptions\InvalidResponseException;
@@ -10,7 +10,7 @@ use Subscribo\RestCommon\SignatureOptions;
  * Class AccountSimplifiedConnector Reduced functionality connector without user information
  *                                  to be used by RemoteAccountProvider
  *
- * @package Subscribo\ApiClientAuth
+ * @package Subscribo\Api1Connector
  */
 class AccountSimplifiedConnector extends AbstractConnector
 {
@@ -139,6 +139,20 @@ class AccountSimplifiedConnector extends AbstractConnector
             'rememberLocale' =>  $source['result']['account']['remember_locale'],
         ];
         return $result;
+    }
+
+    /**
+     * @param $data
+     * @return null|string
+     */
+    public static function extractAccessTokenFromResult($data)
+    {
+        if (empty($data['accessToken'])) {
+
+            return null;
+        }
+
+        return $data['accessToken'];
     }
 
 

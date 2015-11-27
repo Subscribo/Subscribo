@@ -12,7 +12,7 @@ use Subscribo\ApiClientAuth\Registrar;
 use Subscribo\Localization\Deposits\SessionDeposit;
 use Subscribo\Localization\Deposits\CookieDeposit;
 use App\Http\Controllers\Controller;
-use Subscribo\ApiClientAuth\Connectors\AccountConnector;
+use Subscribo\Api1Connector\Connectors\AccountConnector;
 use Subscribo\Webshop\Connectors\BusinessConnector;
 use Subscribo\Webshop\Connectors\TransactionConnector;
 use Subscribo\Localization\Interfaces\LocalizerInterface;

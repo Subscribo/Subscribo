@@ -30,7 +30,8 @@
         "subscribo/client-integration-common": "@dev",
         "subscribo/client-integration": "@dev",
         "symfony/http-foundation": "~2.6",
-        "guzzlehttp/guzzle": "~5.0"
+        "guzzlehttp/guzzle": "~6.0",
+        "psr/http-message": "~1.0"
     },
     "suggest": {
         "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0"
