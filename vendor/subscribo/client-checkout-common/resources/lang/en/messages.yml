@@ -1,13 +1,24 @@
 # English translations resource file for package Subscribo ClientCheckoutCommon - for templates
 # Translation work in progress: (100%)
-template.product.list.item:
-# Template resources/views/client-checkout-common/product/list/item.blade.php
+template.product:
+# Template resources/views/client-checkout-common/product/list.blade.php
+    list:
         heading: Product list
         grossPrice: 'Price:'
         netPrice: 'Price without tax:'
         tax: 'Tax:'
+        buyLink: Buy
+# Template resources/views/client-checkout-common/product/buy.blade.php - not used now
+    buy:
+        heading: Checkout
+        backToListLink: Back to product list
+# Template resources/views/client-checkout-common/product/success.blade.php
+    success:
+        heading: Ordered
+        text: Your order has been processed.
 forms:
     buy:
+# Template resources/views/client-checkout-common/forms/buy/cart.blade.php
         cart:
             name: Name
             grossPrice: Price
@@ -59,10 +70,16 @@ forms:
             title: How often would you like to receive this delivery?
             noSubscription: Just one time delivery (no subscription)
         deliveryWindowType.select.title: When would you like to receive this delivery?
-# ClientCheckoutCommonControllerTrait.php
+# CheckoutProcessor.php
 errors:
     cartEmpty: Your shopping cart is empty
-    orderFailed: Ordering has failed
+    orderFailed: During setting order attempt an error was encountered
     transactionFailed: Transaction might have failed, but also might have been processed. Please, be careful before making a new request. Feel free to contact your bank or merchant for further details.
-    subscriptionFailed: Subscription setting has failed
-    confirmationMessageFailed: Sending confirmation message has failed
+    subscriptionFailed: During subscription setting attempt an error was encountered
+    confirmationMessageFailed: During sending confirmation message attempt an error was encountered
+success:
+    flash: Your request has been processed. Do you want to make a new request?
+# General
+aria.label:
+# used now in template resources/views/client-checkout-common/forms/buy/flashmessage.blade.php
+    close: Close

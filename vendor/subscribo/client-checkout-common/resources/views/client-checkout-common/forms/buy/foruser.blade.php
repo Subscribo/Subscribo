@@ -1,4 +1,5 @@
 <div>
+    @include('subscribo::client-checkout-common.forms.buy.flashmessage')
     @include('subscribo::apiclientcommon.formerrors')
 
     <form method="POST">

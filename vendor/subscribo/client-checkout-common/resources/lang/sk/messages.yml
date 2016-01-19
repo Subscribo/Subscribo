@@ -1,17 +1,16 @@
 # Slovak translations resource file for package Subscribo ClientCheckoutCommon - for templates
 # Translation work in progress: (100%)
-template.product.list.item:
-# Template resources/views/client-checkout-common/product/list/item.blade.php
+template.product:
+# Template resources/views/client-checkout-common/product/list.blade.php
+    list:
         heading: Zoznam produktov
         grossPrice: 'Cena:'
         netPrice: 'Cena bez dane:'
         tax: 'Daň:'
+        buyLink: Kúpiť
 # Template resources/views/client-checkout-common/product/buy.blade.php
     buy:
-        heading: Chcete kúpiť {productName}?
-        grossPrice: 'Cena:'
-        netPrice: 'Cena bez dane:'
-        tax: 'Daň:'
+        heading: Nákup
         backToListLink: Späť na zoznam produktov
 # Template resources/views/client-checkout-common/product/success.blade.php
     success:
@@ -19,6 +18,13 @@ template.product.list.item:
         text: Vaša objednávka bola spracovaná.
 forms:
     buy:
+# Template resources/views/client-checkout-common/forms/buy/cart.blade.php
+        cart:
+            name: Názov
+            grossPrice: Cena
+            netPrice: Cena bez dane
+            tax: Daň
+            amount: Množstvo
 # Template resources/views/client-checkout-common/forms/buy/forguest.blade.php
         forguest.submitButton: Kúpiť
 # Template resources/views/client-checkout-common/forms/buy/foruser.blade.php
@@ -57,9 +63,21 @@ forms:
             passwordConfirmation: Potvrdenie hesla:
 # Template resources/views/client-checkout-common/forms/buy/deliveryselector.blade.php
         delivery.select:
-            title: Select your first delivery
-            text: Deliveries starting from {start}
-# ClientCheckoutCommonControllerTrait.php
+            title: Vyberte svoje prvé dodanie
+            text: Dodávanie začína od {start}
+        subscriptionPeriod.select:
+            title: Ako často si želáte dostávať túto objednávku?
+            noSubscription: Iba raz (bez predplatného)
+        deliveryWindowType.select.title: Kedy by ste si želali dostať túto objednávku?
+# CheckoutProcessor.php
 errors:
-    orderFailed: Pokus o zadanie objednávky zlyhal
+    cartEmpty: Váš nákupný košík je prázdny
+    orderFailed: Počas pokusu o zadanie objednávky nastala chyba
     transactionFailed: Transakcia mohla zlyhať, ale mohla aj prebehnúť. Prosím, buďte opatrní pred zadaním novej požiadavky. Môžte kontaktovať svoju banku alebo obchodníka pre bližšie informácie.
+    subscriptionFailed: Počas pokusu o zadanie predplatného nastala chyba
+    confirmationMessageFailed: Počas pokusu o poslanie potvrdenia nastala chyba
+success:
+    flash: Vaša požiadavka bola zpracovaná. Máte ďalšiu požiadavku?
+aria.label:
+# used now in template resources/views/client-checkout-common/forms/buy/flashmessage.blade.php
+    close: Zavrieť

@@ -1,18 +1,16 @@
 # German translations resource file for package Subscribo ClientCheckoutCommon - for templates
-# Translation work in progress: (20%)
-template.product.list.item:
-# Template resources/views/client-checkout-common/product/list/item.blade.php
+# Translation work in progress: (10%)
+template.product:
+# Template resources/views/client-checkout-common/product/list.blade.php
+    list:
         heading: Produktliste
         grossPrice: 'Preis brutto:'
         netPrice: 'Preis netto:'
         tax: 'Steuer:'
+        buyLink: Kaufen
 # Template resources/views/client-checkout-common/product/buy.blade.php
     buy:
-        heading: Möchten Sie {productName} kaufen?
-        grossPrice: 'Preis netto:'
-        netPrice: 'Preis brutto:'
-        tax: 'Steuer:'
-        buyLink: Kaufen
+        heading: Checkout
         backToListLink: Zurück nach Produktliste
 # Template resources/views/client-checkout-common/product/success.blade.php
     success:
@@ -20,10 +18,17 @@ template.product.list.item:
         text: Your order has been processed.
 forms:
     buy:
+# Template resources/views/client-checkout-common/forms/buy/cart.blade.php
+        cart:
+            name: Name
+            grossPrice: Preis brutto
+            netPrice: Preis netto
+            tax: Steuer
+            amount: Amount
 # Template resources/views/client-checkout-common/forms/buy/forguest.blade.php
-        forguest.submitButton: Buy
+        forguest.submitButton: Kaufen
 # Template resources/views/client-checkout-common/forms/buy/foruser.blade.php
-        foruser.submitButton: Buy
+        foruser.submitButton: Kaufen
 # Template resources/views/client-checkout-common/forms/buy/transactiongatewayselect.blade.php
         transactiongatewayselect:
             title: 'Select payment method:'
@@ -61,7 +66,20 @@ forms:
         delivery.select:
             title: Select your first delivery
             text: Deliveries starting from {start}
-# ClientCheckoutControllerTrait.php
+        subscriptionPeriod.select:
+            title: How often would you like to receive this delivery?
+            noSubscription: Just one time delivery (no subscription)
+        deliveryWindowType.select.title: When would you like to receive this delivery?
+# CheckoutProcessor.php
 errors:
-    orderFailed: Ordering has failed
+    cartEmpty: Your shopping cart is empty
+    orderFailed: During setting order attempt an error was encountered
     transactionFailed: Transaction might have failed, but also might have been processed. Please, be careful before making a new request. Feel free to contact your bank or merchant for further details.
+    subscriptionFailed: During subscription setting attempt an error was encountered
+    confirmationMessageFailed: During sending confirmation message attempt an error was encountered
+success:
+    flash: Your request has been processed. Do you want to make a new request?
+# General
+aria.label:
+# used now in template resources/views/client-checkout-common/forms/buy/flashmessage.blade.php
+    close: Close
