@@ -8,9 +8,9 @@
 <div class="container-fluid">
     <h1>{{ $localizer->trans('heading') }}</h1>
     @if(Auth::check())
-        @include('subscribo::webshop.forms.buy.foruser', ['localizer' => $localizer->template()])
+        @include('subscribo::client-checkout-common.forms.buy.foruser')
     @else
-        @include('subscribo::webshop.forms.buy.forguest', ['localizer' => $localizer->template()])
+        @include('subscribo::client-checkout-common.forms.buy.forguest')
     @endif
     <hr>
     <a href="{{ route('subscribo.webshop.product.list') }}">{{ $localizer->trans('backToListLink') }}</a>

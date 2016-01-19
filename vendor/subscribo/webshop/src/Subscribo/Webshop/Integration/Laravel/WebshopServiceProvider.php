@@ -16,6 +16,7 @@ class WebshopServiceProvider extends ServiceProvider
 
     public function register()
     {
+        $this->app->register('\\Subscribo\\ClientCheckoutCommon\\Integration\\Laravel\\ClientCheckoutCommonServiceProvider');
         $apiClientServiceProviderClassName = '\\Subscribo\\ApiClient\\Integration\\Laravel\\ApiClientServiceProvider';
         $this->apiClientServiceProvider = $this->registerServiceProvider($apiClientServiceProviderClassName);
     }

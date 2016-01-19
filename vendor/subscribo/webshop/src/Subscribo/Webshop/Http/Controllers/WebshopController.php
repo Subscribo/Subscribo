@@ -48,28 +48,17 @@ class WebshopController extends Controller
     protected $sessionKeyBuyProductInputForRedirect = 'subscribo_webshop_buy_product_input_for_redirect';
 
     /**
-     * @param BusinessConnector $connector
      * @param LocalizerInterface $localizer
      * @return \Illuminate\View\View
      */
-    public function listProducts(BusinessConnector $connector, LocalizerInterface $localizer)
+    public function listProducts(LocalizerInterface $localizer)
     {
-        $products = $connector->getProduct();
-        foreach ($products as $key => $product) {
-            if (empty($product['name'])) {
-                $products[$key]['name'] = $product['identifier'];
-            }
-        }
-        $data = [
-            'products' => $products,
-            'localizer' => $localizer->template('messages', 'webshop')->setPrefix('template.product.list'),
-        ];
+        $data = ['localizer' => $localizer->template('messages', 'webshop')->setPrefix('template.product.list')];
 
-        return view('vendor/subscribo/webshop/product/list', $data);
+        return view('subscribo::webshop.product.list', $data);
     }
 
     /**
-     * @param AccountConnector $accountConnector
      * @param BusinessConnector $businessConnector
      * @param TransactionConnector $transactionConnector
      * @param LocalizerInterface $localizer
@@ -84,45 +73,18 @@ class WebshopController extends Controller
      * @return \Illuminate\View\View
      * @throws \Subscribo\Exception\Exceptions\RuntimeException
      */
-    public function getBuyProduct(AccountConnector $accountConnector, BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger, Store $session, $id = null)
+    public function getBuyProduct(BusinessConnector $businessConnector, TransactionConnector $transactionConnector, LocalizerInterface $localizer, Request $request, Guard $auth, Registrar $registrar, SessionDeposit $sessionDeposit, CookieDeposit $cookieDeposit, LoggerInterface $logger, Store $session, $id = null)
     {
         $resultInSession = $session->pull($this->sessionKeyServerRequestHandledResult);
         if ($resultInSession) {
 
             return $this->handleResultInSession($resultInSession, $businessConnector, $transactionConnector, $localizer, $request, $auth, $registrar, $sessionDeposit, $cookieDeposit, $logger, $session);
         }
-        try {
-            $products = $businessConnector->getProduct();
-            $oldItems = $request->old('item');
-            $selectedProduct = static::pickProductById($products, $id);
-            if ($selectedProduct and ! isset($oldItems[$selectedProduct['price_id']])) {
-                $oldItems[$selectedProduct['price_id']] = 1;
-            }
-            $subscriptionPeriods = $this->acquireSubscriptionPeriods($businessConnector, false, $localizer);
-            $transactionGateways = $transactionConnector->getGateway();
-            $addresses = $auth->user() ? $accountConnector->getAddress() : [];
-            $deliveries = $businessConnector->getAvailableDeliveries();
-            $usualDeliveryWindowTypes = $businessConnector->getUsualDeliveryWindowTypes();
-            $deliveryWindowTypes = [];
-            foreach ($usualDeliveryWindowTypes as $deliveryWindowType)
-            {
-                $deliveryWindowTypes[$deliveryWindowType['id']] = $deliveryWindowType['name'];
-            }
-        } catch (Exception $e) {
-            throw new RuntimeException('Error in communication with API', 0, $e);
-        }
         $data = [
-            'products' => $businessConnector->getProduct(),
-            'oldItems' => $oldItems,
-            'transactionGateways' => $transactionGateways,
             'localizer' => $localizer->template('messages', 'webshop')->setPrefix('template.product.buy'),
-            'addresses' => $addresses,
-            'deliveries' => $deliveries,
-            'subscriptionPeriods' => $subscriptionPeriods,
-            'deliveryWindowTypes' => $deliveryWindowTypes,
         ];
 
-        return view('vendor/subscribo/webshop/product/buy', $data);
+        return view('subscribo::webshop.product.buy', $data);
     }
 
     /**
@@ -409,25 +371,5 @@ class WebshopController extends Controller
         return $result;
     }
 
-    /**
-     * @param array $products
-     * @param $id
-     * @return null|array
-     */
-    protected static function pickProductById(array $products, $id)
-    {
-        if (empty($id)) {
 
-            return null;
-        }
-        $stringId = strval($id);
-        foreach ($products as $product) {
-            if (strval($product['id']) === $stringId) {
-
-                return $product;
-            }
-        }
-
-        return null;
-    }
 }
