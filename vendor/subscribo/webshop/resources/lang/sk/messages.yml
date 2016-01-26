@@ -6,13 +6,8 @@ template.product:
         heading: Zoznam produktov
 # Template resources/views/webshop/product/buy.blade.php
     buy:
-        heading: Chcete kúpiť {productName}?
+        heading: Nákup
         backToListLink: Späť na zoznam produktov
 # Template resources/views/webshop/product/success.blade.php
     success:
         heading: Objednané
-        text: Vaša objednávka bola spracovaná.
-# WebshopController.php
-errors:
-    orderFailed: Pokus o zadanie objednávky zlyhal
-    transactionFailed: Transakcia mohla zlyhať, ale mohla aj prebehnúť. Prosím, buďte opatrní pred zadaním novej požiadavky. Môžte kontaktovať svoju banku alebo obchodníka pre bližšie informácie.

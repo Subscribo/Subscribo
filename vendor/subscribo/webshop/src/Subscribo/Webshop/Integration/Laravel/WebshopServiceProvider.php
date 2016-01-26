@@ -44,8 +44,6 @@ class WebshopServiceProvider extends ServiceProvider
         ];
         $paths = array_replace($defaultPaths, $paths);
         $router = $this->getRouter($router);
-        /** @var \Illuminate\Routing\Router $router */
-        $router = $this->app->make('router');
         $router->get($paths['subscribo.webshop.product.list'], [
             'as' => 'subscribo.webshop.product.list',
             'middleware' => $middleware,

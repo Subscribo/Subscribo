@@ -6,13 +6,8 @@ template.product:
         heading: Produktliste
 # Template resources/views/webshop/product/buy.blade.php
     buy:
-        heading: Möchten Sie {productName} kaufen?
+        heading: Checkout
         backToListLink: Zurück nach Produktliste
 # Template resources/views/webshop/product/success.blade.php
     success:
         heading: Ordered
-        text: Your order has been processed.
-# WebshopController.php
-errors:
-    orderFailed: Ordering has failed
-    transactionFailed: Transaction might have failed, but also might have been processed. Please, be careful before making a new request. Feel free to contact your bank or merchant for further details.
