@@ -1,0 +1,24 @@
+{
+    "name": "subscribo/checkout-plugin",
+    "description": "Subscribo checkout plugin",
+    "keywords": [
+        "plugin",
+        "checkout",
+        "subscribo"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "proprietary",
+    "require": {
+        "php": "~5.4",
+        "subscribo/support": "@dev",
+        "illuminate/routing": "^5.1",
+        "subscribo/apiclient": "@dev",
+        "subscribo/api1-connector": "@dev",
+        "subscribo/client-checkout-common": "@dev"
+    },
+    "autoload": {
+        "psr-4":{
+            "Subscribo\\CheckoutPlugin\\": "src/Subscribo/CheckoutPlugin"
+        }
+    }
+}

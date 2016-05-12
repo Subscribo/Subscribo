@@ -1,0 +1,13 @@
+# German translations resource file for package Subscribo checkout-plugin - for templates
+# Translation work in progress: (20%)
+template.product:
+# Template resources/views/checkout-plugin/product/list.blade.php
+    list:
+        heading: Produktliste
+# Template resources/views/checkout-plugin/product/buy.blade.php
+    buy:
+        heading: Checkout
+        backToListLink: Zurück nach Produktliste
+# Template resources/views/checkout-plugin/product/success.blade.php
+    success:
+        heading: Ordered

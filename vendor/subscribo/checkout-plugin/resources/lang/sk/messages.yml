@@ -1,0 +1,13 @@
+# Slovak translations resource file for package Subscribo checkout-plugin - for templates
+# Translation work in progress: (100%)
+template.product:
+# Template resources/views/checkout-plugin/product/list.blade.php
+    list:
+        heading: Zoznam produktov
+# Template resources/views/checkout-plugin/product/buy.blade.php
+    buy:
+        heading: Nákup
+        backToListLink: Späť na zoznam produktov
+# Template resources/views/checkout-plugin/product/success.blade.php
+    success:
+        heading: Objednané
