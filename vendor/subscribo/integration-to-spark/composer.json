@@ -12,7 +12,7 @@
     "require": {
         "php": ">=5.4",
         "subscribo/thick-client": "@dev",
-        "subscribo/webshop": "@dev",
+        "subscribo/checkout-plugin": "@dev",
         "subscribo/support": "@dev"
     },
     "autoload": {

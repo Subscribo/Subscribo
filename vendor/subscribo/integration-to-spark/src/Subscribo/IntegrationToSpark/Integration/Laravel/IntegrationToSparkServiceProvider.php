@@ -10,7 +10,7 @@ class IntegrationToSparkServiceProvider extends ServiceProvider
     {
         $this->app->register('\\Subscribo\\ThickClient\\Integration\\Laravel\\ThickClientServiceProvider');
         $this->app->register('\\Subscribo\\ThickClientIntegration\\Integration\\Laravel\\ThickClientIntegrationServiceProvider');
-        $this->app->register('\\Subscribo\\Webshop\\Integration\\Laravel\\WebshopServiceProvider');
+        $this->app->register('\\Subscribo\\CheckoutPlugin\\Integration\\Laravel\\CheckoutPluginServiceProvider');
     }
 
     public function boot()
