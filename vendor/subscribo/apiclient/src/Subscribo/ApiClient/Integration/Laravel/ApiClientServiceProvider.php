@@ -15,13 +15,12 @@ class ApiClientServiceProvider extends ServiceProvider {
 
     public static function provideMiddleware()
     {
-        $csrf = class_exists('\\App\\Http\\Middleware\\VerifyCsrfToken') ? '\\App\\Http\\Middleware\\VerifyCsrfToken' : '\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken';
         $middleware = [
+            'web',
             '\\Subscribo\\Localization\\Middleware\\StandardLocaleToResponseHeader',
             '\\Subscribo\\Localization\\Middleware\\LocaleFromCookie',
             '\\Subscribo\\Localization\\Middleware\\LocaleFromSession',
             '\\Subscribo\\Localization\\Middleware\\LocaleToApp',
-            $csrf
         ];
 
         return $middleware;

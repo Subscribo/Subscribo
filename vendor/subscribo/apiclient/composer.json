@@ -30,7 +30,6 @@
         "subscribo/exception": "@dev",
         "subscribo/config": "@dev",
         "subscribo/support": "@dev",
-        "illuminate/foundation": "~5.0",
         "illuminate/exception": "~5.0",
         "illuminate/http": "~5.0",
         "illuminate/session": "~5.0",
