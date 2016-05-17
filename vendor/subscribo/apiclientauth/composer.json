@@ -34,7 +34,6 @@
     },
     "suggest": {
         "laravel/framework": "This package have been developed to work with The Laravel Framework 5.0",
-        "illuminate/foundation": "(already contained in laravel/framework) - If using AuthenticatesAndRegistersUsersTrait (recommended version ~5.0)",
         "illuminate/http": "(already contained in laravel/framework) - If using AuthenticatesAndRegistersUsersTrait (recommended version ~5.0)",
         "subscribo/apiclientcommon": "If using AuthenticatesAndRegistersUsersTrait or ApiClientAuthServiceProvider (recommended version @dev)"
     },
