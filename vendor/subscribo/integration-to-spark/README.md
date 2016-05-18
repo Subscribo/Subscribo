@@ -48,6 +48,12 @@ Note: you might want to specify only some ServiceProviders, following way you pu
     php artisan vendor:publish --tag=view
 ```
 
+For publishing Spark specific views for Subscribo checkout plugin:
+
+```sh
+    php artisan vendor:publish --tag=subscribo-spark-plugin-checkout-views
+```
+
 #### Specify environment variables needed to connect to Subscribo API
 
 e.g. by specifying in `.env` file of your project values for keys listed in [`docs/.env.example`](docs/.env.example)

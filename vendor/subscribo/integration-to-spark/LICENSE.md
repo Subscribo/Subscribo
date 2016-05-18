@@ -1,0 +1,1 @@
+Proprietary, parts are MIT

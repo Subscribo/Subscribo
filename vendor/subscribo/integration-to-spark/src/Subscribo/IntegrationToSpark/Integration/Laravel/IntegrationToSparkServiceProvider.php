@@ -16,5 +16,6 @@ class IntegrationToSparkServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerViews();
+        $this->registerViews([], 'checkout-plugin', true, 'subscribo-spark-plugin-checkout-views');
     }
 }
