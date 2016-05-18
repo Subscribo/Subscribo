@@ -48,3 +48,9 @@ or (for conditional registration) you can add following to bootstrap/app.php:
     }
 ```
 
+### 1.4 If you want to use default plugin views, use
+
+```sh
+    php artisan vendor:publish --tag=subscribo-checkout-plugin-default-views
+```
+

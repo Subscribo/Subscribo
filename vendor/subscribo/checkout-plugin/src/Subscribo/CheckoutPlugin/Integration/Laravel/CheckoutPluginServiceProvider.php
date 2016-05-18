@@ -30,7 +30,7 @@ class CheckoutPluginServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerRoutes($this->apiClientServiceProvider->provideMiddleware());
-        $this->registerViews();
+        $this->registerViews([], true, true, 'subscribo-checkout-plugin-default-views');
         $this->registerTranslationResources('messages');
     }
 
