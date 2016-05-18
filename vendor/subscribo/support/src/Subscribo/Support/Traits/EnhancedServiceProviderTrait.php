@@ -69,20 +69,31 @@ trait EnhancedServiceProviderTrait
     /**
      * @param array $havingViewComposer
      * @param string|bool $subdirectory
-     * @param string $viewNamespace
+     * @param string|bool $viewNamespace
+     * @param string|bool $publishTag
      */
-    protected function registerViews($havingViewComposer = array(), $subdirectory = true, $viewNamespace = 'subscribo')
-    {
+    protected function registerViews(
+        $havingViewComposer = array(),
+        $subdirectory = true,
+        $viewNamespace = true,
+        $publishTag = true
+    ) {
         $packagePath = $this->getPackagePath();
         if (true === $subdirectory) {
             $subdirectory = basename($packagePath);
+        }
+        if (true === $viewNamespace) {
+            $viewNamespace = 'subscribo';
+        }
+        if (true === $publishTag) {
+            $publishTag = 'view';
         }
         $pathSuffix = $subdirectory ? ($subdirectory.'/') : '';
         $packageTemplateBasePath = $this->getPackagePath().'/resources/views';
         $packageTemplatePath = $packageTemplateBasePath.'/'.$pathSuffix;
         $basePath = $this->app->make('path.base');
         $applicationTemplatePath = $basePath.'/resources/views/vendor/'.$viewNamespace.'/'.$pathSuffix;
-        $this->publishes([$packageTemplatePath => $applicationTemplatePath], 'view');
+        $this->publishes([$packageTemplatePath => $applicationTemplatePath], $publishTag);
         $this->loadViewsFrom($packageTemplateBasePath, $viewNamespace);
         $this->registerViewComposers($havingViewComposer, $subdirectory, $viewNamespace);
     }
